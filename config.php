@@ -13,8 +13,13 @@ define('ADMIN_SECRET', 'whabitat_admin');    // 管理者（幹部）用
 // API Key for Google Forms Sync (Change this to a random string)
 define('API_KEY', 'himitsu_no_key_12345');
 
-// Available Grades (Generations) - Add new ones here
+// Available Grades (Generations)
 define('AVAILABLE_GRADES', ['18th', '19th', '20th']);
+
+// LINE Login Configuration
+define('LINE_CHANNEL_ID', 'YOUR_CHANNEL_ID');
+define('LINE_CHANNEL_SECRET', 'YOUR_CHANNEL_SECRET');
+define('LINE_CALLBACK_URL', 'https://whabitat.xsrv.jp/callback.php'); // TODO: Update domain
 
 // Start Session
 session_start();
@@ -31,11 +36,19 @@ function getDB() {
     }
 }
 
-// Helper to check if user is logged in
+// Helper: Check Login & Approval
 function requireLogin() {
     if (!isset($_SESSION['user_id'])) {
         header("Location: login.php");
         exit;
     }
+    
+    // Check Approval Status (except for pending page)
+    if (empty($_SESSION['is_approved']) && basename($_SERVER['PHP_SELF']) !== 'approval_pending.php' && basename($_SERVER['PHP_SELF']) !== 'promote.php') {
+        header("Location: approval_pending.php");
+        exit;
+    }
 }
+
+// Helper: Get DB Connection
 ?>

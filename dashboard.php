@@ -56,6 +56,10 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             background-color: #333;
             color: white;
         }
+        .btn-admin {
+            background-color: #e74c3c;
+            color: white;
+        }
         .btn-logout {
             background-color: #f5f5f5;
             color: #333;
@@ -127,6 +131,9 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="event_create.php" class="btn-action btn-create">
                             <i class="fas fa-plus"></i> イベント作成
+                        </a>
+                        <a href="admin/members.php" class="btn-action btn-admin">
+                            <i class="fas fa-users"></i> メンバー管理
                         </a>
                     <?php endif; ?>
                     <a href="logout.php" class="btn-action btn-logout">

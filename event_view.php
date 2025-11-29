@@ -35,8 +35,9 @@ $stmt->execute([$event_id, $_SESSION['user_id']]);
 $my_attendance = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Fetch All Participants (Only those who joined)
+// Note: We fetch more details, but will filter display based on role
 $stmt = $pdo->prepare("
-    SELECT u.name, a.status, a.comment 
+    SELECT u.name, u.student_id, u.line_name, u.grade, a.status, a.comment 
     FROM attendance a 
     JOIN users u ON a.user_id = u.id 
     WHERE a.event_id = ? AND a.status = 'join'
@@ -51,6 +52,8 @@ function getStatusLabel($status) {
     if ($status === 'maybe') return '未定';
     return '';
 }
+
+$is_admin = ($_SESSION['role'] === 'admin');
 
 ?>
 <!DOCTYPE html>
@@ -131,6 +134,11 @@ function getStatusLabel($status) {
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
+            flex-direction: column; /* Changed to column for details */
+            gap: 0.5rem;
+        }
+        .participant-main {
+            display: flex;
             align-items: center;
             gap: 1rem;
         }
@@ -140,6 +148,14 @@ function getStatusLabel($status) {
         .participant-comment {
             color: #666;
             font-size: 0.9rem;
+        }
+        .participant-details {
+            font-size: 0.85rem;
+            color: #555;
+            background: #f5f5f5;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
         }
         .btn-submit {
             background-color: #333;
@@ -207,11 +223,22 @@ function getStatusLabel($status) {
                     <ul class="participant-list">
                         <?php foreach ($participants as $p): ?>
                             <li class="participant-item">
-                                <span class="participant-name">
-                                    <?php echo htmlspecialchars($p['name']); ?>
-                                </span>
-                                <?php if ($p['comment']): ?>
-                                    <span class="participant-comment"><?php echo htmlspecialchars($p['comment']); ?></span>
+                                <div class="participant-main">
+                                    <span class="participant-name">
+                                        <?php echo htmlspecialchars($p['name']); ?>
+                                    </span>
+                                    <?php if ($p['comment']): ?>
+                                        <span class="participant-comment"><?php echo htmlspecialchars($p['comment']); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <?php if ($is_admin): ?>
+                                    <div class="participant-details">
+                                        [管理者表示] 
+                                        学籍番号: <?php echo htmlspecialchars($p['student_id']); ?> | 
+                                        LINE名: <?php echo htmlspecialchars($p['line_name']); ?> | 
+                                        代: <?php echo htmlspecialchars($p['grade']); ?>
+                                    </div>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
