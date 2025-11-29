@@ -1,3 +1,4 @@
+<?php require_once 'config.php'; $csrf_token = generateCsrfToken(); ?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -6,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHABITAT | 早稲田大学ボランティアサークル</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@600;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -15,13 +16,21 @@
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="#" class="logo">WHABITAT</a>
+            <a href="#" class="logo">
+                <img src="logo.png" alt="WHABITAT">
+            </a>
             <nav>
                 <ul class="nav-list">
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#activities" class="nav-link">Activities</a></li>
-                    <li><a href="#atmosphere" class="nav-link">Atmosphere</a></li>
-                    <li><a href="login.php" class="btn-login"><i class="fas fa-lock"></i> サークル員ログイン</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                    <li>
+                        <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i
+                                class="fab fa-x-twitter"></i></a>
+                        <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank"
+                            class="social-icon"><i class="fab fa-instagram"></i></a>
+                    </li>
+                    <li><a href="login.php" class="btn-login"><i class="fas fa-lock"></i> MEMBER LOGIN</a></li>
                 </ul>
             </nav>
         </div>
@@ -29,37 +38,40 @@
 
     <section class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">Build Homes,<br>Build Hope.</h1>
-            <p class="hero-subtitle">国際協力 × 建築 × 地域おこし<br>早稲田大学公認ボランティアサークル WHABITAT</p>
-            <a href="#about" class="btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">もっと知る</a>
+            <h1 class="hero-title">WHABITAT</h1>
+            <p class="hero-subtitle">WASEDA UNIVERSITY</p>
         </div>
     </section>
 
     <section id="about" class="bg-white">
         <div class="container">
-            <h2 class="section-title">About Us</h2>
-            <p style="text-align: center; max-width: 700px; margin: 0 auto 3rem;">
+            <h2 class="section-title"><span>About Us</span></h2>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto 4rem; color: var(--text-light);">
                 WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の正式な学生支部です。<br>
                 「誰もがきちんとした場所で暮らせる世界」を目指し、国内外で住居建築支援を行っています。
             </p>
 
             <div class="about-grid">
                 <div class="info-card">
-                    <h3><i class="fas fa-university"></i> 団体概要</h3>
-                    <ul class="info-list">
-                        <li>早稲田大学公認サークル</li>
-                        <li>WAVOC（平山郁夫記念ボランティアセンター）公認</li>
-                        <li>国際NGO Habitat for Humanity Japan 学生支部</li>
+                    <div style="color: var(--accent-green); font-size: 2rem; margin-bottom: 1rem;"><i
+                            class="fas fa-university"></i></div>
+                    <h3>団体概要</h3>
+                    <ul style="font-size: 0.95rem; color: var(--text-color);">
+                        <li style="margin-bottom: 0.5rem;">早稲田大学公認サークル</li>
+                        <li style="margin-bottom: 0.5rem;">WAVOC 公認</li>
+                        <li style="margin-bottom: 0.5rem;">国際NGO Habitat for Humanity Japan 学生支部</li>
                         <li>設立：2006年</li>
                     </ul>
                 </div>
                 <div class="info-card">
-                    <h3><i class="fas fa-users"></i> 規模・構成</h3>
-                    <ul class="info-list">
-                        <li>人数：約128名</li>
-                        <li>男女比：4:6</li>
-                        <li>学部：全学部（文系理系問わず）</li>
-                        <li>他大生も参加可能（インカレ要素あり）</li>
+                    <div style="color: var(--accent-blue); font-size: 2rem; margin-bottom: 1rem;"><i
+                            class="fas fa-users"></i></div>
+                    <h3>規模・構成</h3>
+                    <ul style="font-size: 0.95rem; color: var(--text-color);">
+                        <li style="margin-bottom: 0.5rem;">人数：約200名</li>
+                        <li style="margin-bottom: 0.5rem;">男女比：4:6</li>
+                        <li style="margin-bottom: 0.5rem;">学部：全学部（文系理系問わず）</li>
+                        <li>早稲田大学の学生限定</li>
                     </ul>
                 </div>
             </div>
@@ -68,7 +80,7 @@
 
     <section id="activities" class="bg-light">
         <div class="container">
-            <h2 class="section-title">Our Activities</h2>
+            <h2 class="section-title"><span>Activities</span></h2>
             <div class="activity-grid">
                 <!-- GV -->
                 <div class="activity-card">
@@ -78,11 +90,11 @@
                     <div class="activity-content">
                         <span class="activity-tag">Main Event</span>
                         <h3>GV (Global Village)</h3>
-                        <p>海外住居建築ボランティア。開発途上国へ渡航し、約2週間かけて「家を建てる」手伝いをします。レンガ運びやセメント混ぜなど、特別な技術は不要です。</p>
-                        <ul class="info-list" style="margin-top: 1rem; font-size: 0.9rem;">
-                            <li>派遣国：ネパール、カンボジア、ベトナムなど</li>
-                            <li>時期：春（2・3月）と夏（8・9月）</li>
-                        </ul>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
+                            海外住居建築ボランティア。開発途上国へ渡航し、約2週間かけて「家を建てる」手伝いをします。</p>
+                        <div style="font-size: 0.85rem; color: var(--accent-red); font-weight: 600;">
+                            <i class="fas fa-map-marker-alt"></i> ネパール、カンボジア、ベトナムなど
+                        </div>
                     </div>
                 </div>
 
@@ -94,11 +106,11 @@
                     <div class="activity-content">
                         <span class="activity-tag">Domestic</span>
                         <h3>JV (Japan Village)</h3>
-                        <p>国内派遣ボランティア。日本各地の地域活性化、古民家再生、農業支援などを行います。海外よりも気軽に参加でき、日本の地域文化を深く学べます。</p>
-                        <ul class="info-list" style="margin-top: 1rem; font-size: 0.9rem;">
-                            <li>活動例：古民家再生、農業支援、雪祭り手伝い</li>
-                            <li>期間：夏休みの1週間程度</li>
-                        </ul>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
+                            国内派遣ボランティア。日本各地の地域活性化、古民家再生、農業支援などを行います。</p>
+                        <div style="font-size: 0.85rem; color: var(--accent-green); font-weight: 600;">
+                            <i class="fas fa-map-marker-alt"></i> 日本全国各地
+                        </div>
                     </div>
                 </div>
 
@@ -110,40 +122,45 @@
                     <div class="activity-content">
                         <span class="activity-tag">Daily Life</span>
                         <h3>通常活動</h3>
-                        <p>毎週のミーティングや、都内での単発ボランティア。貧困問題についての勉強会や、メンバー同士の交流（アイスブレイク）も大切にしています。</p>
-                        <ul class="info-list" style="margin-top: 1rem; font-size: 0.9rem;">
-                            <li>日時：毎週水曜 6限（19:00〜）</li>
-                            <li>場所：早稲田キャンパス or 奉仕園</li>
-                        </ul>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
+                            毎週のミーティングや、都内での単発ボランティア。貧困問題についての勉強会も行います。</p>
+                        <div style="font-size: 0.85rem; color: var(--accent-blue); font-weight: 600;">
+                            <i class="far fa-clock"></i> 毎週水曜 6限（19:00〜）
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="atmosphere" class="bg-white">
+    <section id="contact" class="bg-white">
         <div class="container">
-            <h2 class="section-title">Atmosphere</h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
-                <div style="flex: 1; min-width: 300px;">
-                    <h3 style="margin-bottom: 1.5rem;">アットホームで自由な雰囲気</h3>
-                    <p style="margin-bottom: 1rem;">
-                        <strong>強制は一切ありません。</strong><br>
-                        活動は全て自由参加なので、兼サーやアルバイトとの両立も簡単です（メンバーの約45%がバイトをしています）。
-                    </p>
-                    <p style="margin-bottom: 1rem;">
-                        <strong>未経験者歓迎！</strong><br>
-                        入会者の75%がボランティア未経験。大学から新しいことを始めたい人に最適です。
-                    </p>
-                    <p>
-                        <strong>イベントも充実</strong><br>
-                        早稲田祭、クリスマスパーティー、新歓合宿、スポーツレクなど、真面目な活動だけでなく「遊び」も全力で楽しむ文化があります。
-                    </p>
+            <h2 class="section-title"><span>Contact</span></h2>
+            <div class="contact-form">
+                <?php if (isset($_GET['contact']) && $_GET['contact'] === 'success'): ?>
+                <div
+                    style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+                    メッセージを送信しました。ありがとうございます！
                 </div>
-                <div style="flex: 1; min-width: 300px;">
-                    <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2940&auto=format&fit=crop"
-                        alt="Circle Atmosphere" style="width: 100%; border-radius: 12px; box-shadow: var(--shadow-md);">
-                </div>
+                <?php endif; ?>
+
+                <form action="contact_submit.php" method="POST">
+                    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                    <div class="form-group">
+                        <label class="form-label">お名前</label>
+                        <input type="text" name="name" class="form-input" required placeholder="早稲田 花子">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">メールアドレス</label>
+                        <input type="email" name="email" class="form-input" required placeholder="example@waseda.jp">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">メッセージ</label>
+                        <textarea name="message" class="form-input" rows="5" required
+                            placeholder="ご質問やメッセージをどうぞ"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">送信する</button>
+                </form>
             </div>
         </div>
     </section>
@@ -151,11 +168,12 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-links">
-                <a href="#">Twitter</a>
-                <a href="#">Instagram</a>
-                <a href="#">Contact</a>
+                <a href="https://x.com/whabitat?s=21" target="_blank">X (Twitter)</a>
+                <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank">Instagram</a>
+                <a href="#contact">Contact</a>
             </div>
-            <p>&copy; 2025 WHABITAT Waseda University Chapter. All Rights Reserved.</p>
+            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter.
+                All Rights Reserved.</p>
         </div>
     </footer>
 </body>

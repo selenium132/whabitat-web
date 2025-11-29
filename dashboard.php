@@ -45,6 +45,9 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <a href="admin/members.php" class="btn-secondary">
                             <i class="fas fa-users"></i> メンバー管理
                         </a>
+                        <a href="admin/messages.php" class="btn-secondary">
+                            <i class="fas fa-envelope"></i> お問い合わせ
+                        </a>
                     <?php endif; ?>
                     <a href="logout.php" class="btn-secondary">
                         <i class="fas fa-sign-out-alt"></i> ログアウト
