@@ -4,14 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WHABITAT | 早稲田大学 建築・まちづくりサークル</title>
-    <meta name="description" content="早稲田大学公認サークル WHABITAT（わびたっと）。住まいづくりは、人づくり、街づくり。">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
+    <title>WHABITAT | 早稲田大学ボランティアサークル</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@600;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
@@ -19,196 +16,148 @@
     <header class="header">
         <div class="header-inner">
             <a href="#" class="logo">WHABITAT</a>
-            <button class="nav-toggle" aria-label="メニューを開く">
-                <span class="hamburger"></span>
-            </button>
-            <nav class="nav-menu">
+            <nav>
                 <ul class="nav-list">
-                    <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
-                    <li class="nav-item"><a href="#activity" class="nav-link">Activity</a></li>
-                    <li class="nav-item"><a href="#faq" class="nav-link">FAQ</a></li>
-                    <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li><a href="#activities" class="nav-link">Activities</a></li>
+                    <li><a href="#atmosphere" class="nav-link">Atmosphere</a></li>
                     <li><a href="login.php" class="btn-login"><i class="fas fa-lock"></i> サークル員ログイン</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main>
-        <section class="hero">
-            <div class="hero-bg"></div>
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    住まいづくりは、<br>
-                    人づくり、<br>
-                    街づくり
-                </h1>
-                <p class="hero-subtitle">早稲田大学公認 国際NGO Habitat for Humanity 学生支部</p>
-                <a href="#activity" class="btn btn-hero">活動を見る</a>
-            </div>
-            <div class="scroll-indicator">
-                <span>SCROLL</span>
-                <div class="line"></div>
-            </div>
-        </section>
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Build Homes,<br>Build Hope.</h1>
+            <p class="hero-subtitle">国際協力 × 建築 × 地域おこし<br>早稲田大学公認ボランティアサークル WHABITAT</p>
+            <a href="#about" class="btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">もっと知る</a>
+        </div>
+    </section>
 
-        <section id="about" class="section about">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">About Us</h2>
-                    <p class="section-subtitle">私たちについて</p>
+    <section id="about" class="bg-white">
+        <div class="container">
+            <h2 class="section-title">About Us</h2>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto 3rem;">
+                WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の正式な学生支部です。<br>
+                「誰もがきちんとした場所で暮らせる世界」を目指し、国内外で住居建築支援を行っています。
+            </p>
+
+            <div class="about-grid">
+                <div class="info-card">
+                    <h3><i class="fas fa-university"></i> 団体概要</h3>
+                    <ul class="info-list">
+                        <li>早稲田大学公認サークル</li>
+                        <li>WAVOC（平山郁夫記念ボランティアセンター）公認</li>
+                        <li>国際NGO Habitat for Humanity Japan 学生支部</li>
+                        <li>設立：2006年</li>
+                    </ul>
                 </div>
-                <div class="about-content">
-                    <div class="about-text">
-                        <p class="lead">貧困や劣悪な住環境にある人々のために、<br>安全で安価な家を建てる活動を行う学生団体です。</p>
-
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-label">メンバー数</span>
-                                <span class="stat-value">107<span class="stat-unit">名</span></span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">男女比</span>
-                                <span class="stat-value">4:6</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">ボランティア未経験</span>
-                                <span class="stat-value">75<span class="stat-unit">%</span></span>
-                            </div>
-                        </div>
-
-                        <div class="mission-box">
-                            <h3>Mission</h3>
-                            <p>「A world where everyone has a decent place to live.<br>（誰もがきちんとした場所で暮らせる世界）」</p>
-                            <p class="mission-sub">の実現を目指しています。</p>
-                        </div>
-                    </div>
+                <div class="info-card">
+                    <h3><i class="fas fa-users"></i> 規模・構成</h3>
+                    <ul class="info-list">
+                        <li>人数：約128名</li>
+                        <li>男女比：4:6</li>
+                        <li>学部：全学部（文系理系問わず）</li>
+                        <li>他大生も参加可能（インカレ要素あり）</li>
+                    </ul>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="activity" class="section activity">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Activities</h2>
-                    <p class="section-subtitle">活動内容</p>
+    <section id="activities" class="bg-light">
+        <div class="container">
+            <h2 class="section-title">Our Activities</h2>
+            <div class="activity-grid">
+                <!-- GV -->
+                <div class="activity-card">
+                    <div class="activity-img"
+                        style="background-image: url('https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2940&auto=format&fit=crop');">
+                    </div>
+                    <div class="activity-content">
+                        <span class="activity-tag">Main Event</span>
+                        <h3>GV (Global Village)</h3>
+                        <p>海外住居建築ボランティア。開発途上国へ渡航し、約2週間かけて「家を建てる」手伝いをします。レンガ運びやセメント混ぜなど、特別な技術は不要です。</p>
+                        <ul class="info-list" style="margin-top: 1rem; font-size: 0.9rem;">
+                            <li>派遣国：ネパール、カンボジア、ベトナムなど</li>
+                            <li>時期：春（2・3月）と夏（8・9月）</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="activity-grid">
-                    <div class="activity-card">
-                        <div class="card-image">
-                            <img src="https://placehold.co/600x400" alt="GV Activity">
-                        </div>
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>GV</h3>
-                                <span class="card-subtitle">Global Village</span>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-desc">春と夏に約10日間、海外へ渡航し、現地の家族・大工さんと共に家を建てます。</p>
-                                <dl class="card-details">
-                                    <dt>渡航先</dt>
-                                    <dd>ネパール、カンボジア、ベトナム、インドネシアなど</dd>
-                                    <dt>内容</dt>
-                                    <dd>レンガ積み、竹の加工、資材運搬などの「Build（建築活動）」と、現地の歴史・文化を学ぶ「CA（Cultural Activities）」を行います。</dd>
-                                </dl>
-                            </div>
-                        </div>
+
+                <!-- JV -->
+                <div class="activity-card">
+                    <div class="activity-img"
+                        style="background-image: url('https://images.unsplash.com/photo-1533282960533-51328aa49826?q=80&w=2842&auto=format&fit=crop');">
                     </div>
-                    <div class="activity-card">
-                        <div class="card-image">
-                            <img src="https://placehold.co/600x400" alt="JV Activity">
-                        </div>
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>JV</h3>
-                                <span class="card-subtitle">Japan Village</span>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-desc">夏休みの1週間、日本全国の過疎地域や限界集落へ派遣。「日本を知る、地域と繋がる」活動です。</p>
-                                <dl class="card-details">
-                                    <dt>派遣先</dt>
-                                    <dd>青森（白神山地）、新潟（山古志）、富山（五箇山）、石川（大土）、福岡（黒木町）など多数。</dd>
-                                    <dt>内容</dt>
-                                    <dd>農業支援（らっきょう畑の整備、すだち収穫）、古民家改修、空き家清掃、動物のお世話（ヤギの電気柵点検、アルパカ飼育補助）など。</dd>
-                                </dl>
-                            </div>
-                        </div>
+                    <div class="activity-content">
+                        <span class="activity-tag">Domestic</span>
+                        <h3>JV (Japan Village)</h3>
+                        <p>国内派遣ボランティア。日本各地の地域活性化、古民家再生、農業支援などを行います。海外よりも気軽に参加でき、日本の地域文化を深く学べます。</p>
+                        <ul class="info-list" style="margin-top: 1rem; font-size: 0.9rem;">
+                            <li>活動例：古民家再生、農業支援、雪祭り手伝い</li>
+                            <li>期間：夏休みの1週間程度</li>
+                        </ul>
                     </div>
-                    <div class="activity-card">
-                        <div class="card-image">
-                            <img src="https://placehold.co/600x400" alt="Daily Activity">
-                        </div>
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>Daily & Local</h3>
-                                <span class="card-subtitle">地域貢献・定例活動</span>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-desc">毎週水曜日の定例MTG（19:00〜）に加え、身近なボランティアを実施。</p>
-                                <dl class="card-details">
-                                    <dt>内容</dt>
-                                    <dd>西東京「東京地球農園」での農作業、渋谷や早稲田周辺でのゴミ拾い、地域のお祭り運営サポート、防災ボランティアなど。</dd>
-                                </dl>
-                            </div>
-                        </div>
+                </div>
+
+                <!-- Daily -->
+                <div class="activity-card">
+                    <div class="activity-img"
+                        style="background-image: url('https://images.unsplash.com/photo-1529390003868-6c04176d3757?q=80&w=2940&auto=format&fit=crop');">
+                    </div>
+                    <div class="activity-content">
+                        <span class="activity-tag">Daily Life</span>
+                        <h3>通常活動</h3>
+                        <p>毎週のミーティングや、都内での単発ボランティア。貧困問題についての勉強会や、メンバー同士の交流（アイスブレイク）も大切にしています。</p>
+                        <ul class="info-list" style="margin-top: 1rem; font-size: 0.9rem;">
+                            <li>日時：毎週水曜 6限（19:00〜）</li>
+                            <li>場所：早稲田キャンパス or 奉仕園</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="faq" class="section faq">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">FAQ</h2>
-                    <p class="section-subtitle">よくある質問</p>
+    <section id="atmosphere" class="bg-white">
+        <div class="container">
+            <h2 class="section-title">Atmosphere</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="margin-bottom: 1.5rem;">アットホームで自由な雰囲気</h3>
+                    <p style="margin-bottom: 1rem;">
+                        <strong>強制は一切ありません。</strong><br>
+                        活動は全て自由参加なので、兼サーやアルバイトとの両立も簡単です（メンバーの約45%がバイトをしています）。
+                    </p>
+                    <p style="margin-bottom: 1rem;">
+                        <strong>未経験者歓迎！</strong><br>
+                        入会者の75%がボランティア未経験。大学から新しいことを始めたい人に最適です。
+                    </p>
+                    <p>
+                        <strong>イベントも充実</strong><br>
+                        早稲田祭、クリスマスパーティー、新歓合宿、スポーツレクなど、真面目な活動だけでなく「遊び」も全力で楽しむ文化があります。
+                    </p>
                 </div>
-                <div class="faq-list">
-                    <div class="faq-item">
-                        <h3 class="faq-question">Q. 英語が苦手でも大丈夫？</h3>
-                        <p class="faq-answer">A. 大丈夫です！普段の活動で英語は使いません。海外活動でも簡単な意思疎通ができれば問題ありません。</p>
-                    </div>
-                    <div class="faq-item">
-                        <h3 class="faq-question">Q. 兼サーはできる？</h3>
-                        <p class="faq-answer">A. 可能です！多くのメンバーが他のサークルやアルバイトと両立しています。</p>
-                    </div>
-                    <div class="faq-item">
-                        <h3 class="faq-question">Q. 理系の学生はいる？</h3>
-                        <p class="faq-answer">A. 全体の約15%が理系学部です。建築学科以外の理系学生も活躍しています。</p>
-                    </div>
+                <div style="flex: 1; min-width: 300px;">
+                    <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2940&auto=format&fit=crop"
+                        alt="Circle Atmosphere" style="width: 100%; border-radius: 12px; box-shadow: var(--shadow-md);">
                 </div>
             </div>
-        </section>
-
-        <section id="contact" class="section contact">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Contact</h2>
-                    <p class="section-subtitle">お問い合わせ</p>
-                </div>
-                <div class="contact-content">
-                    <p>入会希望や活動に関するお問い合わせは、<br>公式SNSまたはメールにて受け付けています。</p>
-                    <a href="mailto:info@whabitat.example.com" class="btn btn-primary">メールを送る</a>
-                </div>
-            </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">WHABITAT</div>
-                <div class="footer-sns">
-                    <a href="https://x.com/whabitat?s=21" target="_blank" class="sns-link"><i
-                            class="fab fa-x-twitter"></i></a>
-                    <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank"
-                        class="sns-link"><i class="fab fa-instagram"></i></a>
-                </div>
+            <div class="footer-links">
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">Contact</a>
             </div>
-            <p class="copyright">&copy; Whabitat Waseda Chapter.</p>
+            <p>&copy; 2025 WHABITAT Waseda University Chapter. All Rights Reserved.</p>
         </div>
     </footer>
-
-    <script src="script.js"></script>
 </body>
 
 </html>
