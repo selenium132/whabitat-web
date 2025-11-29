@@ -342,7 +342,7 @@ textarea:focus {
 
 .btn-submit {
     width: 100%;
-    background: linear-gradient(to right, var(--accent-blue), var(--accent-green));
+    background-color: var(--primary-color);
     color: white;
     padding: 1rem;
     border: none;
@@ -350,12 +350,14 @@ textarea:focus {
     font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
 }
 
 .btn-submit:hover {
+    background-color: #1a252f;
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+    box-shadow: var(--shadow-lg);
 }
 
 /* --- Footer --- */
@@ -423,6 +425,7 @@ textarea:focus {
 @media (max-width: 768px) {
     .header-inner {
         padding: 0 1.5rem;
+        position: relative;
     }
 
     .nav-list {
@@ -436,6 +439,10 @@ textarea:focus {
         border: none;
         cursor: pointer;
         z-index: 1001;
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     .menu-toggle span {

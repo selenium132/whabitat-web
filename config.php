@@ -14,7 +14,7 @@ define('ADMIN_SECRET', 'whabitat_admin');    // 管理者（幹部）用
 define('API_KEY', 'himitsu_no_key_12345');
 
 // Available Grades (Generations)
-define('AVAILABLE_GRADES', ['18th', '19th', '20th']);
+define('AVAILABLE_GRADES', ['17th', '18th', '19th', '20th']);
 
 // LINE Login Configuration
 define('LINE_CHANNEL_ID', '2008588186');

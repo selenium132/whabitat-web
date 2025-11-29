@@ -10,6 +10,18 @@ if (!empty($_SESSION['is_approved'])) {
     header("Location: dashboard.php");
     exit;
 }
+
+// Re-check DB status
+$pdo = getDB();
+$stmt = $pdo->prepare("SELECT is_approved FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user = $stmt->fetch();
+
+if ($user && $user['is_approved']) {
+    $_SESSION['is_approved'] = true;
+    header("Location: dashboard.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -24,7 +36,9 @@ if (!empty($_SESSION['is_approved'])) {
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="#" class="logo">WHABITAT</a>
+            <a href="index.php" class="logo">
+                <img src="logo.png" alt="WHABITAT" height="50">
+            </a>
         </div>
     </header>
     <main>
