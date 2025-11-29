@@ -13,6 +13,9 @@ define('ADMIN_SECRET', 'whabitat_admin');    // 管理者（幹部）用
 // API Key for Google Forms Sync (Change this to a random string)
 define('API_KEY', 'himitsu_no_key_12345');
 
+// Available Grades (Generations) - Add new ones here
+define('AVAILABLE_GRADES', ['18th', '19th', '20th']);
+
 // Start Session
 session_start();
 

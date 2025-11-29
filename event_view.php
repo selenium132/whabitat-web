@@ -36,7 +36,7 @@ $my_attendance = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Fetch All Participants (Only those who joined)
 $stmt = $pdo->prepare("
-    SELECT u.email, a.status, a.comment 
+    SELECT u.name, a.status, a.comment 
     FROM attendance a 
     JOIN users u ON a.user_id = u.id 
     WHERE a.event_id = ? AND a.status = 'join'
@@ -44,6 +44,13 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$event_id]);
 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+function getStatusLabel($status) {
+    if ($status === 'join') return '参加';
+    if ($status === 'decline') return '不参加';
+    if ($status === 'maybe') return '未定';
+    return '';
+}
 
 ?>
 <!DOCTYPE html>
@@ -87,6 +94,15 @@ $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
             border-radius: 8px;
             margin-bottom: 2rem;
             border: 1px solid #eee;
+        }
+        .submitted-msg {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            color: #0050b3;
+            padding: 0.8rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-weight: 500;
         }
         .radio-group {
             display: flex;
@@ -154,6 +170,14 @@ $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <div class="attendance-section">
                 <h3>出欠回答</h3>
+                
+                <?php if ($my_attendance): ?>
+                    <div class="submitted-msg">
+                        提出済みです（現在の回答: <?php echo getStatusLabel($my_attendance['status']); ?>）<br>
+                        <small>内容を変更する場合は、以下のフォームから再送信してください。</small>
+                    </div>
+                <?php endif; ?>
+
                 <form method="POST" action="">
                     <div class="radio-group">
                         <label class="radio-label">
@@ -169,7 +193,9 @@ $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div style="margin-bottom: 1rem;">
                         <input type="text" name="comment" placeholder="一言コメント（任意）" value="<?php echo htmlspecialchars($my_attendance['comment'] ?? ''); ?>" style="width: 100%; padding: 0.5rem;">
                     </div>
-                    <button type="submit" class="btn-submit">回答を送信</button>
+                    <button type="submit" class="btn-submit">
+                        <?php echo $my_attendance ? '回答を更新する' : '回答を送信'; ?>
+                    </button>
                 </form>
             </div>
 
@@ -182,11 +208,7 @@ $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php foreach ($participants as $p): ?>
                             <li class="participant-item">
                                 <span class="participant-name">
-                                    <?php 
-                                    // Extract name from email (before @) for privacy if name not available
-                                    $name = explode('@', $p['email'])[0];
-                                    echo htmlspecialchars($name); 
-                                    ?>
+                                    <?php echo htmlspecialchars($p['name']); ?>
                                 </span>
                                 <?php if ($p['comment']): ?>
                                     <span class="participant-comment"><?php echo htmlspecialchars($p['comment']); ?></span>

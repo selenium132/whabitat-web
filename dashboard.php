@@ -40,6 +40,11 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             font-size: 1.8rem;
             color: #333;
         }
+        .welcome-msg {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
         .btn-action {
             padding: 0.5rem 1rem;
             border-radius: 4px;
@@ -114,7 +119,10 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <main>
         <div class="dashboard-container">
             <div class="dashboard-header">
-                <h1 class="dashboard-title">マイページ</h1>
+                <div>
+                    <div class="welcome-msg">ようこそ、<?php echo htmlspecialchars($_SESSION['name']); ?>さん</div>
+                    <h1 class="dashboard-title">マイページ</h1>
+                </div>
                 <div>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="event_create.php" class="btn-action btn-create">

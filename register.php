@@ -4,11 +4,15 @@ require_once 'config.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'] ?? '';
+    $student_id = $_POST['student_id'] ?? '';
+    $line_name = $_POST['line_name'] ?? '';
+    $grade = $_POST['grade'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $secret = $_POST['secret'] ?? '';
 
-    if ($email && $password && $secret) {
+    if ($name && $student_id && $line_name && $grade && $email && $password && $secret) {
         $role = '';
         if ($secret === ADMIN_SECRET) {
             $role = 'admin';
@@ -29,11 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 // Register user
                 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO users (email, password_hash, role) VALUES (?, ?, ?)");
-                if ($stmt->execute([$email, $passwordHash, $role])) {
+                $stmt = $pdo->prepare("INSERT INTO users (name, student_id, line_name, grade, email, password_hash, role) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                if ($stmt->execute([$name, $student_id, $line_name, $grade, $email, $passwordHash, $role])) {
                     // Auto login
                     $_SESSION['user_id'] = $pdo->lastInsertId();
                     $_SESSION['role'] = $role;
+                    $_SESSION['name'] = $name;
                     header("Location: dashboard.php");
                     exit;
                 } else {
@@ -76,12 +81,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 0.5rem;
             font-weight: 500;
         }
-        .form-input {
+        .form-input, .form-select {
             width: 100%;
             padding: 0.8rem;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 1rem;
+        }
+        .form-select {
+            background-color: white;
         }
         .btn-auth {
             width: 100%;
@@ -129,6 +137,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
             <form method="POST" action="">
+                <div class="form-group">
+                    <label class="form-label">お名前（本名）</label>
+                    <input type="text" name="name" class="form-input" placeholder="例：早稲田 太郎" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">学籍番号</label>
+                    <input type="text" name="student_id" class="form-input" placeholder="例：1A234567" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">LINEの名前</label>
+                    <input type="text" name="line_name" class="form-input" placeholder="例：Taro Waseda" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">代（学年）</label>
+                    <select name="grade" class="form-select" required>
+                        <option value="">選択してください</option>
+                        <?php foreach (AVAILABLE_GRADES as $g): ?>
+                            <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label class="form-label">メールアドレス</label>
                     <input type="email" name="email" class="form-input" required>
