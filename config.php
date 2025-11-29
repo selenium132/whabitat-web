@@ -17,9 +17,9 @@ define('API_KEY', 'himitsu_no_key_12345');
 define('AVAILABLE_GRADES', ['18th', '19th', '20th']);
 
 // LINE Login Configuration
-define('LINE_CHANNEL_ID', 'YOUR_CHANNEL_ID');
-define('LINE_CHANNEL_SECRET', 'YOUR_CHANNEL_SECRET');
-define('LINE_CALLBACK_URL', 'https://whabitat.xsrv.jp/callback.php'); // TODO: Update domain
+define('LINE_CHANNEL_ID', '2008588186');
+define('LINE_CHANNEL_SECRET', 'b13037697c736acbb99ddf5fa3d1431d');
+define('LINE_CALLBACK_URL', 'https://whabitathome.com/v2/callback.php'); // Updated for v2 subdirectory
 
 // Start Session
 session_start();
