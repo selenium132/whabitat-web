@@ -35,82 +35,32 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-bottom: 2rem;
             border-bottom: 1px solid #eee;
             padding-bottom: 1rem;
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 1rem; /* Add gap */
         }
         .dashboard-title {
             font-size: 1.8rem;
             color: #333;
+            margin: 0;
         }
         .welcome-msg {
             font-size: 1rem;
             color: #666;
             margin-bottom: 0.5rem;
         }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
         .btn-action {
             padding: 0.5rem 1rem;
             border-radius: 4px;
             text-decoration: none;
             font-size: 0.9rem;
-            margin-left: 10px;
+            white-space: nowrap; /* Prevent text wrap inside button */
         }
-        .btn-create {
-            background-color: #333;
-            color: white;
-        }
-        .btn-admin {
-            background-color: #e74c3c;
-            color: white;
-        }
-        .btn-logout {
-            background-color: #f5f5f5;
-            color: #333;
-            border: 1px solid #ddd;
-        }
-        
-        .section-title {
-            font-size: 1.2rem;
-            margin: 2rem 0 1rem;
-            color: #555;
-            border-left: 4px solid #333;
-            padding-left: 10px;
-        }
-        
-        .event-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 1rem;
-            transition: transform 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .event-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .event-info h3 {
-            margin: 0 0 0.5rem;
-            font-size: 1.2rem;
-        }
-        .event-date {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .btn-view {
-            background-color: #e6f7ff;
-            color: #0050b3;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .no-data {
-            color: #888;
-            padding: 1rem;
-            background: #f9f9f9;
-            border-radius: 4px;
-        }
+        /* ... existing styles ... */
     </style>
 </head>
 <body>
@@ -124,10 +74,10 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="dashboard-container">
             <div class="dashboard-header">
                 <div>
-                    <div class="welcome-msg">ようこそ、<?php echo htmlspecialchars($_SESSION['name']); ?>さん</div>
+                    <div class="welcome-msg">ようこそ、<?php echo htmlspecialchars($_SESSION['name'] ?? 'メンバー'); ?>さん</div>
                     <h1 class="dashboard-title">マイページ</h1>
                 </div>
-                <div>
+                <div class="header-actions">
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="event_create.php" class="btn-action btn-create">
                             <i class="fas fa-plus"></i> イベント作成
