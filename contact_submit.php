@@ -18,11 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['contact_success'] = true;
 
         // Redirect
-        header("Location: index.html#contact");
+        header("Location: index.php#contact");
         exit;
     }
 }
 
 // If invalid, redirect back
-header("Location: index.html#contact");
+header("Location: index.php#contact");
 exit;
