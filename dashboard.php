@@ -26,12 +26,14 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="dashboard.php" class="logo">
+            <a href="index.php" class="logo">
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
             <div class="user-menu">
-
-    <main>
+                <span class="user-name"><?php echo htmlspecialchars($_SESSION['name']); ?> さん</span>
+            </div>
+        </div>
+    </header>
         <div class="dashboard-container">
             <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
