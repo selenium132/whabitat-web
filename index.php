@@ -138,18 +138,41 @@
                     </div>
                 </div>
 
-                <!-- Daily -->
+                <!-- MTG -->
                 <div class="activity-card">
                     <div class="activity-img"
                         style="background-image: url('daily.jpg?v=<?php echo time(); ?>');">
                     </div>
                     <div class="activity-content">
-                        <span class="activity-tag">Daily Life</span>
-                        <h3>通常活動</h3>
+                        <span class="activity-tag">Meeting</span>
+                        <h3>全体ミーティング (MTG)</h3>
                         <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
-                            毎週のミーティングや、都内での単発ボランティア。貧困問題についての勉強会も行います。</p>
-                        <div style="font-size: 0.85rem; color: var(--accent-blue); font-weight: 600;">
+                            アイスブレイクで交流を深めたり、貧困・環境問題やボランティアの意義について学ぶ勉強会・ディスカッションを行います。</p>
+                        <div style="font-size: 0.85rem; color: var(--accent-blue); font-weight: 600; margin-bottom: 0.5rem;">
                             <i class="far fa-clock"></i> 毎週水曜 6限（19:00〜）
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-color); font-weight: 600;">
+                            <i class="fas fa-map-marker-alt"></i> 早稲田キャンパス15号館 / 奉仕園
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domestic Volunteer -->
+                <div class="activity-card">
+                    <div class="activity-img"
+                        style="background-image: url('domestic.jpg?v=<?php echo time(); ?>');">
+                    </div>
+                    <div class="activity-content">
+                        <span class="activity-tag">Domestic Volunteer</span>
+                        <h3>国内単発ボランティア</h3>
+                        <ul style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; padding-left: 1.2rem;">
+                            <li style="margin-bottom: 0.3rem;">ゴミ拾い（渋谷、早稲田周辺など）</li>
+                            <li style="margin-bottom: 0.3rem;">農業ボランティア（東京地球農園など）</li>
+                            <li style="margin-bottom: 0.3rem;">地域連携（お祭り手伝い、防災など）</li>
+                            <li>短期合宿（新潟、山梨など 1〜3泊）</li>
+                        </ul>
+                        <div style="font-size: 0.85rem; color: var(--accent-green); font-weight: 600;">
+                            <i class="fas fa-map-marker-alt"></i> 都内近郊および地方各地
                         </div>
                     </div>
                 </div>

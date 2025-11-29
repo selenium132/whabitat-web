@@ -30,7 +30,7 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
             <div class="user-menu">
-                <span class="user-name"><?php echo htmlspecialchars($_SESSION['name']); ?> さん</span>
+                <span class="user-name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'Guest'); ?> さん</span>
             </div>
         </div>
     </header>

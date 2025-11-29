@@ -63,6 +63,12 @@ function requireLogin() {
         header("Location: approval_pending.php");
         exit;
     }
+
+    // Check Profile Completion (except for profile registration page)
+    if (empty($_SESSION['name']) && basename($_SERVER['PHP_SELF']) !== 'register_profile.php' && basename($_SERVER['PHP_SELF']) !== 'approval_pending.php' && basename($_SERVER['PHP_SELF']) !== 'promote.php') {
+        header("Location: register_profile.php");
+        exit;
+    }
 }
 
 // Helper: Get DB Connection
