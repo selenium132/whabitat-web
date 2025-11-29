@@ -57,8 +57,8 @@ $csrf_token = generateCsrfToken();
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     
                     <div class="form-group">
-                        <label class="form-label">お名前（本名）</label>
-                        <input type="text" name="name" class="form-input" required placeholder="例：早稲田 太郎">
+                        <label class="form-label">お名前（本名） <span style="font-size: 0.8rem; color: #e74c3c;">※名字と名前の間にスペースは入れないでください</span></label>
+                        <input type="text" name="name" class="form-input" required placeholder="例：早稲田太郎">
                     </div>
                     <div class="form-group">
                         <label class="form-label">学籍番号</label>

@@ -21,6 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'approve') {
             $stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
             $stmt->execute([$target_id]);
+        } elseif ($action === 'disapprove') {
+            $stmt = $pdo->prepare("UPDATE users SET is_approved = 0 WHERE id = ?");
+            $stmt->execute([$target_id]);
+        } elseif ($action === 'delete') {
+            // Prevent deleting self
+            if ($target_id != $_SESSION['user_id']) {
+                $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+                $stmt->execute([$target_id]);
+            }
         } elseif ($action === 'update_role') {
             $new_role = $_POST['role'] ?? '';
             if ($new_role === 'member' || $new_role === 'admin') {
@@ -34,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch All Members
-$stmt = $pdo->query("SELECT * FROM users ORDER BY is_approved ASC, created_at DESC");
+// Fetch All Members (Sorted by Grade ASC, then Name ASC)
+$stmt = $pdo->query("SELECT * FROM users ORDER BY grade ASC, name ASC");
 $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $csrf_token = generateCsrfToken();
 
@@ -48,6 +57,11 @@ $csrf_token = generateCsrfToken();
     <title>メンバー管理 | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
+    <script>
+        function confirmAction(message) {
+            return confirm(message);
+        }
+    </script>
 </head>
 <body>
     <header class="header">
@@ -100,28 +114,45 @@ $csrf_token = generateCsrfToken();
                                         <?php echo $m['role'] === 'admin' ? '管理者' : '一般'; ?>
                                     </td>
                                     <td>
-                                        <?php if (!$m['is_approved']): ?>
-                                            <form method="POST" style="display: inline;">
-                                                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-                                                <input type="hidden" name="user_id" value="<?php echo $m['id']; ?>">
-                                                <input type="hidden" name="action" value="approve">
-                                                <button type="submit" class="btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">承認</button>
-                                            </form>
-                                        <?php else: ?>
-                                            <?php if ($m['id'] != $_SESSION['user_id']): ?>
-                                                <form method="POST" style="display: flex; gap: 5px;">
+                                        <?php if ($m['id'] != $_SESSION['user_id']): ?>
+                                            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                                <?php if (!$m['is_approved']): ?>
+                                                    <form method="POST" style="display: inline;">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                                                        <input type="hidden" name="user_id" value="<?php echo $m['id']; ?>">
+                                                        <input type="hidden" name="action" value="approve">
+                                                        <button type="submit" class="btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">承認</button>
+                                                    </form>
+                                                <?php else: ?>
+                                                    <form method="POST" style="display: inline;" onsubmit="return confirmAction('本当に承認を取り消しますか？');">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                                                        <input type="hidden" name="user_id" value="<?php echo $m['id']; ?>">
+                                                        <input type="hidden" name="action" value="disapprove">
+                                                        <button type="submit" class="btn-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem; background-color: #f39c12; color: white;">取消</button>
+                                                    </form>
+                                                <?php endif; ?>
+
+                                                <form method="POST" style="display: inline;" onsubmit="return confirmAction('本当にこのユーザーを削除しますか？\nこの操作は取り消せません。');">
                                                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                                     <input type="hidden" name="user_id" value="<?php echo $m['id']; ?>">
-                                                    <input type="hidden" name="action" value="update_role">
-                                                    <select name="role" class="form-select" style="padding: 0.3rem; width: auto; font-size: 0.9rem;">
-                                                        <option value="member" <?php echo $m['role'] === 'member' ? 'selected' : ''; ?>>一般</option>
-                                                        <option value="admin" <?php echo $m['role'] === 'admin' ? 'selected' : ''; ?>>管理者</option>
-                                                    </select>
-                                                    <button type="submit" class="btn-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">更新</button>
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <button type="submit" class="btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">削除</button>
                                                 </form>
-                                            <?php else: ?>
-                                                -
-                                            <?php endif; ?>
+
+                                                <?php if ($m['is_approved']): ?>
+                                                    <form method="POST" style="display: inline;">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                                                        <input type="hidden" name="user_id" value="<?php echo $m['id']; ?>">
+                                                        <input type="hidden" name="action" value="update_role">
+                                                        <select name="role" class="form-select" style="padding: 0.3rem; width: auto; font-size: 0.9rem;" onchange="this.form.submit()">
+                                                            <option value="member" <?php echo $m['role'] === 'member' ? 'selected' : ''; ?>>一般</option>
+                                                            <option value="admin" <?php echo $m['role'] === 'admin' ? 'selected' : ''; ?>>管理者</option>
+                                                        </select>
+                                                    </form>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <span style="color: #ccc;">(自分)</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
