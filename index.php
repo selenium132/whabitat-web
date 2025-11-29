@@ -19,6 +19,11 @@
             <a href="#" class="logo">
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <nav>
                 <ul class="nav-list">
                     <li><a href="#about" class="nav-link">About</a></li>
@@ -30,11 +35,30 @@
                         <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank"
                             class="social-icon"><i class="fab fa-instagram"></i></a>
                     </li>
-                    <li><a href="login.php" class="btn-login"><i class="fas fa-lock"></i> MEMBER LOGIN</a></li>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <li><a href="dashboard.php" class="btn-login"><i class="fas fa-user"></i> MY PAGE</a></li>
+                    <?php else: ?>
+                        <li><a href="login.php" class="btn-login"><i class="fas fa-lock"></i> MEMBER LOGIN</a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </div>
     </header>
+
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            this.classList.toggle('active');
+            document.querySelector('.nav-list').classList.toggle('nav-open');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-link, .btn-login').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.menu-toggle').classList.remove('active');
+                document.querySelector('.nav-list').classList.remove('nav-open');
+            });
+        });
+    </script>
 
     <section class="hero">
         <div class="hero-content">
@@ -137,11 +161,12 @@
         <div class="container">
             <h2 class="section-title"><span>Contact</span></h2>
             <div class="contact-form">
-                <?php if (isset($_GET['contact']) && $_GET['contact'] === 'success'): ?>
+                <?php if (isset($_SESSION['contact_success']) && $_SESSION['contact_success']): ?>
                 <div
                     style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
                     メッセージを送信しました。ありがとうございます！
                 </div>
+                <?php unset($_SESSION['contact_success']); ?>
                 <?php endif; ?>
 
                 <form action="contact_submit.php" method="POST">

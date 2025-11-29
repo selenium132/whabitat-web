@@ -26,9 +26,10 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="index.html" class="logo">WHABITAT</a>
-        </div>
-    </header>
+            <a href="dashboard.php" class="logo">
+                <img src="logo.png" alt="WHABITAT" height="50">
+            </a>
+            <div class="user-menu">
 
     <main>
         <div class="dashboard-container">

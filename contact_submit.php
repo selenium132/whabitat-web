@@ -14,8 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)");
         $stmt->execute([$name, $email, $message]);
 
-        // Redirect with success flag
-        header("Location: index.html?contact=success#contact");
+        // Set flash message
+        $_SESSION['contact_success'] = true;
+
+        // Redirect
+        header("Location: index.html#contact");
         exit;
     }
 }
