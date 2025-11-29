@@ -34,6 +34,8 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </header>
+
+    <main>
         <div class="dashboard-container">
             <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>

@@ -109,7 +109,7 @@
                 <!-- GV -->
                 <div class="activity-card">
                     <div class="activity-img"
-                        style="background-image: url('https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2940&auto=format&fit=crop');">
+                        style="background-image: url('gv.jpg?v=<?php echo time(); ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Main Event</span>
@@ -125,7 +125,7 @@
                 <!-- JV -->
                 <div class="activity-card">
                     <div class="activity-img"
-                        style="background-image: url('https://images.unsplash.com/photo-1533282960533-51328aa49826?q=80&w=2842&auto=format&fit=crop');">
+                        style="background-image: url('jv.jpg?v=<?php echo time(); ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Domestic</span>
@@ -141,7 +141,7 @@
                 <!-- Daily -->
                 <div class="activity-card">
                     <div class="activity-img"
-                        style="background-image: url('https://images.unsplash.com/photo-1529390003868-6c04176d3757?q=80&w=2940&auto=format&fit=crop');">
+                        style="background-image: url('daily.jpg?v=<?php echo time(); ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Daily Life</span>
