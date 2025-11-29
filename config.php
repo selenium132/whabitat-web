@@ -2,7 +2,7 @@
 // Database Configuration
 // TODO: Update these with your Xserver database details
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'whabitatdb');
+define('DB_NAME', 'xs923565_whabitatdb');
 define('DB_USER', 'xs923565_user');
 define('DB_PASS', '9Z`e*k4#K$bW');
 
