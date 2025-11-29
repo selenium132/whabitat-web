@@ -109,7 +109,7 @@
                 <!-- GV -->
                 <div class="activity-card">
                     <div class="activity-img"
-                        style="background-image: url('gv.jpg?v=<?php echo time(); ?>');">
+                        style="background-image: url('gv_new.jpg?v=<?php echo time(); ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Main Event</span>
