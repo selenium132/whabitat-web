@@ -107,7 +107,7 @@
             <h2 class="section-title"><span>Activities</span></h2>
             <div class="activity-grid">
                 <!-- GV -->
-                <div class="activity-card">
+                <a href="activity_gv.php" class="activity-card" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
                         style="background-image: url('gv_new.jpg?v=<?php echo time(); ?>');">
                     </div>
@@ -120,10 +120,10 @@
                             <i class="fas fa-map-marker-alt"></i> ネパール、カンボジア、ベトナムなど
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- JV -->
-                <div class="activity-card">
+                <a href="activity_jv.php" class="activity-card" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
                         style="background-image: url('jv.jpg?v=<?php echo time(); ?>');">
                     </div>
@@ -136,10 +136,10 @@
                             <i class="fas fa-map-marker-alt"></i> 日本全国各地
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- MTG -->
-                <div class="activity-card">
+                <a href="activity_mtg.php" class="activity-card" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
                         style="background-image: url('daily.jpg?v=<?php echo time(); ?>');">
                     </div>
@@ -155,10 +155,10 @@
                             <i class="fas fa-map-marker-alt"></i> 早稲田キャンパス15号館 / 奉仕園
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- Domestic Volunteer -->
-                <div class="activity-card">
+                <a href="activity_domestic.php" class="activity-card" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
                         style="background-image: url('domestic.jpg?v=<?php echo time(); ?>');">
                     </div>
@@ -175,7 +175,7 @@
                             <i class="fas fa-map-marker-alt"></i> 都内近郊および地方各地
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </section>
