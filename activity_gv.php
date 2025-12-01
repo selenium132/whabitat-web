@@ -35,12 +35,12 @@
     </header>
 
     <!-- Hero Section -->
-    <div class="page-hero" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('gv_new.jpg?v=<?php echo time(); ?>');">
-        <div class="container">
-            <h1 class="page-title">Global Village (GV)</h1>
-            <p class="page-subtitle">家を建て、希望を築く10日間。<br>世界と出会い、新しい自分と出会う旅へ。</p>
+    <section class="hero page-hero" style="height: 60vh; min-height: 400px; background-image: linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url('gv_new.jpg?v=<?php echo time(); ?>');">
+        <div class="hero-content">
+            <h1 class="hero-title" style="font-size: 3.5rem;">Global Village</h1>
+            <p class="hero-subtitle" style="color: var(--primary-color); font-weight: 700; text-shadow: 2px 2px 4px rgba(255,255,255,0.8);">家を建て、希望を築く10日間。<br>世界と出会い、新しい自分と出会う旅へ。</p>
         </div>
-    </div>
+    </section>
 
     <main>
         <div class="container">
@@ -92,8 +92,8 @@
 
             <!-- 3 Reasons -->
             <div class="content-section bg-accent-light p-4 rounded">
-                <h2 class="section-title"><span>WhabitatのGVに参加する3つの理由</span></h2>
-                <div class="reason-grid">
+                <h2 class="section-title"><span>WHABITATのGVに参加する3つの理由</span></h2>
+                <div class="reason-grid centered-grid">
                     <div class="reason-item">
                         <div class="reason-num">01</div>
                         <h3>一生ものの仲間</h3>
@@ -114,34 +114,54 @@
 
             <!-- Timeline -->
             <div class="content-section">
-                <h2 class="section-title"><span>参加までの流れ</span></h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <h4>Step 1: 説明会・エントリー</h4>
-                            <p>まずは説明会に参加して、GVの魅力を知ってください。その後、エントリーシートを提出します。</p>
+                <h2 class="section-title"><span>GVの流れ</span></h2>
+                <div class="timeline-horizontal">
+                    <!-- Step 1 -->
+                    <div class="timeline-step">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-text">
+                            <h4>チーム結成</h4>
+                            <p>メンバー決定！ここから始まります。</p>
                         </div>
                     </div>
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <h4>Step 2: チーム結成・国内活動</h4>
-                            <p>チームが決まったら、出発までに約12回のミーティングを行います。事前学習や募金活動、チームビルディング合宿などを通して準備を整えます。</p>
+                    <!-- Step 2 -->
+                    <div class="timeline-step">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-text">
+                            <h4>事前MTG</h4>
+                            <p>出発までに約12回。<br>チームビルディングや勉強会。</p>
                         </div>
                     </div>
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <h4>Step 3: 出発！ (GV本番)</h4>
-                            <p>いよいよ渡航！10〜14日間の現地活動。最高の仲間と最高の経験を。</p>
+                    <!-- Step 3 -->
+                    <div class="timeline-step">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-text">
+                            <h4>事前レク・合宿</h4>
+                            <p>安全祈願！<br>結束を深める合宿。</p>
                         </div>
                     </div>
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <h4>Step 4: 帰国・報告会</h4>
-                            <p>帰国後は事後研修を行い、活動の振り返りをします。5月頃には報告会も開催します。</p>
+                    <!-- Step 4 -->
+                    <div class="timeline-step">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-text">
+                            <h4>事中 (Work & CA)</h4>
+                            <p>建築活動(Work)と観光(CA)。<br>最高の10日間！</p>
+                        </div>
+                    </div>
+                    <!-- Step 5 -->
+                    <div class="timeline-step">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-text">
+                            <h4>事後MTG</h4>
+                            <p>活動の振り返り。<br>思い出を共有。</p>
+                        </div>
+                    </div>
+                    <!-- Step 6 -->
+                    <div class="timeline-step">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-text">
+                            <h4>報告会 (5月)</h4>
+                            <p>活動の成果を発表。<br>次の代へバトンタッチ。</p>
                         </div>
                     </div>
                 </div>
@@ -149,7 +169,7 @@
 
             <!-- History -->
             <div class="content-section">
-                <h2 class="section-title"><span>Whabitat GV History</span></h2>
+                <h2 class="section-title"><span>WHABITAT GV History</span></h2>
                 <p class="text-center mb-4">これまでに派遣されたチームの記録です。</p>
                 <div class="history-grid">
                     <!-- Example Placeholders -->
@@ -187,7 +207,7 @@
                     <div class="faq-item">
                         <div class="faq-q"><i class="far fa-question-circle"></i> 英語が話せなくても大丈夫ですか？</div>
                         <div class="faq-a">
-                            大丈夫です！チームメンバーで助け合いますし、現地には通訳スタッフもいます。大切なのは「伝えようとする気持ち」です。
+                            大丈夫です！チームメンバーで助け合います。大切なのは「伝えようとする気持ち」です。
                         </div>
                     </div>
                     <div class="faq-item">
@@ -199,7 +219,7 @@
                     <div class="faq-item">
                         <div class="faq-q"><i class="far fa-question-circle"></i> 費用はどれくらいかかりますか？</div>
                         <div class="faq-a">
-                            渡航先や航空券の価格によりますが、おおよそ20〜30万円程度です（航空券、滞在費、保険、寄付金含む）。積み立てや分割払いについても相談に乗ります。
+                            渡航先や航空券の価格によりますが、おおよそ20〜30万円程度です（航空券、滞在費、保険、寄付金含む）。
                         </div>
                     </div>
                 </div>
