@@ -126,7 +126,7 @@
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事前学習・準備</h4>
+                                <h4>事前MTG</h4>
                                 <p>約12回のミーティング。<br>現地の課題学習や安全管理。</p>
                             </div>
                         </div>
@@ -150,7 +150,7 @@
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事後研修</h4>
+                                <h4>事後MTG</h4>
                                 <p>活動の振り返り。<br>学びの言語化。</p>
                             </div>
                         </div>
