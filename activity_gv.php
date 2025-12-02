@@ -43,12 +43,13 @@
                 <!-- Intro -->
                 <div class="content-section text-center">
                     <p class="lead-text">
-                        GV（Global Village）は、Habitat for Humanityが世界中で展開する<br>
+                        GV（Global Village）は、国際NGO Habitat for Humanityが世界中で展開する<br>
                         <strong>「海外住居建築ボランティア」</strong>プログラムです。<br>
                         <br>
-                        ただ家を建てるだけではありません。<br>
-                        <strong>Build（建築）</strong>、<strong>Cultural Activity（観光）</strong>、<strong>Social Learning（学び）</strong>。<br>
-                        この3つの要素が詰まった、他では味わえない濃密な体験があなたを待っています。
+                        WHABITATでは、単なる建築支援にとどまらず、<br>
+                        <strong>Build（建築）</strong>、<strong>Cultural Activity（文化交流）</strong>、<strong>Social Learning（社会学習）</strong>の<br>
+                        3つの柱を通じて、貧困住居問題への理解を深め、<br>
+                        持続可能な支援のあり方を模索する活動を行っています。
                     </p>
                 </div>
 
@@ -59,8 +60,9 @@
                         <p class="text-center mb-2" style="font-weight: bold; color: var(--primary-color);">VISION</p>
                         <h3 class="text-center mb-4" style="font-family: 'Montserrat', sans-serif;">"A world where everyone has a decent place to live"</h3>
                         <p class="text-center">
-                            「誰もがきちんとした場所で暮らせる世界」を目指し、<br>
-                            私たちは開発途上国へ渡航し、現地のホームオーナーさんと共に家を建てます。
+                            「誰もがきちんとした場所で暮らせる世界」の実現を目指し、<br>
+                            私たちは開発途上国へ渡航し、現地のホームオーナーと共に、<br>
+                            安全で安心できる住居の建築支援を行います。
                         </p>
                     </div>
 
@@ -69,19 +71,19 @@
                             <div class="pillar-icon"><i class="fas fa-hammer"></i></div>
                             <h3>Build</h3>
                             <p class="sub-label">建築活動 (約5日間)</p>
-                            <p>現地の家族や大工さんと共に汗を流します。レンガ積み、セメント運び、壁塗りなど。言葉が通じなくても、共に作業することで心がつながります。</p>
+                            <p>現地の専門職人の指導のもと、レンガ積みやセメント運搬などの作業に従事します。ホームオーナーと共に汗を流すことで、支援者・被支援者の枠を超えた信頼関係を築きます。</p>
                         </div>
                         <div class="pillar-card">
                             <div class="pillar-icon"><i class="fas fa-camera-retro"></i></div>
                             <h3>CA</h3>
                             <p class="sub-label">Cultural Activity (約2日間)</p>
-                            <p>アンコールワットやボロブドゥール遺跡など、その国の文化遺産や観光地を巡ります。国の歴史や文化を肌で感じる大切な時間です。</p>
+                            <p>現地の歴史的建造物や文化遺産を訪問し、その国の歴史や文化背景を肌で感じます。多角的な視点から支援国を理解する重要な機会です。</p>
                         </div>
                         <div class="pillar-card">
                             <div class="pillar-icon"><i class="fas fa-hands-helping"></i></div>
                             <h3>SLEA</h3>
                             <p class="sub-label">Social Learning & Exchange</p>
-                            <p>現地コミュニティとの交流会や、過去に建てられた家の訪問、災害教育などを通じて、現地の社会課題について深く学びます。</p>
+                            <p>現地コミュニティとの交流や、過去の支援先訪問、災害教育などを通じて、現地の社会課題を深く学び、私たちにできることを考えます。</p>
                         </div>
                     </div>
                 </div>
@@ -93,17 +95,17 @@
                         <div class="reason-item">
                             <div class="reason-num">01</div>
                             <h3>一生ものの仲間</h3>
-                            <p>共に汗を流し、寝食を共にすることで生まれる絆は特別です。帰国後も続く、深い友情がここで生まれます。</p>
+                            <p>多様なバックグラウンドを持つメンバーとの共同生活や、現地の人々との交流を通じて、表面的な付き合いではない、生涯続く深い信頼関係を築くことができます。</p>
                         </div>
                         <div class="reason-item">
                             <div class="reason-num">02</div>
-                            <h3>圧倒的な成長</h3>
-                            <p>チームビルディング、異文化適応、リーダーシップ。座学では学べない「生きた経験」があなたを成長させます。</p>
+                            <h3>忘れられない思い出</h3>
+                            <p>観光旅行では決して味わえない、現地の人々の生活に深く入り込む体験は、貧困問題の現実を肌で感じる機会となり、一生の財産となる原体験をもたらします。</p>
                         </div>
                         <div class="reason-item">
                             <div class="reason-num">03</div>
-                            <h3>忘れられない思い出</h3>
-                            <p>ただの観光旅行では絶対に出会えない、現地の人々の温かさや笑顔。その感動は一生の宝物になります。</p>
+                            <h3>圧倒的な成長</h3>
+                            <p>異文化環境下での予期せぬ課題や、チームでの合意形成プロセスを通じて、実践的な課題解決能力やリーダーシップ、多角的な視点を養います。</p>
                         </div>
                     </div>
                 </div>
@@ -117,47 +119,47 @@
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
                                 <h4>チーム結成</h4>
-                                <p>メンバー決定！ここから始まります。</p>
+                                <p>メンバー選考・決定。</p>
                             </div>
                         </div>
                         <!-- Step 2 -->
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事前MTG</h4>
-                                <p>出発までに約12回。<br>チームビルディングや勉強会。</p>
+                                <h4>事前学習・準備</h4>
+                                <p>約12回のミーティング。<br>現地の課題学習や安全管理。</p>
                             </div>
                         </div>
                         <!-- Step 3 -->
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事前レク・合宿</h4>
-                                <p>結束を深める合宿。</p>
+                                <h4>事前合宿</h4>
+                                <p>チームビルディング。<br>渡航に向けた最終確認。</p>
                             </div>
                         </div>
                         <!-- Step 4 -->
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事中 (Work & CA)</h4>
-                                <p>建築活動(Work)と観光(CA)。<br>最高の10日間！</p>
+                                <h4>現地活動</h4>
+                                <p>建築支援(Work)と<br>文化学習(CA)。</p>
                             </div>
                         </div>
                         <!-- Step 5 -->
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事後MTG</h4>
-                                <p>活動の振り返り。<br>思い出を共有。</p>
+                                <h4>事後研修</h4>
+                                <p>活動の振り返り。<br>学びの言語化。</p>
                             </div>
                         </div>
                         <!-- Step 6 -->
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>報告会 (5月)</h4>
-                                <p>活動の成果を発表。<br>次の代へバトンタッチ。</p>
+                                <h4>報告会</h4>
+                                <p>活動成果の発表。<br>支援者への報告。</p>
                             </div>
                         </div>
                     </div>
