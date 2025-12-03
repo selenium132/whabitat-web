@@ -38,16 +38,262 @@
         <div class="container">
             <h1 class="section-title"><span>JV (Japan Village)</span></h1>
             <div class="activity-detail-content">
-                <img src="jv.jpg?v=<?php echo time(); ?>" alt="JV" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem; box-shadow: var(--shadow-md);">
+                <img src="jv.jpg?v=<?php echo time(); ?>" alt="JV" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 12px; margin-bottom: 4rem; box-shadow: var(--shadow-md);">
                 
-                <div class="card">
-                    <h3>国内派遣ボランティア</h3>
-                    <p style="line-height: 1.8; margin-bottom: 1.5rem;">
-                        日本国内の地域課題に取り組むボランティア活動です。<br>
-                        古民家の再生、農業支援、地域活性化イベントの手伝いなど、多岐にわたる活動を行っています。
+                <!-- Intro -->
+                <div class="content-section text-center">
+                    <p class="lead-text">
+                        WHABITATが主催する、国内派遣型ボランティア。<br>
+                        コロナ禍で海外への渡航が困難になった際、「GVに代わる大きなイベントを」という想いから生まれました。<br>
+                        日本全国の豊かな自然と温かい人々に出会う、夏休みの1週間。
                     </p>
-                    <div style="margin-bottom: 1rem;">
-                        <strong style="color: var(--accent-green);">主な活動場所:</strong> 日本全国各地（東北、関東、九州など）
+                </div>
+
+                <!-- Overview -->
+                <div class="content-section">
+                    <h2 class="section-title"><span>JVとは？</span></h2>
+                    <div class="three-pillars">
+                        <div class="pillar-card">
+                            <i class="fas fa-users pillar-icon"></i>
+                            <div class="sub-label">TEAM</div>
+                            <h3>チーム構成</h3>
+                            <p>各チームは1〜3年生のメンバー8〜11人前後で構成。学年を超えた深い絆が生まれます。</p>
+                        </div>
+                        <div class="pillar-card">
+                            <i class="fas fa-map-marked-alt pillar-icon"></i>
+                            <div class="sub-label">LOCATION</div>
+                            <h3>派遣先</h3>
+                            <p>北は青森から南は九州まで。普段は訪れることのない、日本の原風景が残る地域へ。</p>
+                        </div>
+                        <div class="pillar-card">
+                            <i class="fas fa-calendar-alt pillar-icon"></i>
+                            <div class="sub-label">TIMING</div>
+                            <h3>派遣時期</h3>
+                            <p>夏休みの1週間。日常を離れ、地域の方々と共に汗を流し、語り合う特別な時間です。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activities -->
+                <div class="content-section bg-light p-4 rounded">
+                    <h2 class="section-title"><span>活動内容</span></h2>
+                    <p class="text-center mb-4">派遣先によって内容は多岐にわたりますが、主に3つの柱があります。</p>
+                    
+                    <div class="reason-grid">
+                        <div class="reason-item">
+                            <h3 style="color: var(--accent-green); margin-bottom: 1rem;"><i class="fas fa-seedling"></i> 農作業</h3>
+                            <p>地域の名産品に関わる作業を通じて、農家さんの想いや苦労を肌で感じます。</p>
+                            <ul style="text-align: left; margin-top: 1rem; padding-left: 1.5rem; color: var(--text-light);">
+                                <li>らっきょう（畑の整備・根付け）</li>
+                                <li>すだち・きくらげ（収穫）</li>
+                                <li>赤かぶ（作付け）など</li>
+                            </ul>
+                        </div>
+                        <div class="reason-item">
+                            <h3 style="color: var(--accent-green); margin-bottom: 1rem;"><i class="fas fa-broom"></i> 環境整備</h3>
+                            <p>過疎化が進む地域での保全活動。地域の美しい景観や生活環境を守ります。</p>
+                            <ul style="text-align: left; margin-top: 1rem; padding-left: 1.5rem; color: var(--text-light);">
+                                <li>森林保全（間伐作業）</li>
+                                <li>空き家対策（掃除・遺品整理）</li>
+                                <li>設備点検・地域清掃など</li>
+                            </ul>
+                        </div>
+                        <div class="reason-item">
+                            <h3 style="color: var(--accent-green); margin-bottom: 1rem;"><i class="fas fa-handshake"></i> 動物・文化交流</h3>
+                            <p>作業だけでなく、その土地ならではの文化や生き物との触れ合いも大切にしています。</p>
+                            <ul style="text-align: left; margin-top: 1rem; padding-left: 1.5rem; color: var(--text-light);">
+                                <li>動物のお世話（牛・アルパカ・ヤギ）</li>
+                                <li>伝統文化体験（合掌造り・伝統楽器）</li>
+                                <li>地域学習（資料館訪問・里山保全）</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Merits -->
+                <div class="content-section">
+                    <h2 class="section-title"><span>JVに参加するメリット</span></h2>
+                    <div class="reason-grid centered-grid">
+                        <div class="reason-item">
+                            <div class="reason-num">01</div>
+                            <h3>参加のしやすさ</h3>
+                            <p>海外（GV）に比べてハードルが低く、費用も抑えられるため、ボランティア初心者でも安心して参加できます。GVへのステップアップとしても最適です。</p>
+                        </div>
+                        <div class="reason-item">
+                            <div class="reason-num">02</div>
+                            <h3>豊かな環境と出会い</h3>
+                            <p>普段行けない自然豊かな地域で、地元の方々やメンバーと濃い時間を過ごします。デジタルデトックスにもなり、心身ともにリフレッシュできます。</p>
+                        </div>
+                        <div class="reason-item">
+                            <div class="reason-num">03</div>
+                            <h3>自己成長と生活</h3>
+                            <p>規則正しい生活と美味しいご飯。集団行動を通じて自分自身を見つめ直し、当たり前の生活のありがたさを再確認する機会になります。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flow -->
+                <div class="content-section">
+                    <h2 class="section-title"><span>JVの流れ</span></h2>
+                    <div class="timeline-horizontal">
+                        <div class="timeline-step">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-text">
+                                <h4>チーム結成</h4>
+                                <p>メンバー決定。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-text">
+                                <h4>事前MTG</h4>
+                                <p>事前学習・レクリエーション。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-text">
+                                <h4>派遣</h4>
+                                <p>夏休みの1週間。<br>現地での活動。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-text">
+                                <h4>事後MTG</h4>
+                                <p>振り返り・レクリエーション。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-text">
+                                <h4>報告会</h4>
+                                <p>活動の集大成。<br>学びの共有。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History -->
+                <div class="content-section">
+                    <h2 class="section-title"><span>WHABITAT JV History</span></h2>
+                    <p class="text-center mb-5">これまでに派遣されたチームの記録です。</p>
+                    
+                    <div class="history-timeline-container">
+                        <!-- 2025 -->
+                        <div class="history-year-group">
+                            <h3 class="history-year-title">2025 Summer</h3>
+                            <div class="history-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+                                <!-- Misara-chi JV -->
+                                <a href="https://www.instagram.com/oi.jv2025?igsh=MXcwdTc2aXd6azg2aA==" target="_blank" class="history-card">
+                                    <img src="jv_misarachi.jpg" alt="Misara-chi JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Tokushima</span>
+                                        <span class="history-country">阿南市大井町</span>
+                                        <h4 class="history-team">みさらーちJV</h4>
+                                    </div>
+                                </a>
+                                <!-- Teyanoppe JV -->
+                                <a href="https://www.instagram.com/teyanope_jv?igsh=cG1reml2NWtwazJk" target="_blank" class="history-card">
+                                    <img src="jv_teyanoppe.jpg" alt="Teyanoppe JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Nagano</span>
+                                        <span class="history-country">小谷村立屋</span>
+                                        <h4 class="history-team">てやのっぺJV</h4>
+                                    </div>
+                                </a>
+                                <!-- PepePON! JV -->
+                                <a href="https://www.instagram.com/pepepon_jv?igsh=MXQ2M2p2MjYyMmFkcQ==" target="_blank" class="history-card">
+                                    <img src="jv_pepepon.jpg" alt="PepePON! JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Tochigi</span>
+                                        <span class="history-country">芳賀郡益子町</span>
+                                        <h4 class="history-team">ぺぺPON！JV</h4>
+                                    </div>
+                                </a>
+                                <!-- Japparedan JV -->
+                                <a href="https://www.instagram.com/pepepon_jv?igsh=MXQ2M2p2MjYyMmFkcQ==" target="_blank" class="history-card">
+                                    <img src="jv_japparedan.jpg" alt="Japparedan JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Aomori</span>
+                                        <span class="history-country">鯵ヶ沢</span>
+                                        <h4 class="history-team">じゃっぱーれ団</h4>
+                                    </div>
+                                </a>
+                                <!-- Menkepokko JV -->
+                                <a href="https://www.instagram.com/jyapparedan_jv?igsh=MXRzcmY2OWFwZW1hZQ==" target="_blank" class="history-card">
+                                    <img src="jv_menkepokko.jpg" alt="Menkepokko JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Akita</span>
+                                        <span class="history-country">仙北市</span>
+                                        <h4 class="history-team">めんけぽっこJV</h4>
+                                    </div>
+                                </a>
+                                <!-- Fukudeppora JV -->
+                                <a href="https://www.instagram.com/fukudeppo?igsh=MTBrdnBhNXA3bHUyYw==" target="_blank" class="history-card">
+                                    <img src="jv_fukudeppora.jpg" alt="Fukudeppora JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Fukushima</span>
+                                        <span class="history-country">いわき市</span>
+                                        <h4 class="history-team">ふくでっぽらJV</h4>
+                                    </div>
+                                </a>
+                                <!-- Kamaquran JV -->
+                                <a href="https://www.instagram.com/kamaqran_jv2025?igsh=c2FlNGQyeHF5a216" target="_blank" class="history-card">
+                                    <img src="jv_kamaquran.jpg" alt="Kamaquran JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Nagano</span>
+                                        <span class="history-country">小谷村真木</span>
+                                        <h4 class="history-team">かまきゅらんJV</h4>
+                                    </div>
+                                </a>
+                                <!-- Gyabamiccha JV -->
+                                <a href="https://www.instagram.com/kamaqran_jv2025?igsh=c2FlNGQyeHF5a216" target="_blank" class="history-card">
+                                    <img src="jv_gyabamiccha.jpg" alt="Gyabamiccha JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Fukuoka</span>
+                                        <span class="history-country">八女市黒木</span>
+                                        <h4 class="history-team">ぎゃばみっちゃJV</h4>
+                                    </div>
+                                </a>
+                                <!-- Konorei48 JV -->
+                                <a href="https://www.instagram.com/konorei48jv2025?igsh=bmQ2enF1cHJyNXN0" target="_blank" class="history-card">
+                                    <img src="jv_konorei48.jpg" alt="Konorei48 JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Mie</span>
+                                        <span class="history-country">名張市赤目町</span>
+                                        <h4 class="history-team">このれい４８JV</h4>
+                                    </div>
+                                </a>
+                                <!-- Nacha JV -->
+                                <a href="https://www.instagram.com/konorei48jv2025?igsh=bmQ2enF1cHJyNXN0" target="_blank" class="history-card">
+                                    <img src="jv_nacha.jpg" alt="Nacha JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Toyama</span>
+                                        <span class="history-country">砺波市五箇山</span>
+                                        <h4 class="history-team">なちゃJV</h4>
+                                    </div>
+                                </a>
+                                <!-- Tsumugururin JV -->
+                                <a href="https://www.instagram.com/tsumugururin_jv?igsh=MXU4OXI5ZXprYzMxYg==" target="_blank" class="history-card">
+                                    <img src="jv_tsumugururin.png" alt="Tsumugururin JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Niigata</span>
+                                        <span class="history-country">長岡市山古志</span>
+                                        <h4 class="history-team">つむぐるりんJV</h4>
+                                    </div>
+                                </a>
+                                <!-- Rimochun JV -->
+                                <a href="https://www.instagram.com/rimochunnn_jv?igsh=MWFpbGl3bXkxbWhpcg==" target="_blank" class="history-card">
+                                    <img src="jv_rimochun.jpg" alt="Rimochun JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Shiga</span>
+                                        <span class="history-country">高島市深清水</span>
+                                        <h4 class="history-team">りもちゅんJV</h4>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
