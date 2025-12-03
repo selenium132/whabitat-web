@@ -226,7 +226,7 @@
                         </a>
                         <!-- Bangal GV -->
                         <a href="https://www.instagram.com/bangalgv?igsh=MXc1aWhqOGVuMjZubQ%3D%3D" target="_blank" class="history-card">
-                            <div class="history-img-placeholder">No Image</div>
+                            <img src="gv_bangal.jpg" alt="Bangal GV" style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="history-info">
                                 <span class="history-year">2025 Spring</span>
                                 <span class="history-country">Nepal</span>
@@ -235,7 +235,7 @@
                         </a>
                         <!-- Wabarumah GV -->
                         <a href="https://www.instagram.com/wabarumahgv?igsh=MnBweGFrNGV3NHI0" target="_blank" class="history-card">
-                            <div class="history-img-placeholder">No Image</div>
+                            <img src="gv_wabarumah.jpg" alt="Wabarumah GV" style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="history-info">
                                 <span class="history-year">-</span>
                                 <span class="history-country">Indonesia</span>
@@ -244,7 +244,7 @@
                         </a>
                         <!-- Dangan GV -->
                         <a href="https://www.instagram.com/dangan_gv?igsh=eGh5OHFnbHdqOXp0" target="_blank" class="history-card">
-                            <div class="history-img-placeholder">No Image</div>
+                            <img src="gv_dangan.jpg" alt="Dangan GV" style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="history-info">
                                 <span class="history-year">-</span>
                                 <span class="history-country">Vietnam</span>
@@ -253,7 +253,7 @@
                         </a>
                         <!-- Erumela GV -->
                         <a href="https://www.instagram.com/erumela_gv?igsh=MWQwbjcybWR6YXN0cg%3D%3D" target="_blank" class="history-card">
-                            <div class="history-img-placeholder">No Image</div>
+                            <img src="gv_erumela.jpg" alt="Erumela GV" style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="history-info">
                                 <span class="history-year">2025 Summer</span>
                                 <span class="history-country">Indonesia</span>
