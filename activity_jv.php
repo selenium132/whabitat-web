@@ -191,7 +191,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Tokushima</span>
-                                        <span class="history-country">阿南市大井町</span>
+                                        <span class="history-country">大井</span>
                                         <h4 class="history-team">みさらーちJV</h4>
                                     </div>
                                 </a>
@@ -202,7 +202,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Nagano</span>
-                                        <span class="history-country">小谷村立屋</span>
+                                        <span class="history-country">立屋</span>
                                         <h4 class="history-team">てやのっぺJV</h4>
                                     </div>
                                 </a>
@@ -213,7 +213,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Tochigi</span>
-                                        <span class="history-country">芳賀郡益子町</span>
+                                        <span class="history-country">益子</span>
                                         <h4 class="history-team">ぺぺPON！JV</h4>
                                     </div>
                                 </a>
@@ -224,7 +224,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Aomori</span>
-                                        <span class="history-country">鯵ヶ沢</span>
+                                        <span class="history-country">白神</span>
                                         <h4 class="history-team">じゃっぱーれ団</h4>
                                     </div>
                                 </a>
@@ -235,7 +235,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Akita</span>
-                                        <span class="history-country">仙北市</span>
+                                        <span class="history-country">仙北</span>
                                         <h4 class="history-team">めんけぽっこJV</h4>
                                     </div>
                                 </a>
@@ -246,7 +246,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Fukushima</span>
-                                        <span class="history-country">いわき市</span>
+                                        <span class="history-country">田人</span>
                                         <h4 class="history-team">ふくでっぽらJV</h4>
                                     </div>
                                 </a>
@@ -257,7 +257,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Nagano</span>
-                                        <span class="history-country">小谷村真木</span>
+                                        <span class="history-country">真木</span>
                                         <h4 class="history-team">かまきゅらんJV</h4>
                                     </div>
                                 </a>
@@ -268,7 +268,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Fukuoka</span>
-                                        <span class="history-country">八女市黒木</span>
+                                        <span class="history-country">黒木</span>
                                         <h4 class="history-team">ぎゃばみっちゃJV</h4>
                                     </div>
                                 </a>
@@ -279,8 +279,8 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Mie</span>
-                                        <span class="history-country">名張市赤目町</span>
-                                        <h4 class="history-team">このれい４８JV</h4>
+                                        <span class="history-country">赤目</span>
+                                        <h4 class="history-team">このれい48JV</h4>
                                     </div>
                                 </a>
                                 <!-- Nacha JV -->
@@ -290,7 +290,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Toyama</span>
-                                        <span class="history-country">砺波市五箇山</span>
+                                        <span class="history-country">五箇山</span>
                                         <h4 class="history-team">なちゃJV</h4>
                                     </div>
                                 </a>
@@ -301,7 +301,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Niigata</span>
-                                        <span class="history-country">長岡市山古志</span>
+                                        <span class="history-country">山古志</span>
                                         <h4 class="history-team">つむぐるりんJV</h4>
                                     </div>
                                 </a>
@@ -312,7 +312,7 @@
                                     </div>
                                     <div class="history-info">
                                         <span class="history-season">Shiga</span>
-                                        <span class="history-country">高島市深清水</span>
+                                        <span class="history-country">高島</span>
                                         <h4 class="history-team">りもちゅんJV</h4>
                                     </div>
                                 </a>
