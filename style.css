@@ -652,7 +652,6 @@ textarea:focus {
     position: relative;
     padding-top: 2rem;
     margin-top: 3rem;
-    overflow-x: auto;
 }
 
 .timeline-horizontal::before {
