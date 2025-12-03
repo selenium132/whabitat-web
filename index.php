@@ -32,7 +32,7 @@
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i
                                 class="fab fa-x-twitter"></i></a>
-                        <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank"
+                        <a href="https://www.instagram.com/whabinsta" target="_blank"
                             class="social-icon"><i class="fab fa-instagram"></i></a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
@@ -62,8 +62,12 @@
 
     <section class="hero">
         <div class="hero-content">
+            <img src="logo.png" alt="WHABITAT Logo" class="hero-logo-main">
             <h1 class="hero-title">WHABITAT</h1>
-            <p class="hero-subtitle">WASEDA UNIVERSITY</p>
+            <div class="hero-subtitle-wrapper">
+                <img src="waseda_logo.png" alt="Waseda University Logo" class="hero-logo-sub">
+                <p class="hero-subtitle">WASEDA UNIVERSITY</p>
+            </div>
         </div>
     </section>
 
@@ -217,7 +221,7 @@
         <div class="container">
             <div class="footer-links">
                 <a href="https://x.com/whabitat?s=21" target="_blank">X (Twitter)</a>
-                <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank">Instagram</a>
+                <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="#contact">Contact</a>
             </div>
             <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter.

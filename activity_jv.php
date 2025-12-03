@@ -22,7 +22,7 @@
                     <li><a href="index.php#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
-                        <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.instagram.com/whabinsta" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <li><a href="dashboard.php" class="btn-login"><i class="fas fa-user"></i> MY PAGE</a></li>
@@ -185,7 +185,7 @@
                             <h3 class="history-year-title">2025 Summer</h3>
                             <div class="history-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
                                 <!-- Misara-chi JV -->
-                                <a href="https://www.instagram.com/oi.jv2025?igsh=MXcwdTc2aXd6azg2aA==" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/oi.jv2025" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_misarachi.jpg" alt="Misara-chi JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -196,7 +196,7 @@
                                     </div>
                                 </a>
                                 <!-- Teyanoppe JV -->
-                                <a href="https://www.instagram.com/teyanope_jv?igsh=cG1reml2NWtwazJk" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/teyanope_jv" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_teyanoppe.jpg" alt="Teyanoppe JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -207,7 +207,7 @@
                                     </div>
                                 </a>
                                 <!-- PepePON! JV -->
-                                <a href="https://www.instagram.com/pepepon_jv?igsh=MXQ2M2p2MjYyMmFkcQ==" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/pepepon_jv" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_pepepon.jpg" alt="PepePON! JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -218,7 +218,7 @@
                                     </div>
                                 </a>
                                 <!-- Japparedan JV -->
-                                <a href="https://www.instagram.com/pepepon_jv?igsh=MXQ2M2p2MjYyMmFkcQ==" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/pepepon_jv" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_japparedan.jpg" alt="Japparedan JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -229,7 +229,7 @@
                                     </div>
                                 </a>
                                 <!-- Menkepokko JV -->
-                                <a href="https://www.instagram.com/jyapparedan_jv?igsh=MXRzcmY2OWFwZW1hZQ==" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/jyapparedan_jv" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_menkepokko.jpg" alt="Menkepokko JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -240,7 +240,7 @@
                                     </div>
                                 </a>
                                 <!-- Fukudeppora JV -->
-                                <a href="https://www.instagram.com/fukudeppo?igsh=MTBrdnBhNXA3bHUyYw==" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/fukudeppo" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_fukudeppora.jpg" alt="Fukudeppora JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -251,7 +251,7 @@
                                     </div>
                                 </a>
                                 <!-- Kamaquran JV -->
-                                <a href="https://www.instagram.com/kamaqran_jv2025?igsh=c2FlNGQyeHF5a216" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/kamaqran_jv2025" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_kamaquran.jpg" alt="Kamaquran JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -262,7 +262,7 @@
                                     </div>
                                 </a>
                                 <!-- Gyabamiccha JV -->
-                                <a href="https://www.instagram.com/kamaqran_jv2025?igsh=c2FlNGQyeHF5a216" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/kamaqran_jv2025" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_gyabamiccha.jpg" alt="Gyabamiccha JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -273,7 +273,7 @@
                                     </div>
                                 </a>
                                 <!-- Konorei48 JV -->
-                                <a href="https://www.instagram.com/konorei48jv2025?igsh=bmQ2enF1cHJyNXN0" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/konorei48jv2025" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_konorei48.jpg" alt="Konorei48 JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -284,7 +284,7 @@
                                     </div>
                                 </a>
                                 <!-- Nacha JV -->
-                                <a href="https://www.instagram.com/konorei48jv2025?igsh=bmQ2enF1cHJyNXN0" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/konorei48jv2025" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_nacha.jpg" alt="Nacha JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -295,7 +295,7 @@
                                     </div>
                                 </a>
                                 <!-- Tsumugururin JV -->
-                                <a href="https://www.instagram.com/tsumugururin_jv?igsh=MXU4OXI5ZXprYzMxYg==" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/tsumugururin_jv" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_tsumugururin.png" alt="Tsumugururin JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -306,7 +306,7 @@
                                     </div>
                                 </a>
                                 <!-- Rimochun JV -->
-                                <a href="https://www.instagram.com/rimochunnn_jv?igsh=MWFpbGl3bXkxbWhpcg==" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/rimochunnn_jv" target="_blank" class="history-card">
                                     <div style="padding: 1rem; background: #fff;">
                                         <img src="jv_rimochun.jpg" alt="Rimochun JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                                     </div>
@@ -330,7 +330,7 @@
         <div class="container">
             <div class="footer-links">
                 <a href="https://x.com/whabitat?s=21" target="_blank">X (Twitter)</a>
-                <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank">Instagram</a>
+                <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="index.php#contact">Contact</a>
             </div>
             <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter. All Rights Reserved.</p>

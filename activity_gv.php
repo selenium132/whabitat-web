@@ -22,7 +22,7 @@
                     <li><a href="index.php#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
-                        <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.instagram.com/whabinsta" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <li><a href="dashboard.php" class="btn-login"><i class="fas fa-user"></i> MY PAGE</a></li>
@@ -176,7 +176,7 @@
                             <h3 class="history-year-title">2020</h3>
                             <div class="history-grid">
                                 <!-- Sakanto GV -->
-                                <a href="https://www.instagram.com/sakanto_gv?igsh=OWx5MTNlZDZyaXB0" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/sakanto_gv" target="_blank" class="history-card">
                                     <img src="gv_sakanto.jpg" alt="Sakanto GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Spring</span>
@@ -201,7 +201,7 @@
                             <h3 class="history-year-title">2023</h3>
                             <div class="history-grid">
                                 <!-- Tantangood GV -->
-                                <a href="https://www.instagram.com/tantangood_whabitat2023?igsh=MTNqaHZtdDJueGhqMg%3D%3D" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/tantangood_whabitat2023" target="_blank" class="history-card">
                                     <img src="gv_tantangood.jpg" alt="Tantangood GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Summer</span>
@@ -217,7 +217,7 @@
                             <h3 class="history-year-title">2024</h3>
                             <div class="history-grid">
                                 <!-- Yupurumu GV -->
-                                <a href="https://www.instagram.com/yupurumu_whabitat?igsh=MWF3MzMxdjNoMHlkMg%3D%3D" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/yupurumu_whabitat" target="_blank" class="history-card">
                                     <img src="gv_yupurumu.jpg" alt="Yupurumu GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Spring</span>
@@ -226,7 +226,7 @@
                                     </div>
                                 </a>
                                 <!-- Magkarawn GV -->
-                                <a href="https://www.instagram.com/magkarawn_gv?igsh=MWZpejRraHRuaTVtbw%3D%3D" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/magkarawn_gv" target="_blank" class="history-card">
                                     <img src="gv_magkarawn.jpg" alt="Magkarawn GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Spring</span>
@@ -235,7 +235,7 @@
                                     </div>
                                 </a>
                                 <!-- Sukairu GV -->
-                                <a href="https://www.instagram.com/sukairu.gv_whabitat?igsh=bjRjMnhpYXE0M3hz" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/sukairu.gv_whabitat" target="_blank" class="history-card">
                                     <img src="gv_sukairu.jpg" alt="Sukairu GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Summer</span>
@@ -251,7 +251,7 @@
                             <h3 class="history-year-title">2025</h3>
                             <div class="history-grid">
                                 <!-- Bangal GV -->
-                                <a href="https://www.instagram.com/bangalgv?igsh=MXc1aWhqOGVuMjZubQ%3D%3D" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/bangalgv" target="_blank" class="history-card">
                                     <img src="gv_bangal.jpg" alt="Bangal GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Spring</span>
@@ -260,7 +260,7 @@
                                     </div>
                                 </a>
                                 <!-- Wabarumah GV -->
-                                <a href="https://www.instagram.com/wabarumahgv?igsh=MnBweGFrNGV3NHI0" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/wabarumahgv" target="_blank" class="history-card">
                                     <img src="gv_wabarumah.jpg" alt="Wabarumah GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Spring</span>
@@ -269,7 +269,7 @@
                                     </div>
                                 </a>
                                 <!-- Dangan GV -->
-                                <a href="https://www.instagram.com/dangan_gv?igsh=eGh5OHFnbHdqOXp0" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/dangan_gv" target="_blank" class="history-card">
                                     <img src="gv_dangan.jpg" alt="Dangan GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Spring</span>
@@ -278,7 +278,7 @@
                                     </div>
                                 </a>
                                 <!-- Erumela GV -->
-                                <a href="https://www.instagram.com/erumela_gv?igsh=MWQwbjcybWR6YXN0cg%3D%3D" target="_blank" class="history-card">
+                                <a href="https://www.instagram.com/erumela_gv" target="_blank" class="history-card">
                                     <img src="gv_erumela.jpg" alt="Erumela GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
                                         <span class="history-season">Summer</span>
@@ -325,7 +325,7 @@
         <div class="container">
             <div class="footer-links">
                 <a href="https://x.com/whabitat?s=21" target="_blank">X (Twitter)</a>
-                <a href="https://www.instagram.com/whabinsta?igsh=MXIybDBlMjFhZWVndA==" target="_blank">Instagram</a>
+                <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="index.php#contact">Contact</a>
             </div>
             <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter. All Rights Reserved.</p>
