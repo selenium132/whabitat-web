@@ -217,7 +217,7 @@
                         </a>
                         <!-- Sukairu GV -->
                         <a href="https://www.instagram.com/sukairu.gv_whabitat?igsh=bjRjMnhpYXE0M3hz" target="_blank" class="history-card">
-                            <div class="history-img-placeholder">No Image</div>
+                            <img src="gv_sukairu.jpg" alt="Sukairu GV" style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="history-info">
                                 <span class="history-year">2024 Summer</span>
                                 <span class="history-country">Cambodia</span>
