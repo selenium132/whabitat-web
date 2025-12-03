@@ -188,7 +188,7 @@
                                 <a href="https://www.instagram.com/habitat_paruparu_gv/" target="_blank" class="history-card">
                                     <img src="gv_paruparu.jpg" alt="Paruparu GV" style="width: 100%; height: 200px; object-fit: cover;">
                                     <div class="history-info">
-                                        <span class="history-season">Summer</span>
+                                        <span class="history-season">Spring</span>
                                         <span class="history-country">Vietnam</span>
                                         <h4 class="history-team">ぱるぱるGV</h4>
                                     </div>
