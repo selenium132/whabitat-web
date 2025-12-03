@@ -94,18 +94,18 @@
                     <div class="reason-grid centered-grid">
                         <div class="reason-item">
                             <div class="reason-num">01</div>
-                            <h3>多様な価値観との出会い</h3>
-                            <p>現地の人々やチームメンバーとの共同生活・共同作業を通じて、多様な価値観に触れ、視野を広げることができます。</p>
+                            <h3>一生ものの仲間</h3>
+                            <p>多様なバックグラウンドを持つメンバーとの共同生活や、現地の人々との交流を通じて、表面的な付き合いではない、生涯続く深い信頼関係を築くことができます。</p>
                         </div>
                         <div class="reason-item">
                             <div class="reason-num">02</div>
-                            <h3>実践的な課題解決力</h3>
-                            <p>異文化環境下でのチームビルディングやプロジェクト遂行を通じて、実践的な課題解決能力やリーダーシップを養います。</p>
+                            <h3>忘れられない思い出</h3>
+                            <p>観光旅行では決して味わえない、現地の人々の生活に深く入り込む体験は、貧困問題の現実を肌で感じる機会となり、一生の財産となる原体験をもたらします。</p>
                         </div>
                         <div class="reason-item">
                             <div class="reason-num">03</div>
-                            <h3>社会課題への深い理解</h3>
-                            <p>実際に現地に足を運び、現地の生活を体験することで、貧困問題や住居問題の現状を肌で感じ、深く理解することができます。</p>
+                            <h3>圧倒的な成長</h3>
+                            <p>異文化環境下での予期せぬ課題や、チームでの合意形成プロセスを通じて、実践的な課題解決能力やリーダーシップ、多角的な視点を養います。</p>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事前学習・準備</h4>
+                                <h4>事前MTG</h4>
                                 <p>約12回のミーティング。<br>現地の課題学習や安全管理。</p>
                             </div>
                         </div>
@@ -150,7 +150,7 @@
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事後研修</h4>
+                                <h4>事後MTG</h4>
                                 <p>活動の振り返り。<br>学びの言語化。</p>
                             </div>
                         </div>
