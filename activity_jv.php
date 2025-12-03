@@ -79,8 +79,8 @@
                     <h2 class="section-title"><span>活動内容</span></h2>
                     <p class="text-center mb-4">派遣先によって内容は多岐にわたりますが、主に3つの柱があります。</p>
                     
-                    <div class="reason-grid">
-                        <div class="reason-item">
+                    <div class="reason-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
+                        <div class="reason-item" style="flex: 1 1 300px; max-width: 400px;">
                             <h3 style="color: var(--accent-green); margin-bottom: 1rem;"><i class="fas fa-seedling"></i> 農作業</h3>
                             <p>地域の名産品に関わる作業を通じて、農家さんの想いや苦労を肌で感じます。</p>
                             <ul style="text-align: left; margin-top: 1rem; padding-left: 1.5rem; color: var(--text-light);">
@@ -89,7 +89,7 @@
                                 <li>赤かぶ（作付け）など</li>
                             </ul>
                         </div>
-                        <div class="reason-item">
+                        <div class="reason-item" style="flex: 1 1 300px; max-width: 400px;">
                             <h3 style="color: var(--accent-green); margin-bottom: 1rem;"><i class="fas fa-broom"></i> 環境整備</h3>
                             <p>過疎化が進む地域での保全活動。地域の美しい景観や生活環境を守ります。</p>
                             <ul style="text-align: left; margin-top: 1rem; padding-left: 1.5rem; color: var(--text-light);">
@@ -98,7 +98,7 @@
                                 <li>設備点検・地域清掃など</li>
                             </ul>
                         </div>
-                        <div class="reason-item">
+                        <div class="reason-item" style="flex: 1 1 300px; max-width: 400px;">
                             <h3 style="color: var(--accent-green); margin-bottom: 1rem;"><i class="fas fa-handshake"></i> 動物・文化交流</h3>
                             <p>作業だけでなく、その土地ならではの文化や生き物との触れ合いも大切にしています。</p>
                             <ul style="text-align: left; margin-top: 1rem; padding-left: 1.5rem; color: var(--text-light);">
@@ -186,7 +186,9 @@
                             <div class="history-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
                                 <!-- Misara-chi JV -->
                                 <a href="https://www.instagram.com/oi.jv2025?igsh=MXcwdTc2aXd6azg2aA==" target="_blank" class="history-card">
-                                    <img src="jv_misarachi.jpg" alt="Misara-chi JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_misarachi.jpg" alt="Misara-chi JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Tokushima</span>
                                         <span class="history-country">阿南市大井町</span>
@@ -195,7 +197,9 @@
                                 </a>
                                 <!-- Teyanoppe JV -->
                                 <a href="https://www.instagram.com/teyanope_jv?igsh=cG1reml2NWtwazJk" target="_blank" class="history-card">
-                                    <img src="jv_teyanoppe.jpg" alt="Teyanoppe JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_teyanoppe.jpg" alt="Teyanoppe JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Nagano</span>
                                         <span class="history-country">小谷村立屋</span>
@@ -204,7 +208,9 @@
                                 </a>
                                 <!-- PepePON! JV -->
                                 <a href="https://www.instagram.com/pepepon_jv?igsh=MXQ2M2p2MjYyMmFkcQ==" target="_blank" class="history-card">
-                                    <img src="jv_pepepon.jpg" alt="PepePON! JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_pepepon.jpg" alt="PepePON! JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Tochigi</span>
                                         <span class="history-country">芳賀郡益子町</span>
@@ -213,7 +219,9 @@
                                 </a>
                                 <!-- Japparedan JV -->
                                 <a href="https://www.instagram.com/pepepon_jv?igsh=MXQ2M2p2MjYyMmFkcQ==" target="_blank" class="history-card">
-                                    <img src="jv_japparedan.jpg" alt="Japparedan JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_japparedan.jpg" alt="Japparedan JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Aomori</span>
                                         <span class="history-country">鯵ヶ沢</span>
@@ -222,7 +230,9 @@
                                 </a>
                                 <!-- Menkepokko JV -->
                                 <a href="https://www.instagram.com/jyapparedan_jv?igsh=MXRzcmY2OWFwZW1hZQ==" target="_blank" class="history-card">
-                                    <img src="jv_menkepokko.jpg" alt="Menkepokko JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_menkepokko.jpg" alt="Menkepokko JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Akita</span>
                                         <span class="history-country">仙北市</span>
@@ -231,7 +241,9 @@
                                 </a>
                                 <!-- Fukudeppora JV -->
                                 <a href="https://www.instagram.com/fukudeppo?igsh=MTBrdnBhNXA3bHUyYw==" target="_blank" class="history-card">
-                                    <img src="jv_fukudeppora.jpg" alt="Fukudeppora JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_fukudeppora.jpg" alt="Fukudeppora JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Fukushima</span>
                                         <span class="history-country">いわき市</span>
@@ -240,7 +252,9 @@
                                 </a>
                                 <!-- Kamaquran JV -->
                                 <a href="https://www.instagram.com/kamaqran_jv2025?igsh=c2FlNGQyeHF5a216" target="_blank" class="history-card">
-                                    <img src="jv_kamaquran.jpg" alt="Kamaquran JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_kamaquran.jpg" alt="Kamaquran JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Nagano</span>
                                         <span class="history-country">小谷村真木</span>
@@ -249,7 +263,9 @@
                                 </a>
                                 <!-- Gyabamiccha JV -->
                                 <a href="https://www.instagram.com/kamaqran_jv2025?igsh=c2FlNGQyeHF5a216" target="_blank" class="history-card">
-                                    <img src="jv_gyabamiccha.jpg" alt="Gyabamiccha JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_gyabamiccha.jpg" alt="Gyabamiccha JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Fukuoka</span>
                                         <span class="history-country">八女市黒木</span>
@@ -258,7 +274,9 @@
                                 </a>
                                 <!-- Konorei48 JV -->
                                 <a href="https://www.instagram.com/konorei48jv2025?igsh=bmQ2enF1cHJyNXN0" target="_blank" class="history-card">
-                                    <img src="jv_konorei48.jpg" alt="Konorei48 JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_konorei48.jpg" alt="Konorei48 JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Mie</span>
                                         <span class="history-country">名張市赤目町</span>
@@ -267,7 +285,9 @@
                                 </a>
                                 <!-- Nacha JV -->
                                 <a href="https://www.instagram.com/konorei48jv2025?igsh=bmQ2enF1cHJyNXN0" target="_blank" class="history-card">
-                                    <img src="jv_nacha.jpg" alt="Nacha JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_nacha.jpg" alt="Nacha JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Toyama</span>
                                         <span class="history-country">砺波市五箇山</span>
@@ -276,7 +296,9 @@
                                 </a>
                                 <!-- Tsumugururin JV -->
                                 <a href="https://www.instagram.com/tsumugururin_jv?igsh=MXU4OXI5ZXprYzMxYg==" target="_blank" class="history-card">
-                                    <img src="jv_tsumugururin.png" alt="Tsumugururin JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_tsumugururin.png" alt="Tsumugururin JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Niigata</span>
                                         <span class="history-country">長岡市山古志</span>
@@ -285,7 +307,9 @@
                                 </a>
                                 <!-- Rimochun JV -->
                                 <a href="https://www.instagram.com/rimochunnn_jv?igsh=MWFpbGl3bXkxbWhpcg==" target="_blank" class="history-card">
-                                    <img src="jv_rimochun.jpg" alt="Rimochun JV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div style="padding: 1rem; background: #fff;">
+                                        <img src="jv_rimochun.jpg" alt="Rimochun JV" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    </div>
                                     <div class="history-info">
                                         <span class="history-season">Shiga</span>
                                         <span class="history-country">高島市深清水</span>
@@ -297,9 +321,7 @@
                     </div>
                 </div>
 
-                <div style="text-align: center; margin-top: 3rem;">
-                    <a href="index.php#activities" class="btn-secondary">一覧に戻る</a>
-                </div>
+
             </div>
         </div>
     </main>

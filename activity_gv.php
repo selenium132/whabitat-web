@@ -316,9 +316,7 @@
                     </div>
                 </div>
 
-                <div style="text-align: center; margin-top: 3rem;">
-                    <a href="index.php#activities" class="btn-secondary">一覧に戻る</a>
-                </div>
+
             </div>
         </div>
     </main>
