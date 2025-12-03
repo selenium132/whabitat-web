@@ -90,22 +90,22 @@
 
                 <!-- 3 Reasons -->
                 <div class="content-section bg-accent-light p-4 rounded">
-                    <h2 class="section-title"><span>WHABITATのGVに参加する3つの理由</span></h2>
+                    <h2 class="section-title"><span>WHABITATのGVに参加する意義</span></h2>
                     <div class="reason-grid centered-grid">
                         <div class="reason-item">
                             <div class="reason-num">01</div>
-                            <h3>一生ものの仲間</h3>
-                            <p>多様なバックグラウンドを持つメンバーとの共同生活や、現地の人々との交流を通じて、表面的な付き合いではない、生涯続く深い信頼関係を築くことができます。</p>
+                            <h3>多様な価値観との出会い</h3>
+                            <p>現地の人々やチームメンバーとの共同生活・共同作業を通じて、多様な価値観に触れ、視野を広げることができます。</p>
                         </div>
                         <div class="reason-item">
                             <div class="reason-num">02</div>
-                            <h3>忘れられない思い出</h3>
-                            <p>観光旅行では決して味わえない、現地の人々の生活に深く入り込む体験は、貧困問題の現実を肌で感じる機会となり、一生の財産となる原体験をもたらします。</p>
+                            <h3>実践的な課題解決力</h3>
+                            <p>異文化環境下でのチームビルディングやプロジェクト遂行を通じて、実践的な課題解決能力やリーダーシップを養います。</p>
                         </div>
                         <div class="reason-item">
                             <div class="reason-num">03</div>
-                            <h3>圧倒的な成長</h3>
-                            <p>異文化環境下での予期せぬ課題や、チームでの合意形成プロセスを通じて、実践的な課題解決能力やリーダーシップ、多角的な視点を養います。</p>
+                            <h3>社会課題への深い理解</h3>
+                            <p>実際に現地に足を運び、現地の生活を体験することで、貧困問題や住居問題の現状を肌で感じ、深く理解することができます。</p>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事前MTG</h4>
+                                <h4>事前学習・準備</h4>
                                 <p>約12回のミーティング。<br>現地の課題学習や安全管理。</p>
                             </div>
                         </div>
@@ -150,7 +150,7 @@
                         <div class="timeline-step">
                             <div class="timeline-point"></div>
                             <div class="timeline-text">
-                                <h4>事後MTG</h4>
+                                <h4>事後研修</h4>
                                 <p>活動の振り返り。<br>学びの言語化。</p>
                             </div>
                         </div>
@@ -170,31 +170,96 @@
                     <h2 class="section-title"><span>WHABITAT GV History</span></h2>
                     <p class="text-center mb-4">これまでに派遣されたチームの記録です。</p>
                     <div class="history-grid">
-                        <!-- Example Placeholders -->
-                        <div class="history-card">
-                            <div class="history-img-placeholder">Photo</div>
+                        <!-- Sakanto GV -->
+                        <a href="https://www.instagram.com/sakanto_gv?igsh=OWx5MTNlZDZyaXB0" target="_blank" class="history-card">
+                            <img src="gv_sakanto.jpg" alt="Sakanto GV" style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="history-info">
-                                <span class="history-year">2024 Summer</span>
-                                <span class="history-country">Indonesia</span>
-                                <h4 class="history-team">Team Example</h4>
+                                <span class="history-year">2020 Spring</span>
+                                <span class="history-country">India</span>
+                                <h4 class="history-team">さかんとGV</h4>
                             </div>
-                        </div>
-                        <div class="history-card">
-                            <div class="history-img-placeholder">Photo</div>
+                        </a>
+                        <!-- Paruparu GV -->
+                        <a href="https://www.instagram.com/habitat_paruparu_gv/" target="_blank" class="history-card">
+                            <img src="gv_paruparu.jpg" alt="Paruparu GV" style="width: 100%; height: 200px; object-fit: cover;">
+                            <div class="history-info">
+                                <span class="history-year">-</span>
+                                <span class="history-country">Vietnam</span>
+                                <h4 class="history-team">ぱるぱるGV</h4>
+                            </div>
+                        </a>
+                        <!-- Tantangood GV -->
+                        <a href="https://www.instagram.com/tantangood_whabitat2023?igsh=MTNqaHZtdDJueGhqMg%3D%3D" target="_blank" class="history-card">
+                            <img src="gv_tantangood.jpg" alt="Tantangood GV" style="width: 100%; height: 200px; object-fit: cover;">
+                            <div class="history-info">
+                                <span class="history-year">2023 Summer</span>
+                                <span class="history-country">Indonesia</span>
+                                <h4 class="history-team">たんたんぐGV</h4>
+                            </div>
+                        </a>
+                        <!-- Yupurumu GV -->
+                        <a href="https://www.instagram.com/yupurumu_whabitat?igsh=MWF3MzMxdjNoMHlkMg%3D%3D" target="_blank" class="history-card">
+                            <img src="gv_yupurumu.jpg" alt="Yupurumu GV" style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="history-info">
                                 <span class="history-year">2024 Spring</span>
                                 <span class="history-country">Cambodia</span>
-                                <h4 class="history-team">Team Example</h4>
+                                <h4 class="history-team">ゆぷるむGV</h4>
                             </div>
-                        </div>
-                        <div class="history-card">
-                            <div class="history-img-placeholder">Photo</div>
+                        </a>
+                        <!-- Magkarawn GV -->
+                        <a href="https://www.instagram.com/magkarawn_gv?igsh=MWZpejRraHRuaTVtbw%3D%3D" target="_blank" class="history-card">
+                            <img src="gv_magkarawn.jpg" alt="Magkarawn GV" style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="history-info">
-                                <span class="history-year">2023 Summer</span>
-                                <span class="history-country">Vietnam</span>
-                                <h4 class="history-team">Team Example</h4>
+                                <span class="history-year">-</span>
+                                <span class="history-country">Philippines</span>
+                                <h4 class="history-team">マカランGV</h4>
                             </div>
-                        </div>
+                        </a>
+                        <!-- Sukairu GV -->
+                        <a href="https://www.instagram.com/sukairu.gv_whabitat?igsh=bjRjMnhpYXE0M3hz" target="_blank" class="history-card">
+                            <div class="history-img-placeholder">No Image</div>
+                            <div class="history-info">
+                                <span class="history-year">2024 Summer</span>
+                                <span class="history-country">Cambodia</span>
+                                <h4 class="history-team">すかいるGV</h4>
+                            </div>
+                        </a>
+                        <!-- Bangal GV -->
+                        <a href="https://www.instagram.com/bangalgv?igsh=MXc1aWhqOGVuMjZubQ%3D%3D" target="_blank" class="history-card">
+                            <div class="history-img-placeholder">No Image</div>
+                            <div class="history-info">
+                                <span class="history-year">2025 Spring</span>
+                                <span class="history-country">Nepal</span>
+                                <h4 class="history-team">ばんがるGV</h4>
+                            </div>
+                        </a>
+                        <!-- Wabarumah GV -->
+                        <a href="https://www.instagram.com/wabarumahgv?igsh=MnBweGFrNGV3NHI0" target="_blank" class="history-card">
+                            <div class="history-img-placeholder">No Image</div>
+                            <div class="history-info">
+                                <span class="history-year">-</span>
+                                <span class="history-country">Indonesia</span>
+                                <h4 class="history-team">わばるまGV</h4>
+                            </div>
+                        </a>
+                        <!-- Dangan GV -->
+                        <a href="https://www.instagram.com/dangan_gv?igsh=eGh5OHFnbHdqOXp0" target="_blank" class="history-card">
+                            <div class="history-img-placeholder">No Image</div>
+                            <div class="history-info">
+                                <span class="history-year">-</span>
+                                <span class="history-country">Vietnam</span>
+                                <h4 class="history-team">ダンガンGV</h4>
+                            </div>
+                        </a>
+                        <!-- Erumela GV -->
+                        <a href="https://www.instagram.com/erumela_gv?igsh=MWQwbjcybWR6YXN0cg%3D%3D" target="_blank" class="history-card">
+                            <div class="history-img-placeholder">No Image</div>
+                            <div class="history-info">
+                                <span class="history-year">2025 Summer</span>
+                                <span class="history-country">Indonesia</span>
+                                <h4 class="history-team">エルメラGV</h4>
+                            </div>
+                        </a>
                     </div>
                 </div>
 

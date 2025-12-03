@@ -739,6 +739,15 @@ textarea:focus {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: var(--shadow-sm);
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s;
+}
+
+.history-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
 }
 
 .history-img-placeholder {
