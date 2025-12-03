@@ -168,98 +168,126 @@
                 <!-- History -->
                 <div class="content-section">
                     <h2 class="section-title"><span>WHABITAT GV History</span></h2>
-                    <p class="text-center mb-4">これまでに派遣されたチームの記録です。</p>
-                    <div class="history-grid">
-                        <!-- Sakanto GV -->
-                        <a href="https://www.instagram.com/sakanto_gv?igsh=OWx5MTNlZDZyaXB0" target="_blank" class="history-card">
-                            <img src="gv_sakanto.jpg" alt="Sakanto GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">2020 Spring</span>
-                                <span class="history-country">India</span>
-                                <h4 class="history-team">さかんとGV</h4>
+                    <p class="text-center mb-5">これまでに派遣されたチームの記録です。</p>
+                    
+                    <div class="history-timeline-container">
+                        <!-- 2020 -->
+                        <div class="history-year-group">
+                            <h3 class="history-year-title">2020</h3>
+                            <div class="history-grid">
+                                <!-- Sakanto GV -->
+                                <a href="https://www.instagram.com/sakanto_gv?igsh=OWx5MTNlZDZyaXB0" target="_blank" class="history-card">
+                                    <img src="gv_sakanto.jpg" alt="Sakanto GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Spring</span>
+                                        <span class="history-country">India</span>
+                                        <h4 class="history-team">さかんとGV</h4>
+                                    </div>
+                                </a>
+                                <!-- Paruparu GV -->
+                                <a href="https://www.instagram.com/habitat_paruparu_gv/" target="_blank" class="history-card">
+                                    <img src="gv_paruparu.jpg" alt="Paruparu GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Summer</span>
+                                        <span class="history-country">Vietnam</span>
+                                        <h4 class="history-team">ぱるぱるGV</h4>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                        <!-- Paruparu GV -->
-                        <a href="https://www.instagram.com/habitat_paruparu_gv/" target="_blank" class="history-card">
-                            <img src="gv_paruparu.jpg" alt="Paruparu GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">-</span>
-                                <span class="history-country">Vietnam</span>
-                                <h4 class="history-team">ぱるぱるGV</h4>
+                        </div>
+
+                        <!-- 2023 -->
+                        <div class="history-year-group">
+                            <h3 class="history-year-title">2023</h3>
+                            <div class="history-grid">
+                                <!-- Tantangood GV -->
+                                <a href="https://www.instagram.com/tantangood_whabitat2023?igsh=MTNqaHZtdDJueGhqMg%3D%3D" target="_blank" class="history-card">
+                                    <img src="gv_tantangood.jpg" alt="Tantangood GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Summer</span>
+                                        <span class="history-country">Indonesia</span>
+                                        <h4 class="history-team">たんたんぐGV</h4>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                        <!-- Tantangood GV -->
-                        <a href="https://www.instagram.com/tantangood_whabitat2023?igsh=MTNqaHZtdDJueGhqMg%3D%3D" target="_blank" class="history-card">
-                            <img src="gv_tantangood.jpg" alt="Tantangood GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">2023 Summer</span>
-                                <span class="history-country">Indonesia</span>
-                                <h4 class="history-team">たんたんぐGV</h4>
+                        </div>
+
+                        <!-- 2024 -->
+                        <div class="history-year-group">
+                            <h3 class="history-year-title">2024</h3>
+                            <div class="history-grid">
+                                <!-- Yupurumu GV -->
+                                <a href="https://www.instagram.com/yupurumu_whabitat?igsh=MWF3MzMxdjNoMHlkMg%3D%3D" target="_blank" class="history-card">
+                                    <img src="gv_yupurumu.jpg" alt="Yupurumu GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Spring</span>
+                                        <span class="history-country">Cambodia</span>
+                                        <h4 class="history-team">ゆぷるむGV</h4>
+                                    </div>
+                                </a>
+                                <!-- Magkarawn GV -->
+                                <a href="https://www.instagram.com/magkarawn_gv?igsh=MWZpejRraHRuaTVtbw%3D%3D" target="_blank" class="history-card">
+                                    <img src="gv_magkarawn.jpg" alt="Magkarawn GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Spring</span>
+                                        <span class="history-country">Philippines</span>
+                                        <h4 class="history-team">マカランGV</h4>
+                                    </div>
+                                </a>
+                                <!-- Sukairu GV -->
+                                <a href="https://www.instagram.com/sukairu.gv_whabitat?igsh=bjRjMnhpYXE0M3hz" target="_blank" class="history-card">
+                                    <img src="gv_sukairu.jpg" alt="Sukairu GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Summer</span>
+                                        <span class="history-country">Cambodia</span>
+                                        <h4 class="history-team">すかいるGV</h4>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                        <!-- Yupurumu GV -->
-                        <a href="https://www.instagram.com/yupurumu_whabitat?igsh=MWF3MzMxdjNoMHlkMg%3D%3D" target="_blank" class="history-card">
-                            <img src="gv_yupurumu.jpg" alt="Yupurumu GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">2024 Spring</span>
-                                <span class="history-country">Cambodia</span>
-                                <h4 class="history-team">ゆぷるむGV</h4>
+                        </div>
+
+                        <!-- 2025 -->
+                        <div class="history-year-group">
+                            <h3 class="history-year-title">2025</h3>
+                            <div class="history-grid">
+                                <!-- Bangal GV -->
+                                <a href="https://www.instagram.com/bangalgv?igsh=MXc1aWhqOGVuMjZubQ%3D%3D" target="_blank" class="history-card">
+                                    <img src="gv_bangal.jpg" alt="Bangal GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Spring</span>
+                                        <span class="history-country">Nepal</span>
+                                        <h4 class="history-team">ばんがるGV</h4>
+                                    </div>
+                                </a>
+                                <!-- Wabarumah GV -->
+                                <a href="https://www.instagram.com/wabarumahgv?igsh=MnBweGFrNGV3NHI0" target="_blank" class="history-card">
+                                    <img src="gv_wabarumah.jpg" alt="Wabarumah GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Spring</span>
+                                        <span class="history-country">Indonesia</span>
+                                        <h4 class="history-team">わばるまGV</h4>
+                                    </div>
+                                </a>
+                                <!-- Dangan GV -->
+                                <a href="https://www.instagram.com/dangan_gv?igsh=eGh5OHFnbHdqOXp0" target="_blank" class="history-card">
+                                    <img src="gv_dangan.jpg" alt="Dangan GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Spring</span>
+                                        <span class="history-country">Vietnam</span>
+                                        <h4 class="history-team">ダンガンGV</h4>
+                                    </div>
+                                </a>
+                                <!-- Erumela GV -->
+                                <a href="https://www.instagram.com/erumela_gv?igsh=MWQwbjcybWR6YXN0cg%3D%3D" target="_blank" class="history-card">
+                                    <img src="gv_erumela.jpg" alt="Erumela GV" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="history-info">
+                                        <span class="history-season">Summer</span>
+                                        <span class="history-country">Indonesia</span>
+                                        <h4 class="history-team">エルメラGV</h4>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                        <!-- Magkarawn GV -->
-                        <a href="https://www.instagram.com/magkarawn_gv?igsh=MWZpejRraHRuaTVtbw%3D%3D" target="_blank" class="history-card">
-                            <img src="gv_magkarawn.jpg" alt="Magkarawn GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">-</span>
-                                <span class="history-country">Philippines</span>
-                                <h4 class="history-team">マカランGV</h4>
-                            </div>
-                        </a>
-                        <!-- Sukairu GV -->
-                        <a href="https://www.instagram.com/sukairu.gv_whabitat?igsh=bjRjMnhpYXE0M3hz" target="_blank" class="history-card">
-                            <img src="gv_sukairu.jpg" alt="Sukairu GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">2024 Summer</span>
-                                <span class="history-country">Cambodia</span>
-                                <h4 class="history-team">すかいるGV</h4>
-                            </div>
-                        </a>
-                        <!-- Bangal GV -->
-                        <a href="https://www.instagram.com/bangalgv?igsh=MXc1aWhqOGVuMjZubQ%3D%3D" target="_blank" class="history-card">
-                            <img src="gv_bangal.jpg" alt="Bangal GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">2025 Spring</span>
-                                <span class="history-country">Nepal</span>
-                                <h4 class="history-team">ばんがるGV</h4>
-                            </div>
-                        </a>
-                        <!-- Wabarumah GV -->
-                        <a href="https://www.instagram.com/wabarumahgv?igsh=MnBweGFrNGV3NHI0" target="_blank" class="history-card">
-                            <img src="gv_wabarumah.jpg" alt="Wabarumah GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">-</span>
-                                <span class="history-country">Indonesia</span>
-                                <h4 class="history-team">わばるまGV</h4>
-                            </div>
-                        </a>
-                        <!-- Dangan GV -->
-                        <a href="https://www.instagram.com/dangan_gv?igsh=eGh5OHFnbHdqOXp0" target="_blank" class="history-card">
-                            <img src="gv_dangan.jpg" alt="Dangan GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">-</span>
-                                <span class="history-country">Vietnam</span>
-                                <h4 class="history-team">ダンガンGV</h4>
-                            </div>
-                        </a>
-                        <!-- Erumela GV -->
-                        <a href="https://www.instagram.com/erumela_gv?igsh=MWQwbjcybWR6YXN0cg%3D%3D" target="_blank" class="history-card">
-                            <img src="gv_erumela.jpg" alt="Erumela GV" style="width: 100%; height: 200px; object-fit: cover;">
-                            <div class="history-info">
-                                <span class="history-year">2025 Summer</span>
-                                <span class="history-country">Indonesia</span>
-                                <h4 class="history-team">エルメラGV</h4>
-                            </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
 
