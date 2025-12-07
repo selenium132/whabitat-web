@@ -611,7 +611,374 @@ textarea:focus {
 .three-pillars {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* --- Domestic Page Specifics --- */
+.domestic-intro {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 5rem;
+}
+
+/* Modern Vertical Timeline */
+.timeline-modern {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    /* Reduced from 4rem */
+    padding: 1rem 0;
+    /* Reduced from 2rem */
+}
+
+.timeline-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: #e0e0e0;
+    margin-left: -1px;
+}
+
+.timeline-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Changed from flex-start to center for better balance in compact mode */
+    margin-bottom: 0;
+    /* Removed margin to rely on fixed height for spacing */
+    position: relative;
+    width: 100%;
+    height: 100px;
+    /* Reduced from 140px */
+}
+
+.timeline-time {
+    width: 45%;
+    text-align: right;
+    padding-right: 2rem;
+    /* Reduced from 3rem */
+    position: relative;
+}
+
+.timeline-content-side {
+    width: 45%;
+    padding-left: 2rem;
+    /* Reduced from 3rem */
+    text-align: left;
+}
+
+/* Connectors */
+.timeline-row::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    /* Center vertically */
+    transform: translate(-50%, -50%);
+    /* Center perfectly */
+    width: 12px;
+    /* Slightly smaller dot */
+    height: 12px;
+    background: white;
+    border: 3px solid var(--accent-orange);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.timeline-month {
+    font-size: 1.3rem;
+    /* Slightly smaller */
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.timeline-detail {
+    /* Removed background/shadow for cleaner compact look, just text aligned */
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    position: relative;
+}
+
+.timeline-detail p {
+    margin: 0;
+    line-height: 1.4;
+    /* Tighter line height */
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+/* Responsive Timeline */
+@media (max-width: 768px) {
+    .timeline-modern::before {
+        left: 20px;
+    }
+
+    .timeline-row {
+        flex-direction: column;
+        margin-bottom: 2rem;
+        padding-left: 45px;
+    }
+
+    .timeline-time {
+        width: 100%;
+        text-align: left;
+        padding-right: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-content-side {
+        width: 100%;
+        padding-left: 0;
+    }
+
+    .timeline-row::after {
+        left: 20px;
+        top: 5px;
+    }
+
+    .timeline-detail::before {
+        display: none;
+    }
+}
+
+/* Modern Vertical Timeline */
+.timeline-modern {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto 4rem;
+    /* Restored spacing */
+    padding: 2rem 0;
+}
+
+.timeline-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: #e0e0e0;
+    margin-left: -1px;
+}
+
+.timeline-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0;
+    position: relative;
+    width: 100%;
+    height: 100px;
+}
+
+.timeline-time {
+    width: 45%;
+    text-align: right;
+    padding-right: 2rem;
+    position: relative;
+}
+
+.timeline-content-side {
+    width: 45%;
+    padding-left: 2rem;
+    text-align: left;
+}
+
+/* Connectors */
+.timeline-row::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: 3px solid var(--accent-orange);
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.timeline-month {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.timeline-detail {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    position: relative;
+}
+
+.timeline-detail p {
+    margin: 0;
+    line-height: 1.4;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+/* Responsive Timeline */
+@media (max-width: 768px) {
+    .timeline-modern::before {
+        left: 20px;
+    }
+
+    .timeline-row {
+        flex-direction: column;
+        margin-bottom: 2rem;
+        padding-left: 45px;
+        height: auto;
+        /* Reset fixed height for mobile */
+    }
+
+    .timeline-time {
+        width: 100%;
+        text-align: left;
+        padding-right: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-content-side {
+        width: 100%;
+        padding-left: 0;
+    }
+
+    .timeline-row::after {
+        left: 20px;
+        top: 5px;
+        transform: none;
+        /* Reset transform for connector */
+    }
+}
+
+.domestic-section {
+    margin-bottom: 4rem;
+}
+
+/* Horizontal Card Tweaks */
+.domestic-card-horizontal {
     gap: 2rem;
+    /* Add gap between image and text */
+    padding-right: 1.5rem;
+    /* Ensure padding on text side */
+}
+
+.domestic-card-horizontal img {
+    border-radius: 12px 0 0 12px;
+    /* Smooth corners on image side */
+}
+
+/* Center alignment helper */
+.text-center {
+    text-align: center;
+}
+
+.center-block {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.domestic-section-title {
+    text-align: center;
+    /* Center aligned */
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Sub-section titles (like Trash Picking, Agri) */
+.domestic-subsection-title {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.domestic-subsection-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--accent-orange);
+    /* Default accent */
+}
+
+.domestic-subsection-title.trash::after {
+    background: var(--accent-blue);
+}
+
+.domestic-subsection-title.agri::after {
+    background: var(--accent-green);
+}
+
+.domestic-subsection-title.community::after {
+    background: var(--accent-red);
+}
+
+.domestic-section p.section-desc {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    color: var(--text-color-light);
+}
+
+.domestic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.domestic-grid-wide {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.domestic-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.domestic-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.domestic-img-placeholder {
+    width: 100%;
+    height: 200px;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-weight: bold;
+}
+
+.domestic-content {
+    padding: 1.5rem;
 }
 
 .pillar-card {
@@ -756,7 +1123,49 @@ textarea:focus {
     }
 }
 
-/* History Timeline */
+
+
+/* Horizontal Card for Domestic Page */
+.domestic-card-horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    height: auto;
+}
+
+.domestic-card-horizontal img {
+    width: 45%;
+    height: 100%;
+    aspect-ratio: auto;
+    /* Let image decide or fill container height if needed, but flex handles it */
+    object-fit: cover;
+    display: block;
+}
+
+.domestic-card-horizontal .domestic-content {
+    width: 55%;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .domestic-card-horizontal {
+        flex-direction: column;
+    }
+
+    .domestic-card-horizontal img,
+    .domestic-card-horizontal .domestic-content {
+        width: 100%;
+    }
+}
+
+/* Mobile Timeline (Vertical) */
 .history-timeline-container {
     max-width: 1000px;
     margin: 0 auto;
