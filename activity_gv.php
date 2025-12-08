@@ -47,7 +47,7 @@
                         <strong>「海外住居建築ボランティア」</strong>プログラムです。<br>
                         <br>
                         WHABITATでは、単なる建築支援にとどまらず、<br>
-                        <strong>Build（建築）</strong>、<strong>Cultural Activity（文化交流）</strong>、<strong>Social Learning（社会学習）</strong>の<br>
+                        <strong>Build（建築）</strong>、<strong>CA（文化交流）</strong>、<strong>SLEA（社会学習）</strong>の<br>
                         3つの柱を通じて、貧困住居問題への理解を深め、<br>
                         持続可能な支援のあり方を模索する活動を行っています。
                     </p>
