@@ -45,11 +45,11 @@
                     <p class="lead-text">
                         GV（Global Village）は、国際NGO Habitat for Humanityが世界中で展開する<br>
                         <strong>「海外住居建築ボランティア」</strong>プログラムです。<br>
-                        <br>
+                        <!--<br>
                         WHABITATでは、単なる建築支援にとどまらず、<br>
                         <strong>Build（建築）</strong>、<strong>CA（文化交流）</strong>、<strong>SLEA（社会学習）</strong>の<br>
                         3つの柱を通じて、貧困住居問題への理解を深め、<br>
-                        持続可能な支援のあり方を模索する活動を行っています。
+                        持続可能な支援のあり方を模索する活動を行っています。-->
                     </p>
                 </div>
 
@@ -69,7 +69,7 @@
                     <div class="three-pillars mt-5">
                         <div class="pillar-card">
                             <div class="pillar-icon"><i class="fas fa-hammer"></i></div>
-                            <h3>Build</h3>
+                            <h3>WORK</h3>
                             <p class="sub-label">建築活動 (約5日間)</p>
                             <p>現地の専門職人の指導のもと、レンガ積みやセメント運搬などの作業に従事します。ホームオーナーと共に汗を流すことで、支援者・被支援者の枠を超えた信頼関係を築きます。</p>
                         </div>

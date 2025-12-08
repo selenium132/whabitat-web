@@ -77,7 +77,7 @@
                     </div>
                     <div class="timeline-content-side">
                         <div class="timeline-detail">
-                            <p>西和賀<br>援農（飯島農園）<br>ゴミ拾い</p>
+                            <p>西和賀<br>援農<br>ゴミ拾い</p>
                         </div>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                     </div>
                     <div class="timeline-content-side">
                         <div class="timeline-detail">
-                            <p>援農（地球農園）<br>武家屋敷<br>丹波山</p>
+                            <p>援農<br>武家屋敷<br>丹波山</p>
                         </div>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
                     </div>
                     <div class="timeline-content-side">
                         <div class="timeline-detail">
-                            <p>ビーチクリーン<br>援農（飯島農園）</p>
+                            <p>ビーチクリーン<br>援農</p>
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                     </div>
                     <div class="timeline-content-side">
                         <div class="timeline-detail">
-                            <p>援農（地球農園）</p>
+                            <p>援農</p>
                         </div>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
                     </div>
                     <div class="timeline-content-side">
                         <div class="timeline-detail">
-                            <p>寺泊<br>お神輿手伝い<br>援農（飯島農園）</p>
+                            <p>寺泊<br>お神輿手伝い<br>援農</p>
                         </div>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                     </div>
                     <div class="timeline-content-side">
                         <div class="timeline-detail">
-                            <p>援農（地球農園）<br>防災訓練</p>
+                            <p>援農<br>防災訓練</p>
                         </div>
                     </div>
                 </div>
@@ -197,15 +197,15 @@
                         <img src="domestic_iijima_farm.jpg" alt="飯島農園" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover;">
                         <div class="domestic-content">
                             <span class="domestic-tag agri">Chiba</span>
-                            <h4>飯島農園 (千葉県)</h4>
+                            <h4>北習志野</h4>
                             <p>千葉県北習志野にある無農薬野菜を作っている農園でのお手伝い。お味噌の仕込みを行ったり、美味しいお野菜をいただいたりと、食と農に触れる貴重な体験ができます。</p>
                         </div>
                     </div>
                     <div class="domestic-card">
                         <img src="domestic_earth_farm.jpg" alt="東京地球農園" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover;">
                         <div class="domestic-content">
-                            <span class="domestic-tag agri">Tokyo Akiruno</span>
-                            <h4>東京地球農園 (東京都あきる野市)</h4>
+                            <span class="domestic-tag agri">Tokyo</span>
+                            <h4>あきる野</h4>
                             <p>自然豊かなあきる野市での農業体験。様々なお野菜に加え、栗の木や鶏のお世話などができます。お昼にはうどんやカレーをいただけたりと、心も体も温まる活動です。</p>
                         </div>
                     </div>
@@ -241,7 +241,7 @@
                         <img src="domestic_teradomari.jpg" alt="寺泊 (新潟県長岡市)" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; transform: scale(1.05); object-position: 60% 50%;">
                         <div class="domestic-content">
                             <span class="domestic-tag camp">Niigata</span>
-                            <h4>寺泊 (新潟県長岡市)</h4>
+                            <h4>寺泊</h4>
                             <p>「求草里山再生プロジェクト」に参加し、竹林整備や地域観光の支援を行います。昨年度は竹や木を刈って神社周辺を整備し、地域の方とBBQで交流を深めました！</p>
                         </div>
                     </div>
@@ -249,15 +249,15 @@
                         <img src="domestic_nishiwaga.jpg" alt="西和賀（岩手県）" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; object-position: right bottom;">
                         <div class="domestic-content">
                             <span class="domestic-tag camp">Iwate</span>
-                            <h4>西和賀（岩手県）</h4>
+                            <h4>西和賀</h4>
                             <p>豪雪地帯である岩手県西和賀町で、2月の「雪あかり」イベントのお手伝いをします。雪国ならではの文化に触れ、地域の方々と深く交流できる活動です。</p>
                         </div>
                     </div>
                     <div class="domestic-card">
                         <img src="domestic_bukeyashiki.jpg" alt="武家屋敷 (東京都日の出町)" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover;">
                         <div class="domestic-content">
-                            <span class="domestic-tag camp">Tokyo Hinode</span>
-                            <h4>武家屋敷 (東京都日の出町)</h4>
+                            <span class="domestic-tag camp">Tokyo</span>
+                            <h4>武家屋敷</h4>
                             <p>歴史ある武家屋敷で、障がい者施設の引越し手伝いや、忍者道場の支援などを行いました。地球農園での活動とセットで行くことも多く、夜は温泉や鍋を囲んでの交流も！</p>
                         </div>
                     </div>
@@ -265,8 +265,8 @@
                         <img src="domestic_tabayama.jpg" alt="丹波山村 (山梨県)" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover;">
                         <div class="domestic-content">
                             <span class="domestic-tag camp">Yamanashi</span>
-                            <h4>丹波山村 (山梨県)</h4>
-                            <p>人口減少や空き家問題などの課題を抱える丹波山村へ滞在。空き家の片付けや活用法の提案、地域の方々との交流を通じて、地域再生のお手伝いをします。</p>
+                            <h4>丹波山</h4>
+                            <p>人口減少や空き家問題などの課題を抱える丹波山村へ滞在。空き家の片付けを通じて、地域再生のお手伝いをします。</p>
                         </div>
                     </div>
                 </div>

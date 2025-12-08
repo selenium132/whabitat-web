@@ -51,7 +51,32 @@
                         <strong style="color: var(--text-color);">場所:</strong> 早稲田キャンパス15号館、または奉仕園
                     </div>
                 </div>
+                </div>
 
+                <!-- MTG History -->
+                <section style="margin-top: 5rem;">
+                    <h2 class="section-title"><span>MTG HISTORY</span></h2>
+                    
+                    <div class="history-year-group">
+                        <h3 style="font-size: 1.5rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 2rem; color: var(--primary-color);">2024</h3>
+                        
+                        <div class="history-grid">
+                            <!-- 2024.11.12 Wabi-Tune -->
+                            <article class="history-card" style="display: flex; flex-direction: column; height: 100%;">
+                                <img src="mtg_2024_11_12.png" alt="わびチューン" style="width: 100%; height: 180px; object-fit: cover;">
+                                <div class="history-info" style="flex-grow: 1; display: flex; flex-direction: column;">
+                                    <span class="history-season" style="color: var(--accent-blue); font-weight: bold;">2024.11.12</span>
+                                    <h4 style="margin: 0.5rem 0; font-size: 1.1rem; line-height: 1.4;">わびチューン<br><span style="font-size: 0.9rem; font-weight: normal;">〜3人の美食家を添えて〜</span></h4>
+                                    <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.8rem;"><i class="fas fa-utensils"></i> テーマ: 食</p>
+                                    <p style="font-size: 0.85rem; line-height: 1.6; color: var(--text-color);">
+                                        <strong>【狙い】班員と仲良くなる！</strong><br>
+                                        3人のクセ強審査員（論理派・アホ・のりお）を攻略せよ！「おでんの具は大根か卵か？」「初デートはイタリアンか居酒屋か？」をテーマに、各班で白熱の議論とプレゼンを行いました。
+                                    </p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </section>
 
             </div>
         </div>
