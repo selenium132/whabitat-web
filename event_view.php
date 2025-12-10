@@ -349,8 +349,10 @@ if (!empty($my_attendance['response_data'])) {
             <?php endif; ?>
 
             <div style="overflow: hidden; padding-bottom: 20px;">
-                <button type="button" onclick="submitForm()" class="btn-submit">送信</button>
-                <button type="button" onclick="document.getElementById('entryForm').reset()" class="btn-clear">フォームをクリア</button>
+                <button type="button" onclick="submitForm()" class="btn-submit">
+                    <?php echo $my_attendance ? '更新' : '送信'; ?>
+                </button>
+                <button type="button" onclick="clearForm()" class="btn-clear">フォームをクリア</button>
             </div>
 
         </form>
@@ -396,6 +398,30 @@ if (!empty($my_attendance['response_data'])) {
 
             // Submit
             document.getElementById('entryForm').submit();
+        }
+
+        function clearForm() {
+            if(!confirm('入力内容をすべて消去しますか？')) return;
+
+            // Clear Status Radio
+            const statusRadios = document.querySelectorAll('input[name="status"]');
+            statusRadios.forEach(r => r.checked = false);
+
+            // Clear Custom Questions
+            const customInputs = document.querySelectorAll('.custom-input');
+            customInputs.forEach(input => {
+                if (input.type === 'text') {
+                    input.value = '';
+                } else if (input.type === 'radio' || input.type === 'checkbox') {
+                    input.checked = false;
+                } else if (input.tagName === 'SELECT') {
+                    input.value = '';
+                }
+            });
+            
+            // Clear Comment (fallback)
+            const comments = document.querySelectorAll('input[name="comment"]');
+            comments.forEach(c => c.value = '');
         }
     </script>
 
