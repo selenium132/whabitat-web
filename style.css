@@ -1138,7 +1138,7 @@ textarea:focus {
 }
 
 .domestic-card-horizontal img {
-    width: 45%;
+    width: 50%;
     height: 100%;
     aspect-ratio: auto;
     /* Let image decide or fill container height if needed, but flex handles it */
