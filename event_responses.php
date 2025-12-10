@@ -178,9 +178,6 @@ function getStatusLabel($status) {
                         <a href="event_create.php?id=<?php echo $event['id']; ?>" style="color: #666; font-size: 14px; text-decoration: underline; margin-right: 15px;">
                             イベントを編集
                         </a>
-                        <a href="event_delete.php?id=<?php echo $event['id']; ?>" style="color: #d93025; font-size: 14px; text-decoration: underline;" onclick="return confirm('本当に削除しますか？');">
-                            削除
-                        </a>
                     </div>
                 <?php endif; ?>
             </div>

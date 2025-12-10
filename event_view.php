@@ -270,9 +270,6 @@ if (!empty($my_attendance['response_data'])) {
                         <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.9rem; padding: 8px 20px;">
                             <i class="far fa-edit"></i> 編集
                         </a>
-                        <a href="event_delete.php?id=<?php echo $event['id']; ?>" class="btn-danger" style="font-size: 0.9rem; padding: 8px 20px;" onclick="return confirm('本当に削除しますか？\n回答データも全て削除されます。');">
-                            <i class="far fa-trash-alt"></i> 削除
-                        </a>
                     </div>
                 <?php endif; ?>
             </div>

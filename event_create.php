@@ -380,11 +380,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <header class="header">
             <div class="header-inner" style="position: relative;">
-                <a href="dashboard.php" class="logo">WHABITAT <span style="font-size: 14px; color: #5f6368; font-weight: normal; margin-left: 10px;">Create Form</span></a>
+                <a href="dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
+                    <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る <span style="font-size: 12px; color: #5f6368; font-weight: normal; margin-left: 10px;">(フォーム編集)</span>
+                </a>
                 
                 <div class="action-bar">
+                    <?php if ($edit_mode): ?>
+                         <a href="event_delete.php?id=<?php echo $event_data['id']; ?>" class="icon-btn" style="color: #d93025; text-decoration: none; margin-right: 15px;" onclick="return confirm('本当に削除しますか？\nこの操作は取り消せません。');" title="イベントを削除">
+                            <i class="far fa-trash-alt"></i>
+                        </a>
+                    <?php endif; ?>
+                    
                     <button type="button" class="btn-save" onclick="saveForm()"><?php echo $edit_mode ? '更新 (Update)' : '作成 (Save)'; ?></button>
-                    <a href="dashboard.php" style="margin-left: 10px; text-decoration: none; color: #5f6368; display: flex; align-items: center; padding: 0 10px;">キャンセル</a>
                 </div>
             </div>
         </header>
