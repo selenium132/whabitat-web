@@ -15,16 +15,17 @@ if (!$event) {
     exit;
 }
 
-// Handle Attendance Submission
+// Handle Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrfToken($_POST['csrf_token'] ?? ''); // CSRF Check
 
     $status = $_POST['status'] ?? '';
     $comment = $_POST['comment'] ?? '';
+    $response_data = $_POST['response_data'] ?? null; // JSON String handling custom answers
     
     if ($status) {
-        $stmt = $pdo->prepare("INSERT INTO attendance (event_id, user_id, status, comment) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE status = ?, comment = ?");
-        $stmt->execute([$event_id, $_SESSION['user_id'], $status, $comment, $status, $comment]);
+        $stmt = $pdo->prepare("INSERT INTO attendance (event_id, user_id, status, comment, response_data) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE status = ?, comment = ?, response_data = ?");
+        $stmt->execute([$event_id, $_SESSION['user_id'], $status, $comment, $response_data, $status, $comment, $response_data]);
         // Refresh to show updated data
         header("Location: event_view.php?id=" . $event_id);
         exit;
@@ -55,7 +56,25 @@ function getStatusLabel($status) {
 }
 
 $is_admin = ($_SESSION['role'] === 'admin');
-$csrf_token = generateCsrfToken(); // Generate Token
+$csrf_token = generateCsrfToken(); 
+
+// Parse Schema
+$form_schema = [];
+if (!empty($event['form_schema'])) {
+    $decoded = json_decode($event['form_schema'], true);
+    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+        $form_schema = $decoded;
+    }
+}
+
+// Parse My Responses
+$my_answers = [];
+if (!empty($my_attendance['response_data'])) {
+    $decoded_ans = json_decode($my_attendance['response_data'], true);
+    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_ans)) {
+        $my_answers = $decoded_ans;
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -64,56 +83,169 @@ $csrf_token = generateCsrfToken(); // Generate Token
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($event['title']); ?> | WHABITAT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        .event-header {
-            margin-bottom: 2rem;
+        body {
+            background-color: #f0ebf8;
+            font-family: 'Roboto', 'Noto Sans JP', sans-serif;
+            padding-bottom: 50px;
         }
-        .event-date-badge {
-            display: inline-block;
-            background: var(--secondary-color);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 4px;
-            font-weight: 600;
-            margin-bottom: 1rem;
+        .header {
+            background: white;
+            box-shadow: none;
+            border-bottom: 1px solid #e0e0e0;
         }
-        .attendance-form {
-            background: var(--bg-color);
-            padding: 1.5rem;
+        .view-container {
+            max-width: 640px;
+            margin: 40px auto;
+            padding: 0 1rem;
+        }
+        
+        /* Event Header Card */
+        .header-card {
+            background: white;
             border-radius: 8px;
-            margin-top: 1.5rem;
+            border-top: 10px solid rgb(103, 58, 183);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            margin-bottom: 24px;
         }
-        .radio-group {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 1.5rem;
+        .event-title {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 400;
         }
-        .radio-label {
+        .event-desc {
+            font-size: 14px;
+            color: #202124;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+        
+        .submitted-msg {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            margin-bottom: 24px;
+            border-left: 5px solid #0f9d58;
+        }
+
+        /* Question Cards */
+        .q-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            margin-bottom: 24px;
+        }
+        .q-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        .req-asterisk {
+            color: #d93025;
+            margin-left: 4px;
+        }
+
+        /* Inputs */
+        .q-text-input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            padding: 8px 0;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .q-text-input:focus {
+            border-bottom: 2px solid rgb(103, 58, 183);
+            background: #fafafa;
+        }
+        
+        .option-label {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            margin-bottom: 10px;
             cursor: pointer;
-            font-weight: 600;
+            font-size: 14px;
+            color: #202124;
         }
-        .participant-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
+        .option-label input {
+            margin-right: 12px;
+            accent-color: rgb(103, 58, 183);
+            transform: scale(1.2);
         }
-        .participant-card {
+
+        .select-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
             background: white;
-            border: 1px solid var(--border-color);
-            padding: 1rem;
+        }
+
+        .btn-submit {
+            background-color: rgb(103, 58, 183);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            float: left;
+        }
+        .btn-submit:hover {
+            background-color: rgb(85, 45, 160);
+        }
+        
+        .btn-clear {
+            float: right;
+            color: rgb(103, 58, 183);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Participant List Section */
+        .participants-section {
+            max-width: 640px;
+            margin: 60px auto 20px;
+            padding: 0 1rem;
+        }
+        .p-card {
+            background: white;
+            padding: 15px;
             border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .p-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgb(103, 58, 183);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
         .admin-details {
             font-size: 0.8rem;
-            color: var(--text-light);
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
-            border-top: 1px dashed #eee;
+            color: #666;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -124,82 +256,171 @@ $csrf_token = generateCsrfToken(); // Generate Token
         </div>
     </header>
 
-    <main>
-        <div class="dashboard-container">
-            <a href="dashboard.php" style="display: inline-block; margin-bottom: 1rem; color: var(--text-light);">&lt; ダッシュボードに戻る</a>
-            
-            <div class="card">
-                <div class="event-header">
-                    <div class="event-date-badge">
-                        <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?>
-                    </div>
-                    <h1 style="margin-bottom: 1rem;"><?php echo htmlspecialchars($event['title']); ?></h1>
-                    <div style="line-height: 1.8; white-space: pre-wrap;"><?php echo htmlspecialchars($event['description']); ?></div>
-                </div>
+    <div class="view-container">
+        
+        <form method="POST" action="" id="entryForm">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+            <input type="hidden" name="response_data" id="response_data_input">
 
-                <div class="attendance-form">
-                    <h3 style="margin-bottom: 1rem;">出欠回答</h3>
-                    
-                    <?php if ($my_attendance): ?>
-                        <div style="background: #e6f7ff; color: #0050b3; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
-                            <strong>提出済みです</strong>（現在の回答: <?php echo getStatusLabel($my_attendance['status']); ?>）<br>
-                            <small>変更する場合は再送信してください。</small>
-                        </div>
-                    <?php endif; ?>
-
-                    <form method="POST" action="">
-                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-                        
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="status" value="join" <?php echo ($my_attendance['status'] ?? '') === 'join' ? 'checked' : ''; ?> required> 参加
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="status" value="decline" <?php echo ($my_attendance['status'] ?? '') === 'decline' ? 'checked' : ''; ?>> 不参加
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="status" value="maybe" <?php echo ($my_attendance['status'] ?? '') === 'maybe' ? 'checked' : ''; ?>> 未定
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="comment" class="form-input" placeholder="一言コメント（任意）" value="<?php echo htmlspecialchars($my_attendance['comment'] ?? ''); ?>">
-                        </div>
-                        <button type="submit" class="btn-primary" style="width: 100%;">
-                            <?php echo $my_attendance ? '回答を更新する' : '回答を送信'; ?>
-                        </button>
-                    </form>
+            <!-- Title Header -->
+            <div class="header-card">
+                <h1 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h1>
+                <div class="event-desc"><?php echo htmlspecialchars($event['description']); ?></div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.9rem; color: #666;">
+                    <strong>開催日時:</strong> <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?><br>
+                    <span style="color: #d93025;">* 必須</span>
                 </div>
             </div>
 
-            <h2 class="section-title" style="text-align: left; margin-bottom: 1.5rem;">参加予定メンバー (<?php echo count($participants); ?>名)</h2>
-            
-            <?php if (empty($participants)): ?>
-                <div class="card" style="text-align: center; color: var(--text-light);">まだ参加予定者はいません。</div>
-            <?php else: ?>
-                <div class="participant-list">
-                    <?php foreach ($participants as $p): ?>
-                        <div class="participant-card">
-                            <div style="font-weight: bold; margin-bottom: 0.3rem;">
-                                <?php echo htmlspecialchars($p['name']); ?>
-                            </div>
-                            <?php if ($p['comment']): ?>
-                                <div style="font-size: 0.9rem; color: var(--text-light);">
-                                    "<?php echo htmlspecialchars($p['comment']); ?>"
-                                </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($is_admin): ?>
-                                <div class="admin-details">
-                                    ID: <?php echo htmlspecialchars($p['student_id']); ?><br>
-                                    LINE: <?php echo htmlspecialchars($p['line_name']); ?><br>
-                                    Grade: <?php echo htmlspecialchars($p['grade']); ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
+            <?php if ($my_attendance): ?>
+                <div class="submitted-msg">
+                    <h3 style="margin-bottom: 10px;">回答済みです</h3>
+                    <p style="font-size: 14px;">あなたの回答: <strong><?php echo getStatusLabel($my_attendance['status']); ?></strong></p>
+                    <p style="font-size: 14px; color: #666; margin-top: 5px;">内容を修正する場合は、下記フォームを編集して再度送信してください。</p>
                 </div>
             <?php endif; ?>
-        </div>
-    </main>
+
+            <!-- Basic Attendance Status (Always required) -->
+            <div class="q-card">
+                <div class="q-title">出欠確認 <span class="req-asterisk">*</span></div>
+                <div class="q-options">
+                    <label class="option-label">
+                        <input type="radio" name="status" value="join" required <?php echo ($my_attendance['status'] ?? '') === 'join' ? 'checked' : ''; ?>>
+                        参加
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="status" value="decline" <?php echo ($my_attendance['status'] ?? '') === 'decline' ? 'checked' : ''; ?>>
+                        不参加
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="status" value="maybe" <?php echo ($my_attendance['status'] ?? '') === 'maybe' ? 'checked' : ''; ?>>
+                        未定
+                    </label>
+                </div>
+            </div>
+
+            <!-- Dynamic Custom Questions -->
+            <?php if (!empty($form_schema)): ?>
+                <?php foreach ($form_schema as $index => $q): ?>
+                    <?php 
+                        $qid = $index; 
+                        $title = htmlspecialchars($q['title']);
+                        $req = $q['required'] ? '<span class="req-asterisk">*</span>' : '';
+                        $requiredAttr = $q['required'] ? 'required' : '';
+                        // Retrieve previous answer if exists (saved as array index usually, or we can use keys if we had IDs)
+                        // Here we rely on order index since we saved as array.
+                        $prev_val = $my_answers[$index] ?? ''; 
+                    ?>
+                    
+                    <div class="q-card custom-q" data-index="<?php echo $index; ?>" data-type="<?php echo $q['type']; ?>">
+                        <div class="q-title"><?php echo $title . $req; ?></div>
+                        
+                        <?php if ($q['type'] === 'paragraph'): ?>
+                            <input type="text" class="q-text-input custom-input" name="ans_<?php echo $index; ?>" value="<?php echo htmlspecialchars($prev_val); ?>" placeholder="回答を入力" <?php echo $requiredAttr; ?>>
+                            
+                        <?php elseif ($q['type'] === 'radio'): ?>
+                            <?php foreach ($q['options'] as $opt): ?>
+                                <label class="option-label">
+                                    <input type="radio" name="ans_<?php echo $index; ?>" value="<?php echo htmlspecialchars($opt); ?>" class="custom-input" <?php echo ($prev_val === $opt) ? 'checked' : ''; ?> <?php echo $requiredAttr; ?>>
+                                    <?php echo htmlspecialchars($opt); ?>
+                                </label>
+                            <?php endforeach; ?>
+
+                        <?php elseif ($q['type'] === 'checkbox'): ?>
+                            <?php 
+                                $prev_checks = is_array($prev_val) ? $prev_val : [];
+                            ?>
+                            <?php foreach ($q['options'] as $opt): ?>
+                                <label class="option-label">
+                                    <input type="checkbox" name="ans_<?php echo $index; ?>[]" value="<?php echo htmlspecialchars($opt); ?>" class="custom-input" <?php echo in_array($opt, $prev_checks) ? 'checked' : ''; ?>>
+                                    <?php echo htmlspecialchars($opt); ?>
+                                </label>
+                            <?php endforeach; ?>
+
+                        <?php elseif ($q['type'] === 'dropdown'): ?>
+                            <select class="select-input custom-input" name="ans_<?php echo $index; ?>" <?php echo $requiredAttr; ?>>
+                                <option value="">選択してください</option>
+                                <?php foreach ($q['options'] as $opt): ?>
+                                    <option value="<?php echo htmlspecialchars($opt); ?>" <?php echo ($prev_val === $opt) ? 'selected' : ''; ?>><?php echo htmlspecialchars($opt); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- Fallback Comment field if no schema (or maybe always show comment?) -->
+                <div class="q-card">
+                    <div class="q-title">一言コメント</div>
+                    <input type="text" name="comment" class="q-text-input" value="<?php echo htmlspecialchars($my_attendance['comment'] ?? ''); ?>" placeholder="回答を入力">
+                </div>
+            <?php endif; ?>
+
+            <div style="overflow: hidden; padding-bottom: 20px;">
+                <button type="button" onclick="submitForm()" class="btn-submit">送信</button>
+                <button type="button" onclick="document.getElementById('entryForm').reset()" class="btn-clear">フォームをクリア</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Participants List for Member Visibility -->
+    <div class="participants-section">
+        <h3 style="margin-bottom: 20px; color: #5f6368;">参加予定者 (<?php echo count($participants); ?>名)</h3>
+        <?php foreach ($participants as $p): ?>
+            <div class="p-card">
+                <div class="p-avatar"><?php echo mb_substr($p['name'], 0, 1); ?></div>
+                <div style="flex-grow: 1;">
+                    <div style="font-weight: 500; font-size: 16px;"><?php echo htmlspecialchars($p['name']); ?></div>
+                    <?php if ($p['comment']): ?>
+                        <div style="font-size: 14px; color: #444; margin-top: 4px;">"<?php echo htmlspecialchars($p['comment']); ?>"</div>
+                    <?php endif; ?>
+                    
+                    <?php if ($is_admin): ?>
+                        <div class="admin-details">
+                            Grade: <?php echo htmlspecialchars($p['grade']); ?> / LINE: <?php echo htmlspecialchars($p['line_name']); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <script>
+        function submitForm() {
+            // Collect Custom Answers
+            const answers = {};
+            
+            // Loop through our known indices if schema exists
+            const customCards = document.querySelectorAll('.custom-q');
+            customCards.forEach(card => {
+                const index = card.dataset.index;
+                const type = card.dataset.type;
+                let val = null;
+
+                if (type === 'paragraph') {
+                    val = card.querySelector('input').value;
+                } else if (type === 'radio') {
+                    const checked = card.querySelector('input:checked');
+                    val = checked ? checked.value : '';
+                } else if (type === 'checkbox') {
+                    const checked = card.querySelectorAll('input:checked');
+                    val = Array.from(checked).map(c => c.value);
+                } else if (type === 'dropdown') {
+                    val = card.querySelector('select').value;
+                }
+                
+                answers[index] = val;
+            });
+
+            // Put JSON into hidden input
+            if (Object.keys(answers).length > 0) {
+                document.getElementById('response_data_input').value = JSON.stringify(answers);
+            }
+
+            // Submit
+            document.getElementById('entryForm').submit();
+        }
+    </script>
+
 </body>
 </html>
