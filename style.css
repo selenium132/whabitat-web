@@ -1159,7 +1159,14 @@ textarea:focus {
         flex-direction: column;
     }
 
-    .domestic-card-horizontal img,
+    .domestic-card-horizontal img {
+        width: 100%;
+        border-radius: 12px 12px 0 0;
+        /* Reset radius for vertical stack */
+        height: 250px;
+        /* Fixed height for consistency */
+    }
+
     .domestic-card-horizontal .domestic-content {
         width: 100%;
     }
