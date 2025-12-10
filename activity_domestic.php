@@ -218,7 +218,7 @@
                         <div class="domestic-content">
                             <span class="domestic-tag community">Festival</span>
                             <h4>お神輿・お祭り手伝い</h4>
-                            <p>早稲田周辺の町内会のお祭りに参加し、お神輿を担いだり、運営のお手伝いをします。幅広い年齢層の地域の方々と交流できる貴重な機会です。</p>
+                            <p>早稲田周辺の町内会のお祭りに参加し、お神輿を担ぐお手伝いをします。幅広い年齢層の地域の方々と交流できる貴重な機会です。</p>
                         </div>
                     </div>
                     <div class="domestic-card">
