@@ -829,13 +829,13 @@ textarea:focus {
 /* Responsive Timeline */
 @media (max-width: 768px) {
     .timeline-modern::before {
-        left: 20px;
+        left: 15px;
     }
 
     .timeline-row {
         flex-direction: column;
         margin-bottom: 2rem;
-        padding-left: 45px;
+        padding-left: 40px;
         height: auto;
         /* Reset fixed height for mobile */
     }
@@ -853,9 +853,9 @@ textarea:focus {
     }
 
     .timeline-row::after {
-        left: 20px;
-        top: 5px;
-        transform: none;
+        left: 15px;
+        top: 6px;
+        transform: translateX(-50%);
         /* Reset transform for connector */
     }
 }

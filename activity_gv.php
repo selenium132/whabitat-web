@@ -66,6 +66,10 @@
                         </p>
                     </div>
 
+                    <p class="text-center" style="margin-top: 3rem; margin-bottom: 2rem; font-weight: bold; font-size: 1.1rem; color: var(--text-color);">
+                        GVの活動には、<span style="color: var(--primary-color);">Work</span>・<span style="color: var(--primary-color);">CA</span>・<span style="color: var(--primary-color);">SLEA</span>の3つの柱が存在します。
+                    </p>
+
                     <div class="three-pillars mt-5">
                         <div class="pillar-card">
                             <div class="pillar-icon"><i class="fas fa-hammer"></i></div>
