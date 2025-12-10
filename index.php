@@ -75,7 +75,7 @@
         <div class="container">
             <h2 class="section-title"><span>About Us</span></h2>
             <p style="text-align: center; max-width: 700px; margin: 0 auto 4rem; color: var(--text-light);">
-                WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の正式な学生支部です。<br>
+                WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の学生支部です。<br>
                 「誰もがきちんとした場所で暮らせる世界」を目指し、国内外で住居建築支援を行っています。
             </p>
 
