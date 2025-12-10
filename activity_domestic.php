@@ -242,7 +242,7 @@
                         <div class="domestic-content">
                             <span class="domestic-tag camp">Niigata</span>
                             <h4>寺泊</h4>
-                            <p>「求草里山再生プロジェクト」に参加し、竹林整備や地域観光の支援を行います。昨年度は竹や木を刈って神社周辺を整備し、地域の方とBBQで交流を深めました！</p>
+                            <p>「求草里山再生プロジェクト」に参加し、竹林整備や地域観光の支援を行います。竹や木を刈って神社周辺を整備したり、地域の方とBBQで交流を深めます。</p>
                         </div>
                     </div>
                     <div class="domestic-card">
