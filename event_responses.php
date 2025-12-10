@@ -69,10 +69,11 @@ function getStatusLabel($status) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
-            font-family: 'Roboto', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            font-family: 'Noto Sans JP', sans-serif;
             padding-bottom: 50px;
         }
         .header {
@@ -81,8 +82,8 @@ function getStatusLabel($status) {
             border-bottom: 1px solid #e0e0e0;
         }
         .container {
-            max-width: 900px; /* Wider for table/list */
-            margin: 40px auto;
+            max-width: 900px;
+            margin: 100px auto 40px;
             padding: 0 1rem;
         }
         .page-header {
@@ -92,37 +93,38 @@ function getStatusLabel($status) {
             align-items: center;
         }
         .event-title {
-            font-size: 24px;
-            font-weight: 500;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
         }
         
         .p-card {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
             margin-bottom: 16px;
-            padding: 20px;
+            padding: 24px;
         }
         
-        /* Table Style for Admin or Desktop */
+        /* Table Style */
         .res-table {
             width: 100%;
             border-collapse: collapse;
             background: white;
-            border-radius: 8px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-sm);
         }
         .res-table th, .res-table td {
-            padding: 12px 16px;
+            padding: 16px 20px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
         .res-table th {
-            background-color: #f1f3f4;
-            font-weight: 500;
-            color: #5f6368;
-            font-size: 14px;
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95rem;
         }
         .res-table tr:last-child td {
             border-bottom: none;
@@ -130,8 +132,8 @@ function getStatusLabel($status) {
         
         .status-badge {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 50px;
             font-size: 12px;
             font-weight: bold;
         }
@@ -141,16 +143,17 @@ function getStatusLabel($status) {
 
         .custom-ans-block {
             margin-top: 8px;
-            font-size: 13px;
-            color: #444;
-            background: #fafafa;
-            padding: 8px;
-            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
         }
         .q-label {
             font-weight: 600;
-            color: #666;
+            color: var(--primary-color);
             margin-right: 5px;
+            font-size: 0.85rem;
         }
 
     </style>
@@ -158,16 +161,17 @@ function getStatusLabel($status) {
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="dashboard.php" class="logo">WHABITAT</a>
+             <a href="dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
+                <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
+            </a>
         </div>
     </header>
 
     <div class="container">
         <div class="page-header">
             <div>
-                <a href="event_view.php?id=<?php echo $event['id']; ?>" style="text-decoration: none; color: #1967d2; font-size: 14px;">&lt; フォームに戻る</a>
                 <h1 class="event-title" style="margin-top: 5px;">回答一覧: <?php echo htmlspecialchars($event['title']); ?></h1>
-                <p style="color: #666; font-size: 14px;">参加予定者数: <?php echo count($participants); ?>名</p>
+                <p style="color: var(--text-light); font-size: 14px;">参加予定者数: <?php echo count($participants); ?>名</p>
             </div>
         </div>
 

@@ -238,6 +238,7 @@ if (!empty($my_attendance['response_data'])) {
             color: var(--accent-red);
         }
 
+    </style>
 </head>
 <body>
     <header class="header">
