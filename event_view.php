@@ -88,8 +88,8 @@ if (!empty($my_attendance['response_data'])) {
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            background-color: #f0ebf8;
-            font-family: 'Roboto', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            font-family: 'Noto Sans JP', sans-serif;
             padding-bottom: 50px;
         }
         .header {
@@ -99,160 +99,152 @@ if (!empty($my_attendance['response_data'])) {
         }
         .view-container {
             max-width: 640px;
-            margin: 40px auto;
+            margin: 100px auto 40px; /* Adjusted for fixed header */
             padding: 0 1rem;
         }
         
         /* Event Header Card */
         .header-card {
             background: white;
-            border-radius: 8px;
-            border-top: 10px solid rgb(103, 58, 183);
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            margin-bottom: 24px;
+            border-radius: 16px;
+            /* Removed purple top border */
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            text-align: center;
         }
         .event-title {
-            font-size: 32px;
-            margin-bottom: 10px;
-            font-weight: 400;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--primary-color);
         }
         .event-desc {
-            font-size: 14px;
-            color: #202124;
-            line-height: 1.5;
+            font-size: 1rem;
+            color: var(--text-color);
+            line-height: 1.8;
             white-space: pre-wrap;
+            margin-bottom: 1.5rem;
         }
         
         .submitted-msg {
             background: white;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-            margin-bottom: 24px;
-            border-left: 5px solid #0f9d58;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--accent-green);
         }
 
         /* Question Cards */
         .q-card {
             background: white;
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-            margin-bottom: 24px;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
         }
         .q-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 16px;
-            line-height: 1.4;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
         }
         .req-asterisk {
-            color: #d93025;
+            color: var(--accent-red);
             margin-left: 4px;
         }
 
         /* Inputs */
         .q-text-input {
             width: 100%;
-            border: none;
-            border-bottom: 1px solid #ddd;
-            padding: 8px 0;
-            font-size: 14px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
             outline: none;
-            transition: 0.2s;
+            transition: 0.3s;
+            background: #f9f9f9;
         }
         .q-text-input:focus {
-            border-bottom: 2px solid rgb(103, 58, 183);
-            background: #fafafa;
+            border-color: var(--accent-blue);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
         .option-label {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             cursor: pointer;
-            font-size: 14px;
-            color: #202124;
+            font-size: 1rem;
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .option-label:hover {
+            background-color: #f5f5f5;
         }
         .option-label input {
             margin-right: 12px;
-            accent-color: rgb(103, 58, 183);
-            transform: scale(1.2);
+            accent-color: var(--accent-blue); /* Site accent color */
+            transform: scale(1.1);
         }
 
         .select-input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            font-size: 14px;
-            background: white;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f9f9f9;
+        }
+        .select-input:focus {
+            border-color: var(--accent-blue);
+            outline: none;
         }
 
         .btn-submit {
-            background-color: rgb(103, 58, 183);
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 24px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
             float: left;
+            box-shadow: var(--shadow-md);
+            transition: 0.3s;
         }
         .btn-submit:hover {
-            background-color: rgb(85, 45, 160);
+            background-color: #1a252f;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
         
         .btn-clear {
             float: right;
-            color: rgb(103, 58, 183);
+            color: var(--text-light);
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 0.9rem;
             font-weight: 500;
+            padding: 12px;
+        }
+        .btn-clear:hover {
+            color: var(--accent-red);
         }
 
-        /* Participant List Section */
-        .participants-section {
-            max-width: 640px;
-            margin: 60px auto 20px;
-            padding: 0 1rem;
-        }
-        .p-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .p-avatar {
-            width: 40px;
-            height: 40px;
-            background: rgb(103, 58, 183);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        .admin-details {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 4px;
-        }
-    </style>
 </head>
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="dashboard.php" class="logo">WHABITAT</a>
+            <a href="dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
+                <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
+            </a>
         </div>
     </header>
 
