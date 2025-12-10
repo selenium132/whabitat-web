@@ -86,6 +86,7 @@ if (!empty($my_attendance['response_data'])) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
             background-color: var(--bg-color);
@@ -263,6 +264,17 @@ if (!empty($my_attendance['response_data'])) {
                     <strong>開催日時:</strong> <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?><br>
                     <span style="color: #d93025;">* 必須</span>
                 </div>
+                
+                <?php if ($is_admin): ?>
+                    <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; display: flex; justify-content: center; gap: 15px;">
+                        <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.9rem; padding: 8px 20px;">
+                            <i class="far fa-edit"></i> 編集
+                        </a>
+                        <a href="event_delete.php?id=<?php echo $event['id']; ?>" class="btn-danger" style="font-size: 0.9rem; padding: 8px 20px;" onclick="return confirm('本当に削除しますか？\n回答データも全て削除されます。');">
+                            <i class="far fa-trash-alt"></i> 削除
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <?php if ($my_attendance): ?>

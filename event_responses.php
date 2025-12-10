@@ -172,6 +172,17 @@ function getStatusLabel($status) {
             <div>
                 <h1 class="event-title" style="margin-top: 5px;">回答一覧: <?php echo htmlspecialchars($event['title']); ?></h1>
                 <p style="color: var(--text-light); font-size: 14px;">参加予定者数: <?php echo count($participants); ?>名</p>
+                
+                <?php if ($is_admin): ?>
+                    <div style="margin-top: 10px;">
+                        <a href="event_create.php?id=<?php echo $event['id']; ?>" style="color: #666; font-size: 14px; text-decoration: underline; margin-right: 15px;">
+                            イベントを編集
+                        </a>
+                        <a href="event_delete.php?id=<?php echo $event['id']; ?>" style="color: #d93025; font-size: 14px; text-decoration: underline;" onclick="return confirm('本当に削除しますか？');">
+                            削除
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 

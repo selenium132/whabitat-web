@@ -8,23 +8,46 @@ if ($_SESSION['role'] !== 'admin') {
     exit;
 }
 
+$edit_mode = false;
+$event_data = null;
+$event_id = $_GET['id'] ?? null;
+
+// Handle Edit Mode - Fetch Data
+if ($event_id) {
+    $pdo = getDB();
+    $stmt = $pdo->prepare("SELECT * FROM events WHERE id = ?");
+    $stmt->execute([$event_id]);
+    $event_data = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($event_data) {
+        $edit_mode = true;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'] ?? '無題のイベント';
     $description = $_POST['description'] ?? '';
-    $event_date = $_POST['event_date'] ?? date('Y-m-d H:i:s'); // Default to now if not set
-    $form_schema = $_POST['form_schema'] ?? '[]'; // JSON string
+    $event_date = $_POST['event_date'] ?? date('Y-m-d H:i:s');
+    $form_schema = $_POST['form_schema'] ?? '[]';
+    $target_id = $_POST['event_id'] ?? null;
 
     if ($title) {
         $pdo = getDB();
-        // Check if column exists (optional safety, or just assume migration ran)
-        // We assume 'form_schema' column exists in 'events' table
         
-        $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema) VALUES (?, ?, ?, ?, ?)");
-        if ($stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema])) {
+        if ($target_id) {
+            // Update
+            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ? WHERE id = ?");
+            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $target_id]);
+        } else {
+            // Insert
+            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema) VALUES (?, ?, ?, ?, ?)");
+            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema]);
+        }
+
+        if ($res) {
             header("Location: dashboard.php");
             exit;
         } else {
-            $error = '作成に失敗しました。';
+            $error = '保存に失敗しました。';
         }
     }
 }
@@ -351,13 +374,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <form id="mainForm" method="POST" action="">
         <input type="hidden" name="form_schema" id="form_schema_input">
+        <?php if ($edit_mode): ?>
+            <input type="hidden" name="event_id" value="<?php echo $event_data['id']; ?>">
+        <?php endif; ?>
         
         <header class="header">
             <div class="header-inner" style="position: relative;">
                 <a href="dashboard.php" class="logo">WHABITAT <span style="font-size: 14px; color: #5f6368; font-weight: normal; margin-left: 10px;">Create Form</span></a>
                 
                 <div class="action-bar">
-                    <button type="button" class="btn-save" onclick="saveForm()">作成 (Save)</button>
+                    <button type="button" class="btn-save" onclick="saveForm()"><?php echo $edit_mode ? '更新 (Update)' : '作成 (Save)'; ?></button>
                     <a href="dashboard.php" style="margin-left: 10px; text-decoration: none; color: #5f6368; display: flex; align-items: center; padding: 0 10px;">キャンセル</a>
                 </div>
             </div>
@@ -367,12 +393,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <!-- Form Title Card -->
             <div class="title-card">
-                <input type="text" name="title" id="form-title" class="title-input" placeholder="無題のフォーム" value="新規イベント参加フォーム" required>
-                <input type="text" name="description" id="form-desc" class="desc-input" placeholder="フォームの説明" value="">
+                <input type="text" name="title" id="form-title" class="title-input" placeholder="無題のフォーム" value="<?php echo $edit_mode ? htmlspecialchars($event_data['title']) : '新規イベント参加フォーム'; ?>" required>
+                <input type="text" name="description" id="form-desc" class="desc-input" placeholder="フォームの説明" value="<?php echo $edit_mode ? htmlspecialchars($event_data['description']) : ''; ?>">
                 
                 <!-- Extra fields for Events table -->
                 <div class="meta-info">
-                   <label style="font-size: 0.8rem;">開催日時: <input type="datetime-local" name="event_date" required style="border:1px solid #ddd; padding: 4px; border-radius: 4px;"></label>
+                   <label style="font-size: 0.8rem;">開催日時: <input type="datetime-local" name="event_date" value="<?php echo $edit_mode ? date('Y-m-d\TH:i', strtotime($event_data['event_date'])) : ''; ?>" required style="border:1px solid #ddd; padding: 4px; border-radius: 4px;"></label>
                 </div>
             </div>
 
@@ -401,11 +427,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // We track questions in DOM primarily, but assign IDs
         let questionIdCounter = 0;
 
-        // Initialize with one question
+        // Existing Schema
+        const existingSchema = <?php echo ($edit_mode && !empty($event_data['form_schema'])) ? $event_data['form_schema'] : '[]'; ?>;
+
+        // Initialize with one question or existing
         window.onload = () => {
-             addQuestion('radio'); 
+             if (existingSchema.length > 0) {
+                 existingSchema.forEach(q => {
+                     restoreQuestion(q);
+                 });
+             } else {
+                 addQuestion('radio'); 
+             }
         };
 
+
+        function restoreQuestion(qData) {
+            questionIdCounter++;
+            const id = questionIdCounter;
+            const type = qData.type;
+            
+            const newQ = createQuestionElement(id, type);
+            container.appendChild(newQ);
+            
+            // Set Values
+            const card = document.getElementById(`q-${id}`);
+            card.querySelector('.q-text-input').value = qData.title;
+            
+            // Render Content first to have inputs
+            renderContent(id, type, qData.options); // Pass options to render
+            
+            // Required toggle
+            if (qData.required) {
+                // It defaults to false, so toggle it
+                toggleRequired(id);
+            }
+        }
+        
         function createQuestionElement(id, initialType = 'radio') {
             const div = document.createElement('div');
             div.className = 'question-card active';
@@ -414,6 +472,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             div.onclick = (e) => {
                 // Prevent triggering when clicking inputs (to avoid re-focusing weirdness if needed)
                 if(e.target.tagName !== 'INPUT') setActive(id);
+                // Also prevent if clicking delete/copy
             };
             
             div.innerHTML = `
@@ -463,7 +522,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             renderContent(id, newType);
         }
 
-        function renderContent(id, type) {
+        function renderContent(id, type, existingOptions = []) {
             const contentDiv = document.getElementById(`q-content-${id}`);
             // Save existing options if converting between list types? 
             // For simplicity, we clear and re-init for now, unless we want to be fancy.
@@ -478,8 +537,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 listContainer.className = 'options-list';
                 contentDiv.appendChild(listContainer);
 
-                // Add initial option
-                addOption(id, type, 'オプション 1');
+                // Add existing options or initial one
+                if (existingOptions.length > 0) {
+                    existingOptions.forEach(opt => {
+                        addOption(id, type, opt);
+                    });
+                } else {
+                    addOption(id, type, 'オプション 1');
+                }
 
                 // "Add Option" link
                 const addLink = document.createElement('div');
