@@ -361,28 +361,12 @@ if (!empty($my_attendance['response_data'])) {
             </div>
 
         </form>
-    </div>
 
-    <!-- Participants List for Member Visibility -->
-    <div class="participants-section">
-        <h3 style="margin-bottom: 20px; color: #5f6368;">参加予定者 (<?php echo count($participants); ?>名)</h3>
-        <?php foreach ($participants as $p): ?>
-            <div class="p-card">
-                <div class="p-avatar"><?php echo mb_substr($p['name'], 0, 1); ?></div>
-                <div style="flex-grow: 1;">
-                    <div style="font-weight: 500; font-size: 16px;"><?php echo htmlspecialchars($p['name']); ?></div>
-                    <?php if ($p['comment']): ?>
-                        <div style="font-size: 14px; color: #444; margin-top: 4px;">"<?php echo htmlspecialchars($p['comment']); ?>"</div>
-                    <?php endif; ?>
-                    
-                    <?php if ($is_admin): ?>
-                        <div class="admin-details">
-                            Grade: <?php echo htmlspecialchars($p['grade']); ?> / LINE: <?php echo htmlspecialchars($p['line_name']); ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
+        <div style="text-align: right; margin-top: 10px;">
+            <a href="event_responses.php?id=<?php echo $event_id; ?>" style="color: #1967d2; text-decoration: none; font-size: 14px;">
+                <i class="fas fa-list"></i> みんなの回答を見る
+            </a>
+        </div>
     </div>
 
     <script>

@@ -75,9 +75,14 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                             <h3 style="margin: 0.5rem 0 0; font-size: 1.3rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
-                        <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 0.5rem 1.5rem;">
-                            詳細・回答
-                        </a>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-size: 14px;">
+                                回答する
+                            </a>
+                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-size: 14px;">
+                                回答状況
+                            </a>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -96,9 +101,11 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                             <h3 style="margin: 0.2rem 0 0; font-size: 1.1rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
-                        <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 1rem;">
-                            確認
-                        </a>
+                        <div style="display: flex; gap: 5px;">
+                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 1rem;">
+                                回答一覧
+                            </a>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>

@@ -368,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Form Title Card -->
             <div class="title-card">
                 <input type="text" name="title" id="form-title" class="title-input" placeholder="無題のフォーム" value="新規イベント参加フォーム" required>
-                <input type="text" name="description" id="form-desc" class="desc-input" placeholder="フォームの説明" value="イベントの詳細や参加に関する情報をここに入力します。">
+                <input type="text" name="description" id="form-desc" class="desc-input" placeholder="フォームの説明" value="">
                 
                 <!-- Extra fields for Events table -->
                 <div class="meta-info">
