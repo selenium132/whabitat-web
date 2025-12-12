@@ -75,13 +75,17 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                             <h3 style="margin: 0.5rem 0 0; font-size: 1.3rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
-                        <div style="display: flex; gap: 10px;">
                             <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-size: 14px;">
                                 回答する
                             </a>
                             <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-size: 14px;">
                                 回答状況
                             </a>
+                            <?php if ($_SESSION['role'] === 'admin'): ?>
+                                <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 0.5rem 1rem; font-size: 14px;" title="編集">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -264,14 +264,6 @@ if (!empty($my_attendance['response_data'])) {
                     <strong>開催日時:</strong> <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?><br>
                     <span style="color: #d93025;">* 必須</span>
                 </div>
-                
-                <?php if ($is_admin): ?>
-                    <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; display: flex; justify-content: center; gap: 15px;">
-                        <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.9rem; padding: 8px 20px;">
-                            <i class="far fa-edit"></i> 編集
-                        </a>
-                    </div>
-                <?php endif; ?>
             </div>
 
             <?php if ($my_attendance): ?>
