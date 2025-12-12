@@ -38,7 +38,7 @@ $stmt = $pdo->prepare("
     FROM attendance a 
     JOIN users u ON a.user_id = u.id 
     WHERE a.event_id = ? 
-    ORDER BY a.created_at DESC
+    ORDER BY a.updated_at DESC
 ");
 $stmt->execute([$event_id]);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -56,7 +56,7 @@ $output = fopen('php://output', 'w');
 fwrite($output, "\xEF\xBB\xBF");
 
 // 4. Build Header Row
-$headerRow = ['ID', '名前', '回答日時'];
+$headerRow = ['ID', '名前', '更新日時']; // Header changed to Updated At
 foreach ($question_titles as $qt) {
     $headerRow[] = $qt;
 }
@@ -67,11 +67,11 @@ foreach ($rows as $row) {
     $csvRow = [
         $row['id'],
         $row['user_name'],
-        $row['created_at']
+        $row['updated_at'] // Use updated_at
     ];
 
     // Parse JSON Answers
-    $answers = json_decode($row['answers'] ?? '[]', true);
+    $answers = json_decode($row['response_data'] ?? '[]', true);
     
     // Map answers to schema order
     // Note: This relies on the schema order not changing significantly, 
