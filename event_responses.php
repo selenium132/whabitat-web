@@ -192,10 +192,10 @@ function getStatusLabel($status) {
                         <th style="width: 150px;">名前</th>
                         <th style="width: 60px;">学年</th>
                         <th style="width: 80px;">ステータス</th>
-                        <th>回答内容</th>
                         <?php if ($is_admin): ?>
-                            <th style="width: 100px;">学籍番号</th>
-                            <th style="width: 120px;">LINE名</th>
+                            <th style="background-color: #f0f4f8;">回答内容 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
+                            <th style="width: 100px; background-color: #f0f4f8;">学籍番号 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
+                            <th style="width: 120px; background-color: #f0f4f8;">LINE名 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -213,36 +213,36 @@ function getStatusLabel($status) {
                                     <?php echo getStatusLabel($p['status']); ?>
                                 </span>
                             </td>
-                            <td>
-                                <?php if ($p['comment']): ?>
-                                    <div style="font-style: italic; margin-bottom: 5px;">"<?php echo htmlspecialchars($p['comment']); ?>"</div>
-                                <?php endif; ?>
+                            <?php if ($is_admin): ?>
+                                <td>
+                                    <?php if ($p['comment']): ?>
+                                        <div style="font-style: italic; margin-bottom: 5px;">"<?php echo htmlspecialchars($p['comment']); ?>"</div>
+                                    <?php endif; ?>
 
-                                <?php 
-                                    if (!empty($p['response_data'])) {
-                                        $ans = json_decode($p['response_data'], true);
-                                        if ($ans) {
-                                            foreach ($ans as $idx => $val) {
-                                                // Find question title from schema if possible
-                                                $qTitle = "Q".($idx+1); 
-                                                // Try to match index to schema
-                                                if (isset($form_schema[$idx]['title'])) {
-                                                     $qTitle = $form_schema[$idx]['title'];
+                                    <?php 
+                                        if (!empty($p['response_data'])) {
+                                            $ans = json_decode($p['response_data'], true);
+                                            if ($ans) {
+                                                foreach ($ans as $idx => $val) {
+                                                    // Find question title from schema if possible
+                                                    $qTitle = "Q".($idx+1); 
+                                                    // Try to match index to schema
+                                                    if (isset($form_schema[$idx]['title'])) {
+                                                         $qTitle = $form_schema[$idx]['title'];
+                                                    }
+                                                    
+                                                    $displayVal = $val;
+                                                    if (is_array($val)) $displayVal = implode(', ', $val);
+                                                    
+                                                    echo '<div class="custom-ans-block">';
+                                                    echo '<span class="q-label">' . htmlspecialchars($qTitle) . ':</span>';
+                                                    echo htmlspecialchars($displayVal);
+                                                    echo '</div>';
                                                 }
-                                                
-                                                $displayVal = $val;
-                                                if (is_array($val)) $displayVal = implode(', ', $val);
-                                                
-                                                echo '<div class="custom-ans-block">';
-                                                echo '<span class="q-label">' . htmlspecialchars($qTitle) . ':</span>';
-                                                echo htmlspecialchars($displayVal);
-                                                echo '</div>';
                                             }
                                         }
-                                    }
-                                ?>
-                            </td>
-                            <?php if ($is_admin): ?>
+                                    ?>
+                                </td>
                                 <td><?php echo htmlspecialchars($p['student_id']); ?></td>
                                 <td><?php echo htmlspecialchars($p['line_name']); ?></td>
                             <?php endif; ?>
