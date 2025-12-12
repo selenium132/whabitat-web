@@ -22,6 +22,27 @@ if ($user && $user['is_approved']) {
     header("Location: dashboard.php");
     exit;
 }
+
+// Handle Secret Keyword
+$error_msg = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
+    $input_keyword = trim($_POST['secret_keyword']);
+    // Hardcoded secret keyword for temporary mass registration
+    if ($input_keyword === 'whabitathome2026') {
+        // Approve User
+        $update_stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
+        $update_stmt->execute([$_SESSION['user_id']]);
+        
+        // Update Session
+        $_SESSION['is_approved'] = 1;
+        
+        // Redirect to Profile Registration
+        header("Location: register_profile.php");
+        exit;
+    } else {
+        $error_msg = '合言葉が間違っています。';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -32,6 +53,29 @@ if ($user && $user['is_approved']) {
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .divider-or {
+            display: flex;
+            align-items: center;
+            color: #999;
+            margin: 2rem 0;
+            font-size: 0.9rem;
+        }
+        .divider-or::before, .divider-or::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+        .divider-or::before { margin-right: 10px; }
+        .divider-or::after { margin-left: 10px; }
+        
+        .secret-form {
+            background-color: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -52,6 +96,26 @@ if ($user && $user['is_approved']) {
                     現在、管理者の承認待ちです。<br>
                     管理者があなたのアカウントを確認し、承認するまで<br>しばらくお待ちください。
                 </p>
+                
+                <div class="divider-or">または</div>
+                
+                <div class="secret-form">
+                    <p style="margin-bottom: 1rem; font-weight: 600; color: var(--primary-color);">合言葉をお持ちの方はこちら</p>
+                    
+                    <?php if ($error_msg): ?>
+                        <div style="color: #d93025; font-size: 0.9rem; margin-bottom: 10px;">
+                            <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error_msg); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <form method="POST" action="">
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <input type="text" name="secret_keyword" placeholder="合言葉を入力" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; flex: 1; max-width: 250px;" required>
+                            <button type="submit" class="btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">送信</button>
+                        </div>
+                    </form>
+                </div>
+
                 <a href="logout.php" class="btn-secondary">ログアウト</a>
             </div>
         </div>
