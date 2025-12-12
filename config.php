@@ -23,6 +23,7 @@ define('LINE_CALLBACK_URL', 'https://whabitathome.com/v2/callback.php'); // Upda
 
 // LINE Messaging API (Bot) Configuration
 define('LINE_BOT_ACCESS_TOKEN', 'XfDWPXXjPtI7VNVP5tbaUAEnwyxCBaDIaZtwiqZ+2cbmhOI4/CRzlsQQBQqdvHkSr9EXTcM90UQJwa2C8h0AcqI3HVpacr7HdqT4yEJ8mfY6XvGrSxT9xad9aftOPxplReoWpt7ex+BrkohL20yeegdB04t89/1O/w1cDnyilFU=');
+define('LINE_BOT_CHANNEL_SECRET', 'YOUR_BOT_CHANNEL_SECRET'); // Add this! Must be different from Login Secret
 
 // Start Session
 session_start();

@@ -16,9 +16,9 @@ if (empty($signature) || empty($input)) {
 }
 
 // HMAC-SHA256 signature validation
-$hash = base64_encode(hash_hmac('sha256', $input, LINE_CHANNEL_SECRET, true));
+$hash = base64_encode(hash_hmac('sha256', $input, LINE_BOT_CHANNEL_SECRET, true));
 if (!hash_equals($hash, $signature)) {
-    file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Error: Signature mismatch. Config Secret: " . substr(LINE_CHANNEL_SECRET, 0, 5) . "...\n", FILE_APPEND);
+    file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Error: Signature mismatch. Config Secret: " . substr(LINE_BOT_CHANNEL_SECRET, 0, 5) . "...\n", FILE_APPEND);
     http_response_code(400);
     exit;
 }
