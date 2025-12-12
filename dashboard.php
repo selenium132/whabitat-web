@@ -30,7 +30,9 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
             <div class="user-menu">
-                <span class="user-name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'Guest'); ?> さん</span>
+                <a href="logout.php" class="header-logout-btn" title="ログアウト">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
             </div>
         </div>
     </header>
@@ -54,9 +56,6 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <i class="fas fa-envelope"></i> お問い合わせ
                         </a>
                     <?php endif; ?>
-                    <a href="logout.php" class="btn-secondary">
-                        <i class="fas fa-sign-out-alt"></i> ログアウト
-                    </a>
                 </div>
             </div>
 

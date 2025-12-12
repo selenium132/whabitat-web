@@ -479,30 +479,36 @@ textarea:focus {
     line-height: 1.2;
 }
 
-margin: 0;
-line-height: 1.2;
+/* Header Logout Icon */
+.header-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    transition: all 0.3s;
+}
+
+.header-logout-btn:hover {
+    background-color: var(--accent-red);
+    color: white;
+    transform: translateY(-2px);
 }
 
 .welcome-actions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    /* 2 columns of buttons */
-    gap: 10px;
-    max-width: 500px;
-    /* Constrain width to keep them tight */
-    margin-left: auto;
-    /* Push to right */
-}
-
-/* Ensure single child (Logout only) looks okay */
-.welcome-actions:has(> a:only-child) {
     display: flex;
+    /* Changed from grid to flex for better 3-item handling */
+    gap: 10px;
+    flex-wrap: wrap;
+    max-width: 600px;
     justify-content: flex-end;
 }
 
-/* Fallback for older browsers if needed, but modern CSS is expected. 
-   If :has isn't supported, the grid with 1 item still works (it just takes 1 cell). 
-*/
+/* Grid was causing issues with odd number of items. Flex wrap is robust. */
 
 /* Event Info */
 .event-info {
