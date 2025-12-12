@@ -190,10 +190,12 @@ function getStatusLabel($status) {
                 <thead>
                     <tr>
                         <th style="width: 150px;">名前</th>
+                        <th style="width: 60px;">学年</th>
                         <th style="width: 80px;">ステータス</th>
                         <th>回答内容</th>
                         <?php if ($is_admin): ?>
-                            <th style="width: 120px;">詳細 (Admin)</th>
+                            <th style="width: 100px;">学籍番号</th>
+                            <th style="width: 120px;">LINE名</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -202,6 +204,9 @@ function getStatusLabel($status) {
                         <tr>
                             <td>
                                 <strong><?php echo htmlspecialchars($p['name']); ?></strong>
+                            </td>
+                            <td>
+                                <?php echo htmlspecialchars($p['grade']); ?>
                             </td>
                             <td>
                                 <span class="status-badge status-<?php echo htmlspecialchars($p['status']); ?>">
@@ -221,7 +226,6 @@ function getStatusLabel($status) {
                                                 // Find question title from schema if possible
                                                 $qTitle = "Q".($idx+1); 
                                                 // Try to match index to schema
-                                                // Schema is array of objects. We used index as key.
                                                 if (isset($form_schema[$idx]['title'])) {
                                                      $qTitle = $form_schema[$idx]['title'];
                                                 }
@@ -239,11 +243,8 @@ function getStatusLabel($status) {
                                 ?>
                             </td>
                             <?php if ($is_admin): ?>
-                                <td style="font-size: 12px; color: #666;">
-                                    <?php echo htmlspecialchars($p['student_id']); ?><br>
-                                    <?php echo htmlspecialchars($p['grade']); ?><br>
-                                    <?php echo htmlspecialchars($p['line_name']); ?>
-                                </td>
+                                <td><?php echo htmlspecialchars($p['student_id']); ?></td>
+                                <td><?php echo htmlspecialchars($p['line_name']); ?></td>
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
