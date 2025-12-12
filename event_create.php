@@ -114,7 +114,6 @@ if ($edit_mode) {
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <!-- ... Head ... -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>フォーム作成 | WHABITAT</title>
@@ -122,7 +121,6 @@ if ($edit_mode) {
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* ... Existing Styles ... */
         body {
             background-color: var(--bg-color);
             font-family: 'Noto Sans JP', sans-serif;
@@ -222,53 +220,12 @@ if ($edit_mode) {
             padding: 0.5rem 1rem; /* Compact padding */
             margin-top: 10px;
         }
-        .admin-selection-details summary {
-            font-weight: 600;
-            cursor: pointer;
-            padding: 0.5rem 0;
-            color: var(--text-color);
-            list-style: none; /* Hide default triangle in some browsers */
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .admin-selection-details summary::-webkit-details-marker {
-            display: none;
-        }
-        .admin-selection-details summary::after {
-            content: '\f078'; /* FontAwesome chevron down */
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            font-size: 0.8rem;
-            transition: transform 0.2s;
-            margin-left: auto;
-        }
-        .admin-selection-details[open] summary::after {
-            transform: rotate(180deg);
-        }
-
         .admin-checkbox-list {
             margin-top: 10px;
             max-height: 300px;
             overflow-y: auto;
             border-top: 1px solid #eee;
             padding-top: 10px;
-        }
-        .grade-group {
-            margin-bottom: 15px;
-        }
-        .grade-header {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            font-weight: 700;
-            margin-bottom: 5px;
-            padding-bottom: 2px;
-            border-bottom: 1px solid #eee;
-        }
-        .grade-users {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 8px;
         }
         .admin-checkbox-item {
             display: flex;
@@ -287,83 +244,6 @@ if ($edit_mode) {
             cursor: pointer;
             accent-color: var(--primary-color);
         }
-    </style>
-</head>
-<body>
-    <!-- ... -->
-    <form id="mainForm" method="POST" action="">
-        <!-- inputs ... -->
-        <input type="hidden" name="form_schema" id="form_schema_input">
-        <?php if ($edit_mode): ?>
-            <input type="hidden" name="event_id" value="<?php echo $event_data['id']; ?>">
-        <?php endif; ?>
-        
-        <header class="header">
-           <!-- ... header content ... -->
-           <div class="header-inner">
-                <a href="dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
-                    <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
-                </a>
-                
-                <div class="action-bar">
-                    <?php if ($edit_mode): ?>
-                         <a href="event_delete.php?id=<?php echo $event_data['id']; ?>" class="icon-btn" style="color: #d93025; text-decoration: none; margin-right: 15px;" onclick="return confirm('本当に削除しますか？\nこの操作は取り消せません。');" title="イベントを削除">
-                            <i class="far fa-trash-alt"></i>
-                        </a>
-                    <?php endif; ?>
-                    
-                    <button type="button" class="btn-save" onclick="saveForm()"><?php echo $edit_mode ? '更新 (Update)' : '作成 (Save)'; ?></button>
-                </div>
-            </div>
-        </header>
-
-        <div class="form-builder-container">
-            
-            <!-- Form Title Card -->
-            <div class="title-card">
-                <input type="text" name="title" id="form-title" class="title-input" placeholder="無題のフォーム" value="<?php echo $edit_mode ? htmlspecialchars($event_data['title']) : '新規イベント参加フォーム'; ?>" required>
-                <input type="text" name="description" id="form-desc" class="desc-input" placeholder="フォームの説明" value="<?php echo $edit_mode ? htmlspecialchars($event_data['description']) : ''; ?>">
-                
-                <!-- Extra fields for Events table -->
-                <div class="meta-info">
-                    <div class="meta-row">
-                        <label style="font-weight: 600;">開催日時:</label>
-                        <input type="datetime-local" name="event_date" value="<?php echo $edit_mode ? date('Y-m-d\TH:i', strtotime($event_data['event_date'])) : ''; ?>" required>
-                    </div>
-                    
-                    <!-- Admin Selection -->
-                    <div class="admin-selection-area">
-                        <details class="admin-selection-details">
-                            <summary>
-                                <span><i class="fas fa-user-shield"></i> イベント管理者設定</span>
-                            </summary>
-                            
-                            <div class="admin-checkbox-list">
-                                <?php if (empty($users_by_grade)): ?>
-                                    <div style="color: #999; padding: 10px;">追加可能なメンバーがいません</div>
-                                <?php else: ?>
-                                    <?php foreach ($users_by_grade as $grade => $users): ?>
-                                        <div class="grade-group">
-                                            <div class="grade-header"><?php echo htmlspecialchars($grade); ?></div>
-                                            <div class="grade-users">
-                                                <?php foreach ($users as $user): ?>
-                                                    <?php 
-                                                        $checked = in_array($user['id'], $current_admins) ? 'checked' : '';
-                                                    ?>
-                                                    <label class="admin-checkbox-item">
-                                                        <input type="checkbox" name="event_admins[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?>>
-                                                        <?php echo htmlspecialchars($user['name']); ?>
-                                                    </label>
-                                                <?php endforeach; ?>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </div>
-                        </details>
-                    </div>
-                </div>
-            </div>
 
         /* Question Cards */
         .question-card {
@@ -666,7 +546,6 @@ if ($edit_mode) {
                 <input type="text" name="title" id="form-title" class="title-input" placeholder="無題のフォーム" value="<?php echo $edit_mode ? htmlspecialchars($event_data['title']) : '新規イベント参加フォーム'; ?>" required>
                 <input type="text" name="description" id="form-desc" class="desc-input" placeholder="フォームの説明" value="<?php echo $edit_mode ? htmlspecialchars($event_data['description']) : ''; ?>">
                 
-                <!-- Extra fields for Events table -->
                 <!-- Extra fields for Events table -->
                 <div class="meta-info">
                     <div class="meta-row">
