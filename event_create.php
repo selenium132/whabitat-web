@@ -43,7 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($title) {
         $pdo = getDB();
         
-                // Update
+        if ($target_id) {
+            // Update
             $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ? WHERE id = ?");
             $res = $stmt->execute([$title, $description, $event_date, $form_schema, $target_id]);
             $event_id_final = $target_id;
