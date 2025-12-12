@@ -34,7 +34,7 @@ if (is_array($schema)) {
 
 // 2. Fetch Attendance Data
 $stmt = $pdo->prepare("
-    SELECT a.*, u.name as user_name, u.email 
+    SELECT a.*, u.name as user_name 
     FROM attendance a 
     JOIN users u ON a.user_id = u.id 
     WHERE a.event_id = ? 
@@ -56,7 +56,7 @@ $output = fopen('php://output', 'w');
 fwrite($output, "\xEF\xBB\xBF");
 
 // 4. Build Header Row
-$headerRow = ['ID', '名前', 'メールアドレス', '回答日時'];
+$headerRow = ['ID', '名前', '回答日時'];
 foreach ($question_titles as $qt) {
     $headerRow[] = $qt;
 }
@@ -67,7 +67,6 @@ foreach ($rows as $row) {
     $csvRow = [
         $row['id'],
         $row['user_name'],
-        $row['email'],
         $row['created_at']
     ];
 
