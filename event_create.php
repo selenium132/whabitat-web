@@ -458,11 +458,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Questions Container -->
             <div id="questions-container"></div>
 
-            <!-- Floating Sidebar -->
-            <div class="floating-menu">
-                <div class="float-btn add-q" onclick="addQuestion()" title="質問を追加">
-                    <i class="fas fa-plus-circle"></i>
-                </div>
+            <!-- Add Question Button Area -->
+            <div style="text-align: center; margin-top: 20px; padding-bottom: 30px;">
+                <button type="button" class="btn-secondary" onclick="addQuestion()" style="border-radius: 50px; padding: 12px 30px; font-weight: 600; font-size: 1rem; box-shadow: var(--shadow-sm); display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-plus-circle" style="color: var(--primary-color);"></i> 質問を追加
+                </button>
             </div>
 
         </div>
