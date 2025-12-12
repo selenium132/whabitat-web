@@ -379,11 +379,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transform: translateY(-2px);
         }
         
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         /* Action Bar (Top Right) */
         .action-bar {
-            position: absolute;
-            right: 20px;
-            top: 15px;
             display: flex;
             align-items: center;
             gap: 15px;
@@ -418,7 +425,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
         
         <header class="header">
-            <div class="header-inner" style="position: relative;">
+            <div class="header-inner">
                 <a href="dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
                     <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
                 </a>
@@ -455,13 +462,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="floating-menu">
                 <div class="float-btn add-q" onclick="addQuestion()" title="質問を追加">
                     <i class="fas fa-plus-circle"></i>
-                </div>
-                <!-- Other buttons can act as placeholders or future features -->
-                <div class="float-btn" title="画像を挿入 (未実装)">
-                    <i class="far fa-image"></i>
-                </div>
-                <div class="float-btn" title="動画を追加 (未実装)">
-                    <i class="fab fa-youtube"></i>
                 </div>
             </div>
 

@@ -73,8 +73,10 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <i class="far fa-calendar-alt"></i> 
                                 <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?>
                             </div>
+                            </div>
                             <h3 style="margin: 0.5rem 0 0; font-size: 1.3rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
+                        <div style="display: flex; gap: 10px;">
                             <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-size: 14px;">
                                 回答する
                             </a>
