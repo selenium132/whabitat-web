@@ -39,6 +39,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->execute([$new_role, $target_id]);
                 }
             }
+        } elseif ($action === 'update_profile') {
+            // Admin Update Profile
+            $name = $_POST['name'] ?? '';
+            $sid = $_POST['student_id'] ?? '';
+            $grade = $_POST['grade'] ?? '';
+            
+            if ($name && $sid && $grade) {
+                $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ? WHERE id = ?");
+                $stmt->execute([$name, $sid, $grade, $target_id]);
+            }
         }
     }
 }
@@ -60,9 +70,29 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
         function confirmAction(message) {
-            return confirm(message);
+        // Modal Logic
+        function openEditModal(id, name, sid, grade) {
+            document.getElementById('edit_user_id').value = id;
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_sid').value = sid;
+            document.getElementById('edit_grade').value = grade;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
         }
     </script>
+    <style>
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -119,6 +149,11 @@ $csrf_token = generateCsrfToken();
                                     <td>
                                         <?php if ($m['id'] != $_SESSION['user_id']): ?>
                                             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                                <button type="button" class="btn-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;" 
+                                                    onclick="openEditModal('<?php echo $m['id']; ?>', '<?php echo htmlspecialchars($m['name'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['student_id'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['grade'], ENT_QUOTES); ?>')">
+                                                    編集
+                                                </button>
+
                                                 <?php if (!$m['is_approved']): ?>
                                                     <form method="POST" style="display: inline;">
                                                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
@@ -166,5 +201,39 @@ $csrf_token = generateCsrfToken();
             </div>
         </div>
     </main>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay" onclick="if(event.target === this) closeEditModal()">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem; text-align: center;">メンバー情報を編集</h2>
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                <input type="hidden" name="user_id" id="edit_user_id">
+                <input type="hidden" name="action" value="update_profile">
+
+                <div class="form-group">
+                    <label class="form-label">お名前</label>
+                    <input type="text" name="name" id="edit_name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">学籍番号</label>
+                    <input type="text" name="student_id" id="edit_sid" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">代（学年）</label>
+                    <select name="grade" id="edit_grade" class="form-select" required>
+                        <?php foreach (AVAILABLE_GRADES as $g): ?>
+                            <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                    <button type="button" class="btn-secondary" onclick="closeEditModal()" style="flex: 1;">キャンセル</button>
+                    <button type="submit" class="btn-primary" style="flex: 1;">更新</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

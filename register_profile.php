@@ -27,6 +27,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $csrf_token = generateCsrfToken();
+
+// Fetch current data for pre-filling
+$current_user = [];
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $pdo = getDB();
+    $stmt = $pdo->prepare("SELECT name, student_id, grade FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $current_user = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+// Use POST data if available (e.g. after error), otherwise DB data, otherwise empty
+$name_val = $_POST['name'] ?? $current_user['name'] ?? '';
+$sid_val = $_POST['student_id'] ?? $current_user['student_id'] ?? '';
+$grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -60,22 +74,22 @@ $csrf_token = generateCsrfToken();
                     
                     <div class="form-group">
                         <label class="form-label">お名前（本名） <span style="font-size: 0.8rem; color: #e74c3c;">※名字と名前の間にスペースは入れないでください</span></label>
-                        <input type="text" name="name" class="form-input" required placeholder="例：早稲田太郎">
+                        <input type="text" name="name" class="form-input" required placeholder="例：早稲田太郎" value="<?php echo htmlspecialchars($name_val); ?>">
                     </div>
                     <div class="form-group">
                         <label class="form-label">学籍番号</label>
-                        <input type="text" name="student_id" class="form-input" required placeholder="例：1A234567">
+                        <input type="text" name="student_id" class="form-input" required placeholder="例：1A234567" value="<?php echo htmlspecialchars($sid_val); ?>">
                     </div>
                     <div class="form-group">
                         <label class="form-label">代（学年）</label>
                         <select name="grade" class="form-select" required>
                             <option value="">選択してください</option>
                             <?php foreach (AVAILABLE_GRADES as $g): ?>
-                                <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
+                                <option value="<?php echo htmlspecialchars($g); ?>" <?php echo $grade_val === $g ? 'selected' : ''; ?>><?php echo htmlspecialchars($g); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <button type="submit" class="btn-primary" style="width: 100%;">登録して始める</button>
+                    <button type="submit" class="btn-primary" style="width: 100%;"><?php echo $current_user ? '更新する' : '登録して始める'; ?></button>
                 </form>
             </div>
         </div>

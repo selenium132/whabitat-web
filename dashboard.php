@@ -55,6 +55,10 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <a href="admin/messages.php" class="btn-secondary">
                             <i class="fas fa-envelope"></i> お問い合わせ
                         </a>
+                    <?php else: ?>
+                        <a href="register_profile.php" class="btn-secondary">
+                            <i class="fas fa-user-edit"></i> プロフィール編集
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>
