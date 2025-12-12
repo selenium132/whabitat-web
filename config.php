@@ -84,10 +84,15 @@ function isEventAdmin($event_id) {
     
     // 2. Check if user is assigned as admin for this event
     if (isset($_SESSION['user_id'])) {
-        $pdo = getDB();
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM event_admins WHERE event_id = ? AND user_id = ?");
-        $stmt->execute([$event_id, $_SESSION['user_id']]);
-        return $stmt->fetchColumn() > 0;
+        try {
+            $pdo = getDB();
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM event_admins WHERE event_id = ? AND user_id = ?");
+            $stmt->execute([$event_id, $_SESSION['user_id']]);
+            return $stmt->fetchColumn() > 0;
+        } catch (PDOException $e) {
+            // Table might not exist yet, treat as not admin
+            return false;
+        }
     }
 
     return false;

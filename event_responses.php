@@ -5,11 +5,7 @@ requireLogin();
 $event_id = $_GET['id'] ?? 0;
 $pdo = getDB();
 
-// Check Admin or Event Admin
-if (!isEventAdmin($event_id, $pdo)) {
-    header("Location: dashboard.php");
-    exit;
-}
+$pdo = getDB();
 
 // Fetch Event Details
 $stmt = $pdo->prepare("SELECT * FROM events WHERE id = ?");
