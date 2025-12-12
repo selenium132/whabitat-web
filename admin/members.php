@@ -70,6 +70,9 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
         function confirmAction(message) {
+            return confirm(message);
+        }
+
         // Modal Logic
         function openEditModal(id, name, sid, grade) {
             document.getElementById('edit_user_id').value = id;
@@ -78,6 +81,7 @@ $csrf_token = generateCsrfToken();
             document.getElementById('edit_grade').value = grade;
             document.getElementById('editModal').style.display = 'flex';
         }
+
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
         }
