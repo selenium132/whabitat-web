@@ -40,7 +40,9 @@ $csrf_token = generateCsrfToken();
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="#" class="logo">WHABITAT</a>
+            <a href="index.php" class="logo">
+                <img src="logo.png" alt="WHABITAT" height="50">
+            </a>
         </div>
     </header>
     <main>
