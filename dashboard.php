@@ -67,23 +67,23 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             <?php else: ?>
                 <?php foreach ($upcoming_events as $event): ?>
-                    <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; margin-bottom: 1rem;">
-                        <div>
-                            <div style="color: var(--secondary-color); font-weight: 600; font-size: 0.9rem;">
+                    <div class="card event-card">
+                        <div class="event-info">
+                            <div class="event-date">
                                 <i class="far fa-calendar-alt"></i> 
                                 <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?>
                             </div>
-                            <h3 style="margin: 0.5rem 0 0; font-size: 1.3rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
+                            <h3 class="event-title-text"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
-                        <div style="display: flex; gap: 10px;">
-                            <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-size: 14px;">
+                        <div class="event-actions">
+                            <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer">
                                 回答する
                             </a>
-                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-size: 14px;">
+                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                 回答状況
                             </a>
                             <?php if ($_SESSION['role'] === 'admin'): ?>
-                                <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 0.5rem 1rem; font-size: 14px;" title="編集">
+                                <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-edit" title="編集">
                                     <i class="far fa-edit"></i>
                                 </a>
                             <?php endif; ?>

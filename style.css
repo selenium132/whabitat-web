@@ -451,6 +451,96 @@ textarea:focus {
     color: white;
 }
 
+.btn-danger {
+    background-color: var(--accent-red);
+    color: white;
+}
+
+/* Event Card Styles */
+.event-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    /* Allow wrapping on very small screens if needed */
+    gap: 1rem;
+}
+
+.event-info {
+    flex: 1;
+    /* Take available validation */
+    min-width: 200px;
+}
+
+.event-date {
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.event-title-text {
+    margin: 0.5rem 0 0;
+    font-size: 1.3rem;
+    line-height: 1.4;
+}
+
+.event-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-answer,
+.btn-status,
+.btn-edit {
+    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    /* Prevent text breaking */
+}
+
+/* Responsive Event Card */
+@media (max-width: 768px) {
+    .event-card {
+        flex-direction: column;
+        align-items: stretch;
+        /* Stretch children to full width */
+        text-align: center;
+        padding: 1.5rem 1rem;
+    }
+
+    .event-info {
+        margin-bottom: 1rem;
+    }
+
+    .event-actions {
+        flex-direction: column;
+        /* Stack buttons vertically */
+        width: 100%;
+        gap: 0.8rem;
+    }
+
+    .btn-answer,
+    .btn-status,
+    .btn-edit {
+        width: 100%;
+        /* Full width buttons */
+        display: block;
+        text-align: center;
+        padding: 0.8rem;
+    }
+
+    .btn-edit {
+        width: auto;
+        /* Keep edit button small or make it full width too? Let's make it full width for easy tapping or keep it separate. */
+        /* Actually, having a huge edit button is weird. Let's put Edit next to Status if possible, or just stack it. */
+        /* Stacking is safest for now. */
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header-inner {
