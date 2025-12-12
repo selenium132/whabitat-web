@@ -57,6 +57,7 @@ $csrf_token = generateCsrfToken();
     <title>メンバー管理 | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
         function confirmAction(message) {
             return confirm(message);
@@ -66,13 +67,15 @@ $csrf_token = generateCsrfToken();
 <body>
     <header class="header">
         <div class="header-inner">
-            <a href="../dashboard.php" class="logo">WHABITAT Admin</a>
+            <a href="../dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
+                <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
+            </a>
         </div>
     </header>
 
     <main>
         <div class="dashboard-container" style="max-width: 1100px;">
-            <a href="../dashboard.php" style="display: inline-block; margin-bottom: 1rem;">&lt; ダッシュボードに戻る</a>
+
             <h1 style="margin-bottom: 2rem;">メンバー管理</h1>
             
             <div class="card" style="padding: 0;">

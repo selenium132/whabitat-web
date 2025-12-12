@@ -21,6 +21,9 @@ define('LINE_CHANNEL_ID', '2008588186');
 define('LINE_CHANNEL_SECRET', 'b13037697c736acbb99ddf5fa3d1431d');
 define('LINE_CALLBACK_URL', 'https://whabitathome.com/v2/callback.php'); // Updated for v2 subdirectory
 
+// LINE Messaging API (Bot) Configuration
+define('LINE_BOT_ACCESS_TOKEN', 'YOUR_CHANNEL_ACCESS_TOKEN_HERE');
+
 // Start Session
 session_start();
 
