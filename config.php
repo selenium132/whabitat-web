@@ -75,5 +75,24 @@ function requireLogin() {
     }
 }
 
+// Helper: Check if user is Event Admin (Global Admin OR Assigned Event Admin)
+function isEventAdmin($event_id) {
+    // 1. Global Admin is always allowed
+    if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+        return true;
+    }
+    
+    // 2. Check if user is assigned as admin for this event
+    if (isset($_SESSION['user_id'])) {
+        $pdo = getDB();
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM event_admins WHERE event_id = ? AND user_id = ?");
+        $stmt->execute([$event_id, $_SESSION['user_id']]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    return false;
+}
+
+
 // Helper: Get DB Connection
 ?>

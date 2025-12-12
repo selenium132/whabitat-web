@@ -2,15 +2,25 @@
 require_once 'config.php';
 requireLogin();
 
-// Check Admin Role
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: dashboard.php");
-    exit;
+// Access Control
+$event_id = $_GET['id'] ?? null;
+
+if ($event_id) {
+    // Edit Mode: Check if Admin or Event Admin
+    if (!isEventAdmin($event_id)) {
+        header("Location: dashboard.php");
+        exit;
+    }
+} else {
+    // Create Mode: Only Global Admin
+    if ($_SESSION['role'] !== 'admin') {
+        header("Location: dashboard.php");
+        exit;
+    }
 }
 
 $edit_mode = false;
 $event_data = null;
-$event_id = $_GET['id'] ?? null;
 
 // Handle Edit Mode - Fetch Data
 if ($event_id) {
@@ -33,22 +43,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($title) {
         $pdo = getDB();
         
-        if ($target_id) {
-            // Update
+                // Update
             $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ? WHERE id = ?");
             $res = $stmt->execute([$title, $description, $event_date, $form_schema, $target_id]);
+            $event_id_final = $target_id;
         } else {
             // Insert
             $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema) VALUES (?, ?, ?, ?, ?)");
             $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema]);
+            $event_id_final = $pdo->lastInsertId();
         }
 
         if ($res) {
+            // --- Handle Event Admins ---
+            // Ensure table exists (Failsafe)
+            $pdo->exec("CREATE TABLE IF NOT EXISTS event_admins (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                event_id INT NOT NULL,
+                user_id INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                UNIQUE KEY unique_event_admin (event_id, user_id)
+            )");
+
+            // 1. Delete existing admins for this event
+            $del_stmt = $pdo->prepare("DELETE FROM event_admins WHERE event_id = ?");
+            $del_stmt->execute([$event_id_final]);
+
+            // 2. Insert new admins
+            if (!empty($_POST['event_admins']) && is_array($_POST['event_admins'])) {
+                $ins_stmt = $pdo->prepare("INSERT INTO event_admins (event_id, user_id) VALUES (?, ?)");
+                foreach ($_POST['event_admins'] as $uid) {
+                    $ins_stmt->execute([$event_id_final, $uid]);
+                }
+            }
+            // ---------------------------
+
             header("Location: dashboard.php");
             exit;
         } else {
             $error = '保存に失敗しました。';
         }
+    }
+}
+
+// Fetch Users for Admin Selection
+$pdo = getDB();
+$users_stmt = $pdo->query("SELECT id, name FROM users WHERE is_approved = 1 ORDER BY id ASC");
+$all_users = $users_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch Current Event Admins if editing
+$current_admins = [];
+if ($edit_mode) {
+    if ($pdo->query("SHOW TABLES LIKE 'event_admins'")->rowCount() > 0) {
+        $stmt_admins = $pdo->prepare("SELECT user_id FROM event_admins WHERE event_id = ?");
+        $stmt_admins->execute([$event_id]);
+        $current_admins = $stmt_admins->fetchAll(PDO::FETCH_COLUMN);
     }
 }
 ?>
@@ -127,17 +178,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-bottom: 1px solid var(--accent-blue);
         }
         
-        /* Date Info */
+        /* Date Info & Admin Selection */
         .meta-info {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
             border-top: 1px solid #f0f0f0;
             color: var(--text-color);
             font-size: 0.95rem;
+        }
+        .meta-row {
             display: flex;
             align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .meta-info input[type="datetime-local"] {
+        .meta-row input[type="datetime-local"] {
             border: 1px solid #ddd; 
             padding: 8px 12px; 
             border-radius: 8px;
@@ -146,6 +202,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 1rem;
             color: var(--text-color);
             background: #f9f9f9;
+        }
+        
+        .admin-selection-area {
+            background: #fcfcfc;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 10px;
+        }
+        .admin-checkbox-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .admin-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .admin-checkbox-item input {
+            cursor: pointer;
         }
 
         /* Question Cards */
@@ -450,8 +532,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="description" id="form-desc" class="desc-input" placeholder="フォームの説明" value="<?php echo $edit_mode ? htmlspecialchars($event_data['description']) : ''; ?>">
                 
                 <!-- Extra fields for Events table -->
+                <!-- Extra fields for Events table -->
                 <div class="meta-info">
-                   <label style="font-size: 0.8rem;">開催日時: <input type="datetime-local" name="event_date" value="<?php echo $edit_mode ? date('Y-m-d\TH:i', strtotime($event_data['event_date'])) : ''; ?>" required style="border:1px solid #ddd; padding: 4px; border-radius: 4px;"></label>
+                    <div class="meta-row">
+                        <label style="font-weight: 600;">開催日時:</label>
+                        <input type="datetime-local" name="event_date" value="<?php echo $edit_mode ? date('Y-m-d\TH:i', strtotime($event_data['event_date'])) : ''; ?>" required>
+                    </div>
+                    
+                    <!-- Admin Selection -->
+                    <div class="admin-selection-area">
+                        <label style="font-weight: 600; display: block; margin-bottom: 5px;">
+                            <i class="fas fa-user-shield"></i> イベント管理者 (自分以外に追加する場合)
+                        </label>
+                        <div class="admin-checkbox-list">
+                            <?php foreach ($all_users as $user): ?>
+                                <?php 
+                                    // Skip self (creator is always admin basically, or handled by role)
+                                    if ($user['id'] == $_SESSION['user_id']) continue; 
+                                    $checked = in_array($user['id'], $current_admins) ? 'checked' : '';
+                                ?>
+                                <label class="admin-checkbox-item">
+                                    <input type="checkbox" name="event_admins[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?>>
+                                    <?php echo htmlspecialchars($user['name']); ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </div>
             </div>
 

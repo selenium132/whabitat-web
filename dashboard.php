@@ -78,10 +78,11 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer">
                                 回答する
                             </a>
-                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
-                                回答状況
-                            </a>
-                            <?php if ($_SESSION['role'] === 'admin'): ?>
+                            
+                            <?php if (isEventAdmin($event['id'])): ?>
+                                <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
+                                    回答状況
+                                </a>
                                 <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-edit" title="編集">
                                     <i class="far fa-edit"></i>
                                 </a>

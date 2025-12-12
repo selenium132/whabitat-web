@@ -2,14 +2,15 @@
 require_once 'config.php';
 requireLogin();
 
-// Check Admin Role
-if ($_SESSION['role'] !== 'admin') {
-    die("Access Denied");
+$event_id = $_GET['id'] ?? null;
+
+if (!$event_id) {
+    die("Event ID required");
 }
 
-$event_id = $_GET['id'] ?? null;
-if (!$event_id) {
-    die("Invalid Event ID");
+// Access Control: Admin or Event Admin
+if (!isEventAdmin($event_id)) {
+    die("Access Denied");
 }
 
 $pdo = getDB();

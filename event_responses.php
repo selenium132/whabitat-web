@@ -5,13 +5,19 @@ requireLogin();
 $event_id = $_GET['id'] ?? 0;
 $pdo = getDB();
 
+// Check Admin or Event Admin
+if (!isEventAdmin($event_id, $pdo)) {
+    header("Location: dashboard.php");
+    exit;
+}
+
 // Fetch Event Details
 $stmt = $pdo->prepare("SELECT * FROM events WHERE id = ?");
 $stmt->execute([$event_id]);
 $event = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$event) {
-    header("Location: dashboard.php");
+    echo "イベントが見つかりません。";
     exit;
 }
 
