@@ -220,12 +220,53 @@ if ($edit_mode) {
             padding: 0.5rem 1rem; /* Compact padding */
             margin-top: 10px;
         }
+        .admin-selection-details summary {
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.5rem 0;
+            color: var(--text-color);
+            list-style: none; /* Hide default triangle in some browsers */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .admin-selection-details summary::-webkit-details-marker {
+            display: none;
+        }
+        .admin-selection-details summary::after {
+            content: '\f078'; /* FontAwesome chevron down */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+            margin-left: auto;
+        }
+        .admin-selection-details[open] summary::after {
+            transform: rotate(180deg);
+        }
+
         .admin-checkbox-list {
             margin-top: 10px;
             max-height: 300px;
             overflow-y: auto;
             border-top: 1px solid #eee;
             padding-top: 10px;
+        }
+        .grade-group {
+            margin-bottom: 15px;
+        }
+        .grade-header {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 700;
+            margin-bottom: 5px;
+            padding-bottom: 2px;
+            border-bottom: 1px solid #eee;
+        }
+        .grade-users {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
         }
         .admin-checkbox-item {
             display: flex;
@@ -555,22 +596,34 @@ if ($edit_mode) {
                     
                     <!-- Admin Selection -->
                     <div class="admin-selection-area">
-                        <label style="font-weight: 600; display: block; margin-bottom: 5px;">
-                            <i class="fas fa-user-shield"></i> イベント管理者 (自分以外に追加する場合)
-                        </label>
-                        <div class="admin-checkbox-list">
-                            <?php foreach ($all_users as $user): ?>
-                                <?php 
-                                    // Skip self (creator is always admin basically, or handled by role)
-                                    if ($user['id'] == $_SESSION['user_id']) continue; 
-                                    $checked = in_array($user['id'], $current_admins) ? 'checked' : '';
-                                ?>
-                                <label class="admin-checkbox-item">
-                                    <input type="checkbox" name="event_admins[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?>>
-                                    <?php echo htmlspecialchars($user['name']); ?>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
+                        <details class="admin-selection-details">
+                            <summary>
+                                <span><i class="fas fa-user-shield"></i> イベント管理者設定</span>
+                            </summary>
+                            
+                            <div class="admin-checkbox-list">
+                                <?php if (empty($users_by_grade)): ?>
+                                    <div style="color: #999; padding: 10px;">追加可能なメンバーがいません</div>
+                                <?php else: ?>
+                                    <?php foreach ($users_by_grade as $grade => $users): ?>
+                                        <div class="grade-group">
+                                            <div class="grade-header"><?php echo htmlspecialchars($grade); ?></div>
+                                            <div class="grade-users">
+                                                <?php foreach ($users as $user): ?>
+                                                    <?php 
+                                                        $checked = in_array($user['id'], $current_admins) ? 'checked' : '';
+                                                    ?>
+                                                    <label class="admin-checkbox-item">
+                                                        <input type="checkbox" name="event_admins[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?>>
+                                                        <?php echo htmlspecialchars($user['name']); ?>
+                                                    </label>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                        </details>
                     </div>
                 </div>
             </div>
