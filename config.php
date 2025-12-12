@@ -61,6 +61,30 @@ function requireLogin() {
         header("Location: login.php");
         exit;
     }
+
+    // Security: Re-validate user status from DB on every request
+    // This prevents banned/deleted users from staying logged in via session
+    try {
+        $pdo = getDB();
+        $stmt = $pdo->prepare("SELECT id, is_approved, name, role FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            // User deleted
+            header("Location: logout.php");
+            exit;
+        }
+
+        // Sync Session with DB
+        $_SESSION['is_approved'] = $user['is_approved'];
+        $_SESSION['role'] = $user['role']; // Also sync role in case of promotion/demotion
+
+    } catch (PDOException $e) {
+        // DB Error, maybe serve 500 or just ignore and rely on session (fail open or closed?)
+        // Safe to fail closed
+        die("Database Error during auth check.");
+    }
     
     // Check Approval Status (except for pending page)
     if (empty($_SESSION['is_approved']) && basename($_SERVER['PHP_SELF']) !== 'approval_pending.php' && basename($_SERVER['PHP_SELF']) !== 'promote.php') {
