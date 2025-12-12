@@ -37,12 +37,12 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <main>
         <div class="dashboard-container">
-            <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <div style="color: var(--text-light); font-size: 0.9rem;">ようこそ</div>
-                    <h1 style="font-size: 1.8rem; margin: 0;"><?php echo htmlspecialchars($_SESSION['name'] ?? 'メンバー'); ?> さん</h1>
+            <div class="card welcome-card">
+                <div class="welcome-text">
+                    <div class="welcome-label">ようこそ</div>
+                    <h1 class="welcome-user"><?php echo htmlspecialchars($_SESSION['name'] ?? 'メンバー'); ?> さん</h1>
                 </div>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="welcome-actions">
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="event_create.php" class="btn-primary">
                             <i class="fas fa-plus"></i> イベント作成

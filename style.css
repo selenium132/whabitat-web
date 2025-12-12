@@ -451,26 +451,44 @@ textarea:focus {
     color: white;
 }
 
-.btn-danger {
-    background-color: var(--accent-red);
-    color: white;
-}
-
 /* Event Card Styles */
+.welcome-card,
 .event-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    /* Allow wrapping on very small screens if needed */
-    gap: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    gap: 2rem;
 }
 
+/* Welcome Section Specifics */
+.welcome-text {
+    flex-shrink: 0;
+}
+
+.welcome-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.welcome-user {
+    font-size: 1.8rem;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.welcome-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* Event Info */
 .event-info {
     flex: 1;
-    /* Take available validation */
     min-width: 200px;
 }
 
@@ -478,66 +496,64 @@ textarea:focus {
     color: var(--accent-blue);
     font-weight: 600;
     font-size: 0.9rem;
+    margin-bottom: 0.5rem;
 }
 
 .event-title-text {
-    margin: 0.5rem 0 0;
-    font-size: 1.3rem;
-    line-height: 1.4;
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.3;
 }
 
 .event-actions {
     display: flex;
     gap: 10px;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .btn-answer,
 .btn-status,
 .btn-edit {
     border-radius: 50px;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.95rem;
     white-space: nowrap;
-    /* Prevent text breaking */
 }
 
-/* Responsive Event Card */
+/* Responsive Styles (Mobile) */
 @media (max-width: 768px) {
+
+    .welcome-card,
     .event-card {
         flex-direction: column;
         align-items: stretch;
-        /* Stretch children to full width */
         text-align: center;
-        padding: 1.5rem 1rem;
+        padding: 1.5rem;
+        gap: 1.5rem;
     }
 
-    .event-info {
-        margin-bottom: 1rem;
-    }
-
+    .welcome-actions,
     .event-actions {
+        justify-content: center;
         flex-direction: column;
-        /* Stack buttons vertically */
         width: 100%;
         gap: 0.8rem;
     }
 
+    .welcome-actions .btn-primary,
+    .welcome-actions .btn-secondary,
     .btn-answer,
     .btn-status,
     .btn-edit {
         width: 100%;
-        /* Full width buttons */
         display: block;
         text-align: center;
-        padding: 0.8rem;
+        margin: 0;
     }
 
-    .btn-edit {
-        width: auto;
-        /* Keep edit button small or make it full width too? Let's make it full width for easy tapping or keep it separate. */
-        /* Actually, having a huge edit button is weird. Let's put Edit next to Status if possible, or just stack it. */
-        /* Stacking is safest for now. */
+    .welcome-user {
+        font-size: 1.5rem;
     }
 }
 
