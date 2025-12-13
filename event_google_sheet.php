@@ -25,18 +25,29 @@ try {
     $gs = new SimpleGoogleSheets('service-account.json');
 
     // 2. Check if Sheet already exists
+    // Force reset if requested
+    if (isset($_GET['reset'])) {
+        $updateStmt = $pdo->prepare("UPDATE events SET spreadsheet_id = NULL WHERE id = ?");
+        $updateStmt->execute([$event_id]);
+        $event['spreadsheet_id'] = null; // Update local variable
+    }
+
     $spreadsheetId = $event['spreadsheet_id'];
     $isNew = false;
-
+    
     if (empty($spreadsheetId)) {
         // Create New Sheet
-        $sheet = $gs->createSpreadsheet('[WHABITAT] ' . $event['title']);
-        $spreadsheetId = $sheet['spreadsheetId'];
-        $isNew = true;
+        try {
+            $sheet = $gs->createSpreadsheet('[WHABITAT] ' . $event['title']);
+            $spreadsheetId = $sheet['spreadsheetId'];
+            $isNew = true;
 
-        // Save ID to DB
-        $updateStmt = $pdo->prepare("UPDATE events SET spreadsheet_id = ? WHERE id = ?");
-        $updateStmt->execute([$spreadsheetId, $event_id]);
+            // Save ID to DB
+            $updateStmt = $pdo->prepare("UPDATE events SET spreadsheet_id = ? WHERE id = ?");
+            $updateStmt->execute([$spreadsheetId, $event_id]);
+        } catch (Exception $e) {
+            throw new Exception("スプレッドシートの作成に失敗しました: " . $e->getMessage());
+        }
     }
 
     // 3. Prepare Data
