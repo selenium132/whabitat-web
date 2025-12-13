@@ -17,17 +17,12 @@ class SimpleGoogleSheets {
         $now = time();
         $claim = json_encode([
             'iss' => $this->credentials['client_email'],
-        $claim = json_encode([
-            'iss' => $this->credentials['client_email'],
             'scope' => 'https://www.googleapis.com/auth/spreadsheets',
             'aud' => $this->credentials['token_uri'],
             'exp' => $now + 3600,
             'iat' => $now
         ]);
-            'aud' => $this->credentials['token_uri'],
-            'exp' => $now + 3600,
-            'iat' => $now
-        ]);
+
 
         $base64Header = $this->base64UrlEncode($header);
         $base64Claim = $this->base64UrlEncode($claim);
