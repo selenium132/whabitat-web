@@ -23,6 +23,16 @@ if (!$event) {
 try {
     // 1. Initialize Custom Google Client
     $gs = new SimpleGoogleSheets('service-account.json');
+    
+    // DEBUG: Show who we are explicitly
+    $creds = json_decode(file_get_contents('service-account.json'), true);
+    // echo "Debug: Client Email = " . $creds['client_email'] . "<br>";
+    // echo "Debug: Project ID = " . $creds['project_id'] . "<br>";
+    // Un-comment the above if needed, but for now let's just log it or pass it to exception
+    
+    // Allow user to see it in the error message if it fails
+    $debugEmail = $creds['client_email'];
+    $debugProject = $creds['project_id'];
 
     // 2. Check if Sheet already exists
     // Force reset if requested
@@ -133,6 +143,11 @@ try {
     // Basic Error Handling
     echo "<h1>Error</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
+    if (isset($debugEmail)) {
+        echo "<hr><p>Debug Info:<br>";
+        echo "Service Account: <strong>" . htmlspecialchars($debugEmail) . "</strong><br>";
+        echo "Project ID: <strong>" . htmlspecialchars($debugProject) . "</strong></p>";
+    }
     echo "<p><a href='event_responses.php?id=$event_id'>戻る</a></p>";
     exit;
 }
