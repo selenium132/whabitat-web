@@ -19,7 +19,7 @@ define('AVAILABLE_GRADES', ['17th', '18th', '19th', '20th']);
 // LINE Login Configuration
 define('LINE_CHANNEL_ID', '2008588186');
 define('LINE_CHANNEL_SECRET', 'b13037697c736acbb99ddf5fa3d1431d');
-define('LINE_CALLBACK_URL', 'https://whabitathome.com/v2/callback.php'); // Updated for v2 subdirectory
+define('LINE_CALLBACK_URL', 'https://whabitathome.com/callback.php'); // Updated for root domain
 
 // LINE Messaging API (Bot) Configuration
 define('LINE_BOT_ACCESS_TOKEN', 'XfDWPXXjPtI7VNVP5tbaUAEnwyxCBaDIaZtwiqZ+2cbmhOI4/CRzlsQQBQqdvHkSr9EXTcM90UQJwa2C8h0AcqI3HVpacr7HdqT4yEJ8mfY6XvGrSxT9xad9aftOPxplReoWpt7ex+BrkohL20yeegdB04t89/1O/w1cDnyilFU=');

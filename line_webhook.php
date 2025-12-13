@@ -58,10 +58,10 @@ foreach ($events as $event) {
             foreach ($upcoming_events as $ev) {
                 $date = date('m/d H:i', strtotime($ev['event_date']));
                 $replyText .= "🔹 {$date} ～\n   {$ev['title']}\n";
-                // Add link to view if needed, e.g. "https://whabitathome.com/v2/event_view.php?id=" . $ev['id']
-                $replyText .= "   👇 詳細・回答:\n   https://whabitathome.com/v2/event_view.php?id={$ev['id']}\n\n";
+                // Add link to view if needed, e.g. "https://whabitathome.com/event_view.php?id=" . $ev['id']
+                $replyText .= "   👇 詳細・回答:\n   https://whabitathome.com/event_view.php?id={$ev['id']}\n\n";
             }
-            $replyText .= "サイトで確認: https://whabitathome.com/v2/dashboard.php";
+            $replyText .= "サイトで確認: https://whabitathome.com/dashboard.php";
         }
 
         // 5. Send Reply

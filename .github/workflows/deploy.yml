@@ -18,4 +18,9 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: v2/
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            old_wp_backup/**
