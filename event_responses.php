@@ -174,11 +174,24 @@ function getStatusLabel($status) {
             <div>
                 <h1 class="event-title" style="margin-top: 5px;">回答一覧: <?php echo htmlspecialchars($event['title']); ?></h1>
                 <p style="color: var(--text-light); font-size: 14px;">参加予定者数: <?php echo count($participants); ?>名</p>
+                <?php 
+                    $is_manager = $is_admin || isEventAdmin($event['id']);
+                ?>
+                <?php if ($is_manager && !empty($event['spreadsheet_id'])): ?>
+                    <p style="margin-top: 5px;">
+                        <a href="https://docs.google.com/spreadsheets/d/<?php echo $event['spreadsheet_id']; ?>" target="_blank" style="color: #0f9d58; font-weight: bold; text-decoration: underline;">
+                            <i class="fas fa-external-link-alt"></i> 連携済みスプレッドシートを開く
+                        </a>
+                    </p>
+                <?php endif; ?>
             </div>
-            <?php if ($is_admin): ?>
+            <?php if ($is_manager): ?>
                 <button onclick="copyForSpreadsheet()" class="btn-primary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
                     <i class="fas fa-copy"></i> シート用にコピー
                 </button>
+                <a href="event_google_sheet.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; background-color: #0f9d58; color: white;">
+                    <i class="fas fa-file-excel"></i> シート連携(Beta)
+                </a>
             <?php endif; ?>
         </div>
 
