@@ -160,7 +160,6 @@ $sheetUrl = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId;
     } catch (Exception $e) {
         // Ignore if fails (e.g. already set)
     }
-}
 
 // Notify user via session flash or redirect param
 header("Location: event_responses.php?id=$event_id&sheet_url=" . urlencode($sheetUrl));
