@@ -17,7 +17,7 @@ class SimpleGoogleSheets {
         $now = time();
         $claim = json_encode([
             'iss' => $this->credentials['client_email'],
-            'scope' => 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive',
+            'scope' => 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file',
             'aud' => $this->credentials['token_uri'],
             'exp' => $now + 3600,
             'iat' => $now
