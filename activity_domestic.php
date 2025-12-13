@@ -205,7 +205,7 @@
                         <img src="domestic_earth_farm.jpg" alt="東京地球農園" style="width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover;">
                         <div class="domestic-content">
                             <span class="domestic-tag agri">Tokyo</span>
-                            <h4>あきる野市</h4>
+                            <h4>あきる野</h4>
                             <p>自然豊かな東京都あきる野市での農業体験。様々なお野菜に加え、栗や鶏のお世話などができます。お昼にはうどんやカレーをいただけたりと、心も体も温まる活動です。</p>
                         </div>
                     </div>

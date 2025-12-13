@@ -25,7 +25,11 @@ if ($user && $user['is_approved']) {
 
 // Handle Secret Keyword
 $error_msg = '';
+$csrf_token = generateCsrfToken(); // Generate Token
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
+    validateCsrfToken($_POST['csrf_token'] ?? ''); // Validate Token
+
     $input_keyword = trim($_POST['secret_keyword']);
     // Hardcoded secret keyword for temporary mass registration
     if ($input_keyword === 'whabitathome2026') {
@@ -109,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
                     <?php endif; ?>
                     
                     <form method="POST" action="">
+                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                         <div style="display: flex; gap: 10px; justify-content: center;">
                             <input type="text" name="secret_keyword" placeholder="合言葉を入力" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; flex: 1; max-width: 250px;" required>
                             <button type="submit" class="btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">送信</button>

@@ -647,7 +647,11 @@ if ($edit_mode) {
         let questionIdCounter = 0;
 
         // Existing Schema
-        const existingSchema = <?php echo ($edit_mode && !empty($event_data['form_schema'])) ? $event_data['form_schema'] : '[]'; ?>;
+        // Security Fix: json_encode the decoded array to ensure safe JS output
+        const existingSchema = <?php 
+            $schema_data = ($edit_mode && !empty($event_data['form_schema'])) ? json_decode($event_data['form_schema']) : [];
+            echo json_encode($schema_data); 
+        ?>;
 
         // Initialize with one question or existing
         window.onload = () => {

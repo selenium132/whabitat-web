@@ -25,6 +25,16 @@ define('LINE_CALLBACK_URL', 'https://whabitathome.com/callback.php'); // Updated
 define('LINE_BOT_ACCESS_TOKEN', 'XfDWPXXjPtI7VNVP5tbaUAEnwyxCBaDIaZtwiqZ+2cbmhOI4/CRzlsQQBQqdvHkSr9EXTcM90UQJwa2C8h0AcqI3HVpacr7HdqT4yEJ8mfY6XvGrSxT9xad9aftOPxplReoWpt7ex+BrkohL20yeegdB04t89/1O/w1cDnyilFU=');
 define('LINE_BOT_CHANNEL_SECRET', '71e364600d533ca83747d44d177b92f6'); // Add this! Must be different from Login Secret
 
+// Security: Session Hardening
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_secure', 1); // Enable for HTTPS
+ini_set('session.cookie_samesite', 'Lax');
+
+// Security: Disable Error Display in Production
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 // Start Session
 session_start();
 
