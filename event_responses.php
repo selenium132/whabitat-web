@@ -176,10 +176,7 @@ function getStatusLabel($status) {
                 <p style="color: var(--text-light); font-size: 14px;">参加予定者数: <?php echo count($participants); ?>名</p>
             </div>
             <?php if ($is_admin): ?>
-                <a href="event_export_csv.php?id=<?php echo $event['id']; ?>" class="btn-success" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background-color: #1e8e3e; color: white;">
-                    <i class="fas fa-file-csv"></i> CSV出力
-                </a>
-                <button onclick="copyForSpreadsheet()" class="btn-primary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px;">
+                <button onclick="copyForSpreadsheet()" class="btn-primary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
                     <i class="fas fa-copy"></i> シート用にコピー
                 </button>
             <?php endif; ?>

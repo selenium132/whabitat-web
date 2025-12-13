@@ -1,0 +1,1 @@
+ALTER TABLE events ADD COLUMN spreadsheet_id VARCHAR(255) DEFAULT NULL;
