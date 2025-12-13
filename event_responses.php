@@ -179,6 +179,9 @@ function getStatusLabel($status) {
                 <a href="event_export_csv.php?id=<?php echo $event['id']; ?>" class="btn-success" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background-color: #1e8e3e; color: white;">
                     <i class="fas fa-file-csv"></i> CSV出力
                 </a>
+                <button onclick="copyForSpreadsheet()" class="btn-primary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px;">
+                    <i class="fas fa-copy"></i> シート用にコピー
+                </button>
             <?php endif; ?>
         </div>
 
@@ -251,8 +254,41 @@ function getStatusLabel($status) {
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
+                </tbody>
             </table>
         <?php endif; ?>
     </div>
-</body>
+
+    <!-- Copy to Clipboard Script -->
+    <script>
+        function copyForSpreadsheet() {
+            const table = document.querySelector('.res-table');
+            if (!table) return;
+
+            let text = '';
+            
+            // 1. Headers
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText.replace(/\n/g, ' ').trim());
+            text += headers.join('\t') + '\n';
+
+            // 2. Rows
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(tr => {
+                const cells = Array.from(tr.querySelectorAll('td')).map(td => {
+                    // Clean up text: remove newlines inside cells, trim whitespace
+                    let val = td.innerText.replace(/[\n\r]+/g, ' ').trim();
+                    return val;
+                });
+                text += cells.join('\t') + '\n';
+            });
+
+            // 3. Copy
+            navigator.clipboard.writeText(text).then(() => {
+                alert('コピーしました！\nスプレッドシートを開いてペーストしてください。');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('コピーに失敗しました。');
+            });
+        }
+    </script>
 </html>
