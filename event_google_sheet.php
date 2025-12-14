@@ -45,10 +45,13 @@ try {
     $spreadsheetId = $event['spreadsheet_id'];
     $isNew = false;
     
+    // Apps Script URL for creating spreadsheets
+    $appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxITwm-W_e9-1axQqFgzlqo48tBPSJJHEr90r6aoAa74Md1ETZLAwLMOMPdiJYthBWS/exec';
+    
     if (empty($spreadsheetId)) {
-        // Create New Sheet
+        // Create New Sheet via Apps Script (this uses user's Drive storage, not service account)
         try {
-            $sheet = $gs->createSpreadsheet('[WHABITAT] ' . $event['title']);
+            $sheet = $gs->createSpreadsheetViaAppsScript('[WHABITAT] ' . $event['title'], $appsScriptUrl);
             $spreadsheetId = $sheet['spreadsheetId'];
             $isNew = true;
 
@@ -124,13 +127,15 @@ try {
     // Write new data
     $gs->updateValues($spreadsheetId, 'Sheet1!A1', $dataRows);
 
-    // 5. Set Permissions (if new)
+    // 5. Set Permissions (if new) - Apps Script already shares with service account
+    // We can optionally make it "anyone with link" for easy sharing among admins
     if ($isNew) {
-        // Share with anyone with link as writer
         try {
+            // Make accessible to anyone with link (optional, for admins to share easily)
             $gs->addPermission($spreadsheetId, 'writer', 'anyone');
         } catch (Exception $e) {
-            // Permission error
+            // This might fail if service account doesn't have permission - that's OK
+            // The sheet is still accessible to the user who created it via Apps Script
         }
     }
 

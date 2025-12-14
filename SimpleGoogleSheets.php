@@ -111,6 +111,29 @@ class SimpleGoogleSheets {
         return ['spreadsheetId' => $result['id']];
     }
 
+    // Apps Script method: Create via user's Google Apps Script (recommended)
+    public function createSpreadsheetViaAppsScript($title, $appsScriptUrl) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $appsScriptUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['title' => $title]));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Important for Apps Script redirects
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        $data = json_decode($response, true);
+        
+        if (!$data || !isset($data['success']) || !$data['success']) {
+            $errorMsg = isset($data['error']) ? $data['error'] : $response;
+            throw new Exception("Apps Script Error: " . $errorMsg);
+        }
+        
+        return ['spreadsheetId' => $data['spreadsheetId'], 'url' => $data['url']];
+    }
+
     public function clearValues($spreadsheetId, $range) {
         $url = "https://sheets.googleapis.com/v4/spreadsheets/$spreadsheetId/values/$range:clear";
         return $this->callApi('POST', $url, new stdClass()); // Empty body
