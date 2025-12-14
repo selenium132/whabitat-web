@@ -99,6 +99,18 @@ class SimpleGoogleSheets {
         return $this->callApi('POST', $url, $body);
     }
 
+    // Alternative: Create via Drive API
+    public function createSpreadsheetViaDrive($title) {
+        $url = "https://www.googleapis.com/drive/v3/files";
+        $body = [
+            'name' => $title,
+            'mimeType' => 'application/vnd.google-apps.spreadsheet'
+        ];
+        $result = $this->callApi('POST', $url, $body);
+        // Return in similar format to Sheets API
+        return ['spreadsheetId' => $result['id']];
+    }
+
     public function clearValues($spreadsheetId, $range) {
         $url = "https://sheets.googleapis.com/v4/spreadsheets/$spreadsheetId/values/$range:clear";
         return $this->callApi('POST', $url, new stdClass()); // Empty body
