@@ -4,9 +4,16 @@ require_once 'config.php';
 $code = $_GET['code'] ?? '';
 $state = $_GET['state'] ?? '';
 
-if (!$code || $state !== $_SESSION['line_state']) {
-    die('Invalid Request');
+// Check state from session OR cookie (for mobile browsers that lose session)
+$expected_state = $_SESSION['line_state'] ?? $_COOKIE['line_state'] ?? '';
+
+if (!$code || $state !== $expected_state || empty($expected_state)) {
+    die('Invalid Request - セッションが切れました。もう一度ログインしてください。<br><a href="index.php">トップページへ</a>');
 }
+
+// Clear the cookie after use
+setcookie('line_state', '', time() - 3600, '/');
+unset($_SESSION['line_state']);
 
 // 1. Get Access Token
 $ch = curl_init();
