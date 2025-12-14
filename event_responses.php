@@ -177,21 +177,20 @@ function getStatusLabel($status) {
                 <?php 
                     $is_manager = $is_admin || isEventAdmin($event['id']);
                 ?>
-                <?php if ($is_manager && !empty($event['spreadsheet_id'])): ?>
-                    <p style="margin-top: 5px;">
-                        <a href="https://docs.google.com/spreadsheets/d/<?php echo $event['spreadsheet_id']; ?>" target="_blank" style="color: #0f9d58; font-weight: bold; text-decoration: underline;">
-                            <i class="fas fa-external-link-alt"></i> 連携済みスプレッドシートを開く
-                        </a>
-                    </p>
-                <?php endif; ?>
             </div>
             <?php if ($is_manager): ?>
                 <button onclick="copyForSpreadsheet()" class="btn-primary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
                     <i class="fas fa-copy"></i> シート用にコピー
                 </button>
-                <a href="event_google_sheet.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; background-color: #0f9d58; color: white;">
-                    <i class="fas fa-file-excel"></i> シート連携(Beta)
-                </a>
+                <?php if (!empty($event['spreadsheet_id'])): ?>
+                    <a href="event_google_sheet.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; background-color: #0f9d58; color: white;">
+                        <i class="fas fa-sync-alt"></i> シートを開く (同期)
+                    </a>
+                <?php else: ?>
+                    <a href="event_google_sheet.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; background-color: #0f9d58; color: white;">
+                        <i class="fas fa-file-excel"></i> シート連携
+                    </a>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 

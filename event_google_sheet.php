@@ -148,9 +148,9 @@ try {
         }
     }
 
-    // Notify user via Logic (Redirect)
-    $sheetUrl = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId;
-    header("Location: event_responses.php?id=$event_id&sheet_url=" . urlencode($sheetUrl));
+    // Redirect directly to the spreadsheet (simpler UX)
+    $sheetUrl = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/edit";
+    header("Location: " . $sheetUrl);
     exit;
 
 } catch (Exception $e) {
