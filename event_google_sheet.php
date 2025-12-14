@@ -117,15 +117,24 @@ try {
     }
 
     // 4. Update Sheet
+    // Try Japanese sheet name first, then English as fallback
+    $sheetName = 'シート1'; // Japanese locale default
+    
     // Clear old data first to avoid leftovers
     try {
-        $gs->clearValues($spreadsheetId, 'Sheet1');
+        $gs->clearValues($spreadsheetId, $sheetName);
     } catch (Exception $e) {
-        // Ignore clear errors (e.g. if sheet is empty)
+        // Try English sheet name
+        $sheetName = 'Sheet1';
+        try {
+            $gs->clearValues($spreadsheetId, $sheetName);
+        } catch (Exception $e2) {
+            // Ignore clear errors (e.g. if sheet is empty or different name)
+        }
     }
 
     // Write new data
-    $gs->updateValues($spreadsheetId, 'Sheet1!A1', $dataRows);
+    $gs->updateValues($spreadsheetId, $sheetName . '!A1', $dataRows);
 
     // 5. Set Permissions (if new) - Apps Script already shares with service account
     // We can optionally make it "anyone with link" for easy sharing among admins
