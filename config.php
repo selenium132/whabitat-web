@@ -29,7 +29,7 @@ define('LINE_BOT_CHANNEL_SECRET', '71e364600d533ca83747d44d177b92f6'); // Add th
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
 ini_set('session.cookie_secure', 1); // Enable for HTTPS
-ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.cookie_samesite', 'None'); // Required for OAuth redirects (LINE login)
 
 // Security: Disable Error Display in Production
 ini_set('display_errors', 0);
