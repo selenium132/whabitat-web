@@ -41,6 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $name_val = $_POST['name'] ?? $current_user['name'] ?? '';
 $sid_val = $_POST['student_id'] ?? $current_user['student_id'] ?? '';
 $grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
+
+// Determine if this is initial registration or profile edit
+// If name is empty in DB, it's first registration
+$is_first_registration = empty($current_user['name']);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -62,8 +66,13 @@ $grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
     <main>
         <div class="dashboard-container" style="max-width: 500px;">
             <div class="card">
-                <h1 style="text-align: center; font-size: 1.8rem; margin-bottom: 2rem;">プロフィール登録</h1>
-                <p style="text-align: center; margin-bottom: 2rem; color: var(--text-light);">初回のみ、以下の情報を登録してください。</p>
+                <?php if ($is_first_registration): ?>
+                    <h1 style="text-align: center; font-size: 1.8rem; margin-bottom: 2rem;">プロフィール登録</h1>
+                    <p style="text-align: center; margin-bottom: 2rem; color: var(--text-light);">初回のみ、以下の情報を登録してください。</p>
+                <?php else: ?>
+                    <h1 style="text-align: center; font-size: 1.8rem; margin-bottom: 2rem;">プロフィール編集</h1>
+                    <p style="text-align: center; margin-bottom: 2rem; color: var(--text-light);">情報を変更できます。</p>
+                <?php endif; ?>
                 
                 <?php if ($error): ?>
                     <p style="color: #e74c3c; text-align: center; margin-bottom: 1rem;"><?php echo htmlspecialchars($error); ?></p>
@@ -89,7 +98,9 @@ $grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <button type="submit" class="btn-primary" style="width: 100%;"><?php echo $current_user ? '更新する' : '登録して始める'; ?></button>
+                    <button type="submit" class="btn-primary" style="width: 100%;">
+                        <?php echo $is_first_registration ? '登録して始める' : '更新する'; ?>
+                    </button>
                 </form>
             </div>
         </div>
