@@ -12,6 +12,17 @@ $upcoming_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt = $pdo->query("SELECT * FROM events WHERE event_date < CURDATE() ORDER BY event_date DESC LIMIT 5");
 $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Count unread messages (for admin badge)
+$unread_count = 0;
+if ($_SESSION['role'] === 'admin') {
+    try {
+        $unread_count = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0")->fetchColumn();
+    } catch (Exception $e) {
+        // Column might not exist yet, ignore
+        $unread_count = 0;
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -52,8 +63,11 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <a href="admin/members.php" class="btn-secondary">
                             <i class="fas fa-users"></i> メンバー管理
                         </a>
-                        <a href="admin/messages.php" class="btn-secondary">
+                        <a href="admin/messages.php" class="btn-secondary" style="position: relative;">
                             <i class="fas fa-envelope"></i> お問い合わせ
+                            <?php if ($unread_count > 0): ?>
+                                <span style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: 600;"><?php echo $unread_count; ?></span>
+                            <?php endif; ?>
                         </a>
                     <?php endif; ?>
                     
