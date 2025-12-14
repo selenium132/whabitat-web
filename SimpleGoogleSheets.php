@@ -121,5 +121,34 @@ class SimpleGoogleSheets {
         }
         return $this->callApi('POST', $url, $body);
     }
+
+    // Debug: Get token info to verify scopes
+    public function debugTokenInfo() {
+        $token = $this->getAccessToken();
+        $url = "https://oauth2.googleapis.com/tokeninfo?access_token=" . urlencode($token);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        return json_decode($response, true);
+    }
+
+    // Debug: Try a simple API call to test connectivity
+    public function debugTestApi() {
+        $token = $this->getAccessToken();
+        // Try to get info about a public spreadsheet (this should always work if token is valid)
+        $url = "https://sheets.googleapis.com/v4/spreadsheets/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"; // Sample public sheet
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer $token"
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        return ['httpCode' => $httpCode, 'response' => json_decode($response, true)];
+    }
 }
 ?>
