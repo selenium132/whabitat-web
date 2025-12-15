@@ -132,27 +132,17 @@ $csrf_token = generateCsrfToken();
 
             <h1 style="margin-bottom: 2rem;">メンバー管理</h1>
             
-            <!-- Member Statistics -->
-            <div class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
-                <h3 style="margin: 0 0 1rem 0; font-size: 1rem; color: var(--text-light);">📊 メンバー統計</h3>
-                <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 1.5rem; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: 700;"><?php echo $total_approved; ?></div>
-                        <div style="font-size: 0.85rem; opacity: 0.9;">承認済みメンバー</div>
-                    </div>
-                    <?php foreach ($grade_counts as $grade => $count): ?>
-                        <div style="background: #f8f9fa; padding: 0.8rem 1.2rem; border-radius: 8px; text-align: center; border: 1px solid #e9ecef;">
-                            <div style="font-size: 1.5rem; font-weight: 600; color: #333;"><?php echo $count; ?></div>
-                            <div style="font-size: 0.8rem; color: #666;"><?php echo htmlspecialchars($grade); ?></div>
-                        </div>
-                    <?php endforeach; ?>
-                    <?php if ($total_all > $total_approved): ?>
-                        <div style="background: #fff3cd; padding: 0.8rem 1.2rem; border-radius: 8px; text-align: center; border: 1px solid #ffc107;">
-                            <div style="font-size: 1.5rem; font-weight: 600; color: #856404;"><?php echo $total_all - $total_approved; ?></div>
-                            <div style="font-size: 0.8rem; color: #856404;">未承認</div>
-                        </div>
-                    <?php endif; ?>
-                </div>
+            <!-- Member Statistics (Compact) -->
+            <div style="margin-bottom: 1rem; padding: 0.8rem 1rem; background: #f8f9fa; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; font-size: 0.9rem;">
+                <span style="font-weight: 600;">👥 <?php echo $total_approved; ?>名</span>
+                <span style="color: #999;">|</span>
+                <?php foreach ($grade_counts as $grade => $count): ?>
+                    <span style="color: #666;"><?php echo htmlspecialchars($grade); ?>: <?php echo $count; ?></span>
+                <?php endforeach; ?>
+                <?php if ($total_all > $total_approved): ?>
+                    <span style="color: #999;">|</span>
+                    <span style="color: #f39c12;">未承認: <?php echo $total_all - $total_approved; ?></span>
+                <?php endif; ?>
             </div>
             
             <div class="card" style="padding: 0;">
