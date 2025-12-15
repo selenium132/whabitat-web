@@ -56,6 +56,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Fetch All Members (Sorted by Grade ASC, then Name ASC)
 $stmt = $pdo->query("SELECT * FROM users ORDER BY grade ASC, name ASC");
 $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Count members by grade (only approved members)
+$grade_counts = [];
+$total_approved = 0;
+$total_all = count($members);
+foreach ($members as $m) {
+    if ($m['is_approved']) {
+        $total_approved++;
+        $grade = $m['grade'] ?: '未設定';
+        if (!isset($grade_counts[$grade])) {
+            $grade_counts[$grade] = 0;
+        }
+        $grade_counts[$grade]++;
+    }
+}
+// Sort by grade name
+ksort($grade_counts);
+
 $csrf_token = generateCsrfToken();
 
 ?>
@@ -111,6 +129,29 @@ $csrf_token = generateCsrfToken();
         <div class="dashboard-container" style="max-width: 1100px;">
 
             <h1 style="margin-bottom: 2rem;">メンバー管理</h1>
+            
+            <!-- Member Statistics -->
+            <div class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                <h3 style="margin: 0 0 1rem 0; font-size: 1rem; color: var(--text-light);">📊 メンバー統計</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 1.5rem; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 700;"><?php echo $total_approved; ?></div>
+                        <div style="font-size: 0.85rem; opacity: 0.9;">承認済みメンバー</div>
+                    </div>
+                    <?php foreach ($grade_counts as $grade => $count): ?>
+                        <div style="background: #f8f9fa; padding: 0.8rem 1.2rem; border-radius: 8px; text-align: center; border: 1px solid #e9ecef;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: #333;"><?php echo $count; ?></div>
+                            <div style="font-size: 0.8rem; color: #666;"><?php echo htmlspecialchars($grade); ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php if ($total_all > $total_approved): ?>
+                        <div style="background: #fff3cd; padding: 0.8rem 1.2rem; border-radius: 8px; text-align: center; border: 1px solid #ffc107;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: #856404;"><?php echo $total_all - $total_approved; ?></div>
+                            <div style="font-size: 0.8rem; color: #856404;">未承認</div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
             
             <div class="card" style="padding: 0;">
                 <div class="table-responsive">
