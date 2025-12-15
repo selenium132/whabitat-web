@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHABITAT | 早稲田大学ボランティアサークル</title>
+    <meta name="description" content="WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の学生支部です。「誰もがきちんとした場所で暮らせる世界」を目指し、国内外で住居建築支援を行っています。">
+    <link rel="canonical" href="https://whabitathome.com/">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     <link
@@ -13,6 +15,49 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Structured Data for Google Sitelinks -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "WHABITAT",
+        "alternateName": "早稲田大学ハビタット",
+        "url": "https://whabitathome.com",
+        "logo": "https://whabitathome.com/logo.png",
+        "description": "国際NGO Habitat for Humanity Japan の早稲田大学学生支部",
+        "sameAs": [
+            "https://www.instagram.com/whabitat_wu/"
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "WHABITAT",
+        "url": "https://whabitathome.com",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://whabitathome.com/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SiteNavigationElement",
+        "name": ["GV (海外ボランティア)", "JV (国内ボランティア)", "国内単発ボランティア", "定例MTG", "Contact"],
+        "url": [
+            "https://whabitathome.com/activity_gv.php",
+            "https://whabitathome.com/activity_jv.php",
+            "https://whabitathome.com/activity_domestic.php",
+            "https://whabitathome.com/activity_mtg.php",
+            "https://whabitathome.com/#contact"
+        ]
+    }
+    </script>
 </head>
 
 <body>

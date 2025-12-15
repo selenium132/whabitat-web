@@ -1,0 +1,14 @@
+# robots.txt for whabitathome.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://whabitathome.com/sitemap.xml
+
+# Disallow admin pages and internal files
+Disallow: /admin/
+Disallow: /config.php
+Disallow: /callback.php
+Disallow: /*.sql
+Disallow: /service-account.json
