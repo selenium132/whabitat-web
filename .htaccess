@@ -1,0 +1,23 @@
+# Error handling
+ErrorDocument 404 /404.php
+
+# Redirect old URLs to new locations
+RewriteEngine On
+RewriteBase /
+
+# Redirect /about-us to home
+RewriteRule ^about-us/?$ / [R=301,L]
+
+# Redirect /contact to home contact section
+RewriteRule ^contact/?$ /#contact [R=301,NE,L]
+
+# Redirect /activity to domestic
+RewriteRule ^activity/?$ /activity_domestic.php [R=301,L]
+
+# Redirect /gv /jv to proper pages
+RewriteRule ^gv/?$ /activity_gv.php [R=301,L]
+RewriteRule ^jv/?$ /activity_jv.php [R=301,L]
+RewriteRule ^domestic/?$ /activity_domestic.php [R=301,L]
+
+# Redirect /member to dashboard
+RewriteRule ^member/?$ /dashboard.php [R=301,L]
