@@ -44,6 +44,18 @@ if ($is_admin) {
 $stmt->execute([$event_id]);
 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Count only 'join' status for participant count (fix for admin view including all)
+$join_count = 0;
+foreach ($participants as $p) {
+    if ($p['status'] === 'join') {
+        $join_count++;
+    }
+}
+// If not admin, all participants are 'join' anyway
+if (!$is_admin) {
+    $join_count = count($participants);
+}
+
 // Parse Schema for Headers if needed (to show custom answers columns?)
 // For now, let's just list them nicely.
 $form_schema = [];
@@ -175,7 +187,7 @@ function getStatusLabel($status) {
         <div class="page-header">
             <div>
                 <h1 class="event-title" style="margin-top: 5px;">回答一覧: <?php echo htmlspecialchars($event['title']); ?></h1>
-                <p style="color: var(--text-light); font-size: 14px;">参加予定者数: <?php echo count($participants); ?>名</p>
+                <p style="color: var(--text-light); font-size: 14px;">参加予定者数: <?php echo $join_count; ?>名</p>
                 <?php 
                     $is_manager = $is_admin || isEventAdmin($event['id']);
                 ?>
