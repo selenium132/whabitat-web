@@ -705,15 +705,14 @@ if ($edit_mode) {
             echo json_encode($schema_data); 
         ?>;
 
-        // Initialize with one question or existing
+        // Initialize with existing questions only (no default question for new events)
         window.onload = () => {
              if (existingSchema.length > 0) {
                  existingSchema.forEach(q => {
                      restoreQuestion(q);
                  });
-             } else {
-                 addQuestion('radio'); 
              }
+             // New events start with no questions - user adds them if needed
         };
 
 
