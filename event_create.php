@@ -639,7 +639,7 @@ if ($edit_mode) {
                     <div class="admin-selection-area">
                         <details class="admin-selection-details">
                             <summary>
-                                <span><i class="fas fa-clock"></i> 回答受付期間（任意）</span>
+                                <span><i class="fas fa-cog"></i> 詳細設定</span>
                             </summary>
                             
                             <div style="padding: 15px; display: flex; flex-direction: column; gap: 15px;">
