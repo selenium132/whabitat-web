@@ -372,6 +372,9 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                     
                     <div class="q-card custom-q" data-index="<?php echo $index; ?>" data-type="<?php echo $q['type']; ?>">
                         <div class="q-title"><?php echo $title . $req; ?></div>
+                        <?php if (!empty($q['description'])): ?>
+                            <div style="font-size: 0.85rem; color: #666; margin-bottom: 10px;"><?php echo htmlspecialchars($q['description']); ?></div>
+                        <?php endif; ?>
                         
                         <?php if ($q['type'] === 'paragraph'): ?>
                             <input type="text" class="q-text-input custom-input" name="ans_<?php echo $index; ?>" value="<?php echo htmlspecialchars($prev_val); ?>" placeholder="回答を入力" <?php echo $requiredAttr; ?>>

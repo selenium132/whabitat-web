@@ -728,6 +728,12 @@ if ($edit_mode) {
             const card = document.getElementById(`q-${id}`);
             card.querySelector('.q-text-input').value = qData.title;
             
+            // Set description if exists
+            const descInput = card.querySelector('.q-desc-input');
+            if (descInput && qData.description) {
+                descInput.value = qData.description;
+            }
+            
             // Render Content first to have inputs
             renderContent(id, type, qData.options); // Pass options to render
             
@@ -753,12 +759,13 @@ if ($edit_mode) {
                 <div class="q-header">
                     <input type="text" class="q-text-input" placeholder="質問" value="無題の質問">
                     <select class="q-type-select" onchange="changeType(${id}, this.value)">
-                        <option value="paragraph" ${initialType === 'paragraph' ? 'selected' : ''}>記述式 (Long text)</option>
-                        <option value="radio" ${initialType === 'radio' ? 'selected' : ''}>ラジオボタン</option>
-                        <option value="checkbox" ${initialType === 'checkbox' ? 'selected' : ''}>チェックボックス</option>
-                        <option value="dropdown" ${initialType === 'dropdown' ? 'selected' : ''}>プルダウン</option>
+                        <option value="paragraph" ${initialType === 'paragraph' ? 'selected' : ''}>記述式</option>
+                        <option value="radio" ${initialType === 'radio' ? 'selected' : ''}>単数選択</option>
+                        <option value="checkbox" ${initialType === 'checkbox' ? 'selected' : ''}>複数選択</option>
                     </select>
                 </div>
+                
+                <input type="text" class="q-desc-input" placeholder="説明（任意）" style="width: 100%; border: none; border-bottom: 1px solid #eee; padding: 8px 0; font-size: 0.9rem; color: #666; margin-bottom: 10px;">
                 
                 <div class="q-content" id="q-content-${id}">
                     <!-- Content injected by JS -->
@@ -803,7 +810,7 @@ if ($edit_mode) {
             contentDiv.innerHTML = '';
 
             if (type === 'paragraph') {
-                contentDiv.innerHTML = `<div class="long-text-placeholder">長文回答テキスト</div>`;
+                contentDiv.innerHTML = `<div class="long-text-placeholder">テキスト</div>`;
             } else {
                 // List based types
                 const listContainer = document.createElement('div');
@@ -860,11 +867,7 @@ if ($edit_mode) {
         
         function deleteQuestion(id) {
             const card = document.getElementById(`q-${id}`);
-            if (container.children.length > 1) {
-                card.remove();
-            } else {
-                alert("これ以上削除できません");
-            }
+            card.remove();
         }
 
         function duplicateQuestion(id) {
@@ -904,6 +907,7 @@ if ($edit_mode) {
             cards.forEach(card => {
                 const id = card.dataset.qid;
                 const text = card.querySelector('.q-text-input').value;
+                const desc = card.querySelector('.q-desc-input')?.value || '';
                 const type = card.querySelector('.q-type-select').value;
                 const required = card.querySelector('.required-toggle i').getAttribute('data-required') === 'true';
                 
@@ -915,6 +919,7 @@ if ($edit_mode) {
 
                 questions.push({
                     title: text,
+                    description: desc,
                     type: type,
                     required: required,
                     options: options
