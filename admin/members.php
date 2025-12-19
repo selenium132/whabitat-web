@@ -53,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch All Members (Sorted by Grade ASC, then Name ASC)
-$stmt = $pdo->query("SELECT * FROM users ORDER BY grade ASC, name ASC");
+// Fetch All Members (Sorted by Grade ASC, then Name in Japanese order)
+$stmt = $pdo->query("SELECT * FROM users ORDER BY grade ASC, name COLLATE utf8mb4_unicode_ci ASC");
 $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Count members by grade (only approved members)
