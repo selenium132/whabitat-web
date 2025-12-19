@@ -39,19 +39,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $event_date = $_POST['event_date'] ?? date('Y-m-d H:i:s');
     $form_schema = $_POST['form_schema'] ?? '[]';
     $target_id = $_POST['event_id'] ?? null;
+    
+    // Response schedule (NULL = default behavior)
+    $open_at = !empty($_POST['open_at']) ? $_POST['open_at'] : null;
+    $close_at = !empty($_POST['close_at']) ? $_POST['close_at'] : null;
 
     if ($title) {
         $pdo = getDB();
         
         if ($target_id) {
             // Update
-            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ? WHERE id = ?");
-            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $target_id]);
+            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ? WHERE id = ?");
+            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $open_at, $close_at, $target_id]);
             $event_id_final = $target_id;
         } else {
             // Insert
-            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema) VALUES (?, ?, ?, ?, ?)");
-            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema]);
+            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at]);
             $event_id_final = $pdo->lastInsertId();
         }
 
@@ -624,6 +628,32 @@ if ($edit_mode) {
                                         </div>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
+                            </div>
+                        </details>
+                    </div>
+                    
+                    <!-- Response Schedule -->
+                    <div class="admin-selection-area">
+                        <details class="admin-selection-details">
+                            <summary>
+                                <span><i class="fas fa-clock"></i> 回答受付期間（任意）</span>
+                            </summary>
+                            
+                            <div style="padding: 15px; display: flex; flex-direction: column; gap: 15px;">
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <label style="min-width: 80px; font-weight: 500;">開始日時:</label>
+                                    <input type="datetime-local" name="open_at" 
+                                        value="<?php echo ($edit_mode && !empty($event_data['open_at'])) ? date('Y-m-d\TH:i', strtotime($event_data['open_at'])) : ''; ?>"
+                                        style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                                    <span style="color: #888; font-size: 0.85rem;">空欄 = 即時公開</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <label style="min-width: 80px; font-weight: 500;">締切日時:</label>
+                                    <input type="datetime-local" name="close_at" 
+                                        value="<?php echo ($edit_mode && !empty($event_data['close_at'])) ? date('Y-m-d\TH:i', strtotime($event_data['close_at'])) : ''; ?>"
+                                        style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                                    <span style="color: #888; font-size: 0.85rem;">空欄 = 締切なし</span>
+                                </div>
                             </div>
                         </details>
                     </div>
