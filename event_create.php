@@ -672,11 +672,10 @@ if ($edit_mode) {
             </div>
 
             <!-- Attendance Question Notice -->
-            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #4caf50; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
-                <i class="fas fa-check-circle" style="color: #4caf50; font-size: 1.5rem;"></i>
-                <div>
-                    <div style="font-weight: 600; color: #2e7d32;">出欠確認は自動で追加されます</div>
-                    <div style="font-size: 0.85rem; color: #558b2f; margin-top: 3px;">「参加 / 不参加 / 未定」の選択項目は自動的に表示されます。追加の質問があれば下から追加してください。</div>
+            <div style="background: #f8f9fa; border: 1px solid #e0e0e0; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-info-circle" style="color: #666; font-size: 1.1rem;"></i>
+                <div style="font-size: 0.9rem; color: #555;">
+                    <strong>出欠確認</strong>（参加 / 不参加 / 未定）は自動で追加されます
                 </div>
             </div>
 
@@ -898,6 +897,12 @@ if ($edit_mode) {
             const formTitle = document.getElementById('form-title').value;
             if (!formTitle) {
                 alert("フォームのタイトルを入力してください");
+                return;
+            }
+            
+            const eventDate = document.querySelector('input[name="event_date"]').value;
+            if (!eventDate) {
+                alert("開催日時を設定してください");
                 return;
             }
 
