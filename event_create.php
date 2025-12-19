@@ -671,6 +671,15 @@ if ($edit_mode) {
                 </div>
             </div>
 
+            <!-- Attendance Question Notice -->
+            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #4caf50; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-check-circle" style="color: #4caf50; font-size: 1.5rem;"></i>
+                <div>
+                    <div style="font-weight: 600; color: #2e7d32;">出欠確認は自動で追加されます</div>
+                    <div style="font-size: 0.85rem; color: #558b2f; margin-top: 3px;">「参加 / 不参加 / 未定」の選択項目は自動的に表示されます。追加の質問があれば下から追加してください。</div>
+                </div>
+            </div>
+
             <!-- Questions Container -->
             <div id="questions-container"></div>
 
