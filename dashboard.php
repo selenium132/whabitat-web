@@ -126,10 +126,19 @@ if ($_SESSION['role'] === 'admin') {
                             </div>
                             <h3 style="margin: 0.2rem 0 0; font-size: 1.1rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
-                        <div style="display: flex; gap: 5px;">
+                        <div style="display: flex; gap: 5px; align-items: center;">
                             <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 1rem;">
                                 回答一覧
                             </a>
+                            <?php if ($_SESSION['role'] === 'admin'): ?>
+                                <a href="event_delete.php?id=<?php echo $event['id']; ?>" 
+                                   onclick="return confirm('このイベントを削除しますか？\nこの操作は取り消せません。');"
+                                   class="btn-secondary" 
+                                   style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-color: #dc3545;"
+                                   title="削除">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
