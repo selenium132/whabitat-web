@@ -43,19 +43,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Response schedule (NULL = default behavior)
     $open_at = !empty($_POST['open_at']) ? $_POST['open_at'] : null;
     $close_at = !empty($_POST['close_at']) ? $_POST['close_at'] : null;
+    
+    // Capacity (NULL = unlimited)
+    $capacity = !empty($_POST['capacity']) ? intval($_POST['capacity']) : null;
 
     if ($title) {
         $pdo = getDB();
         
         if ($target_id) {
             // Update
-            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ? WHERE id = ?");
-            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $open_at, $close_at, $target_id]);
+            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ?, capacity = ? WHERE id = ?");
+            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $open_at, $close_at, $capacity, $target_id]);
             $event_id_final = $target_id;
         } else {
             // Insert
-            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at]);
+            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at, capacity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at, $capacity]);
             $event_id_final = $pdo->lastInsertId();
         }
 
@@ -653,6 +656,14 @@ if ($edit_mode) {
                                         value="<?php echo ($edit_mode && !empty($event_data['close_at'])) ? date('Y-m-d\TH:i', strtotime($event_data['close_at'])) : ''; ?>"
                                         style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
                                     <span style="color: #888; font-size: 0.85rem;">空欄 = 締切なし</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <label style="min-width: 80px; font-weight: 500;">定員:</label>
+                                    <input type="number" name="capacity" min="1" 
+                                        value="<?php echo ($edit_mode && !empty($event_data['capacity'])) ? intval($event_data['capacity']) : ''; ?>"
+                                        placeholder="例: 20"
+                                        style="padding: 8px; border: 1px solid #ddd; border-radius: 6px; width: 100px;">
+                                    <span style="color: #888; font-size: 0.85rem;">空欄 = 定員なし</span>
                                 </div>
                             </div>
                         </details>

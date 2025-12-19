@@ -99,6 +99,21 @@ if (!empty($event['close_at'])) {
     }
 }
 
+// Check capacity (if set, count participants and compare)
+$current_participants = count($participants); // Already fetched above - only 'join' status
+$is_full = false;
+if (!empty($event['capacity']) && $event['capacity'] > 0) {
+    if ($current_participants >= $event['capacity']) {
+        // Check if current user already joined (they can still edit)
+        $already_joined = ($my_attendance && $my_attendance['status'] === 'join');
+        if (!$already_joined) {
+            $is_full = true;
+            $is_open = false;
+            $schedule_message = '定員に達しました（' . $current_participants . '/' . $event['capacity'] . '名）';
+        }
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -296,6 +311,11 @@ if (!empty($event['close_at'])) {
                         <?php if (!empty($event['close_at'])): ?>
                             <div style="margin-top: 8px; color: #888; font-size: 0.85rem;">
                                 <i class="fas fa-hourglass-end"></i> 締切: <?php echo date('Y年m月d日 H:i', strtotime($event['close_at'])); ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!empty($event['capacity'])): ?>
+                            <div style="margin-top: 8px; color: #888; font-size: 0.85rem;">
+                                <i class="fas fa-users"></i> 定員: <?php echo $current_participants; ?>/<?php echo $event['capacity']; ?>名
                             </div>
                         <?php endif; ?>
                     <?php endif; ?>
