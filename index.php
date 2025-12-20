@@ -15,6 +15,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
     <!-- Structured Data for Google Sitelinks -->
     <script type="application/ld+json">
@@ -242,6 +243,14 @@
                 </div>
                 <?php unset($_SESSION['contact_success']); ?>
                 <?php endif; ?>
+                
+                <?php if (isset($_SESSION['contact_error'])): ?>
+                <div
+                    style="background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+                    <?php echo htmlspecialchars($_SESSION['contact_error']); ?>
+                </div>
+                <?php unset($_SESSION['contact_error']); ?>
+                <?php endif; ?>
 
                 <form action="contact_submit.php" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
@@ -257,6 +266,9 @@
                         <label class="form-label">メッセージ</label>
                         <textarea name="message" class="form-input" rows="5" required
                             placeholder="ご質問やメッセージをどうぞ"></textarea>
+                    </div>
+                    <div class="form-group" style="display: flex; justify-content: center;">
+                        <div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
                     </div>
                     <button type="submit" class="btn-submit">送信する</button>
                 </form>

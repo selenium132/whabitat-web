@@ -25,6 +25,10 @@ define('LINE_CALLBACK_URL', 'https://whabitathome.com/callback.php'); // Updated
 define('LINE_BOT_ACCESS_TOKEN', 'XfDWPXXjPtI7VNVP5tbaUAEnwyxCBaDIaZtwiqZ+2cbmhOI4/CRzlsQQBQqdvHkSr9EXTcM90UQJwa2C8h0AcqI3HVpacr7HdqT4yEJ8mfY6XvGrSxT9xad9aftOPxplReoWpt7ex+BrkohL20yeegdB04t89/1O/w1cDnyilFU=');
 define('LINE_BOT_CHANNEL_SECRET', '71e364600d533ca83747d44d177b92f6'); // Add this! Must be different from Login Secret
 
+// reCAPTCHA v2 Configuration
+define('RECAPTCHA_SITE_KEY', '6LdKxjEsAAAAAK4JrVk0-WU_aiEQWyU-1hjdf7p4');
+define('RECAPTCHA_SECRET_KEY', '6LdKxjEsAAAAABnJLfqMR7C7SlheBCKnXLGgEgTU');
+
 // Security: Session Hardening
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
