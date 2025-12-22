@@ -93,6 +93,19 @@ if ($_SESSION['role'] === 'admin') {
                                 <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?>
                             </div>
                             <h3 class="event-title-text"><?php echo htmlspecialchars($event['title']); ?></h3>
+                            <?php if (!empty($event['open_at']) || !empty($event['close_at']) || !empty($event['capacity'])): ?>
+                                <div style="margin-top: 8px; font-size: 0.8rem; color: #666; display: flex; flex-wrap: wrap; gap: 12px;">
+                                    <?php if (!empty($event['open_at'])): ?>
+                                        <span><i class="fas fa-play-circle" style="color: #28a745;"></i> 開始: <?php echo date('m/d H:i', strtotime($event['open_at'])); ?></span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($event['close_at'])): ?>
+                                        <span><i class="fas fa-stop-circle" style="color: #dc3545;"></i> 締切: <?php echo date('m/d H:i', strtotime($event['close_at'])); ?></span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($event['capacity'])): ?>
+                                        <span><i class="fas fa-users" style="color: #007bff;"></i> 定員: <?php echo $event['capacity']; ?>名</span>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="event-actions">
                             <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer">
