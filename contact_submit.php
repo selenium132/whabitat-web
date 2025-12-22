@@ -39,9 +39,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Honeypot check - if the hidden "website" field is filled, it's a bot
+    if (!empty($_POST['website'])) {
+        // Silently ignore (don't give feedback to bots)
+        header("Location: index.php#contact");
+        exit;
+    }
+
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     $message = $_POST['message'] ?? '';
+
+    // Block HTML tags (spam typically contains <a href=...>)
+    if (preg_match('/<[a-z?!\/]/i', $name . $email . $message)) {
+        $_SESSION['contact_error'] = 'HTMLタグを含むメッセージは送信できません。';
+        header("Location: index.php#contact");
+        exit;
+    }
+
+    // Block suspicious domains/keywords commonly used in spam
+    $spam_patterns = [
+        '/\b(888starz|casino|poker|bet|gambling)\b/i',
+        '/\.(store|online|top|xyz|icu|buzz)\//i',
+    ];
+    foreach ($spam_patterns as $pattern) {
+        if (preg_match($pattern, $message)) {
+            // Silently ignore spam
+            header("Location: index.php#contact");
+            exit;
+        }
+    }
 
     if ($name && $email && $message) {
         $pdo = getDB();

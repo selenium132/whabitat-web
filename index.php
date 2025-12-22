@@ -254,6 +254,10 @@
 
                 <form action="contact_submit.php" method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                    <!-- Honeypot field - hidden from humans, bots will fill it -->
+                    <div style="position: absolute; left: -9999px;" aria-hidden="true">
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </div>
                     <div class="form-group">
                         <label class="form-label">お名前</label>
                         <input type="text" name="name" class="form-input" required placeholder="早稲田 花子">
