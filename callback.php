@@ -53,7 +53,10 @@ $stmt->execute([$line_user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user) {
-    // Existing User
+    // Existing User - Update LINE name and avatar in case they changed
+    $stmt = $pdo->prepare("UPDATE users SET line_name = ?, avatar_url = ? WHERE id = ?");
+    $stmt->execute([$line_name, $avatar_url, $user['id']]);
+    
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['role'] = $user['role'];
     $_SESSION['name'] = $user['name'];
