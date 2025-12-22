@@ -368,10 +368,46 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             </div>
 
             <?php if (!$is_open): ?>
-                <!-- Response period is closed - show read-only view -->
-                <div class="question-card" style="text-align: center; padding: 30px;">
-                    <p style="color: #666;">現在、回答を受け付けていません。</p>
-                    <a href="dashboard.php" class="btn-primary" style="display: inline-block; margin-top: 15px;">ダッシュボードへ戻る</a>
+                <!-- Response period is closed - show submitted response -->
+                <?php if ($my_attendance): ?>
+                    <div class="question-card" style="padding: 20px;">
+                        <h3 style="margin-bottom: 15px; color: #333;">あなたの回答</h3>
+                        <div style="background: #f5f5f5; padding: 12px 16px; border-radius: 8px; margin-bottom: 10px;">
+                            <strong>出欠:</strong> <?php echo getStatusLabel($my_attendance['status']); ?>
+                        </div>
+                        <?php if (!empty($form_schema) && !empty($my_answers)): ?>
+                            <?php foreach ($form_schema as $index => $q): ?>
+                                <?php if (isset($my_answers[$index])): ?>
+                                    <div style="background: #f5f5f5; padding: 12px 16px; border-radius: 8px; margin-bottom: 10px;">
+                                        <strong><?php echo htmlspecialchars($q['title']); ?>:</strong> 
+                                        <?php 
+                                            $val = $my_answers[$index];
+                                            if (is_array($val)) {
+                                                echo htmlspecialchars(implode(', ', $val));
+                                            } else {
+                                                echo htmlspecialchars($val);
+                                            }
+                                        ?>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="question-card" style="text-align: center; padding: 20px;">
+                        <p style="color: #666;">回答が登録されていません。</p>
+                    </div>
+                <?php endif; ?>
+                
+                <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: center;">
+                    <p style="color: #856404; margin: 0; font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 6px;"></i>
+                        回答の変更が必要な場合は、幹部までご連絡ください。
+                    </p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="dashboard.php" class="btn-primary" style="display: inline-block;">ダッシュボードへ戻る</a>
                 </div>
             <?php else: ?>
             
@@ -453,12 +489,6 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <!-- Fallback Comment field if no schema (or maybe always show comment?) -->
-                <div class="q-card">
-                    <div class="q-title">一言コメント</div>
-                    <input type="text" name="comment" class="q-text-input" value="<?php echo htmlspecialchars($my_attendance['comment'] ?? ''); ?>" placeholder="回答を入力">
-                </div>
             <?php endif; ?>
 
             <div style="overflow: hidden; padding-bottom: 20px;">
