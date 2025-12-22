@@ -19,7 +19,52 @@ if (!$event) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrfToken($_POST['csrf_token'] ?? ''); // CSRF Check
 
+    // Server-side deadline check
+    $now = new DateTime();
+    $can_submit = true;
+    
+    // Check open_at
+    if (!empty($event['open_at'])) {
+        $open_time = new DateTime($event['open_at']);
+        if ($now < $open_time) {
+            $can_submit = false;
+        }
+    }
+    
+    // Check close_at
+    if (!empty($event['close_at'])) {
+        $close_time = new DateTime($event['close_at']);
+        if ($now > $close_time) {
+            $can_submit = false;
+        }
+    }
+    
+    // Check capacity (only for new 'join' submissions)
     $status = $_POST['status'] ?? '';
+    if (!empty($event['capacity']) && $event['capacity'] > 0 && $status === 'join') {
+        // Count current 'join' participants
+        $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM attendance WHERE event_id = ? AND status = 'join' AND user_id != ?");
+        $count_stmt->execute([$event_id, $_SESSION['user_id']]);
+        $current_joins = $count_stmt->fetchColumn();
+        
+        if ($current_joins >= $event['capacity']) {
+            // Check if user already has 'join' status (editing is allowed)
+            $my_stmt = $pdo->prepare("SELECT status FROM attendance WHERE event_id = ? AND user_id = ?");
+            $my_stmt->execute([$event_id, $_SESSION['user_id']]);
+            $my_current = $my_stmt->fetchColumn();
+            
+            if ($my_current !== 'join') {
+                $can_submit = false; // Cannot join, capacity full
+            }
+        }
+    }
+    
+    if (!$can_submit) {
+        // Redirect back without saving
+        header("Location: event_view.php?id=" . $event_id);
+        exit;
+    }
+
     $comment = $_POST['comment'] ?? '';
     $response_data = $_POST['response_data'] ?? null; // JSON String handling custom answers
     
