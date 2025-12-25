@@ -154,6 +154,7 @@ $csrf_token = generateCsrfToken();
                                 <th>学籍番号</th>
                                 <th>LINE名</th>
                                 <th>代</th>
+                                <th>学部</th>
                                 <th>ステータス</th>
                                 <th>権限</th>
                                 <th>操作</th>
@@ -173,6 +174,7 @@ $csrf_token = generateCsrfToken();
                                     <td><?php echo htmlspecialchars($m['student_id']); ?></td>
                                     <td><?php echo htmlspecialchars($m['line_name']); ?></td>
                                     <td><?php echo htmlspecialchars($m['grade']); ?></td>
+                                    <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
                                     <td>
                                         <?php if ($m['is_approved']): ?>
                                             <span style="color: #2ecc71; font-weight: bold;">承認済</span>

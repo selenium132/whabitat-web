@@ -10,11 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $student_id = $_POST['student_id'] ?? '';
     $grade = $_POST['grade'] ?? '';
+    $faculty = $_POST['faculty'] ?? '';
 
-    if ($name && $student_id && $grade) {
+    if ($name && $student_id && $grade && $faculty) {
         $pdo = getDB();
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ? WHERE id = ?");
-        if ($stmt->execute([$name, $student_id, $grade, $_SESSION['user_id']])) {
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ? WHERE id = ?");
+        if ($stmt->execute([$name, $student_id, $grade, $faculty, $_SESSION['user_id']])) {
             $_SESSION['name'] = $name;
             header("Location: dashboard.php");
             exit;
@@ -32,7 +33,7 @@ $csrf_token = generateCsrfToken();
 $current_user = [];
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT name, student_id, grade FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT name, student_id, grade, faculty FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $current_user = $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -41,6 +42,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $name_val = $_POST['name'] ?? $current_user['name'] ?? '';
 $sid_val = $_POST['student_id'] ?? $current_user['student_id'] ?? '';
 $grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
+$faculty_val = $_POST['faculty'] ?? $current_user['faculty'] ?? '';
+
+// Waseda University faculties
+$waseda_faculties = [
+    '政治経済学部',
+    '法学部',
+    '教育学部',
+    '商学部',
+    '社会科学部',
+    '国際教養学部',
+    '文化構想学部',
+    '文学部',
+    '基幹理工学部',
+    '創造理工学部',
+    '先進理工学部',
+    '人間科学部',
+    'スポーツ科学部',
+];
 
 // Determine if this is initial registration or profile edit
 // If name is empty in DB, it's first registration
@@ -97,6 +116,15 @@ $is_first_registration = empty($current_user['name']);
                             <option value="">選択してください</option>
                             <?php foreach (AVAILABLE_GRADES as $g): ?>
                                 <option value="<?php echo htmlspecialchars($g); ?>" <?php echo $grade_val === $g ? 'selected' : ''; ?>><?php echo htmlspecialchars($g); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">学部</label>
+                        <select name="faculty" class="form-select" required>
+                            <option value="">選択してください</option>
+                            <?php foreach ($waseda_faculties as $f): ?>
+                                <option value="<?php echo htmlspecialchars($f); ?>" <?php echo $faculty_val === $f ? 'selected' : ''; ?>><?php echo htmlspecialchars($f); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
