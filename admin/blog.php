@@ -211,15 +211,21 @@ $csrf_token = generateCsrfToken();
                                 <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">現在のサムネイル</p>
                             </div>
                         <?php endif; ?>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <div style="flex: 1; min-width: 200px;">
-                                <label style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 5px;">ファイルをアップロード</label>
-                                <input type="file" name="thumbnail_file" accept="image/*" class="form-input" style="padding: 8px;">
-                            </div>
-                            <div style="flex: 1; min-width: 200px;">
-                                <label style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 5px;">またはURLを入力</label>
-                                <input type="url" name="thumbnail" class="form-input" placeholder="https://example.com/image.jpg">
-                            </div>
+                        
+                        <!-- Drag & Drop Area -->
+                        <div id="dropZone" style="border: 2px dashed #ddd; border-radius: 8px; padding: 2rem; text-align: center; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s;">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #aaa; margin-bottom: 0.5rem;"></i>
+                            <p style="color: #666; margin: 0;">ドラッグ＆ドロップ または クリックして画像を選択</p>
+                            <input type="file" name="thumbnail_file" id="fileInput" accept="image/*" style="display: none;">
+                        </div>
+                        <div id="previewNew" style="display: none; margin-bottom: 1rem;">
+                            <img id="previewImg" style="max-width: 200px; border-radius: 8px;">
+                            <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">選択した画像</p>
+                        </div>
+                        
+                        <div style="margin-top: 1rem;">
+                            <label style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 5px;">または画像アドレスを入力</label>
+                            <input type="text" name="thumbnail" id="thumbnailUrl" class="form-input" placeholder="https://example.com/image.jpg">
                         </div>
                     </div>
                     
@@ -316,6 +322,53 @@ $csrf_token = generateCsrfToken();
         document.getElementById('blogForm').addEventListener('submit', function() {
             document.getElementById('contentHidden').value = quill.root.innerHTML;
         });
+        
+        // Drag & Drop handlers
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const previewNew = document.getElementById('previewNew');
+        const previewImg = document.getElementById('previewImg');
+        
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#667eea';
+            dropZone.style.background = '#f0f4ff';
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#ddd';
+            dropZone.style.background = 'transparent';
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ddd';
+            dropZone.style.background = 'transparent';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                fileInput.files = files;
+                showPreview(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                showPreview(e.target.files[0]);
+            }
+        });
+        
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                previewNew.style.display = 'block';
+                dropZone.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
     </script>
 </body>
 </html>
