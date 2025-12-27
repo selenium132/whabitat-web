@@ -4,6 +4,16 @@ requireLogin();
 
 $pdo = getDB();
 
+// Check if profile is complete - redirect if any required field is missing
+$stmt = $pdo->prepare("SELECT name, student_id, grade, faculty FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty($user_profile['grade']) || empty($user_profile['faculty'])) {
+    header("Location: register_profile.php");
+    exit;
+}
+
 // Fetch Upcoming Events
 $stmt = $pdo->query("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC");
 $upcoming_events = $stmt->fetchAll(PDO::FETCH_ASSOC);

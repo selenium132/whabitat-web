@@ -12,28 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $grade = $_POST['grade'] ?? '';
     $faculty = $_POST['faculty'] ?? '';
 
-    // Check if basic required fields are filled
-    if ($name && $student_id && $grade) {
+    // All fields are required
+    if ($name && $student_id && $grade && $faculty) {
         $pdo = getDB();
-        
-        // Check if faculty column exists
-        $faculty_exists = false;
-        try {
-            $check = $pdo->query("SHOW COLUMNS FROM users LIKE 'faculty'");
-            $faculty_exists = $check->rowCount() > 0;
-        } catch (Exception $e) {
-            $faculty_exists = false;
-        }
-        
-        if ($faculty_exists && $faculty) {
-            $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ? WHERE id = ?");
-            $result = $stmt->execute([$name, $student_id, $grade, $faculty, $_SESSION['user_id']]);
-        } else {
-            $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ? WHERE id = ?");
-            $result = $stmt->execute([$name, $student_id, $grade, $_SESSION['user_id']]);
-        }
-        
-        if ($result) {
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ? WHERE id = ?");
+        if ($stmt->execute([$name, $student_id, $grade, $faculty, $_SESSION['user_id']])) {
             $_SESSION['name'] = $name;
             header("Location: dashboard.php");
             exit;
@@ -49,23 +32,9 @@ $csrf_token = generateCsrfToken();
 
 // Fetch current data for pre-filling
 $current_user = [];
-$faculty_column_exists = true;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $pdo = getDB();
-    
-    // Check if faculty column exists
-    try {
-        $check = $pdo->query("SHOW COLUMNS FROM users LIKE 'faculty'");
-        $faculty_column_exists = $check->rowCount() > 0;
-    } catch (Exception $e) {
-        $faculty_column_exists = false;
-    }
-    
-    if ($faculty_column_exists) {
-        $stmt = $pdo->prepare("SELECT name, student_id, grade, faculty FROM users WHERE id = ?");
-    } else {
-        $stmt = $pdo->prepare("SELECT name, student_id, grade FROM users WHERE id = ?");
-    }
+    $stmt = $pdo->prepare("SELECT name, student_id, grade, faculty FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $current_user = $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -151,7 +120,6 @@ $is_first_registration = empty($current_user['name']);
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <?php if ($faculty_column_exists): ?>
                     <div class="form-group">
                         <label class="form-label">学部</label>
                         <select name="faculty" class="form-select" required>
@@ -161,7 +129,6 @@ $is_first_registration = empty($current_user['name']);
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <?php endif; ?>
                     <button type="submit" class="btn-primary" style="width: 100%;">
                         <?php echo $is_first_registration ? '登録して始める' : '更新する'; ?>
                     </button>
