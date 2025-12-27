@@ -90,7 +90,7 @@ try {
                 <ul class="nav-list">
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#activities" class="nav-link">Activities</a></li>
-                    <li><a href="blog.php" class="nav-link">Blog</a></li>
+                    <li><a href="#blog" class="nav-link">Blog</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i
@@ -248,12 +248,12 @@ try {
     </section>
 
     <!-- Blog Section -->
-    <?php if (!empty($recent_blogs)): ?>
     <section id="blog" class="bg-white">
         <div class="container">
             <h2 class="section-title"><span>Blog</span></h2>
             <p style="text-align: center; color: var(--text-light); margin-bottom: 2.5rem;">活動報告やお知らせ</p>
             
+            <?php if (!empty($recent_blogs)): ?>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
                 <?php foreach ($recent_blogs as $blog): ?>
                     <a href="blog_view.php?id=<?php echo $blog['id']; ?>" style="text-decoration: none; color: inherit; display: block; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease;">
@@ -277,9 +277,16 @@ try {
             <div style="text-align: center; margin-top: 2rem;">
                 <a href="blog.php" class="btn-secondary" style="display: inline-block;">すべての記事を見る <i class="fas fa-arrow-right"></i></a>
             </div>
+            <?php else: ?>
+            <div style="text-align: center; padding: 3rem; color: #888;">
+                <i class="fas fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <p style="font-size: 1.1rem;">Coming Soon</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">記事を準備中です。お楽しみに！</p>
+            </div>
+            <?php endif; ?>
         </div>
     </section>
-    <?php endif; ?>
+
 
     <section id="contact" class="bg-white">
         <div class="container">
