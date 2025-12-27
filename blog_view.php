@@ -49,9 +49,9 @@ try {
             line-height: 1.9;
             color: #333;
         }
-        .article-content h1 { font-size: 1.5rem; margin: 2rem 0 1rem; font-weight: 700; }
-        .article-content h2 { font-size: 1.3rem; margin: 2rem 0 1rem; font-weight: 600; }
-        .article-content h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; font-weight: 600; }
+        .article-content h1 { font-size: 1.5rem; margin: 2rem 0 1rem; font-weight: 700; text-align: left; }
+        .article-content h2 { font-size: 1.3rem; margin: 2rem 0 1rem; font-weight: 600; text-align: left; }
+        .article-content h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; font-weight: 600; text-align: left; }
         .article-content blockquote {
             border-left: 3px solid var(--primary-color);
             padding-left: 1rem;
