@@ -49,6 +49,7 @@ try {
             line-height: 1.9;
             color: #333;
         }
+        .article-content h1 { font-size: 1.5rem; margin: 2rem 0 1rem; font-weight: 700; }
         .article-content h2 { font-size: 1.3rem; margin: 2rem 0 1rem; font-weight: 600; }
         .article-content h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; font-weight: 600; }
         .article-content blockquote {
@@ -61,6 +62,18 @@ try {
             border: none;
             border-top: 1px solid #eee;
             margin: 2rem 0;
+        }
+        .article-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .article-content a {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        .article-content .text-center {
+            text-align: center;
         }
         .share-buttons {
             display: flex;
@@ -132,14 +145,10 @@ try {
                 <!-- Content -->
                 <div class="article-content">
                     <?php 
-                    $content = htmlspecialchars($blog['content']);
-                    $content = preg_replace('/^## (.+)$/m', '<h2>$1</h2>', $content);
-                    $content = preg_replace('/^### (.+)$/m', '<h3>$1</h3>', $content);
-                    $content = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $content);
-                    $content = preg_replace('/^- (.+)$/m', '• $1', $content);
-                    $content = preg_replace('/^> (.+)$/m', '<blockquote>$1</blockquote>', $content);
-                    $content = preg_replace('/^---$/m', '<hr>', $content);
-                    echo nl2br($content);
+                    // WYSIWYG editor saves HTML directly, so we just output it
+                    // Only allow safe HTML tags
+                    $allowed_tags = '<h1><h2><h3><p><br><strong><b><em><i><u><a><img><ul><ol><li><blockquote><hr><div><span>';
+                    echo strip_tags($blog['content'], $allowed_tags);
                     ?>
                 </div>
                 

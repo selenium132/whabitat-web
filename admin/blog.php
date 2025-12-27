@@ -28,27 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Handle file upload
         if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] === UPLOAD_ERR_OK) {
             $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            $max_size = 5 * 1024 * 1024; // 5MB
-            
+            $max_size = 5 * 1024 * 1024;
             $file = $_FILES['thumbnail_file'];
             
             if (!in_array($file['type'], $allowed_types)) {
-                $error = '画像形式がJPEG, PNG, GIF, WebPのいずれかである必要があります。';
+                $error = '画像形式はJPEG, PNG, GIF, WebPのみ対応です。';
             } elseif ($file['size'] > $max_size) {
                 $error = 'ファイルサイズは5MB以下にしてください。';
             } else {
                 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $filename = 'blog_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
                 $upload_dir = '../uploads/blog/';
-                
-                if (!is_dir($upload_dir)) {
-                    mkdir($upload_dir, 0755, true);
-                }
-                
+                if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
                 if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
                     $thumbnail = 'uploads/blog/' . $filename;
-                } else {
-                    $error = 'アップロードに失敗しました。';
                 }
             }
         }
@@ -63,8 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             } else {
                 $blog_id = $_POST['blog_id'] ?? 0;
-                // Keep existing thumbnail if no new one provided
-                if (empty($thumbnail) && $action === 'update') {
+                if (empty($thumbnail)) {
                     $stmt = $pdo->prepare("SELECT thumbnail FROM blogs WHERE id = ?");
                     $stmt->execute([$blog_id]);
                     $existing = $stmt->fetch();
@@ -100,9 +92,7 @@ $blogs = [];
 try {
     $stmt = $pdo->query("SELECT b.*, u.name as author_name FROM blogs b LEFT JOIN users u ON b.author_id = u.id ORDER BY b.created_at DESC");
     $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {
-    $blogs = [];
-}
+} catch (Exception $e) {}
 
 $csrf_token = generateCsrfToken();
 ?>
@@ -113,50 +103,24 @@ $csrf_token = generateCsrfToken();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ブログ管理 | WHABITAT</title>
     <link rel="icon" type="image/png" href="../logo.png">
-    <link rel="apple-touch-icon" href="../logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Quill Editor -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <style>
-        .toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            padding: 10px;
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            border-bottom: none;
-            border-radius: 8px 8px 0 0;
-        }
-        .toolbar button {
-            padding: 6px 12px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-        .toolbar button:hover {
-            background: var(--primary-color);
-            color: #fff;
-            border-color: var(--primary-color);
-        }
-        .content-editor {
-            min-height: 250px;
-            border: 1px solid #ddd;
-            border-radius: 0 0 8px 8px;
-            padding: 1rem;
+        .ql-editor {
+            min-height: 300px;
             font-size: 1rem;
             line-height: 1.8;
-            resize: vertical;
-            font-family: inherit;
-            width: 100%;
-            box-sizing: border-box;
         }
-        .content-editor:focus {
-            outline: none;
-            border-color: var(--primary-color);
+        .ql-container {
+            border-radius: 0 0 8px 8px;
+            font-family: inherit;
+        }
+        .ql-toolbar {
+            border-radius: 8px 8px 0 0;
+            background: #f8f9fa;
         }
         .blog-item {
             display: flex;
@@ -165,9 +129,7 @@ $csrf_token = generateCsrfToken();
             padding: 1rem 0;
             border-bottom: 1px solid #eee;
         }
-        .blog-item:last-child {
-            border-bottom: none;
-        }
+        .blog-item:last-child { border-bottom: none; }
         .status-badge {
             display: inline-block;
             padding: 2px 8px;
@@ -196,13 +158,11 @@ $csrf_token = generateCsrfToken();
     </header>
 
     <main>
-        <div class="dashboard-container" style="max-width: 800px;">
-            <!-- Back link -->
+        <div class="dashboard-container" style="max-width: 900px;">
             <a href="../blog.php" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-color); text-decoration: none; font-weight: 500; margin-bottom: 1.5rem;">
                 <i class="fas fa-chevron-left"></i> ブログに戻る
             </a>
             
-            <!-- Page Header -->
             <div class="card" style="text-align: center; margin-bottom: 2rem;">
                 <h1 style="font-size: 1.5rem; margin: 0;">
                     <i class="fas fa-newspaper" style="margin-right: 8px;"></i>ブログ管理
@@ -227,9 +187,10 @@ $csrf_token = generateCsrfToken();
                     <?php echo $edit_blog ? '記事を編集' : '新しい記事を書く'; ?>
                 </h2>
                 
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data" id="blogForm">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <input type="hidden" name="action" value="<?php echo $edit_blog ? 'update' : 'create'; ?>">
+                    <input type="hidden" name="content" id="contentHidden">
                     <?php if ($edit_blog): ?>
                         <input type="hidden" name="blog_id" value="<?php echo $edit_blog['id']; ?>">
                     <?php endif; ?>
@@ -257,25 +218,14 @@ $csrf_token = generateCsrfToken();
                             </div>
                             <div style="flex: 1; min-width: 200px;">
                                 <label style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 5px;">またはURLを入力</label>
-                                <input type="url" name="thumbnail" class="form-input" 
-                                       placeholder="https://example.com/image.jpg"
-                                       value="">
+                                <input type="url" name="thumbnail" class="form-input" placeholder="https://example.com/image.jpg">
                             </div>
                         </div>
-                        <p style="font-size: 0.75rem; color: #888; margin-top: 8px;">JPEG, PNG, GIF, WebP対応（最大5MB）</p>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">本文</label>
-                        <div class="toolbar">
-                            <button type="button" onclick="insertFormat('## ', '')">見出し</button>
-                            <button type="button" onclick="insertFormat('**', '**')">太字</button>
-                            <button type="button" onclick="insertFormat('- ', '')">リスト</button>
-                            <button type="button" onclick="insertFormat('> ', '')">引用</button>
-                            <button type="button" onclick="insertFormat('---\n', '')">区切り</button>
-                        </div>
-                        <textarea name="content" id="contentEditor" class="content-editor" required 
-                                  placeholder="ここに本文を入力..."><?php echo htmlspecialchars($edit_blog['content'] ?? ''); ?></textarea>
+                        <div id="editor"><?php echo $edit_blog['content'] ?? ''; ?></div>
                     </div>
                     
                     <div class="form-group">
@@ -344,17 +294,28 @@ $csrf_token = generateCsrfToken();
         </div>
     </main>
 
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     <script>
-        function insertFormat(before, after) {
-            const editor = document.getElementById('contentEditor');
-            const start = editor.selectionStart;
-            const end = editor.selectionEnd;
-            const text = editor.value;
-            const selected = text.substring(start, end);
-            editor.value = text.substring(0, start) + before + selected + after + text.substring(end);
-            editor.focus();
-            editor.selectionStart = editor.selectionEnd = start + before.length + selected.length + after.length;
-        }
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'ここに本文を入力...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ 'align': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['blockquote'],
+                    ['link', 'image'],
+                    ['clean']
+                ]
+            }
+        });
+        
+        // Before submit, copy editor content to hidden field
+        document.getElementById('blogForm').addEventListener('submit', function() {
+            document.getElementById('contentHidden').value = quill.root.innerHTML;
+        });
     </script>
 </body>
 </html>
