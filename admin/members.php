@@ -44,10 +44,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name = $_POST['name'] ?? '';
             $sid = $_POST['student_id'] ?? '';
             $grade = $_POST['grade'] ?? '';
+            $faculty = $_POST['faculty'] ?? '';
             
             if ($name && $sid && $grade) {
-                $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ? WHERE id = ?");
-                $stmt->execute([$name, $sid, $grade, $target_id]);
+                // Check if faculty column exists
+                try {
+                    $check = $pdo->query("SHOW COLUMNS FROM users LIKE 'faculty'");
+                    $faculty_exists = $check->rowCount() > 0;
+                } catch (Exception $e) {
+                    $faculty_exists = false;
+                }
+                
+                if ($faculty_exists && $faculty) {
+                    $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ? WHERE id = ?");
+                    $stmt->execute([$name, $sid, $grade, $faculty, $target_id]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ? WHERE id = ?");
+                    $stmt->execute([$name, $sid, $grade, $target_id]);
+                }
             }
         }
     }
@@ -94,11 +108,13 @@ $csrf_token = generateCsrfToken();
         }
 
         // Modal Logic
-        function openEditModal(id, name, sid, grade) {
+        function openEditModal(id, name, sid, grade, faculty) {
             document.getElementById('edit_user_id').value = id;
             document.getElementById('edit_name').value = name;
             document.getElementById('edit_sid').value = sid;
             document.getElementById('edit_grade').value = grade;
+            var facultyEl = document.getElementById('edit_faculty');
+            if (facultyEl) facultyEl.value = faculty || '';
             document.getElementById('editModal').style.display = 'flex';
         }
 
@@ -189,7 +205,7 @@ $csrf_token = generateCsrfToken();
                                         <?php if ($m['id'] != $_SESSION['user_id']): ?>
                                             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
                                                 <button type="button" class="btn-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;" 
-                                                    onclick="openEditModal('<?php echo $m['id']; ?>', '<?php echo htmlspecialchars($m['name'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['student_id'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['grade'], ENT_QUOTES); ?>')">
+                                                    onclick="openEditModal('<?php echo $m['id']; ?>', '<?php echo htmlspecialchars($m['name'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['student_id'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['grade'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['faculty'] ?? '', ENT_QUOTES); ?>')">
                                                     編集
                                                 </button>
 
@@ -263,6 +279,17 @@ $csrf_token = generateCsrfToken();
                     <select name="grade" id="edit_grade" class="form-select" required>
                         <?php foreach (AVAILABLE_GRADES as $g): ?>
                             <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">学部</label>
+                    <select name="faculty" id="edit_faculty" class="form-select">
+                        <option value="">選択してください</option>
+                        <?php 
+                        $waseda_faculties = ['政治経済学部','法学部','教育学部','商学部','社会科学部','国際教養学部','文化構想学部','文学部','基幹理工学部','創造理工学部','先進理工学部','人間科学部','スポーツ科学部'];
+                        foreach ($waseda_faculties as $f): ?>
+                            <option value="<?php echo htmlspecialchars($f); ?>"><?php echo htmlspecialchars($f); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
