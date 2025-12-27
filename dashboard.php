@@ -72,6 +72,9 @@ if ($_SESSION['role'] === 'admin') {
                         <a href="event_create.php" class="btn-primary">
                             <i class="fas fa-plus"></i> イベント作成
                         </a>
+                        <a href="admin/blog.php" class="btn-secondary">
+                            <i class="fas fa-newspaper"></i> ブログ管理
+                        </a>
                         <a href="admin/members.php" class="btn-secondary">
                             <i class="fas fa-users"></i> メンバー管理
                         </a>

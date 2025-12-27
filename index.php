@@ -1,4 +1,18 @@
-<?php require_once 'config.php'; $csrf_token = generateCsrfToken(); ?>
+<?php 
+require_once 'config.php'; 
+$csrf_token = generateCsrfToken();
+
+// Fetch recent blogs for homepage
+$pdo = getDB();
+$recent_blogs = [];
+try {
+    $stmt = $pdo->query("SELECT * FROM blogs WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3");
+    $recent_blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    // Table might not exist yet
+    $recent_blogs = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -76,6 +90,7 @@
                 <ul class="nav-list">
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#activities" class="nav-link">Activities</a></li>
+                    <li><a href="blog.php" class="nav-link">Blog</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i
@@ -231,6 +246,40 @@
             </div>
         </div>
     </section>
+
+    <!-- Blog Section -->
+    <?php if (!empty($recent_blogs)): ?>
+    <section id="blog" class="bg-white">
+        <div class="container">
+            <h2 class="section-title"><span>Blog</span></h2>
+            <p style="text-align: center; color: var(--text-light); margin-bottom: 2.5rem;">活動報告やお知らせ</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                <?php foreach ($recent_blogs as $blog): ?>
+                    <a href="blog_view.php?id=<?php echo $blog['id']; ?>" style="text-decoration: none; color: inherit; display: block; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                        <?php if ($blog['thumbnail']): ?>
+                            <div style="width: 100%; height: 180px; background-image: url('<?php echo htmlspecialchars($blog['thumbnail']); ?>'); background-size: cover; background-position: center;"></div>
+                        <?php else: ?>
+                            <div style="width: 100%; height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-alt" style="font-size: 2.5rem; color: rgba(255,255,255,0.5);"></i>
+                            </div>
+                        <?php endif; ?>
+                        <div style="padding: 1.25rem;">
+                            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.4;"><?php echo htmlspecialchars($blog['title']); ?></h3>
+                            <div style="font-size: 0.8rem; color: #888;">
+                                <i class="far fa-calendar-alt"></i> <?php echo date('Y年m月d日', strtotime($blog['created_at'])); ?>
+                            </div>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="blog.php" class="btn-secondary" style="display: inline-block;">すべての記事を見る <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <section id="contact" class="bg-white">
         <div class="container">
