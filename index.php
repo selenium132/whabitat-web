@@ -282,6 +282,9 @@ try {
                 <i class="fas fa-newspaper" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                 <p style="font-size: 1.1rem;">Coming Soon</p>
                 <p style="font-size: 0.9rem; margin-top: 0.5rem;">記事を準備中です。お楽しみに！</p>
+                <div style="margin-top: 1.5rem;">
+                    <a href="blog.php" class="btn-secondary" style="display: inline-block;">ブログページへ <i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
             <?php endif; ?>
         </div>
