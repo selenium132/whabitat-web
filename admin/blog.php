@@ -25,7 +25,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $thumbnail = $_POST['thumbnail'] ?? '';
         $is_published = isset($_POST['is_published']) ? 1 : 0;
         
-        if ($title && $content) {
+        // Handle file upload
+        if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] === UPLOAD_ERR_OK) {
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $max_size = 5 * 1024 * 1024; // 5MB
+            
+            $file = $_FILES['thumbnail_file'];
+            
+            if (!in_array($file['type'], $allowed_types)) {
+                $error = '画像形式がJPEG, PNG, GIF, WebPのいずれかである必要があります。';
+            } elseif ($file['size'] > $max_size) {
+                $error = 'ファイルサイズは5MB以下にしてください。';
+            } else {
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $filename = 'blog_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                $upload_dir = '../uploads/blog/';
+                
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                
+                if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
+                    $thumbnail = 'uploads/blog/' . $filename;
+                } else {
+                    $error = 'アップロードに失敗しました。';
+                }
+            }
+        }
+        
+        if (!$error && $title && $content) {
             if ($action === 'create') {
                 $stmt = $pdo->prepare("INSERT INTO blogs (title, content, thumbnail, author_id, is_published) VALUES (?, ?, ?, ?, ?)");
                 if ($stmt->execute([$title, $content, $thumbnail ?: null, $_SESSION['user_id'], $is_published])) {
@@ -35,6 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             } else {
                 $blog_id = $_POST['blog_id'] ?? 0;
+                // Keep existing thumbnail if no new one provided
+                if (empty($thumbnail) && $action === 'update') {
+                    $stmt = $pdo->prepare("SELECT thumbnail FROM blogs WHERE id = ?");
+                    $stmt->execute([$blog_id]);
+                    $existing = $stmt->fetch();
+                    $thumbnail = $existing['thumbnail'] ?? '';
+                }
                 $stmt = $pdo->prepare("UPDATE blogs SET title = ?, content = ?, thumbnail = ?, is_published = ?, updated_at = NOW() WHERE id = ?");
                 if ($stmt->execute([$title, $content, $thumbnail ?: null, $is_published, $blog_id])) {
                     $success = '記事を更新しました！';
@@ -42,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $error = 'エラーが発生しました。';
                 }
             }
-        } else {
+        } elseif (!$error) {
             $error = 'タイトルと本文を入力してください。';
         }
     } elseif ($action === 'delete') {
@@ -192,7 +227,7 @@ $csrf_token = generateCsrfToken();
                     <?php echo $edit_blog ? '記事を編集' : '新しい記事を書く'; ?>
                 </h2>
                 
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <input type="hidden" name="action" value="<?php echo $edit_blog ? 'update' : 'create'; ?>">
                     <?php if ($edit_blog): ?>
@@ -207,10 +242,27 @@ $csrf_token = generateCsrfToken();
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">サムネイル画像URL（任意）</label>
-                        <input type="url" name="thumbnail" class="form-input" 
-                               placeholder="https://example.com/image.jpg"
-                               value="<?php echo htmlspecialchars($edit_blog['thumbnail'] ?? ''); ?>">
+                        <label class="form-label">サムネイル画像</label>
+                        <?php if (!empty($edit_blog['thumbnail'])): ?>
+                            <div style="margin-bottom: 10px;">
+                                <img src="../<?php echo htmlspecialchars($edit_blog['thumbnail']); ?>" 
+                                     style="max-width: 200px; border-radius: 8px;">
+                                <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">現在のサムネイル</p>
+                            </div>
+                        <?php endif; ?>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 5px;">ファイルをアップロード</label>
+                                <input type="file" name="thumbnail_file" accept="image/*" class="form-input" style="padding: 8px;">
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="font-size: 0.85rem; color: #666; display: block; margin-bottom: 5px;">またはURLを入力</label>
+                                <input type="url" name="thumbnail" class="form-input" 
+                                       placeholder="https://example.com/image.jpg"
+                                       value="">
+                            </div>
+                        </div>
+                        <p style="font-size: 0.75rem; color: #888; margin-top: 8px;">JPEG, PNG, GIF, WebP対応（最大5MB）</p>
                     </div>
                     
                     <div class="form-group">
