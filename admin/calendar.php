@@ -149,12 +149,12 @@ $csrf_token = generateCsrfToken();
                     
                     <div class="form-group">
                         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                            <input type="checkbox" name="is_all_day" id="isAllDay" checked style="width: 18px; height: 18px;" onchange="toggleTimeFields()">
+                            <input type="checkbox" name="is_all_day" id="isAllDay" style="width: 18px; height: 18px;" onchange="toggleTimeFields()">
                             <span>終日</span>
                         </label>
                     </div>
                     
-                    <div id="timeFields" style="display: none;">
+                    <div id="timeFields">
                         <div style="display: flex; gap: 10px;">
                             <div class="form-group" style="flex: 1;">
                                 <label class="form-label">開始時間</label>
