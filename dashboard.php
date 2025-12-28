@@ -124,7 +124,7 @@ try {
                 </div>
             </div>
 
-            <div id="events" style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem;">
+            <div id="events" style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; scroll-margin-top: 80px;">
                 <h2 class="section-title" style="text-align: left; margin: 0;">イベント</h2>
                 <a href="past_events.php" style="font-size: 0.85rem; color: #888; text-decoration: none;">過去のイベント →</a>
             </div>
@@ -174,7 +174,7 @@ try {
             <?php endif; ?>
 
             <!-- 目安箱 (Suggestion Box) -->
-            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📮 目安箱</h2>
+            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">📮 目安箱</h2>
             <div class="card" style="padding: 2rem;">
                 <?php if (isset($_SESSION['suggestion_success']) && $_SESSION['suggestion_success']): ?>
                     <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
@@ -205,7 +205,7 @@ try {
             </div>
 
             <!-- わびカレンダー -->
-            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem;">📅 わびカレンダー</h2>
+            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem; scroll-margin-top: 80px;">📅 わびカレンダー</h2>
             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.75rem;">
                 <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #667eea; border-radius: 2px;"></span>イベント</span>
                 <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #28a745; border-radius: 2px;"></span>派遣</span>
