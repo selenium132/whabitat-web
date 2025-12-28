@@ -23,10 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $event_date = $_POST['event_date'] ?? '';
         $description = $_POST['description'] ?? '';
         $color = $_POST['color'] ?? '#667eea';
+        $is_all_day = isset($_POST['is_all_day']) ? 1 : 0;
+        $start_time = $is_all_day ? null : ($_POST['start_time'] ?? null);
+        $end_time = $is_all_day ? null : ($_POST['end_time'] ?? null);
         
         if ($title && $event_date) {
-            $stmt = $pdo->prepare("INSERT INTO calendar_events (title, event_date, description, color, created_by) VALUES (?, ?, ?, ?, ?)");
-            if ($stmt->execute([$title, $event_date, $description ?: null, $color, $_SESSION['user_id']])) {
+            $stmt = $pdo->prepare("INSERT INTO calendar_events (title, event_date, start_time, end_time, is_all_day, description, color, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            if ($stmt->execute([$title, $event_date, $start_time, $end_time, $is_all_day, $description ?: null, $color, $_SESSION['user_id']])) {
                 $success = '予定を追加しました！';
             } else {
                 $error = 'エラーが発生しました。';
@@ -145,6 +148,26 @@ $csrf_token = generateCsrfToken();
                     </div>
                     
                     <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" name="is_all_day" id="isAllDay" checked style="width: 18px; height: 18px;" onchange="toggleTimeFields()">
+                            <span>終日</span>
+                        </label>
+                    </div>
+                    
+                    <div id="timeFields" style="display: none;">
+                        <div style="display: flex; gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">開始時間</label>
+                                <input type="time" name="start_time" class="form-input">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">終了時間</label>
+                                <input type="time" name="end_time" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
                         <label class="form-label">メモ（任意）</label>
                         <input type="text" name="description" class="form-input" placeholder="追加情報があれば...">
                     </div>
@@ -190,8 +213,16 @@ $csrf_token = generateCsrfToken();
                                     <div style="font-weight: 600;"><?php echo htmlspecialchars($ev['title']); ?></div>
                                     <div style="font-size: 0.85rem; color: #888;">
                                         <?php echo date('Y/m/d', strtotime($ev['event_date'])); ?>
+                                        <?php if (!($ev['is_all_day'] ?? true) && $ev['start_time']): ?>
+                                            <?php echo date('H:i', strtotime($ev['start_time'])); ?>
+                                            <?php if ($ev['end_time']): ?>
+                                                - <?php echo date('H:i', strtotime($ev['end_time'])); ?>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            終日
+                                        <?php endif; ?>
                                         <?php if ($ev['description']): ?>
-                                            - <?php echo htmlspecialchars($ev['description']); ?>
+                                            / <?php echo htmlspecialchars($ev['description']); ?>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -216,6 +247,11 @@ $csrf_token = generateCsrfToken();
             document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
             el.classList.add('selected');
             document.getElementById('selectedColor').value = color;
+        }
+        
+        function toggleTimeFields() {
+            const isAllDay = document.getElementById('isAllDay').checked;
+            document.getElementById('timeFields').style.display = isAllDay ? 'none' : 'block';
         }
     </script>
 </body>

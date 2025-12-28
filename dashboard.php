@@ -306,6 +306,9 @@ try {
                             <span style="width: 8px; height: 8px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
                             <span style="font-size: 0.8rem; color: #666; min-width: 35px;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
                             <span style="font-size: 0.9rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
+                            <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
+                                <span style="font-size: 0.75rem; color: #888;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
