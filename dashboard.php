@@ -110,9 +110,17 @@ try {
                         <i class="fas fa-user-edit"></i> プロフィール編集
                     </a>
                 </div>
+                
+                <!-- Quick navigation -->
+                <div style="display: flex; gap: 16px; margin-top: 1rem; flex-wrap: wrap;">
+                    <a href="#upcoming" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-decoration: none;">📅 これから</a>
+                    <a href="#past" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-decoration: none;">📋 過去</a>
+                    <a href="#suggestion" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-decoration: none;">📝 目安箱</a>
+                    <a href="#calendar" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-decoration: none;">🗓 カレンダー</a>
+                </div>
             </div>
 
-            <h2 class="section-title" style="text-align: left; margin-bottom: 1.5rem;">これからのイベント</h2>
+            <h2 id="upcoming" class="section-title" style="text-align: left; margin-bottom: 1.5rem;">これからのイベント</h2>
             <?php if (empty($upcoming_events)): ?>
                 <div class="card" style="text-align: center; color: var(--text-light);">
                     予定されているイベントはありません。
@@ -158,7 +166,7 @@ try {
                 <?php endforeach; ?>
             <?php endif; ?>
 
-            <h2 class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">過去のイベント</h2>
+            <h2 id="past" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">過去のイベント</h2>
             <?php if (empty($past_events)): ?>
                 <div class="card" style="text-align: center; color: var(--text-light);">
                     過去のイベントはありません。
@@ -191,7 +199,7 @@ try {
             <?php endif; ?>
 
             <!-- 目安箱 (Suggestion Box) -->
-            <h2 class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📮 目安箱</h2>
+            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📮 目安箱</h2>
             <div class="card" style="padding: 2rem;">
                 <?php if (isset($_SESSION['suggestion_success']) && $_SESSION['suggestion_success']): ?>
                     <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
