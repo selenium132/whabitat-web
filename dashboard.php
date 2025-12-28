@@ -75,6 +75,12 @@ try {
             <a href="index.php" class="logo">
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <a href="#upcoming" style="font-size: 0.8rem; color: #666; text-decoration: none;">📅 これから</a>
+                <a href="#past" style="font-size: 0.8rem; color: #666; text-decoration: none;">📋 過去</a>
+                <a href="#suggestion" style="font-size: 0.8rem; color: #666; text-decoration: none;">📝 目安箱</a>
+                <a href="#calendar" style="font-size: 0.8rem; color: #666; text-decoration: none;">🗓 カレンダー</a>
+            </div>
             <div class="user-menu">
                 <a href="logout.php" class="header-logout-btn" title="ログアウト">
                     <i class="fas fa-sign-out-alt"></i>
@@ -109,14 +115,6 @@ try {
                     <a href="register_profile.php" class="btn-secondary">
                         <i class="fas fa-user-edit"></i> プロフィール編集
                     </a>
-                </div>
-                
-                <!-- Quick navigation -->
-                <div style="display: flex; gap: 16px; margin-top: 1rem; flex-wrap: wrap;">
-                    <a href="#upcoming" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-decoration: none;">📅 これから</a>
-                    <a href="#past" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-decoration: none;">📋 過去</a>
-                    <a href="#suggestion" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-decoration: none;">📝 目安箱</a>
-                    <a href="#calendar" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-decoration: none;">🗓 カレンダー</a>
                 </div>
             </div>
 
