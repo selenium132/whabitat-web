@@ -361,7 +361,7 @@ try {
                         <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
                             <span style="width: 6px; height: 6px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
                             <span style="font-size: 0.75rem; color: #888;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
-                            <span style="font-size: 0.85rem; flex: 1;"><?php echo htmlspecialchars($ev['title']); ?></span>
+                            <span style="font-size: 0.85rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
                             <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
                                 <span style="font-size: 0.7rem; color: #aaa;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
                             <?php endif; ?>
