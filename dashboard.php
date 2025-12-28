@@ -75,12 +75,12 @@ try {
             <a href="index.php" class="logo">
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
-            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <a href="#upcoming" style="font-size: 0.8rem; color: #666; text-decoration: none;">📅 これから</a>
-                <a href="#past" style="font-size: 0.8rem; color: #666; text-decoration: none;">📋 過去</a>
-                <a href="#suggestion" style="font-size: 0.8rem; color: #666; text-decoration: none;">📝 目安箱</a>
-                <a href="#calendar" style="font-size: 0.8rem; color: #666; text-decoration: none;">🗓 カレンダー</a>
-            </div>
+            <nav style="display: flex; gap: 24px;">
+                <a href="#upcoming" style="color: var(--text-color); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-color)'">これから</a>
+                <a href="#past" style="color: var(--text-color); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-color)'">過去</a>
+                <a href="#suggestion" style="color: var(--text-color); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-color)'">目安箱</a>
+                <a href="#calendar" style="color: var(--text-color); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-color)'">カレンダー</a>
+            </nav>
             <div class="user-menu">
                 <a href="logout.php" class="header-logout-btn" title="ログアウト">
                     <i class="fas fa-sign-out-alt"></i>
