@@ -279,8 +279,13 @@ $csrf_token = generateCsrfToken();
             if (start) {
                 const startDate = new Date(start);
                 startDate.setMinutes(startDate.getMinutes() + 10);
-                const endStr = startDate.toISOString().slice(0, 16);
-                document.getElementById('endDatetime').value = endStr;
+                // Format as local datetime-local string (YYYY-MM-DDTHH:MM)
+                const year = startDate.getFullYear();
+                const month = String(startDate.getMonth() + 1).padStart(2, '0');
+                const day = String(startDate.getDate()).padStart(2, '0');
+                const hours = String(startDate.getHours()).padStart(2, '0');
+                const mins = String(startDate.getMinutes()).padStart(2, '0');
+                document.getElementById('endDatetime').value = `${year}-${month}-${day}T${hours}:${mins}`;
             }
         }
         
