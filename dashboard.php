@@ -15,7 +15,7 @@ if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty(
 }
 
 // Fetch Upcoming Events
-$stmt = $pdo->query("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC");
+$stmt = $pdo->query("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC, open_at ASC");
 $upcoming_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch Past Events
@@ -228,12 +228,39 @@ try {
                     }
                 }
                 
-                // Index all events by date (Y-m-d)
+                // Index all events by date (Y-m-d) - handling multi-day events
                 $events_by_full_date = [];
                 foreach ($calendar_events_all as $ev) {
-                    $date_key = $ev['event_date'];
-                    if (!isset($events_by_full_date[$date_key])) $events_by_full_date[$date_key] = [];
-                    $events_by_full_date[$date_key][] = $ev;
+                    $start_str = $ev['event_date'];
+                    $end_str = $ev['end_date'] ?? $start_str;
+                    
+                    try {
+                        $start = new DateTime($start_str);
+                        $end = new DateTime($end_str);
+                        $end->modify('+1 day'); // inclusive end date
+                        
+                        $period = new DatePeriod($start, new DateInterval('P1D'), $end);
+                        
+                        foreach ($period as $dt) {
+                            $d_key = $dt->format('Y-m-d');
+                            if (!isset($events_by_full_date[$d_key])) {
+                                $events_by_full_date[$d_key] = [];
+                            }
+                            
+                            // Add flags for styling
+                            $day_ev = $ev;
+                            $day_ev['is_start_day'] = ($d_key === $start_str);
+                            $day_ev['is_end_day'] = ($d_key === $end_str);
+                            
+                            $events_by_full_date[$d_key][] = $day_ev;
+                        }
+                    } catch (Exception $e) {
+                        // Fallback for invalid dates
+                        if (!isset($events_by_full_date[$start_str])) $events_by_full_date[$start_str] = [];
+                        $ev['is_start_day'] = true;
+                        $ev['is_end_day'] = true;
+                        $events_by_full_date[$start_str][] = $ev;
+                    }
                 }
                 ?>
                 
@@ -301,7 +328,8 @@ try {
                                         <div style="margin-top: 2px;">
                                             <?php foreach ($events_by_full_date[$date_key] as $ev): ?>
                                                 <div onclick="event.stopPropagation(); <?php if ($_SESSION['role'] === 'admin'): ?>editCalendarEvent(<?php echo $ev['id']; ?>)<?php endif; ?>" 
-                                                     style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; color: white; font-size: 0.55rem; padding: 1px 3px; border-radius: 2px; margin-bottom: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; box-sizing: border-box; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
+                                                     class="event-bar <?php echo ($ev['is_start_day']?'is-start':'') . ' ' . ($ev['is_end_day']?'is-end':''); ?>"
+                                                     style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
                                                      title="<?php echo htmlspecialchars($ev['title']); ?>">
                                                     <?php echo htmlspecialchars($ev['title']); ?>
                                                 </div>
@@ -420,6 +448,29 @@ try {
                 background-color: #e9ecef;
                 transform: none;
             }
+        }
+        
+        .event-bar {
+            color: white; 
+            font-size: 0.55rem; 
+            padding: 1px 3px; 
+            border-radius: 0; /* Default square */
+            margin-bottom: 1px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+        .event-bar.is-start {
+            border-top-left-radius: 3px;
+            border-bottom-left-radius: 3px;
+            margin-left: 1px; /* Slight gap from cell edge */
+        }
+        .event-bar.is-end {
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+            margin-right: 1px; /* Slight gap from cell edge */
         }
     </style>
     
@@ -574,10 +625,10 @@ try {
                     
                     if (ev.is_all_day) {
                         document.getElementById('eventStartDate').value = ev.event_date;
-                        document.getElementById('eventEndDate').value = ev.event_date;
+                        document.getElementById('eventEndDate').value = ev.end_date || ev.event_date;
                     } else {
                         const startDt = ev.event_date + 'T' + (ev.start_time || '00:00').substring(0,5);
-                        const endDt = ev.event_date + 'T' + (ev.end_time || '00:00').substring(0,5);
+                        const endDt = (ev.end_date || ev.event_date) + 'T' + (ev.end_time || '00:00').substring(0,5);
                         document.getElementById('eventStartDatetime').value = startDt;
                         document.getElementById('eventEndDatetime').value = endDt;
                     }
@@ -595,9 +646,45 @@ try {
         
         function toggleModalTimeFields() {
             const isAllDay = document.getElementById('eventAllDay').checked;
+            const currentStartDateTime = document.getElementById('eventStartDatetime').value;
+            const currentEndDateTime = document.getElementById('eventEndDatetime').value;
+            const currentStartDate = document.getElementById('eventStartDate').value;
+            const currentEndDate = document.getElementById('eventEndDate').value;
+
+            // Preserve values when switching modes
+            if (isAllDay) {
+                // Switching TO All Day
+                // Copy date part from datetime inputs if they exist and date inputs are empty or different
+                if (currentStartDateTime) {
+                    document.getElementById('eventStartDate').value = currentStartDateTime.split('T')[0];
+                }
+                if (currentEndDateTime) {
+                    document.getElementById('eventEndDate').value = currentEndDateTime.split('T')[0];
+                }
+            } else {
+                // Switching FROM All Day
+                // Apply date from date inputs to datetime inputs
+                if (currentStartDate) {
+                    const timePart = currentStartDateTime ? currentStartDateTime.split('T')[1] : '12:00';
+                    document.getElementById('eventStartDatetime').value = currentStartDate + 'T' + timePart;
+                }
+                if (currentEndDate) {
+                    const timePart = currentEndDateTime ? currentEndDateTime.split('T')[1] : '13:00';
+                    document.getElementById('eventEndDatetime').value = currentEndDate + 'T' + timePart;
+                }
+            }
+
             document.getElementById('modalDateOnly').style.display = isAllDay ? 'block' : 'none';
             document.getElementById('modalDateTime').style.display = isAllDay ? 'none' : 'block';
         }
+        
+        // Auto-fill end date when start date changes
+        document.getElementById('eventStartDate').addEventListener('change', function() {
+            const end = document.getElementById('eventEndDate');
+            if (!end.value) {
+                end.value = this.value;
+            }
+        });
         
         function autoFillModalEnd() {
             const start = document.getElementById('eventStartDatetime').value;

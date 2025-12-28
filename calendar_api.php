@@ -32,20 +32,24 @@ try {
             $description = $_POST['description'] ?? '';
             
             if ($is_all_day) {
-                $event_date = $_POST['start_date'] ?? '';
+                $start_date = $_POST['start_date'] ?? '';
+                $end_date = $_POST['end_date'] ?? $start_date; // Default to start_date if empty
+                $event_date = $start_date;
                 $start_time = null;
                 $end_time = null;
             } else {
                 $start_datetime = $_POST['start_datetime'] ?? '';
                 $end_datetime = $_POST['end_datetime'] ?? '';
                 $event_date = $start_datetime ? date('Y-m-d', strtotime($start_datetime)) : '';
+                // For non-all-day, end_date matches end_datetime date
+                $end_date = $end_datetime ? date('Y-m-d', strtotime($end_datetime)) : $event_date;
                 $start_time = $start_datetime ? date('H:i:s', strtotime($start_datetime)) : null;
                 $end_time = $end_datetime ? date('H:i:s', strtotime($end_datetime)) : null;
             }
             
             if ($title && $event_date) {
-                $stmt = $pdo->prepare("INSERT INTO calendar_events (title, event_date, start_time, end_time, is_all_day, description, color, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$title, $event_date, $start_time, $end_time, $is_all_day, $description ?: null, $color, $_SESSION['user_id']]);
+                $stmt = $pdo->prepare("INSERT INTO calendar_events (title, event_date, end_date, start_time, end_time, is_all_day, description, color, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$title, $event_date, $end_date, $start_time, $end_time, $is_all_day, $description ?: null, $color, $_SESSION['user_id']]);
                 echo json_encode(['success' => true, 'id' => $pdo->lastInsertId()]);
             } else {
                 echo json_encode(['error' => 'タイトルと日時を入力してください']);
@@ -61,20 +65,23 @@ try {
             $description = $_POST['description'] ?? '';
             
             if ($is_all_day) {
-                $event_date = $_POST['start_date'] ?? '';
+                $start_date = $_POST['start_date'] ?? '';
+                $end_date = $_POST['end_date'] ?? $start_date;
+                $event_date = $start_date;
                 $start_time = null;
                 $end_time = null;
             } else {
                 $start_datetime = $_POST['start_datetime'] ?? '';
                 $end_datetime = $_POST['end_datetime'] ?? '';
                 $event_date = $start_datetime ? date('Y-m-d', strtotime($start_datetime)) : '';
+                $end_date = $end_datetime ? date('Y-m-d', strtotime($end_datetime)) : $event_date;
                 $start_time = $start_datetime ? date('H:i:s', strtotime($start_datetime)) : null;
                 $end_time = $end_datetime ? date('H:i:s', strtotime($end_datetime)) : null;
             }
             
             if ($id && $title && $event_date) {
-                $stmt = $pdo->prepare("UPDATE calendar_events SET title=?, event_date=?, start_time=?, end_time=?, is_all_day=?, description=?, color=? WHERE id=?");
-                $stmt->execute([$title, $event_date, $start_time, $end_time, $is_all_day, $description ?: null, $color, $id]);
+                $stmt = $pdo->prepare("UPDATE calendar_events SET title=?, event_date=?, end_date=?, start_time=?, end_time=?, is_all_day=?, description=?, color=? WHERE id=?");
+                $stmt->execute([$title, $event_date, $end_date, $start_time, $end_time, $is_all_day, $description ?: null, $color, $id]);
                 echo json_encode(['success' => true]);
             } else {
                 echo json_encode(['error' => 'Invalid data']);
