@@ -239,21 +239,21 @@ try {
                 ?>
                 
                 <div style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-                    <a href="?cal_year=<?php echo $prev_year; ?>&cal_month=<?php echo $prev_month; ?>#calendar" style="color: var(--primary-color); text-decoration: none; padding: 8px;">
+                    <a href="?cal_year=<?php echo $prev_year; ?>&cal_month=<?php echo $prev_month; ?>" style="color: var(--primary-color); text-decoration: none; padding: 8px;">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                     <div style="text-align: center;">
                         <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0;"><?php echo $cal_month; ?>月</h3>
                         <p style="color: #888; font-size: 0.85rem; margin: 0;"><?php echo $cal_year; ?>年</p>
                     </div>
-                    <a href="?cal_year=<?php echo $next_year; ?>&cal_month=<?php echo $next_month; ?>#calendar" style="color: var(--primary-color); text-decoration: none; padding: 8px;">
+                    <a href="?cal_year=<?php echo $next_year; ?>&cal_month=<?php echo $next_month; ?>" style="color: var(--primary-color); text-decoration: none; padding: 8px;">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </div>
                 
                 <?php if (!$is_current_month): ?>
                 <div style="text-align: center; padding-bottom: 0.5rem;">
-                    <a href="dashboard.php#calendar" style="font-size: 0.8rem; color: var(--primary-color);">今月に戻る</a>
+                    <a href="dashboard.php" style="font-size: 0.8rem; color: var(--primary-color);">今月に戻る</a>
                 </div>
                 <?php endif; ?>
                 
@@ -349,5 +349,25 @@ try {
             </div>
         </div>
     </main>
+    
+    <script>
+        // Preserve scroll position when navigating calendar months
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('cal_year') || urlParams.has('cal_month')) {
+                const savedScroll = sessionStorage.getItem('calendarScroll');
+                if (savedScroll) {
+                    window.scrollTo(0, parseInt(savedScroll));
+                    sessionStorage.removeItem('calendarScroll');
+                }
+            }
+            
+            document.querySelectorAll('a[href*="cal_year"]').forEach(link => {
+                link.addEventListener('click', () => {
+                    sessionStorage.setItem('calendarScroll', window.scrollY);
+                });
+            });
+        })();
+    </script>
 </body>
 </html>
