@@ -372,6 +372,53 @@ try {
             </div>
         </div>
     </main>
+
+    <style>
+        /* ヘッダーの調整: 右端に寄りすぎないようにパディングを追加 */
+        @media (min-width: 769px) {
+            .header-inner {
+                padding-right: 4%; /* 画面幅の4%分内側に寄せる */
+            }
+        }
+
+        /* ログアウトボタンのスタイル調整 */
+        .nav-list .nav-link[href="logout.php"] {
+            background-color: #f0f2f5; /* 薄いグレーの背景 */
+            color: #555 !important;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%; /* 正円 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 !important; /* paddingをリセット */
+            margin-left: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-list .nav-link[href="logout.php"]:hover {
+            background-color: #e4e6eb; /* ホバー時は少し濃く */
+            color: #333 !important;
+            transform: translateY(-1px);
+        }
+        
+        /* モバイルメニュー内のログアウトボタン調整 */
+        @media (max-width: 768px) {
+             .nav-list .nav-link[href="logout.php"] {
+                width: auto;
+                height: auto;
+                border-radius: 8px; /* 四角く戻す */
+                justify-content: flex-start;
+                padding: 1rem 1.5rem !important;
+                background-color: transparent;
+                margin-left: 0;
+            }
+            .nav-list .nav-link[href="logout.php"]:hover {
+                background-color: #f8f9fa;
+                transform: none;
+            }
+        }
+    </style>
     
     <?php if ($_SESSION['role'] === 'admin'): ?>
     <!-- Calendar Modal -->
