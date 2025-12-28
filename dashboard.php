@@ -125,7 +125,7 @@ try {
             </div>
 
             <div id="events" style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; scroll-margin-top: 80px;">
-                <h2 class="section-title" style="text-align: left; margin: 0;">イベント</h2>
+                <h2 class="section-title" style="text-align: left; margin: 0;">募集中のイベント</h2>
                 <a href="past_events.php" style="font-size: 0.85rem; color: #888; text-decoration: none;">過去のイベント →</a>
             </div>
             <?php if (empty($upcoming_events)): ?>
