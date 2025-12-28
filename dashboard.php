@@ -32,12 +32,20 @@ if ($_SESSION['role'] === 'admin') {
     }
 }
 
-// Fetch calendar events for current month
+// Calendar month navigation
+$cal_year = isset($_GET['cal_year']) ? (int)$_GET['cal_year'] : (int)date('Y');
+$cal_month = isset($_GET['cal_month']) ? (int)$_GET['cal_month'] : (int)date('n');
+
+// Validate and normalize month
+if ($cal_month < 1) { $cal_month = 12; $cal_year--; }
+if ($cal_month > 12) { $cal_month = 1; $cal_year++; }
+
+// Fetch calendar events for selected month
 $calendar_events = [];
 try {
-    $current_month = date('Y-m');
+    $month_str = sprintf('%04d-%02d', $cal_year, $cal_month);
     $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE DATE_FORMAT(event_date, '%Y-%m') = ? ORDER BY event_date ASC");
-    $stmt->execute([$current_month]);
+    $stmt->execute([$month_str]);
     $calendar_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     $calendar_events = [];
@@ -209,7 +217,7 @@ try {
             </div>
 
             <!-- わびカレンダー -->
-            <h2 class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📅 わびカレンダー</h2>
+            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📅 わびカレンダー</h2>
             <div class="card" style="padding: 0; overflow: hidden;">
                 <?php if ($_SESSION['role'] === 'admin'): ?>
                     <div style="padding: 1rem 1.5rem 0; text-align: right;">
@@ -219,15 +227,38 @@ try {
                     </div>
                 <?php endif; ?>
                 
-                <div style="padding: 1rem 1.5rem;">
-                    <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0;"><?php echo date('n'); ?>月</h3>
-                    <p style="color: #888; font-size: 0.85rem; margin: 0;"><?php echo date('Y年'); ?></p>
+                <?php
+                // Calculate prev/next month
+                $prev_month = $cal_month - 1;
+                $prev_year = $cal_year;
+                if ($prev_month < 1) { $prev_month = 12; $prev_year--; }
+                $next_month = $cal_month + 1;
+                $next_year = $cal_year;
+                if ($next_month > 12) { $next_month = 1; $next_year++; }
+                $is_current_month = ($cal_year == date('Y') && $cal_month == date('n'));
+                ?>
+                
+                <div style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <a href="?cal_year=<?php echo $prev_year; ?>&cal_month=<?php echo $prev_month; ?>#calendar" style="color: var(--primary-color); text-decoration: none; padding: 8px;">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <div style="text-align: center;">
+                        <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0;"><?php echo $cal_month; ?>月</h3>
+                        <p style="color: #888; font-size: 0.85rem; margin: 0;"><?php echo $cal_year; ?>年</p>
+                    </div>
+                    <a href="?cal_year=<?php echo $next_year; ?>&cal_month=<?php echo $next_month; ?>#calendar" style="color: var(--primary-color); text-decoration: none; padding: 8px;">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
                 </div>
                 
+                <?php if (!$is_current_month): ?>
+                <div style="text-align: center; padding-bottom: 0.5rem;">
+                    <a href="dashboard.php#calendar" style="font-size: 0.8rem; color: var(--primary-color);">今月に戻る</a>
+                </div>
+                <?php endif; ?>
+                
                 <?php
-                $year = date('Y');
-                $month = date('n');
-                $first_day = mktime(0, 0, 0, $month, 1, $year);
+                $first_day = mktime(0, 0, 0, $cal_month, 1, $cal_year);
                 $days_in_month = date('t', $first_day);
                 $start_day = date('w', $first_day);
                 
@@ -272,7 +303,7 @@ try {
                         <?php foreach ($week as $i => $day): ?>
                             <div style="padding: 8px 4px; text-align: center; min-height: 30px;">
                                 <?php if ($day): 
-                                    $is_today = ($day == date('j'));
+                                    $is_today = ($is_current_month && $day == date('j'));
                                 ?>
                                     <span style="<?php if ($is_today): ?>background: var(--primary-color); color: white; border-radius: 50%; padding: 4px 8px; font-weight: 600;<?php endif; ?> <?php echo $i === 0 ? 'color: #dc3545;' : ($i === 6 ? 'color: #007bff;' : ''); ?>"><?php echo $day; ?></span>
                                 <?php endif; ?>
