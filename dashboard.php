@@ -339,7 +339,9 @@ try {
                                     <?php if ($has_events): ?>
                                         <div style="margin-top: 2px;">
                                             <?php foreach ($events_by_full_date[$date_key] as $ev): ?>
-                                                <div style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; color: white; font-size: 0.55rem; padding: 1px 3px; border-radius: 2px; margin-bottom: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($ev['title']); ?>">
+                                                <div onclick="event.stopPropagation(); <?php if ($_SESSION['role'] === 'admin'): ?>editCalendarEvent(<?php echo $ev['id']; ?>)<?php endif; ?>" 
+                                                     style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; color: white; font-size: 0.55rem; padding: 1px 3px; border-radius: 2px; margin-bottom: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
+                                                     title="<?php echo htmlspecialchars($ev['title']); ?>">
                                                     <?php echo htmlspecialchars(mb_substr($ev['title'], 0, 4)); ?>
                                                 </div>
                                             <?php endforeach; ?>
@@ -356,13 +358,17 @@ try {
                 <?php if (!empty($month_events)): ?>
                 <div style="padding: 0.75rem 1rem; background: #fafafa;">
                     <?php foreach ($month_events as $ev): ?>
-                        <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
-                             <?php if ($_SESSION['role'] === 'admin'): ?>onclick="editCalendarEvent(<?php echo $ev['id']; ?>)"<?php endif; ?>>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
                             <span style="width: 6px; height: 6px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
                             <span style="font-size: 0.75rem; color: #888;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
-                            <span style="font-size: 0.85rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
+                            <span style="font-size: 0.85rem; flex: 1;"><?php echo htmlspecialchars($ev['title']); ?></span>
                             <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
                                 <span style="font-size: 0.7rem; color: #aaa;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
+                            <?php endif; ?>
+                            <?php if ($_SESSION['role'] === 'admin'): ?>
+                                <button onclick="editCalendarEvent(<?php echo $ev['id']; ?>)" style="background: none; border: none; cursor: pointer; padding: 4px 8px; color: #888; border-radius: 4px;" onmouseover="this.style.background='#eee'" onmouseout="this.style.background='none'">
+                                    <i class="fas fa-pencil-alt" style="font-size: 0.75rem;"></i>
+                                </button>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
