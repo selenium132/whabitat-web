@@ -376,7 +376,14 @@ try {
                     <?php foreach ($month_events as $ev): ?>
                         <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0;">
                             <span style="width: 6px; height: 6px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
-                            <span style="font-size: 0.75rem; color: #888;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
+                            <span style="font-size: 0.75rem; color: #888;">
+                                <?php 
+                                echo date('n/j', strtotime($ev['event_date']));
+                                if (!empty($ev['end_date']) && $ev['end_date'] !== $ev['event_date']) {
+                                    echo '〜' . date('n/j', strtotime($ev['end_date']));
+                                }
+                                ?>
+                            </span>
                             <span style="font-size: 0.85rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
                             <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
                                 <span style="font-size: 0.7rem; color: #aaa;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
