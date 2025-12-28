@@ -76,20 +76,6 @@ try {
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
             
-            <!-- Desktop nav -->
-            <nav class="dashboard-nav-desktop">
-                <a href="#events">イベント</a>
-                <a href="#suggestion">目安箱</a>
-                <a href="#calendar">カレンダー</a>
-            </nav>
-            
-            <!-- Desktop logout -->
-            <div class="dashboard-logout-desktop">
-                <a href="logout.php" class="header-logout-btn" title="ログアウト">
-                    <i class="fas fa-sign-out-alt"></i>
-                </a>
-            </div>
-            
             <!-- Mobile menu toggle -->
             <button class="menu-toggle" aria-label="メニュー">
                 <span></span>
@@ -97,84 +83,17 @@ try {
                 <span></span>
             </button>
             
-            <!-- Mobile nav -->
-            <nav class="dashboard-nav-mobile">
+            <!-- Nav (shared for desktop/mobile via CSS) -->
+            <nav>
                 <ul class="nav-list">
-                    <li><a href="#events" class="nav-link">イベント</a></li>
-                    <li><a href="#suggestion" class="nav-link">目安箱</a></li>
-                    <li><a href="#calendar" class="nav-link">カレンダー</a></li>
-                    <li><a href="logout.php" class="nav-link" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> ログアウト</a></li>
+                    <li><a href="#events" class="nav-link">Events</a></li>
+                    <li><a href="#calendar" class="nav-link">Calendar</a></li>
+                    <li><a href="#suggestion" class="nav-link">Suggestion</a></li>
+                    <li><a href="logout.php" class="nav-link" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-    
-    <style>
-        .dashboard-nav-desktop {
-            display: flex;
-            gap: 24px;
-        }
-        .dashboard-nav-desktop a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .dashboard-nav-desktop a:hover {
-            color: var(--primary-color);
-        }
-        .dashboard-logout-desktop {
-            display: block;
-        }
-        .dashboard-nav-mobile {
-            display: none;
-        }
-        
-        @media (max-width: 768px) {
-            .dashboard-nav-desktop,
-            .dashboard-logout-desktop {
-                display: none;
-            }
-            .menu-toggle {
-                display: flex;
-            }
-            .dashboard-nav-mobile {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: white;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                padding: 1rem 0;
-            }
-            .dashboard-nav-mobile.nav-open {
-                display: block;
-            }
-            .dashboard-nav-mobile .nav-list {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-            .dashboard-nav-mobile .nav-list li {
-                border-bottom: 1px solid #eee;
-            }
-            .dashboard-nav-mobile .nav-list li:last-child {
-                border-bottom: none;
-            }
-            .dashboard-nav-mobile .nav-link {
-                display: block;
-                padding: 1rem 1.5rem;
-                color: var(--text-color);
-                text-decoration: none;
-                font-weight: 500;
-            }
-            .dashboard-nav-mobile .nav-link:hover {
-                background: #f8f9fa;
-            }
-        }
-    </style>
 
     <main>
         <div class="dashboard-container">
@@ -534,14 +453,14 @@ try {
         // Mobile menu toggle
         document.querySelector('.menu-toggle').addEventListener('click', function() {
             this.classList.toggle('active');
-            document.querySelector('.dashboard-nav-mobile').classList.toggle('nav-open');
+            document.querySelector('.nav-list').classList.toggle('nav-open');
         });
         
         // Close mobile menu when clicking a link
-        document.querySelectorAll('.dashboard-nav-mobile .nav-link').forEach(link => {
+        document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => {
                 document.querySelector('.menu-toggle').classList.remove('active');
-                document.querySelector('.dashboard-nav-mobile').classList.remove('nav-open');
+                document.querySelector('.nav-list').classList.remove('nav-open');
             });
         });
         
