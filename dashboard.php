@@ -86,10 +86,10 @@ try {
             <!-- Nav (shared for desktop/mobile via CSS) -->
             <nav>
                 <ul class="nav-list">
-                    <li><a href="#events" class="nav-link">Events</a></li>
-                    <li><a href="#calendar" class="nav-link">Calendar</a></li>
-                    <li><a href="#suggestion" class="nav-link">Suggestion</a></li>
-                    <li><a href="logout.php" class="nav-link" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="#events" class="nav-link">イベント</a></li>
+                    <li><a href="#calendar" class="nav-link">カレンダー</a></li>
+                    <li><a href="#suggestion" class="nav-link">目安箱</a></li>
+                    <li><a href="logout.php" class="nav-link" style="color: var(--text-color);"><i class="fas fa-sign-out-alt"></i></a></li>
                 </ul>
             </nav>
         </div>
@@ -172,37 +172,6 @@ try {
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
-
-            <!-- 目安箱 (Suggestion Box) -->
-            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">📮 目安箱</h2>
-            <div class="card" style="padding: 2rem;">
-                <?php if (isset($_SESSION['suggestion_success']) && $_SESSION['suggestion_success']): ?>
-                    <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
-                        ✅ 送信しました！ご意見ありがとうございます。
-                    </div>
-                    <?php unset($_SESSION['suggestion_success']); ?>
-                <?php endif; ?>
-                <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.95rem;">
-                    サークルへのご意見・ご要望があればお気軽にどうぞ！<br>
-                    <span style="font-size: 0.85rem;">💡 名前を書かなければ「匿名」で送信されます。</span>
-                </p>
-                <form action="suggestion_submit.php" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
-                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
-                    <div>
-                        <label for="suggestion_name" style="font-weight: 500; display: block; margin-bottom: 0.3rem;">名前（任意）</label>
-                        <input type="text" id="suggestion_name" name="name" placeholder="書かなければ匿名で送信されます" 
-                            style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
-                    </div>
-                    <div>
-                        <label for="suggestion_content" style="font-weight: 500; display: block; margin-bottom: 0.3rem;">内容 <span style="color: #dc3545;">*</span></label>
-                        <textarea id="suggestion_content" name="message" rows="4" required placeholder="ご意見・ご要望をお書きください..."
-                            style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; resize: vertical; box-sizing: border-box;"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary" style="align-self: flex-start; padding: 0.8rem 2rem; border-radius: 50px; border: none; cursor: pointer; font-weight: 600;">
-                        <i class="fas fa-paper-plane"></i> 送信する
-                    </button>
-                </form>
-            </div>
 
             <!-- わびカレンダー -->
             <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem; scroll-margin-top: 80px;">📅 わびカレンダー</h2>
@@ -369,6 +338,37 @@ try {
                 
                 <?php endforeach; ?>
                 </div><!-- end calendarScroll -->
+            </div>
+
+            <!-- 目安箱 (Suggestion Box) -->
+            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">📮 目安箱</h2>
+            <div class="card" style="padding: 2rem;">
+                <?php if (isset($_SESSION['suggestion_success']) && $_SESSION['suggestion_success']): ?>
+                    <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
+                        ✅ 送信しました！ご意見ありがとうございます。
+                    </div>
+                    <?php unset($_SESSION['suggestion_success']); ?>
+                <?php endif; ?>
+                <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.95rem;">
+                    サークルへのご意見・ご要望があればお気軽にどうぞ！<br>
+                    <span style="font-size: 0.85rem;">💡 名前を書かなければ「匿名」で送信されます。</span>
+                </p>
+                <form action="suggestion_submit.php" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                    <div>
+                        <label for="suggestion_name" style="font-weight: 500; display: block; margin-bottom: 0.3rem;">名前（任意）</label>
+                        <input type="text" id="suggestion_name" name="name" placeholder="書かなければ匿名で送信されます" 
+                            style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label for="suggestion_content" style="font-weight: 500; display: block; margin-bottom: 0.3rem;">内容 <span style="color: #dc3545;">*</span></label>
+                        <textarea id="suggestion_content" name="message" rows="4" required placeholder="ご意見・ご要望をお書きください..."
+                            style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; resize: vertical; box-sizing: border-box;"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="align-self: flex-start; padding: 0.8rem 2rem; border-radius: 50px; border: none; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-paper-plane"></i> 送信する
+                    </button>
+                </form>
             </div>
         </div>
     </main>
