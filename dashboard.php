@@ -329,21 +329,23 @@ try {
                 <?php endforeach; ?>
                 
                 <!-- Event list -->
-                <?php if (!empty($calendar_events)): ?>
-                <div style="padding: 1rem 1.5rem; background: #f8f9fa;">
-                    <h4 style="font-size: 0.85rem; margin-bottom: 0.5rem; color: #666;"><?php echo date('n'); ?>月</h4>
-                    <?php foreach ($calendar_events as $ev): ?>
-                        <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
-                            <span style="width: 8px; height: 8px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
-                            <span style="font-size: 0.8rem; color: #666; min-width: 35px;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
-                            <span style="font-size: 0.9rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
-                            <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
-                                <span style="font-size: 0.75rem; color: #888;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
+                <div style="padding: 1rem 1.5rem; background: #f8f9fa; min-height: 120px;">
+                    <h4 style="font-size: 0.85rem; margin-bottom: 0.5rem; color: #666;"><?php echo $cal_month; ?>月の予定</h4>
+                    <?php if (!empty($calendar_events)): ?>
+                        <?php foreach ($calendar_events as $ev): ?>
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
+                                <span style="width: 8px; height: 8px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
+                                <span style="font-size: 0.8rem; color: #666; min-width: 35px;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
+                                <span style="font-size: 0.9rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
+                                <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
+                                    <span style="font-size: 0.75rem; color: #888;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p style="color: #999; font-size: 0.85rem; margin: 0;">予定はありません</p>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
             </div>
         </div>
     </main>
