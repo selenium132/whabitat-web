@@ -84,12 +84,14 @@ $csrf_token = generateCsrfToken();
             flex-wrap: wrap;
         }
         .color-option {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
+            padding: 8px 14px;
+            border-radius: 20px;
             cursor: pointer;
-            border: 3px solid transparent;
-            transition: border-color 0.2s;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: white;
         }
         .color-option:hover, .color-option.selected {
             border-color: #333;
@@ -192,16 +194,22 @@ $csrf_token = generateCsrfToken();
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">色</label>
+                        <label class="form-label">カテゴリ</label>
                         <div class="color-picker">
                             <?php 
-                            $colors = ['#667eea', '#dc3545', '#28a745', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'];
-                            foreach ($colors as $i => $c): 
+                            $categories = [
+                                ['color' => '#667eea', 'label' => 'イベント'],
+                                ['color' => '#28a745', 'label' => '派遣'],
+                                ['color' => '#17a2b8', 'label' => 'mtg'],
+                                ['color' => '#dc3545', 'label' => '幹部関連'],
+                                ['color' => '#6c757d', 'label' => 'その他'],
+                            ];
+                            foreach ($categories as $i => $cat): 
                             ?>
                                 <div class="color-option <?php echo $i === 0 ? 'selected' : ''; ?>" 
-                                     style="background: <?php echo $c; ?>;" 
-                                     data-color="<?php echo $c; ?>"
-                                     onclick="selectColor(this, '<?php echo $c; ?>')"></div>
+                                     style="background: <?php echo $cat['color']; ?>;" 
+                                     data-color="<?php echo $cat['color']; ?>"
+                                     onclick="selectColor(this, '<?php echo $cat['color']; ?>')"><?php echo $cat['label']; ?></div>
                             <?php endforeach; ?>
                         </div>
                     </div>
