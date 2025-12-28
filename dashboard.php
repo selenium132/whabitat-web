@@ -407,14 +407,16 @@ try {
              .nav-list .nav-link[href="logout.php"] {
                 width: auto;
                 height: auto;
-                border-radius: 8px; /* 四角く戻す */
+                border-radius: 8px;
                 justify-content: flex-start;
                 padding: 1rem 1.5rem !important;
-                background-color: transparent;
+                background-color: #f8f9fa; /* 薄いグレーの背景を追加 */
+                color: #555 !important;
                 margin-left: 0;
+                margin-top: 0.5rem; /* 上に少し余白 */
             }
             .nav-list .nav-link[href="logout.php"]:hover {
-                background-color: #f8f9fa;
+                background-color: #e9ecef;
                 transform: none;
             }
         }
