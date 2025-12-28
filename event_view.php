@@ -405,7 +405,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                         <?php if ($my_attendance): ?>
                             回答の変更が必要な場合は、幹部までご連絡ください。
                         <?php else: ?>
-                            これ以降の参加の相談は幹部まで！
+                            これ以降の参加希望の相談は幹部まで！
                         <?php endif; ?>
                     </p>
                 </div>
