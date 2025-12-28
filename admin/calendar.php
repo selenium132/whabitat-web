@@ -20,12 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($action === 'add') {
         $title = $_POST['title'] ?? '';
-        $event_date = $_POST['event_date'] ?? '';
         $description = $_POST['description'] ?? '';
         $color = $_POST['color'] ?? '#667eea';
         $is_all_day = isset($_POST['is_all_day']) ? 1 : 0;
-        $start_time = $is_all_day ? null : ($_POST['start_time'] ?? null);
-        $end_time = $is_all_day ? null : ($_POST['end_time'] ?? null);
+        
+        if ($is_all_day) {
+            $event_date = $_POST['event_date_only'] ?? '';
+            $start_time = null;
+            $end_time = null;
+        } else {
+            $start_datetime = $_POST['start_datetime'] ?? '';
+            $end_datetime = $_POST['end_datetime'] ?? '';
+            $event_date = $start_datetime ? date('Y-m-d', strtotime($start_datetime)) : '';
+            $start_time = $start_datetime ? date('H:i:s', strtotime($start_datetime)) : null;
+            $end_time = $end_datetime ? date('H:i:s', strtotime($end_datetime)) : null;
+        }
         
         if ($title && $event_date) {
             $stmt = $pdo->prepare("INSERT INTO calendar_events (title, event_date, start_time, end_time, is_all_day, description, color, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -35,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'エラーが発生しました。';
             }
         } else {
-            $error = 'タイトルと日付を入力してください。';
+            $error = 'タイトルと日時を入力してください。';
         }
     } elseif ($action === 'delete') {
         $event_id = $_POST['event_id'] ?? 0;
@@ -143,26 +152,28 @@ $csrf_token = generateCsrfToken();
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">日付</label>
-                        <input type="date" name="event_date" class="form-input" required>
-                    </div>
-                    
-                    <div class="form-group">
                         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                             <input type="checkbox" name="is_all_day" id="isAllDay" style="width: 18px; height: 18px;" onchange="toggleTimeFields()">
                             <span>終日</span>
                         </label>
                     </div>
                     
-                    <div id="timeFields">
+                    <div id="dateOnlyField" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">日付</label>
+                            <input type="date" name="event_date_only" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <div id="dateTimeFields">
                         <div style="display: flex; gap: 10px;">
                             <div class="form-group" style="flex: 1;">
-                                <label class="form-label">開始時間</label>
-                                <input type="time" name="start_time" class="form-input">
+                                <label class="form-label">開始</label>
+                                <input type="datetime-local" name="start_datetime" class="form-input">
                             </div>
                             <div class="form-group" style="flex: 1;">
-                                <label class="form-label">終了時間</label>
-                                <input type="time" name="end_time" class="form-input">
+                                <label class="form-label">終了</label>
+                                <input type="datetime-local" name="end_datetime" class="form-input">
                             </div>
                         </div>
                     </div>
@@ -251,7 +262,8 @@ $csrf_token = generateCsrfToken();
         
         function toggleTimeFields() {
             const isAllDay = document.getElementById('isAllDay').checked;
-            document.getElementById('timeFields').style.display = isAllDay ? 'none' : 'block';
+            document.getElementById('dateOnlyField').style.display = isAllDay ? 'block' : 'none';
+            document.getElementById('dateTimeFields').style.display = isAllDay ? 'none' : 'block';
         }
     </script>
 </body>
