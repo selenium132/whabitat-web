@@ -41,7 +41,7 @@ try {
     $start_date = $view_past ? date('Y-m-d', strtotime('-12 months')) : date('Y-m-d');
     $end_date = $view_past ? date('Y-m-d') : date('Y-m-d', strtotime('+12 months'));
     
-    $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE event_date >= ? AND event_date <= ? ORDER BY event_date ASC");
+    $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE event_date >= ? AND event_date <= ? ORDER BY event_date ASC, start_time ASC");
     $stmt->execute([$start_date, $end_date]);
     $all_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -290,11 +290,17 @@ try {
                         $weeks[] = $current_week;
                     }
                     
-                    // Get events for this month
+                    // Get events for this month (checking overlap for multi-day events)
                     $month_events = [];
-                    $month_prefix = sprintf('%04d-%02d', $cal_year, $cal_month);
+                    $month_start = sprintf('%04d-%02d-01', $cal_year, $cal_month);
+                    $month_end = date('Y-m-t', strtotime($month_start));
+                    
                     foreach ($calendar_events_all as $ev) {
-                        if (strpos($ev['event_date'], $month_prefix) === 0) {
+                        $ev_start = $ev['event_date'];
+                        $ev_end = $ev['end_date'] ?? $ev['event_date'];
+                        
+                        // Check overlap: Event Start <= Month End AND Event End >= Month Start
+                        if ($ev_start <= $month_end && $ev_end >= $month_start) {
                             $month_events[] = $ev;
                         }
                     }
