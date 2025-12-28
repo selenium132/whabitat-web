@@ -86,7 +86,7 @@ try {
             <!-- Nav (shared for desktop/mobile via CSS) -->
             <nav>
                 <ul class="nav-list">
-                    <li><a href="#events" class="nav-link">イベント</a></li>
+                    <li><a href="#events" class="nav-link">イベント情報</a></li>
                     <li><a href="#calendar" class="nav-link">カレンダー</a></li>
                     <li><a href="#suggestion" class="nav-link">目安箱</a></li>
                     <li><a href="logout.php" class="nav-link" style="color: var(--text-color);"><i class="fas fa-sign-out-alt"></i></a></li>
@@ -125,7 +125,7 @@ try {
             </div>
 
             <div id="events" style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; scroll-margin-top: 80px;">
-                <h2 class="section-title" style="text-align: left; margin: 0;">募集中のイベント</h2>
+                <h2 class="section-title" style="text-align: left; margin: 0;">イベント情報</h2>
                 <a href="past_events.php" style="font-size: 0.85rem; color: #888; text-decoration: none;">過去のイベント →</a>
             </div>
             <?php if (empty($upcoming_events)): ?>
@@ -289,7 +289,7 @@ try {
                 <div style="border-bottom: 1px solid #f0f0f0;">
                     <div style="display: grid; grid-template-columns: repeat(7, 1fr);">
                         <?php foreach ($week as $i => $day): ?>
-                            <div style="padding: 6px 2px; text-align: center; min-height: 28px; <?php if ($day && $_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>"
+                            <div style="padding: 6px 0; text-align: center; min-height: 28px; <?php if ($day && $_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>"
                                  <?php if ($day && $_SESSION['role'] === 'admin'): ?>onclick="openCalendarModalWithDate(<?php echo $cal_year; ?>, <?php echo $cal_month; ?>, <?php echo $day; ?>)"<?php endif; ?>>
                                 <?php if ($day): 
                                     $is_today = ($is_current_month && $day == date('j'));
@@ -301,9 +301,9 @@ try {
                                         <div style="margin-top: 2px;">
                                             <?php foreach ($events_by_full_date[$date_key] as $ev): ?>
                                                 <div onclick="event.stopPropagation(); <?php if ($_SESSION['role'] === 'admin'): ?>editCalendarEvent(<?php echo $ev['id']; ?>)<?php endif; ?>" 
-                                                     style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; color: white; font-size: 0.55rem; padding: 1px 3px; border-radius: 2px; margin-bottom: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
+                                                     style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; color: white; font-size: 0.55rem; padding: 1px 3px; border-radius: 2px; margin-bottom: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; box-sizing: border-box; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
                                                      title="<?php echo htmlspecialchars($ev['title']); ?>">
-                                                    <?php echo htmlspecialchars(mb_substr($ev['title'], 0, 4)); ?>
+                                                    <?php echo htmlspecialchars($ev['title']); ?>
                                                 </div>
                                             <?php endforeach; ?>
                                         </div>
