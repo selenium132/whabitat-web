@@ -28,9 +28,19 @@ if ($_SESSION['role'] === 'admin') {
     try {
         $unread_count = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0")->fetchColumn();
     } catch (Exception $e) {
-        // Column might not exist yet, ignore
         $unread_count = 0;
     }
+}
+
+// Fetch calendar events for current month
+$calendar_events = [];
+try {
+    $current_month = date('Y-m');
+    $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE DATE_FORMAT(event_date, '%Y-%m') = ? ORDER BY event_date ASC");
+    $stmt->execute([$current_month]);
+    $calendar_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $calendar_events = [];
 }
 
 ?>
@@ -196,6 +206,82 @@ if ($_SESSION['role'] === 'admin') {
                         <i class="fas fa-paper-plane"></i> 送信する
                     </button>
                 </form>
+            </div>
+
+            <!-- わびカレンダー -->
+            <h2 class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📅 わびカレンダー</h2>
+            <div class="card" style="padding: 1.5rem;">
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <div style="text-align: right; margin-bottom: 1rem;">
+                        <a href="admin/calendar.php" class="btn-secondary" style="font-size: 0.85rem;">
+                            <i class="fas fa-cog"></i> カレンダー管理
+                        </a>
+                    </div>
+                <?php endif; ?>
+                
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <h3 style="font-size: 1.2rem; margin: 0;"><?php echo date('Y年n月'); ?></h3>
+                </div>
+                
+                <?php
+                // Generate calendar
+                $year = date('Y');
+                $month = date('n');
+                $first_day = mktime(0, 0, 0, $month, 1, $year);
+                $days_in_month = date('t', $first_day);
+                $start_day = date('w', $first_day);
+                
+                // Index events by date
+                $events_by_date = [];
+                foreach ($calendar_events as $ev) {
+                    $day = (int)date('j', strtotime($ev['event_date']));
+                    if (!isset($events_by_date[$day])) $events_by_date[$day] = [];
+                    $events_by_date[$day][] = $ev;
+                }
+                ?>
+                
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;">
+                    <?php foreach (['日', '月', '火', '水', '木', '金', '土'] as $i => $d): ?>
+                        <div style="padding: 8px; font-weight: 600; font-size: 0.8rem; color: <?php echo $i === 0 ? '#dc3545' : ($i === 6 ? '#007bff' : '#333'); ?>;"><?php echo $d; ?></div>
+                    <?php endforeach; ?>
+                    
+                    <?php for ($i = 0; $i < $start_day; $i++): ?>
+                        <div style="padding: 8px;"></div>
+                    <?php endfor; ?>
+                    
+                    <?php for ($day = 1; $day <= $days_in_month; $day++): 
+                        $is_today = ($day == date('j'));
+                        $day_of_week = ($start_day + $day - 1) % 7;
+                    ?>
+                        <div style="padding: 6px; position: relative; <?php echo $is_today ? 'background: #667eea; color: white; border-radius: 50%; font-weight: bold;' : ''; ?> <?php echo $day_of_week === 0 ? 'color: #dc3545;' : ($day_of_week === 6 ? 'color: #007bff;' : ''); ?>">
+                            <?php echo $day; ?>
+                            <?php if (isset($events_by_date[$day])): ?>
+                                <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px;">
+                                    <?php foreach ($events_by_date[$day] as $ev): ?>
+                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: <?php echo htmlspecialchars($ev['color'] ?? '#667eea'); ?>;"></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endfor; ?>
+                </div>
+                
+                <?php if (!empty($calendar_events)): ?>
+                <div style="margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                    <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: #666;">今月の予定</h4>
+                    <?php foreach ($calendar_events as $ev): ?>
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: <?php echo htmlspecialchars($ev['color'] ?? '#667eea'); ?>; flex-shrink: 0;"></span>
+                            <span style="font-size: 0.85rem; color: #888; min-width: 50px;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
+                            <span style="font-size: 0.95rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <div style="margin-top: 1rem; text-align: center; color: #999; font-size: 0.9rem;">
+                    今月の予定はまだありません
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </main>
