@@ -46,7 +46,15 @@ try {
     $month_str = sprintf('%04d-%02d', $cal_year, $cal_month);
     $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE DATE_FORMAT(event_date, '%Y-%m') = ? ORDER BY event_date ASC");
     $stmt->execute([$month_str]);
-    $calendar_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $all_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Filter: hide 幹部関連 (red #dc3545) events for non-admin users
+    foreach ($all_events as $ev) {
+        if ($ev['color'] === '#dc3545' && $_SESSION['role'] !== 'admin') {
+            continue; // Skip admin-only events
+        }
+        $calendar_events[] = $ev;
+    }
 } catch (Exception $e) {
     $calendar_events = [];
 }

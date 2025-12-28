@@ -198,18 +198,18 @@ $csrf_token = generateCsrfToken();
                         <div class="color-picker">
                             <?php 
                             $categories = [
-                                ['color' => '#667eea', 'label' => 'イベント'],
-                                ['color' => '#28a745', 'label' => '派遣'],
-                                ['color' => '#17a2b8', 'label' => 'mtg'],
-                                ['color' => '#dc3545', 'label' => '幹部関連'],
-                                ['color' => '#6c757d', 'label' => 'その他'],
+                                ['color' => '#667eea', 'label' => 'イベント', 'admin_only' => false],
+                                ['color' => '#28a745', 'label' => '派遣', 'admin_only' => false],
+                                ['color' => '#17a2b8', 'label' => 'mtg', 'admin_only' => false],
+                                ['color' => '#dc3545', 'label' => '幹部関連', 'admin_only' => true],
+                                ['color' => '#6c757d', 'label' => 'その他', 'admin_only' => false],
                             ];
                             foreach ($categories as $i => $cat): 
                             ?>
                                 <div class="color-option <?php echo $i === 0 ? 'selected' : ''; ?>" 
                                      style="background: <?php echo $cat['color']; ?>;" 
                                      data-color="<?php echo $cat['color']; ?>"
-                                     onclick="selectColor(this, '<?php echo $cat['color']; ?>')"><?php echo $cat['label']; ?></div>
+                                     onclick="selectColor(this, '<?php echo $cat['color']; ?>')"><?php if ($cat['admin_only']): ?><i class="fas fa-lock" style="margin-right: 4px;"></i><?php endif; ?><?php echo $cat['label']; ?></div>
                             <?php endforeach; ?>
                         </div>
                     </div>
