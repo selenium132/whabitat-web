@@ -222,7 +222,16 @@ try {
             </div>
 
             <!-- わびカレンダー -->
-            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📅 わびカレンダー</h2>
+            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem;">📅 わびカレンダー</h2>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.75rem;">
+                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #667eea; border-radius: 2px;"></span>イベント</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #28a745; border-radius: 2px;"></span>派遣</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #17a2b8; border-radius: 2px;"></span>mtg</span>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #dc3545; border-radius: 2px;"></span>🔒幹部関連</span>
+                <?php endif; ?>
+                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #6c757d; border-radius: 2px;"></span>その他</span>
+            </div>
             <div class="card" style="padding: 0; overflow: hidden;">
                 <div style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
                     <?php if ($view_past): ?>
