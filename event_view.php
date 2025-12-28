@@ -402,7 +402,11 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                 <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: center;">
                     <p style="color: #856404; margin: 0; font-size: 0.9rem;">
                         <i class="fas fa-exclamation-triangle" style="margin-right: 6px;"></i>
-                        回答の変更が必要な場合は、幹部までご連絡ください。
+                        <?php if ($my_attendance): ?>
+                            回答の変更が必要な場合は、幹部までご連絡ください。
+                        <?php else: ?>
+                            これ以降の参加の相談は幹部まで！
+                        <?php endif; ?>
                     </p>
                 </div>
                 
