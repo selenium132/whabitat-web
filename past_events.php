@@ -1,0 +1,78 @@
+<?php
+require_once 'config.php';
+requireLogin();
+
+$pdo = getDB();
+
+// Fetch past events
+$stmt = $pdo->prepare("SELECT * FROM events WHERE event_date < NOW() ORDER BY event_date DESC");
+$stmt->execute();
+$past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>過去のイベント | WHABITAT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.php" class="logo">
+                <img src="logo.png" alt="WHABITAT" height="50">
+            </a>
+            <div class="user-menu">
+                <a href="dashboard.php" class="header-logout-btn" title="マイページに戻る">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="dashboard-container">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin: 0;">過去のイベント</h2>
+                <a href="dashboard.php#events" style="font-size: 0.85rem; color: #888; text-decoration: none;">← マイページに戻る</a>
+            </div>
+            
+            <?php if (empty($past_events)): ?>
+                <div class="card" style="text-align: center; color: var(--text-light);">
+                    過去のイベントはありません。
+                </div>
+            <?php else: ?>
+                <?php foreach ($past_events as $event): ?>
+                    <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; margin-bottom: 1rem; opacity: 0.9;">
+                        <div>
+                            <div style="color: var(--text-light); font-size: 0.9rem;">
+                                <?php echo date('Y年m月d日', strtotime($event['event_date'])); ?>
+                            </div>
+                            <h3 style="margin: 0.2rem 0 0; font-size: 1.1rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
+                        </div>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 1rem;">
+                                回答一覧
+                            </a>
+                            <?php if ($_SESSION['role'] === 'admin'): ?>
+                                <a href="event_delete.php?id=<?php echo $event['id']; ?>" 
+                                   onclick="return confirm('このイベントを削除しますか？\nこの操作は取り消せません。');"
+                                   class="btn-secondary" 
+                                   style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-color: #dc3545;"
+                                   title="削除">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </main>
+</body>
+</html>

@@ -78,8 +78,7 @@ try {
             
             <!-- Desktop nav -->
             <nav class="dashboard-nav-desktop">
-                <a href="#upcoming">これから</a>
-                <a href="#past">過去</a>
+                <a href="#events">イベント</a>
                 <a href="#suggestion">目安箱</a>
                 <a href="#calendar">カレンダー</a>
             </nav>
@@ -101,8 +100,7 @@ try {
             <!-- Mobile nav -->
             <nav class="dashboard-nav-mobile">
                 <ul class="nav-list">
-                    <li><a href="#upcoming" class="nav-link">これから</a></li>
-                    <li><a href="#past" class="nav-link">過去</a></li>
+                    <li><a href="#events" class="nav-link">イベント</a></li>
                     <li><a href="#suggestion" class="nav-link">目安箱</a></li>
                     <li><a href="#calendar" class="nav-link">カレンダー</a></li>
                     <li><a href="logout.php" class="nav-link" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> ログアウト</a></li>
@@ -207,7 +205,10 @@ try {
                 </div>
             </div>
 
-            <h2 id="upcoming" class="section-title" style="text-align: left; margin-bottom: 1.5rem;">これからのイベント</h2>
+            <div id="events" style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="text-align: left; margin: 0;">イベント</h2>
+                <a href="past_events.php" style="font-size: 0.85rem; color: #888; text-decoration: none;">過去のイベント →</a>
+            </div>
             <?php if (empty($upcoming_events)): ?>
                 <div class="card" style="text-align: center; color: var(--text-light);">
                     予定されているイベントはありません。
@@ -246,38 +247,6 @@ try {
                             <?php if (isEventAdmin($event['id'])): ?>
                                 <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-edit" title="編集">
                                     <i class="far fa-edit"></i>
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-
-            <h2 id="past" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">過去のイベント</h2>
-            <?php if (empty($past_events)): ?>
-                <div class="card" style="text-align: center; color: var(--text-light);">
-                    過去のイベントはありません。
-                </div>
-            <?php else: ?>
-                <?php foreach ($past_events as $event): ?>
-                    <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; margin-bottom: 1rem; opacity: 0.8;">
-                        <div>
-                            <div style="color: var(--text-light); font-size: 0.9rem;">
-                                <?php echo date('Y年m月d日', strtotime($event['event_date'])); ?>
-                            </div>
-                            <h3 style="margin: 0.2rem 0 0; font-size: 1.1rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
-                        </div>
-                        <div style="display: flex; gap: 5px; align-items: center;">
-                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 1rem;">
-                                回答一覧
-                            </a>
-                            <?php if ($_SESSION['role'] === 'admin'): ?>
-                                <a href="event_delete.php?id=<?php echo $event['id']; ?>" 
-                                   onclick="return confirm('このイベントを削除しますか？\nこの操作は取り消せません。');"
-                                   class="btn-secondary" 
-                                   style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-color: #dc3545;"
-                                   title="削除">
-                                    <i class="fas fa-trash-alt"></i>
                                 </a>
                             <?php endif; ?>
                         </div>
