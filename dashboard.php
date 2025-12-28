@@ -322,22 +322,43 @@ try {
                 <div style="border-bottom: 1px solid #f0f0f0;">
                     <div style="display: grid; grid-template-columns: repeat(7, 1fr);">
                         <?php foreach ($week as $i => $day): ?>
-                            <div style="padding: 6px 0; text-align: center; min-height: 28px; <?php if ($day && $_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>"
+                            <div style="padding: 6px 0; text-align: center; min-height: 28px; position: relative; z-index: <?php echo 20 - $i; ?>; <?php if ($day && $_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>"
                                  <?php if ($day && $_SESSION['role'] === 'admin'): ?>onclick="openCalendarModalWithDate(<?php echo $cal_year; ?>, <?php echo $cal_month; ?>, <?php echo $day; ?>)"<?php endif; ?>>
                                 <?php if ($day): 
                                     $is_today = ($is_current_month && $day == date('j'));
                                     $date_key = sprintf('%04d-%02d-%02d', $cal_year, $cal_month, $day);
-                                    $has_events = isset($events_by_full_date[$date_key]);
-                                ?>
+                                    
+                                    // Calculate remaining days in this week (including today)
+                                    $days_left_in_week = 7 - $i;
+                                    ?>
                                     <span style="<?php if ($is_today): ?>background: var(--primary-color); color: white; border-radius: 50%; padding: 3px 7px; font-weight: 600;<?php endif; ?> <?php echo $i === 0 ? 'color: #dc3545;' : ($i === 6 ? 'color: #007bff;' : ''); ?> font-size: 0.85rem;"><?php echo $day; ?></span>
-                                    <?php if ($has_events): ?>
+                                    
+                                    <?php if (isset($events_by_full_date[$date_key])): ?>
                                         <div style="margin-top: 2px;">
                                             <?php foreach ($events_by_full_date[$date_key] as $ev): ?>
+                                                <?php
+                                                    // Calculate span for this event in this week
+                                                    $ev_end_ts = strtotime($ev['end_date'] ?? $ev['event_date']);
+                                                    $current_ts = strtotime($date_key);
+                                                    $days_until_event_end = floor(($ev_end_ts - $current_ts) / 86400) + 1;
+                                                    $span = min($days_left_in_week, $days_until_event_end);
+                                                    $span = max(1, $span); // Safety
+                                                    
+                                                    // Show title if start day OR 1st day of month (visual break)
+                                                    $show_title = $ev['is_start_day'] || $day == 1;
+                                                ?>
                                                 <div onclick="event.stopPropagation(); <?php if ($_SESSION['role'] === 'admin'): ?>editCalendarEvent(<?php echo $ev['id']; ?>)<?php endif; ?>" 
                                                      class="event-bar <?php echo ($ev['is_start_day']?'is-start':'') . ' ' . ($ev['is_end_day']?'is-end':''); ?>"
-                                                     style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
+                                                     style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; height: 16px; position: relative; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
                                                      title="<?php echo htmlspecialchars($ev['title']); ?>">
-                                                    <?php echo htmlspecialchars($ev['title']); ?>
+                                                    
+                                                    <?php if ($show_title): ?>
+                                                        <div style="position: absolute; left: 0; top: 0; width: <?php echo $span * 100; ?>%; text-align: center; height: 100%; line-height: 16px; z-index: 5; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white;">
+                                                            <?php echo htmlspecialchars($ev['title']); ?>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        &nbsp;
+                                                    <?php endif; ?>
                                                 </div>
                                             <?php endforeach; ?>
                                         </div>
@@ -459,12 +480,10 @@ try {
         .event-bar {
             color: white; 
             font-size: 0.55rem; 
-            padding: 1px 3px; 
-            border-radius: 0; /* Default square */
+            padding: 0; /* padding 0 for container */
+            border-radius: 0; 
             margin-bottom: 1px; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            white-space: nowrap; 
+            overflow: visible; /* Allowing title to overflow */
             width: 100%; 
             box-sizing: border-box;
         }
