@@ -374,10 +374,11 @@ try {
     </main>
 
     <style>
-        /* ヘッダーの調整: 右端に寄りすぎないようにパディングを追加 */
+        /* ヘッダーの調整: コンテンツ幅に合わせる */
         @media (min-width: 769px) {
             .header-inner {
-                padding-right: 4%; /* 画面幅の4%分内側に寄せる */
+                max-width: 900px; /* dashboard-containerと同じ幅に */
+                padding: 0 2rem; /* paddingもdashboard-containerに合わせる */
             }
         }
 
