@@ -32,31 +32,28 @@ if ($_SESSION['role'] === 'admin') {
     }
 }
 
-// Calendar month navigation
-$cal_year = isset($_GET['cal_year']) ? (int)$_GET['cal_year'] : (int)date('Y');
-$cal_month = isset($_GET['cal_month']) ? (int)$_GET['cal_month'] : (int)date('n');
+// Calendar: show 12 months from current month (or past if requested)
+$view_past = isset($_GET['view_past']) ? true : false;
 
-// Validate and normalize month
-if ($cal_month < 1) { $cal_month = 12; $cal_year--; }
-if ($cal_month > 12) { $cal_month = 1; $cal_year++; }
-
-// Fetch calendar events for selected month
-$calendar_events = [];
+// Fetch calendar events for 12 months
+$calendar_events_all = [];
 try {
-    $month_str = sprintf('%04d-%02d', $cal_year, $cal_month);
-    $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE DATE_FORMAT(event_date, '%Y-%m') = ? ORDER BY event_date ASC");
-    $stmt->execute([$month_str]);
+    $start_date = $view_past ? date('Y-m-d', strtotime('-12 months')) : date('Y-m-d');
+    $end_date = $view_past ? date('Y-m-d') : date('Y-m-d', strtotime('+12 months'));
+    
+    $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE event_date >= ? AND event_date <= ? ORDER BY event_date ASC");
+    $stmt->execute([$start_date, $end_date]);
     $all_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Filter: hide 幹部関連 (red #dc3545) events for non-admin users
     foreach ($all_events as $ev) {
         if ($ev['color'] === '#dc3545' && $_SESSION['role'] !== 'admin') {
-            continue; // Skip admin-only events
+            continue;
         }
-        $calendar_events[] = $ev;
+        $calendar_events_all[] = $ev;
     }
 } catch (Exception $e) {
-    $calendar_events = [];
+    $calendar_events_all = [];
 }
 
 ?>
@@ -227,108 +224,124 @@ try {
             <!-- わびカレンダー -->
             <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📅 わびカレンダー</h2>
             <div class="card" style="padding: 0; overflow: hidden;">
-                <?php if ($_SESSION['role'] === 'admin'): ?>
-                    <div style="padding: 1rem 1.5rem 0; text-align: right;">
+                <div style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
+                    <?php if ($view_past): ?>
+                        <a href="dashboard.php#calendar" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                            <i class="fas fa-arrow-left"></i> 今後の予定へ
+                        </a>
+                        <span style="font-weight: 600;">過去のカレンダー</span>
+                    <?php else: ?>
+                        <a href="?view_past=1#calendar" style="font-size: 0.8rem; color: #888; text-decoration: none;">
+                            <i class="fas fa-history"></i> 過去のカレンダー
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
                         <button onclick="openCalendarModal()" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; border: none; cursor: pointer;">
                             <i class="fas fa-plus"></i> 予定追加
                         </button>
-                    </div>
-                <?php endif; ?>
-                
-                <?php
-                // Calculate prev/next month
-                $prev_month = $cal_month - 1;
-                $prev_year = $cal_year;
-                if ($prev_month < 1) { $prev_month = 12; $prev_year--; }
-                $next_month = $cal_month + 1;
-                $next_year = $cal_year;
-                if ($next_month > 12) { $next_month = 1; $next_year++; }
-                $is_current_month = ($cal_year == date('Y') && $cal_month == date('n'));
-                ?>
-                
-                <div style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-                    <a href="?cal_year=<?php echo $prev_year; ?>&cal_month=<?php echo $prev_month; ?>" style="color: var(--primary-color); text-decoration: none; padding: 8px;">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                    <div style="text-align: center;">
-                        <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0;"><?php echo $cal_month; ?>月</h3>
-                        <p style="color: #888; font-size: 0.85rem; margin: 0;"><?php echo $cal_year; ?>年</p>
-                    </div>
-                    <a href="?cal_year=<?php echo $next_year; ?>&cal_month=<?php echo $next_month; ?>" style="color: var(--primary-color); text-decoration: none; padding: 8px;">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
+                    <?php endif; ?>
                 </div>
                 
-                <?php if (!$is_current_month): ?>
-                <div style="text-align: center; padding-bottom: 0.5rem;">
-                    <a href="dashboard.php" style="font-size: 0.8rem; color: var(--primary-color);">今月に戻る</a>
-                </div>
-                <?php endif; ?>
-                
                 <?php
-                $first_day = mktime(0, 0, 0, $cal_month, 1, $cal_year);
-                $days_in_month = date('t', $first_day);
-                $start_day = date('w', $first_day);
+                // Generate 12 months
+                $base_year = (int)date('Y');
+                $base_month = (int)date('n');
                 
-                $events_by_date = [];
-                foreach ($calendar_events as $ev) {
-                    $day = (int)date('j', strtotime($ev['event_date']));
-                    if (!isset($events_by_date[$day])) $events_by_date[$day] = [];
-                    $events_by_date[$day][] = $ev;
+                if ($view_past) {
+                    // Past: from 12 months ago to last month
+                    $months_to_show = [];
+                    for ($i = 12; $i >= 1; $i--) {
+                        $m = $base_month - $i;
+                        $y = $base_year;
+                        while ($m < 1) { $m += 12; $y--; }
+                        $months_to_show[] = ['year' => $y, 'month' => $m];
+                    }
+                } else {
+                    // Future: from current month to 11 months ahead
+                    $months_to_show = [];
+                    for ($i = 0; $i < 12; $i++) {
+                        $m = $base_month + $i;
+                        $y = $base_year;
+                        while ($m > 12) { $m -= 12; $y++; }
+                        $months_to_show[] = ['year' => $y, 'month' => $m];
+                    }
                 }
                 
-                // Build weeks array
-                $weeks = [];
-                $current_week = array_fill(0, 7, null);
-                $day_counter = 1;
-                
-                for ($i = $start_day; $i < 7 && $day_counter <= $days_in_month; $i++) {
-                    $current_week[$i] = $day_counter++;
+                // Index all events by date (Y-m-d)
+                $events_by_full_date = [];
+                foreach ($calendar_events_all as $ev) {
+                    $date_key = $ev['event_date'];
+                    if (!isset($events_by_full_date[$date_key])) $events_by_full_date[$date_key] = [];
+                    $events_by_full_date[$date_key][] = $ev;
                 }
-                $weeks[] = $current_week;
                 
-                while ($day_counter <= $days_in_month) {
+                foreach ($months_to_show as $mon):
+                    $cal_year = $mon['year'];
+                    $cal_month = $mon['month'];
+                    $first_day = mktime(0, 0, 0, $cal_month, 1, $cal_year);
+                    $days_in_month = date('t', $first_day);
+                    $start_day = date('w', $first_day);
+                    $is_current_month = ($cal_year == date('Y') && $cal_month == date('n'));
+                    
+                    // Build weeks
+                    $weeks = [];
                     $current_week = array_fill(0, 7, null);
-                    for ($i = 0; $i < 7 && $day_counter <= $days_in_month; $i++) {
+                    $day_counter = 1;
+                    for ($i = $start_day; $i < 7 && $day_counter <= $days_in_month; $i++) {
                         $current_week[$i] = $day_counter++;
                     }
                     $weeks[] = $current_week;
-                }
+                    while ($day_counter <= $days_in_month) {
+                        $current_week = array_fill(0, 7, null);
+                        for ($i = 0; $i < 7 && $day_counter <= $days_in_month; $i++) {
+                            $current_week[$i] = $day_counter++;
+                        }
+                        $weeks[] = $current_week;
+                    }
+                    
+                    // Get events for this month
+                    $month_events = [];
+                    $month_prefix = sprintf('%04d-%02d', $cal_year, $cal_month);
+                    foreach ($calendar_events_all as $ev) {
+                        if (strpos($ev['event_date'], $month_prefix) === 0) {
+                            $month_events[] = $ev;
+                        }
+                    }
                 ?>
                 
+                <div style="padding: 1rem 1.5rem; border-bottom: 2px solid #eee;">
+                    <h3 style="font-size: 1.3rem; font-weight: 700; margin: 0;"><?php echo $cal_month; ?>月 <span style="font-size: 0.9rem; color: #888; font-weight: 400;"><?php echo $cal_year; ?>年</span></h3>
+                </div>
+                
                 <!-- Day headers -->
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #eee; border-bottom: 1px solid #eee; background: #f8f9fa;">
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 1px solid #eee;">
                     <?php foreach (['日', '月', '火', '水', '木', '金', '土'] as $i => $d): ?>
-                        <div style="padding: 8px 4px; text-align: center; font-size: 0.75rem; font-weight: 500; color: <?php echo $i === 0 ? '#dc3545' : ($i === 6 ? '#007bff' : '#888'); ?>;"><?php echo $d; ?></div>
+                        <div style="padding: 6px 4px; text-align: center; font-size: 0.7rem; font-weight: 500; color: <?php echo $i === 0 ? '#dc3545' : ($i === 6 ? '#007bff' : '#888'); ?>;"><?php echo $d; ?></div>
                     <?php endforeach; ?>
                 </div>
                 
                 <!-- Week rows -->
                 <?php foreach ($weeks as $week): ?>
-                <div style="border-bottom: 1px solid #eee;">
-                    <!-- Date row -->
+                <div style="border-bottom: 1px solid #f0f0f0;">
                     <div style="display: grid; grid-template-columns: repeat(7, 1fr);">
                         <?php foreach ($week as $i => $day): ?>
-                            <div style="padding: 8px 4px; text-align: center; min-height: 30px;">
+                            <div style="padding: 6px 2px; text-align: center; min-height: 28px; <?php if ($day && $_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>"
+                                 <?php if ($day && $_SESSION['role'] === 'admin'): ?>onclick="openCalendarModalWithDate(<?php echo $cal_year; ?>, <?php echo $cal_month; ?>, <?php echo $day; ?>)"<?php endif; ?>>
                                 <?php if ($day): 
                                     $is_today = ($is_current_month && $day == date('j'));
+                                    $date_key = sprintf('%04d-%02d-%02d', $cal_year, $cal_month, $day);
+                                    $has_events = isset($events_by_full_date[$date_key]);
                                 ?>
-                                    <span style="<?php if ($is_today): ?>background: var(--primary-color); color: white; border-radius: 50%; padding: 4px 8px; font-weight: 600;<?php endif; ?> <?php echo $i === 0 ? 'color: #dc3545;' : ($i === 6 ? 'color: #007bff;' : ''); ?>"><?php echo $day; ?></span>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    
-                    <!-- Events row -->
-                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); padding-bottom: 6px;">
-                        <?php foreach ($week as $i => $day): ?>
-                            <div style="padding: 0 2px;">
-                                <?php if ($day && isset($events_by_date[$day])): ?>
-                                    <?php foreach ($events_by_date[$day] as $ev): ?>
-                                        <div style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; color: white; font-size: 0.65rem; padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($ev['title']); ?>">
-                                            <?php echo htmlspecialchars(mb_substr($ev['title'], 0, 6)); ?>
+                                    <span style="<?php if ($is_today): ?>background: var(--primary-color); color: white; border-radius: 50%; padding: 3px 7px; font-weight: 600;<?php endif; ?> <?php echo $i === 0 ? 'color: #dc3545;' : ($i === 6 ? 'color: #007bff;' : ''); ?> font-size: 0.85rem;"><?php echo $day; ?></span>
+                                    <?php if ($has_events): ?>
+                                        <div style="margin-top: 2px;">
+                                            <?php foreach ($events_by_full_date[$date_key] as $ev): ?>
+                                                <div style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; color: white; font-size: 0.55rem; padding: 1px 3px; border-radius: 2px; margin-bottom: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($ev['title']); ?>">
+                                                    <?php echo htmlspecialchars(mb_substr($ev['title'], 0, 4)); ?>
+                                                </div>
+                                            <?php endforeach; ?>
                                         </div>
-                                    <?php endforeach; ?>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
@@ -336,28 +349,24 @@ try {
                 </div>
                 <?php endforeach; ?>
                 
-                <!-- Event list -->
-                <div style="padding: 1rem 1.5rem; background: #f8f9fa; min-height: 120px;">
-                    <h4 style="font-size: 0.85rem; margin-bottom: 0.5rem; color: #666;"><?php echo $cal_month; ?>月の予定</h4>
-                    <?php if (!empty($calendar_events)): ?>
-                        <?php foreach ($calendar_events as $ev): ?>
-                            <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
-                                 <?php if ($_SESSION['role'] === 'admin'): ?>onclick="editCalendarEvent(<?php echo $ev['id']; ?>)"<?php endif; ?>>
-                                <span style="width: 8px; height: 8px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
-                                <span style="font-size: 0.8rem; color: #666; min-width: 35px;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
-                                <span style="font-size: 0.9rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
-                                <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
-                                    <span style="font-size: 0.75rem; color: #888;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
-                                <?php endif; ?>
-                                <?php if ($_SESSION['role'] === 'admin'): ?>
-                                    <i class="fas fa-pencil-alt" style="font-size: 0.7rem; color: #aaa; margin-left: auto;"></i>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p style="color: #999; font-size: 0.85rem; margin: 0;">予定はありません</p>
-                    <?php endif; ?>
+                <!-- Month event list -->
+                <?php if (!empty($month_events)): ?>
+                <div style="padding: 0.75rem 1rem; background: #fafafa;">
+                    <?php foreach ($month_events as $ev): ?>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
+                             <?php if ($_SESSION['role'] === 'admin'): ?>onclick="editCalendarEvent(<?php echo $ev['id']; ?>)"<?php endif; ?>>
+                            <span style="width: 6px; height: 6px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
+                            <span style="font-size: 0.75rem; color: #888;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
+                            <span style="font-size: 0.85rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
+                            <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
+                                <span style="font-size: 0.7rem; color: #aaa;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
+                
+                <?php endforeach; ?>
             </div>
         </div>
     </main>
@@ -472,6 +481,13 @@ try {
             document.getElementById('eventColor').value = '#667eea';
             toggleModalTimeFields();
             document.getElementById('calendarModal').style.display = 'flex';
+        }
+        
+        function openCalendarModalWithDate(year, month, day) {
+            openCalendarModal();
+            const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            document.getElementById('eventStartDatetime').value = dateStr + 'T12:00';
+            document.getElementById('eventEndDatetime').value = dateStr + 'T12:10';
         }
         
         function closeCalendarModal() {
