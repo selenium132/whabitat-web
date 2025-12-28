@@ -25,13 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is_all_day = isset($_POST['is_all_day']) ? 1 : 0;
         
         if ($is_all_day) {
-            $event_date = $_POST['event_date_only'] ?? '';
+            $event_date = $_POST['start_date'] ?? '';
+            $end_date = $_POST['end_date'] ?? $event_date;
             $start_time = null;
             $end_time = null;
         } else {
             $start_datetime = $_POST['start_datetime'] ?? '';
             $end_datetime = $_POST['end_datetime'] ?? '';
             $event_date = $start_datetime ? date('Y-m-d', strtotime($start_datetime)) : '';
+            $end_date = $end_datetime ? date('Y-m-d', strtotime($end_datetime)) : $event_date;
             $start_time = $start_datetime ? date('H:i:s', strtotime($start_datetime)) : null;
             $end_time = $end_datetime ? date('H:i:s', strtotime($end_datetime)) : null;
         }
@@ -159,9 +161,15 @@ $csrf_token = generateCsrfToken();
                     </div>
                     
                     <div id="dateOnlyField" style="display: none;">
-                        <div class="form-group">
-                            <label class="form-label">日付</label>
-                            <input type="date" name="event_date_only" class="form-input">
+                        <div style="display: flex; gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">開始日</label>
+                                <input type="date" name="start_date" id="startDate" class="form-input" onchange="autoFillEndDate()">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">終了日</label>
+                                <input type="date" name="end_date" id="endDate" class="form-input">
+                            </div>
                         </div>
                     </div>
                     
@@ -169,11 +177,11 @@ $csrf_token = generateCsrfToken();
                         <div style="display: flex; gap: 10px;">
                             <div class="form-group" style="flex: 1;">
                                 <label class="form-label">開始</label>
-                                <input type="datetime-local" name="start_datetime" class="form-input">
+                                <input type="datetime-local" name="start_datetime" id="startDatetime" class="form-input" onchange="autoFillEndDatetime()">
                             </div>
                             <div class="form-group" style="flex: 1;">
                                 <label class="form-label">終了</label>
-                                <input type="datetime-local" name="end_datetime" class="form-input">
+                                <input type="datetime-local" name="end_datetime" id="endDatetime" class="form-input">
                             </div>
                         </div>
                     </div>
@@ -264,6 +272,23 @@ $csrf_token = generateCsrfToken();
             const isAllDay = document.getElementById('isAllDay').checked;
             document.getElementById('dateOnlyField').style.display = isAllDay ? 'block' : 'none';
             document.getElementById('dateTimeFields').style.display = isAllDay ? 'none' : 'block';
+        }
+        
+        function autoFillEndDatetime() {
+            const start = document.getElementById('startDatetime').value;
+            if (start) {
+                const startDate = new Date(start);
+                startDate.setMinutes(startDate.getMinutes() + 10);
+                const endStr = startDate.toISOString().slice(0, 16);
+                document.getElementById('endDatetime').value = endStr;
+            }
+        }
+        
+        function autoFillEndDate() {
+            const start = document.getElementById('startDate').value;
+            if (start) {
+                document.getElementById('endDate').value = start;
+            }
         }
     </script>
 </body>
