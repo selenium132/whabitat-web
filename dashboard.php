@@ -210,76 +210,104 @@ try {
 
             <!-- わびカレンダー -->
             <h2 class="section-title" style="text-align: left; margin: 3rem 0 1.5rem;">📅 わびカレンダー</h2>
-            <div class="card" style="padding: 1.5rem;">
+            <div class="card" style="padding: 0; overflow: hidden;">
                 <?php if ($_SESSION['role'] === 'admin'): ?>
-                    <div style="text-align: right; margin-bottom: 1rem;">
-                        <a href="admin/calendar.php" class="btn-secondary" style="font-size: 0.85rem;">
-                            <i class="fas fa-cog"></i> カレンダー管理
+                    <div style="padding: 1rem 1.5rem 0; text-align: right;">
+                        <a href="admin/calendar.php" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                            <i class="fas fa-plus"></i> 予定追加
                         </a>
                     </div>
                 <?php endif; ?>
                 
-                <div style="text-align: center; margin-bottom: 1rem;">
-                    <h3 style="font-size: 1.2rem; margin: 0;"><?php echo date('Y年n月'); ?></h3>
+                <div style="padding: 1rem 1.5rem;">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; margin: 0;"><?php echo date('n'); ?>月</h3>
+                    <p style="color: #888; font-size: 0.85rem; margin: 0;"><?php echo date('Y年'); ?></p>
                 </div>
                 
                 <?php
-                // Generate calendar
                 $year = date('Y');
                 $month = date('n');
                 $first_day = mktime(0, 0, 0, $month, 1, $year);
                 $days_in_month = date('t', $first_day);
                 $start_day = date('w', $first_day);
                 
-                // Index events by date
                 $events_by_date = [];
                 foreach ($calendar_events as $ev) {
                     $day = (int)date('j', strtotime($ev['event_date']));
                     if (!isset($events_by_date[$day])) $events_by_date[$day] = [];
                     $events_by_date[$day][] = $ev;
                 }
+                
+                // Build weeks array
+                $weeks = [];
+                $current_week = array_fill(0, 7, null);
+                $day_counter = 1;
+                
+                for ($i = $start_day; $i < 7 && $day_counter <= $days_in_month; $i++) {
+                    $current_week[$i] = $day_counter++;
+                }
+                $weeks[] = $current_week;
+                
+                while ($day_counter <= $days_in_month) {
+                    $current_week = array_fill(0, 7, null);
+                    for ($i = 0; $i < 7 && $day_counter <= $days_in_month; $i++) {
+                        $current_week[$i] = $day_counter++;
+                    }
+                    $weeks[] = $current_week;
+                }
                 ?>
                 
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;">
+                <!-- Day headers -->
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid #eee; border-bottom: 1px solid #eee; background: #f8f9fa;">
                     <?php foreach (['日', '月', '火', '水', '木', '金', '土'] as $i => $d): ?>
-                        <div style="padding: 8px; font-weight: 600; font-size: 0.8rem; color: <?php echo $i === 0 ? '#dc3545' : ($i === 6 ? '#007bff' : '#333'); ?>;"><?php echo $d; ?></div>
+                        <div style="padding: 8px 4px; text-align: center; font-size: 0.75rem; font-weight: 500; color: <?php echo $i === 0 ? '#dc3545' : ($i === 6 ? '#007bff' : '#888'); ?>;"><?php echo $d; ?></div>
                     <?php endforeach; ?>
-                    
-                    <?php for ($i = 0; $i < $start_day; $i++): ?>
-                        <div style="padding: 8px;"></div>
-                    <?php endfor; ?>
-                    
-                    <?php for ($day = 1; $day <= $days_in_month; $day++): 
-                        $is_today = ($day == date('j'));
-                        $day_of_week = ($start_day + $day - 1) % 7;
-                    ?>
-                        <div style="padding: 6px; position: relative; <?php echo $is_today ? 'background: #667eea; color: white; border-radius: 50%; font-weight: bold;' : ''; ?> <?php echo $day_of_week === 0 ? 'color: #dc3545;' : ($day_of_week === 6 ? 'color: #007bff;' : ''); ?>">
-                            <?php echo $day; ?>
-                            <?php if (isset($events_by_date[$day])): ?>
-                                <div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); display: flex; gap: 2px;">
-                                    <?php foreach ($events_by_date[$day] as $ev): ?>
-                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: <?php echo htmlspecialchars($ev['color'] ?? '#667eea'); ?>;"></span>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    <?php endfor; ?>
                 </div>
                 
+                <!-- Week rows -->
+                <?php foreach ($weeks as $week): ?>
+                <div style="border-bottom: 1px solid #eee;">
+                    <!-- Date row -->
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr);">
+                        <?php foreach ($week as $i => $day): ?>
+                            <div style="padding: 8px 4px; text-align: center; min-height: 30px;">
+                                <?php if ($day): 
+                                    $is_today = ($day == date('j'));
+                                ?>
+                                    <span style="<?php if ($is_today): ?>background: var(--primary-color); color: white; border-radius: 50%; padding: 4px 8px; font-weight: 600;<?php endif; ?> <?php echo $i === 0 ? 'color: #dc3545;' : ($i === 6 ? 'color: #007bff;' : ''); ?>"><?php echo $day; ?></span>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    
+                    <!-- Events row -->
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); padding-bottom: 6px;">
+                        <?php foreach ($week as $i => $day): ?>
+                            <div style="padding: 0 2px;">
+                                <?php if ($day && isset($events_by_date[$day])): ?>
+                                    <?php foreach ($events_by_date[$day] as $ev): ?>
+                                        <div style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; color: white; font-size: 0.65rem; padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($ev['title']); ?>">
+                                            <?php echo htmlspecialchars(mb_substr($ev['title'], 0, 6)); ?>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+                
+                <!-- Event list -->
                 <?php if (!empty($calendar_events)): ?>
-                <div style="margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
-                    <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: #666;">今月の予定</h4>
+                <div style="padding: 1rem 1.5rem; background: #f8f9fa;">
+                    <h4 style="font-size: 0.85rem; margin-bottom: 0.5rem; color: #666;"><?php echo date('n'); ?>月</h4>
                     <?php foreach ($calendar_events as $ev): ?>
-                        <div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                            <span style="width: 10px; height: 10px; border-radius: 50%; background: <?php echo htmlspecialchars($ev['color'] ?? '#667eea'); ?>; flex-shrink: 0;"></span>
-                            <span style="font-size: 0.85rem; color: #888; min-width: 50px;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
-                            <span style="font-size: 0.95rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
+                            <span style="width: 8px; height: 8px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
+                            <span style="font-size: 0.8rem; color: #666; min-width: 35px;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
+                            <span style="font-size: 0.9rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
                         </div>
                     <?php endforeach; ?>
-                </div>
-                <?php else: ?>
-                <div style="margin-top: 1rem; text-align: center; color: #999; font-size: 0.9rem;">
-                    今月の予定はまだありません
                 </div>
                 <?php endif; ?>
             </div>
