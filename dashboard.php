@@ -229,9 +229,9 @@ try {
             <div class="card" style="padding: 0; overflow: hidden;">
                 <?php if ($_SESSION['role'] === 'admin'): ?>
                     <div style="padding: 1rem 1.5rem 0; text-align: right;">
-                        <a href="admin/calendar.php" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                        <button onclick="openCalendarModal()" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; border: none; cursor: pointer;">
                             <i class="fas fa-plus"></i> 予定追加
-                        </a>
+                        </button>
                     </div>
                 <?php endif; ?>
                 
@@ -341,12 +341,16 @@ try {
                     <h4 style="font-size: 0.85rem; margin-bottom: 0.5rem; color: #666;"><?php echo $cal_month; ?>月の予定</h4>
                     <?php if (!empty($calendar_events)): ?>
                         <?php foreach ($calendar_events as $ev): ?>
-                            <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0;">
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
+                                 <?php if ($_SESSION['role'] === 'admin'): ?>onclick="editCalendarEvent(<?php echo $ev['id']; ?>)"<?php endif; ?>>
                                 <span style="width: 8px; height: 8px; border-radius: 2px; background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; flex-shrink: 0;"></span>
                                 <span style="font-size: 0.8rem; color: #666; min-width: 35px;"><?php echo date('n/j', strtotime($ev['event_date'])); ?></span>
                                 <span style="font-size: 0.9rem;"><?php echo htmlspecialchars($ev['title']); ?></span>
                                 <?php if (!($ev['is_all_day'] ?? true) && !empty($ev['start_time'])): ?>
                                     <span style="font-size: 0.75rem; color: #888;"><?php echo date('H:i', strtotime($ev['start_time'])); ?></span>
+                                <?php endif; ?>
+                                <?php if ($_SESSION['role'] === 'admin'): ?>
+                                    <i class="fas fa-pencil-alt" style="font-size: 0.7rem; color: #aaa; margin-left: auto;"></i>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
@@ -358,8 +362,84 @@ try {
         </div>
     </main>
     
+    <?php if ($_SESSION['role'] === 'admin'): ?>
+    <!-- Calendar Modal -->
+    <div id="calendarModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; border-radius: 16px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div style="padding: 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="modalTitle" style="margin: 0; font-size: 1.2rem;">予定を追加</h3>
+                <button onclick="closeCalendarModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888;">&times;</button>
+            </div>
+            <form id="calendarForm" style="padding: 1.5rem;">
+                <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                <input type="hidden" name="id" id="eventId" value="">
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.3rem;">タイトル</label>
+                    <input type="text" name="title" id="eventTitle" class="form-input" required placeholder="例: 定例ミーティング">
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" name="is_all_day" id="eventAllDay" style="width: 18px; height: 18px;" onchange="toggleModalTimeFields()">
+                        <span>終日</span>
+                    </label>
+                </div>
+                
+                <div id="modalDateOnly" style="display: none; margin-bottom: 1rem;">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 0.3rem;">開始日</label>
+                            <input type="date" name="start_date" id="eventStartDate" class="form-input">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 0.3rem;">終了日</label>
+                            <input type="date" name="end_date" id="eventEndDate" class="form-input">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="modalDateTime" style="margin-bottom: 1rem;">
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 0.3rem;">開始</label>
+                            <input type="datetime-local" name="start_datetime" id="eventStartDatetime" class="form-input" onchange="autoFillModalEnd()">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="display: block; font-weight: 500; margin-bottom: 0.3rem;">終了</label>
+                            <input type="datetime-local" name="end_datetime" id="eventEndDatetime" class="form-input">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.3rem;">メモ</label>
+                    <input type="text" name="description" id="eventDescription" class="form-input" placeholder="追加情報があれば...">
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">カテゴリ</label>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="colorPicker">
+                        <span class="cat-btn selected" data-color="#667eea" style="background: #667eea; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">イベント</span>
+                        <span class="cat-btn" data-color="#28a745" style="background: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">派遣</span>
+                        <span class="cat-btn" data-color="#17a2b8" style="background: #17a2b8; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">mtg</span>
+                        <span class="cat-btn" data-color="#dc3545" style="background: #dc3545; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;"><i class="fas fa-lock" style="margin-right: 4px;"></i>幹部関連</span>
+                        <span class="cat-btn" data-color="#6c757d" style="background: #6c757d; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">その他</span>
+                    </div>
+                    <input type="hidden" name="color" id="eventColor" value="#667eea">
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn-primary" style="flex: 1;">保存</button>
+                    <button type="button" id="deleteBtn" onclick="deleteCalendarEvent()" class="btn-danger" style="display: none; padding: 0.8rem 1.5rem;">削除</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <?php endif; ?>
+    
     <script>
-        // Preserve scroll position when navigating calendar months
+        // Scroll position preservation
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('cal_year') || urlParams.has('cal_month')) {
@@ -376,6 +456,131 @@ try {
                 });
             });
         })();
+        
+        <?php if ($_SESSION['role'] === 'admin'): ?>
+        // Calendar Modal Functions
+        let currentEventId = null;
+        
+        function openCalendarModal() {
+            currentEventId = null;
+            document.getElementById('modalTitle').textContent = '予定を追加';
+            document.getElementById('calendarForm').reset();
+            document.getElementById('eventId').value = '';
+            document.getElementById('deleteBtn').style.display = 'none';
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector('.cat-btn[data-color="#667eea"]').classList.add('selected');
+            document.getElementById('eventColor').value = '#667eea';
+            toggleModalTimeFields();
+            document.getElementById('calendarModal').style.display = 'flex';
+        }
+        
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').style.display = 'none';
+        }
+        
+        function editCalendarEvent(id) {
+            currentEventId = id;
+            fetch('calendar_api.php?action=get&id=' + id)
+                .then(r => r.json())
+                .then(ev => {
+                    if (ev.error) return alert(ev.error);
+                    document.getElementById('modalTitle').textContent = '予定を編集';
+                    document.getElementById('eventId').value = ev.id;
+                    document.getElementById('eventTitle').value = ev.title;
+                    document.getElementById('eventDescription').value = ev.description || '';
+                    document.getElementById('eventAllDay').checked = !!parseInt(ev.is_all_day);
+                    
+                    if (ev.is_all_day) {
+                        document.getElementById('eventStartDate').value = ev.event_date;
+                        document.getElementById('eventEndDate').value = ev.event_date;
+                    } else {
+                        const startDt = ev.event_date + 'T' + (ev.start_time || '00:00').substring(0,5);
+                        const endDt = ev.event_date + 'T' + (ev.end_time || '00:00').substring(0,5);
+                        document.getElementById('eventStartDatetime').value = startDt;
+                        document.getElementById('eventEndDatetime').value = endDt;
+                    }
+                    
+                    document.querySelectorAll('.cat-btn').forEach(btn => {
+                        btn.classList.toggle('selected', btn.dataset.color === ev.color);
+                    });
+                    document.getElementById('eventColor').value = ev.color;
+                    
+                    toggleModalTimeFields();
+                    document.getElementById('deleteBtn').style.display = 'block';
+                    document.getElementById('calendarModal').style.display = 'flex';
+                });
+        }
+        
+        function toggleModalTimeFields() {
+            const isAllDay = document.getElementById('eventAllDay').checked;
+            document.getElementById('modalDateOnly').style.display = isAllDay ? 'block' : 'none';
+            document.getElementById('modalDateTime').style.display = isAllDay ? 'none' : 'block';
+        }
+        
+        function autoFillModalEnd() {
+            const start = document.getElementById('eventStartDatetime').value;
+            if (start) {
+                const d = new Date(start);
+                d.setMinutes(d.getMinutes() + 10);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const h = String(d.getHours()).padStart(2, '0');
+                const min = String(d.getMinutes()).padStart(2, '0');
+                document.getElementById('eventEndDatetime').value = `${y}-${m}-${day}T${h}:${min}`;
+            }
+        }
+        
+        function deleteCalendarEvent() {
+            if (!currentEventId || !confirm('この予定を削除しますか？')) return;
+            const formData = new FormData();
+            formData.append('action', 'delete');
+            formData.append('id', currentEventId);
+            formData.append('csrf_token', document.querySelector('[name="csrf_token"]').value);
+            
+            fetch('calendar_api.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) location.reload();
+                    else alert(res.error || 'エラー');
+                });
+        }
+        
+        // Form submit
+        document.getElementById('calendarForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('action', currentEventId ? 'update' : 'add');
+            
+            fetch('calendar_api.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) location.reload();
+                    else alert(res.error || 'エラー');
+                });
+        });
+        
+        // Color picker
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('eventColor').value = this.dataset.color;
+            });
+        });
+        
+        // Close modal on backdrop click
+        document.getElementById('calendarModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCalendarModal();
+        });
+        <?php endif; ?>
     </script>
+    
+    <style>
+        .cat-btn { opacity: 0.7; border: 2px solid transparent; }
+        .cat-btn.selected { opacity: 1; border-color: #333; }
+        .cat-btn:hover { opacity: 1; }
+        .btn-danger { background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    </style>
 </body>
 </html>
