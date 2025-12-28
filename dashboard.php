@@ -274,7 +274,10 @@ try {
                     if (!isset($events_by_full_date[$date_key])) $events_by_full_date[$date_key] = [];
                     $events_by_full_date[$date_key][] = $ev;
                 }
+                ?>
                 
+                <div id="calendarScroll" style="max-height: 450px; overflow-y: auto;">
+                <?php
                 foreach ($months_to_show as $mon):
                     $cal_year = $mon['year'];
                     $cal_month = $mon['month'];
@@ -367,6 +370,7 @@ try {
                 <?php endif; ?>
                 
                 <?php endforeach; ?>
+                </div><!-- end calendarScroll -->
             </div>
         </div>
     </main>
