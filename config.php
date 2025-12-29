@@ -72,11 +72,17 @@ function validateCsrfToken($token) {
 // Helper: Check Login & Approval
 function requireLogin() {
     if (!isset($_SESSION['user_id'])) {
-        // Store the requested URL for redirection after login
-        if (!empty($_SERVER['REQUEST_URI'])) {
-            $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
-        }
-        header("Location: login.php");
+        // Use JavaScript redirect to capture the full URL including hash (anchor)
+        // Fallback to PHP session storage if JS fails (or for API calls) can happen in login.php via 'next' param
+        
+        $login_url = 'login.php';
+        
+        // Output simple HTML with JS redirect
+        // We pass the current full URL as 'next' parameter to login.php
+        echo '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>';
+        echo '<script>window.location.href = "' . $login_url . '?next=" + encodeURIComponent(window.location.href);</script>';
+        echo '<noscript><meta http-equiv="refresh" content="0;url=' . $login_url . '"></noscript>';
+        echo '</body></html>';
         exit;
     }
 
