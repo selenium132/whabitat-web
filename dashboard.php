@@ -319,6 +319,107 @@ try {
                 
                 <!-- Week rows -->
                 <?php foreach ($weeks as $week): ?>
+                <?php
+                    // --- Pre-calculate layout for this week ---
+                    
+                    // 1. Identify valid days and date mapping
+                    $day_date_map = []; // [col_idx => 'YYYY-MM-DD']
+                    $valid_cols = [];
+                    foreach($week as $col_idx => $day_num) {
+                        if($day_num !== null) {
+                            $day_date_map[$col_idx] = sprintf('%04d-%02d-%02d', $cal_year, $cal_month, $day_num);
+                            $valid_cols[] = $col_idx;
+                        }
+                    }
+                    
+                    if (empty($valid_cols)) continue;
+
+                    // 2. Find all events overlapping with this week's visible days
+                    $week_events_list = [];
+                    // Optimization: Filter from $calendar_events_all
+                    // Note: This relies on $calendar_events_all being populated correctly
+                    foreach ($calendar_events_all as $ev) {
+                        $ev_start = $ev['event_date'];
+                        $ev_end = $ev['end_date'] ?? $ev['event_date'];
+                        
+                        // Check overlap with week range
+                        $week_start_date = reset($day_date_map);
+                        $week_end_date = end($day_date_map);
+                        
+                        // Overlap: StartA <= EndB AND EndA >= StartB
+                        if ($ev_start <= $week_end_date && $ev_end >= $week_start_date) {
+                            $week_events_list[] = $ev;
+                        }
+                    }
+                    
+                    // 3. Sort events: Earlier start first, then longer duration
+                    usort($week_events_list, function($a, $b) {
+                        if ($a['event_date'] != $b['event_date']) {
+                            return strcmp($a['event_date'], $b['event_date']);
+                        }
+                        $a_len = strtotime($a['end_date'] ?? $a['event_date']) - strtotime($a['event_date']);
+                        $b_len = strtotime($b['end_date'] ?? $b['event_date']) - strtotime($b['event_date']);
+                        return $b_len - $a_len; // Descending duration
+                    });
+
+                    // 4. Assign slots (Greedy packing)
+                    $slots = []; // [row][col] = {event, span, is_start...}
+                    // Initialize empty slots for max distinct events (safe upper bound 50)
+                    for($r=0; $r<50; $r++) { 
+                         for($c=0; $c<7; $c++) $slots[$r][$c] = null;
+                    }
+                    
+                    $max_row_used = -1;
+
+                    foreach($week_events_list as $ev) {
+                        $ev_start = $ev['event_date'];
+                        $ev_end = $ev['end_date'] ?? $ev['event_date'];
+
+                        // Determine occupied columns in this week
+                        $cols_occupied = [];
+                        foreach($day_date_map as $c => $d_date) {
+                            if ($d_date >= $ev_start && $d_date <= $ev_end) {
+                                $cols_occupied[] = $c;
+                            }
+                        }
+                        
+                        if (empty($cols_occupied)) continue;
+                        
+                        $c_start = min($cols_occupied);
+                        $c_end = max($cols_occupied);
+                        
+                        // Find first available row
+                        $row = 0;
+                        while(true) {
+                            $fit = true;
+                            for($c=$c_start; $c<=$c_end; $c++) {
+                                if ($slots[$row][$c] !== null) {
+                                    $fit = false;
+                                    break;
+                                }
+                            }
+                            if ($fit) break;
+                            $row++;
+                        }
+                        
+                        $max_row_used = max($max_row_used, $row);
+                        
+                        // Record slot data
+                        $total_span = $c_end - $c_start + 1;
+                        for($c=$c_start; $c<=$c_end; $c++) {
+                            $slots[$row][$c] = [
+                                'id' => $ev['id'],
+                                'title' => $ev['title'],
+                                'color' => $ev['color'] ?? 'var(--primary-color)',
+                                'is_visual_start' => ($c == $c_start),
+                                'total_span' => $total_span,
+                                'is_real_start' => ($day_date_map[$c] === $ev['event_date']),
+                                'is_real_end' => ($day_date_map[$c] === $ev['end_date'] ?? $ev['event_date']),
+                            ];
+                        }
+                    }
+                ?>
+                
                 <div style="border-bottom: 1px solid #f0f0f0;">
                     <div style="display: grid; grid-template-columns: repeat(7, 1fr);">
                         <?php foreach ($week as $i => $day): ?>
@@ -326,43 +427,38 @@ try {
                                  <?php if ($day && $_SESSION['role'] === 'admin'): ?>onclick="openCalendarModalWithDate(<?php echo $cal_year; ?>, <?php echo $cal_month; ?>, <?php echo $day; ?>)"<?php endif; ?>>
                                 <?php if ($day): 
                                     $is_today = ($is_current_month && $day == date('j'));
-                                    $date_key = sprintf('%04d-%02d-%02d', $cal_year, $cal_month, $day);
-                                    
-                                    // Calculate remaining days in this week (including today)
-                                    $days_left_in_week = 7 - $i;
                                     ?>
                                     <span style="<?php if ($is_today): ?>background: var(--primary-color); color: white; border-radius: 50%; padding: 3px 7px; font-weight: 600;<?php endif; ?> <?php echo $i === 0 ? 'color: #dc3545;' : ($i === 6 ? 'color: #007bff;' : ''); ?> font-size: 0.85rem;"><?php echo $day; ?></span>
                                     
-                                    <?php if (isset($events_by_full_date[$date_key])): ?>
-                                        <div style="margin-top: 2px;">
-                                            <?php foreach ($events_by_full_date[$date_key] as $ev): ?>
-                                                <?php
-                                                    // Calculate span for this event in this week
-                                                    $ev_end_ts = strtotime($ev['end_date'] ?? $ev['event_date']);
-                                                    $current_ts = strtotime($date_key);
-                                                    $days_until_event_end = floor(($ev_end_ts - $current_ts) / 86400) + 1;
-                                                    $span = min($days_left_in_week, $days_until_event_end);
-                                                    $span = max(1, $span); // Safety
-                                                    
-                                                    // Show title if start day OR 1st day of month (visual break)
-                                                    $show_title = $ev['is_start_day'] || $day == 1;
-                                                ?>
-                                                <div onclick="event.stopPropagation(); <?php if ($_SESSION['role'] === 'admin'): ?>editCalendarEvent(<?php echo $ev['id']; ?>)<?php endif; ?>" 
-                                                     class="event-bar <?php echo ($ev['is_start_day']?'is-start':'') . ' ' . ($ev['is_end_day']?'is-end':''); ?>"
-                                                     style="background: <?php echo htmlspecialchars($ev['color'] ?? 'var(--primary-color)'); ?>; height: 16px; position: relative; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
-                                                     title="<?php echo htmlspecialchars($ev['title']); ?>">
-                                                    
-                                                    <?php if ($show_title): ?>
-                                                        <div style="position: absolute; left: 0; top: 0; width: <?php echo $span * 100; ?>%; text-align: center; height: 100%; line-height: 16px; z-index: 5; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white;">
-                                                            <?php echo htmlspecialchars($ev['title']); ?>
+                                    <div style="margin-top: 2px; display: flex; flex-direction: column; gap: 1px;">
+                                        <?php for($r=0; $r<=$max_row_used; $r++): ?>
+                                            <?php 
+                                            $slot = $slots[$r][$i] ?? null; 
+                                            ?>
+                                            <?php if ($slot): ?>
+                                                <?php if ($slot['is_visual_start']): ?>
+                                                    <div onclick="event.stopPropagation(); <?php if ($_SESSION['role'] === 'admin'): ?>editCalendarEvent(<?php echo $slot['id']; ?>)<?php endif; ?>" 
+                                                         class="event-bar <?php echo ($slot['is_real_start']?'is-start':'') . ' ' . ($slot['is_real_end']?'is-end':''); ?>"
+                                                         style="background: <?php echo htmlspecialchars($slot['color']); ?>; height: 16px; position: relative; width: <?php echo $slot['total_span'] * 100; ?>%; z-index: 10; <?php if ($_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>" 
+                                                         title="<?php echo htmlspecialchars($slot['title']); ?>">
+                                                        
+                                                        <div style="position: absolute; left: 0; top: 0; width: 100%; text-align: center; height: 100%; line-height: 16px; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white;">
+                                                            <?php echo htmlspecialchars($slot['title']); ?>
                                                         </div>
-                                                    <?php else: ?>
-                                                        &nbsp;
-                                                    <?php endif; ?>
-                                                </div>
-                                            <?php endforeach; ?>
-                                        </div>
-                                    <?php endif; ?>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <!-- Occupied by span from left, keep height but render nothing to allow overflow -->
+                                                    <div style="height: 16px;"></div>
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <!-- Empty spacer to maintain alignment -->
+                                                <div style="height: 16px;"></div>
+                                            <?php endif; ?>
+                                        <?php endfor; ?>
+                                    </div>
+                                <?php else: ?>
+                                    <!-- Empty cell (no day number) -->
+                                    &nbsp;
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
