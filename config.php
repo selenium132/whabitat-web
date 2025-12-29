@@ -72,6 +72,10 @@ function validateCsrfToken($token) {
 // Helper: Check Login & Approval
 function requireLogin() {
     if (!isset($_SESSION['user_id'])) {
+        // Store the requested URL for redirection after login
+        if (!empty($_SERVER['REQUEST_URI'])) {
+            $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+        }
         header("Location: login.php");
         exit;
     }

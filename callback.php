@@ -66,7 +66,13 @@ if ($user) {
     if (empty($user['name']) || empty($user['student_id'])) {
         header("Location: register_profile.php");
     } else {
-        header("Location: dashboard.php");
+        if (!empty($_SESSION['redirect_after_login'])) {
+            $redirect_url = $_SESSION['redirect_after_login'];
+            unset($_SESSION['redirect_after_login']);
+            header("Location: " . $redirect_url);
+        } else {
+            header("Location: dashboard.php");
+        }
     }
 } else {
     // New User -> Create basic record and redirect to profile fill
