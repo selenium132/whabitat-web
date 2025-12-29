@@ -25,7 +25,7 @@ $is_admin = ($_SESSION['role'] === 'admin');
 if ($is_admin) {
     // Admin sees everything
     $stmt = $pdo->prepare("
-        SELECT u.name, u.student_id, u.line_name, u.grade, a.status, a.comment, a.response_data, a.updated_at
+        SELECT u.name, u.student_id, u.line_name, u.grade, u.faculty, a.status, a.comment, a.response_data, a.updated_at
         FROM attendance a 
         JOIN users u ON a.user_id = u.id 
         WHERE a.event_id = ?
@@ -222,6 +222,7 @@ function getStatusLabel($status) {
                         <th style="width: 80px;">ステータス</th>
                         <?php if ($is_admin): ?>
                             <th style="background-color: #f0f4f8;">回答内容 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
+                            <th style="width: 100px; background-color: #f0f4f8;">学部 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                             <th style="width: 100px; background-color: #f0f4f8;">学籍番号 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                             <th style="width: 120px; background-color: #f0f4f8;">LINE名 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                         <?php endif; ?>
@@ -271,6 +272,7 @@ function getStatusLabel($status) {
                                         }
                                     ?>
                                 </td>
+                                <td><?php echo htmlspecialchars($p['faculty']); ?></td>
                                 <td><?php echo htmlspecialchars($p['student_id']); ?></td>
                                 <td><?php echo htmlspecialchars($p['line_name']); ?></td>
                             <?php endif; ?>
