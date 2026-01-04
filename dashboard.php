@@ -120,7 +120,7 @@ try {
                 <div class="welcome-actions">
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="event_create.php" class="btn-primary">
-                            <i class="fas fa-plus"></i> 出欠作成
+                            <i class="fas fa-plus"></i> 出欠確認作成
                         </a>
                         <a href="event_create.php?type=survey" class="btn-primary" style="background-color: #f39c12;">
                             <i class="fas fa-poll-h"></i> アンケート作成
