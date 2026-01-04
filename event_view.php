@@ -15,6 +15,16 @@ if (!$event) {
     exit;
 }
 
+// Check access for surveys with target_users
+if (($event['type'] ?? 'event') === 'survey' && !empty($event['target_users'])) {
+    $targets = json_decode($event['target_users'], true);
+    if (is_array($targets) && !in_array($_SESSION['user_id'], $targets)) {
+        // User not in target list - redirect
+        header("Location: dashboard.php");
+        exit;
+    }
+}
+
 // Handle Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrfToken($_POST['csrf_token'] ?? ''); // CSRF Check

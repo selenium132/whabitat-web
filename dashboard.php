@@ -26,7 +26,17 @@ foreach ($all_upcoming as $ev) {
     // Default to 'event' if type is not set (backwards compatibility)
     $type = $ev['type'] ?? 'event';
     if ($type === 'survey') {
-        $surveys[] = $ev;
+        // Check if user is in target_users (NULL = all users)
+        $show = true;
+        if (!empty($ev['target_users'])) {
+            $targets = json_decode($ev['target_users'], true);
+            if (is_array($targets) && !in_array($_SESSION['user_id'], $targets)) {
+                $show = false;
+            }
+        }
+        if ($show) {
+            $surveys[] = $ev;
+        }
     } else {
         $attend_checks[] = $ev;
     }

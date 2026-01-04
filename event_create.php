@@ -48,19 +48,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $capacity = !empty($_POST['capacity']) ? intval($_POST['capacity']) : null;
 
     $type = $_POST['type'] ?? 'event';
+    
+    // Target users for surveys (JSON array of user IDs, NULL = all users)
+    $target_users = null;
+    if (!empty($_POST['target_users']) && is_array($_POST['target_users'])) {
+        $target_users = json_encode(array_map('intval', $_POST['target_users']));
+    }
+    
+    // For surveys, event_date can be null (use current time as placeholder)
+    if ($type === 'survey' && empty($event_date)) {
+        $event_date = date('Y-m-d H:i:s');
+    }
 
     if ($title) {
         $pdo = getDB();
         
         if ($target_id) {
             // Update
-            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ?, capacity = ?, type = ? WHERE id = ?");
-            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $open_at, $close_at, $capacity, $type, $target_id]);
+            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ?, capacity = ?, type = ?, target_users = ? WHERE id = ?");
+            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $open_at, $close_at, $capacity, $type, $target_users, $target_id]);
             $event_id_final = $target_id;
         } else {
             // Insert
-            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at, capacity, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at, $capacity, $type]);
+            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at, capacity, type, target_users) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at, $capacity, $type, $target_users]);
             $event_id_final = $pdo->lastInsertId();
         }
 
@@ -607,18 +618,17 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                 
                 <!-- Extra fields for Events table -->
                 <div class="meta-info">
+                    <?php if ($type !== 'survey'): ?>
                     <div class="meta-row">
-                        <label style="font-weight: 600;"><?php echo $date_label; ?>:</label>
+                        <label style="font-weight: 600;">イベント日時:</label>
                         <input type="datetime-local" name="event_date" value="<?php echo $edit_mode ? date('Y-m-d\TH:i', strtotime($event_data['event_date'])) : ''; ?>" required>
                     </div>
+                    <?php endif; ?>
                     
                     <div class="meta-row">
                         <i class="fas fa-info-circle" style="width: 20px; color: #666;"></i>
                         <span style="font-size: 0.85rem; color: #666;">
-                            ※ 回答時にメンバーの名前・学籍番号・学部・性別・LINE名が自動的に収集・記録されます。<br>
-                            <?php if ($type !== 'survey'): ?>
-                            ※ 「出欠」ステータスは回答後も変更可能です。
-                            <?php endif; ?>
+                            ※ 回答時にメンバーの名前・学籍番号・学部・性別・LINE名が自動的に収集・記録されます。
                         </span>
                     </div>
                     
@@ -626,7 +636,7 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                     <div class="admin-selection-area">
                         <details class="admin-selection-details">
                             <summary>
-                                <span><i class="fas fa-user-shield"></i> イベント管理者設定</span>
+                                <span><i class="fas fa-user-shield"></i> <?php echo ($type === 'survey') ? '管理者設定' : 'イベント管理者設定'; ?></span>
                             </summary>
                             
                             <div class="admin-checkbox-list">
@@ -653,6 +663,84 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                             </div>
                         </details>
                     </div>
+                    
+                    <!-- Target Users Selection (Surveys Only) -->
+                    <?php if ($type === 'survey'): ?>
+                    <?php 
+                        // Fetch all users for target selection
+                        $all_users_stmt = $pdo->query("SELECT id, name, grade, faculty FROM users WHERE is_approved = 1 ORDER BY grade ASC, name ASC");
+                        $all_members = $all_users_stmt->fetchAll(PDO::FETCH_ASSOC);
+                        
+                        // Get current targets if editing
+                        $current_targets = [];
+                        if ($edit_mode && !empty($event_data['target_users'])) {
+                            $decoded = json_decode($event_data['target_users'], true);
+                            if (is_array($decoded)) {
+                                $current_targets = $decoded;
+                            }
+                        }
+                        
+                        // Group by grade for display
+                        $members_by_grade_target = [];
+                        $faculties_list = [];
+                        foreach ($all_members as $m) {
+                            $g = $m['grade'] ?: '未設定';
+                            $members_by_grade_target[$g][] = $m;
+                            if (!empty($m['faculty']) && !in_array($m['faculty'], $faculties_list)) {
+                                $faculties_list[] = $m['faculty'];
+                            }
+                        }
+                        sort($faculties_list);
+                    ?>
+                    <div class="admin-selection-area">
+                        <details class="admin-selection-details" open>
+                            <summary>
+                                <span><i class="fas fa-users"></i> 対象者設定 <small style="color:#888;">(未選択=全員)</small></span>
+                            </summary>
+                            
+                            <!-- Filter/Search Controls -->
+                            <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                                <input type="text" id="targetUserSearch" placeholder="名前で検索..." 
+                                    style="flex: 1; min-width: 150px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem;"
+                                    oninput="filterTargetUsers()">
+                                <select id="targetGradeFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" onchange="filterTargetUsers()">
+                                    <option value="">全学年</option>
+                                    <?php foreach (AVAILABLE_GRADES as $g): ?>
+                                        <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <select id="targetFacultyFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" onchange="filterTargetUsers()">
+                                    <option value="">全学部</option>
+                                    <?php foreach ($faculties_list as $f): ?>
+                                        <option value="<?php echo htmlspecialchars($f); ?>"><?php echo htmlspecialchars($f); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="button" onclick="selectAllTargets()" style="padding: 6px 12px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">全選択</button>
+                                <button type="button" onclick="clearAllTargets()" style="padding: 6px 12px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">全解除</button>
+                            </div>
+                            
+                            <div class="admin-checkbox-list" id="targetUserList">
+                                <?php foreach ($members_by_grade_target as $grade => $users): ?>
+                                    <div class="grade-group" data-grade="<?php echo htmlspecialchars($grade); ?>">
+                                        <div class="grade-header"><?php echo htmlspecialchars($grade); ?></div>
+                                        <div class="grade-users">
+                                            <?php foreach ($users as $user): ?>
+                                                <?php $checked = in_array($user['id'], $current_targets) ? 'checked' : ''; ?>
+                                                <label class="admin-checkbox-item target-user-item" 
+                                                    data-name="<?php echo htmlspecialchars(strtolower($user['name'])); ?>"
+                                                    data-grade="<?php echo htmlspecialchars($user['grade']); ?>"
+                                                    data-faculty="<?php echo htmlspecialchars($user['faculty']); ?>">
+                                                    <input type="checkbox" name="target_users[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?>>
+                                                    <?php echo htmlspecialchars($user['name']); ?>
+                                                </label>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </details>
+                    </div>
+                    <?php endif; ?>
                     
                     <!-- Response Schedule -->
                     <div class="admin-selection-area">
@@ -909,6 +997,49 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                 icon.style.color = '#ccc';
                 icon.setAttribute('data-required', 'false');
             }
+        }
+
+        // ----------------------------------------
+        // Target User Filter Functions (for Surveys)
+        // ----------------------------------------
+        function filterTargetUsers() {
+            const searchVal = (document.getElementById('targetUserSearch')?.value || '').toLowerCase();
+            const gradeVal = document.getElementById('targetGradeFilter')?.value || '';
+            const facultyVal = document.getElementById('targetFacultyFilter')?.value || '';
+            
+            document.querySelectorAll('.target-user-item').forEach(function(item) {
+                const name = item.dataset.name || '';
+                const grade = item.dataset.grade || '';
+                const faculty = item.dataset.faculty || '';
+                
+                let show = true;
+                if (searchVal && !name.includes(searchVal)) show = false;
+                if (gradeVal && grade !== gradeVal) show = false;
+                if (facultyVal && faculty !== facultyVal) show = false;
+                
+                item.style.display = show ? '' : 'none';
+            });
+            
+            // Hide empty grade groups
+            document.querySelectorAll('#targetUserList .grade-group').forEach(function(group) {
+                const visibleItems = group.querySelectorAll('.target-user-item[style=""], .target-user-item:not([style])');
+                const hasVisible = Array.from(group.querySelectorAll('.target-user-item')).some(i => i.style.display !== 'none');
+                group.style.display = hasVisible ? '' : 'none';
+            });
+        }
+        
+        function selectAllTargets() {
+            document.querySelectorAll('.target-user-item').forEach(function(item) {
+                if (item.style.display !== 'none') {
+                    item.querySelector('input[type="checkbox"]').checked = true;
+                }
+            });
+        }
+        
+        function clearAllTargets() {
+            document.querySelectorAll('.target-user-item input[type="checkbox"]').forEach(function(cb) {
+                cb.checked = false;
+            });
         }
 
         // ----------------------------------------
