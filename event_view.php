@@ -41,6 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Check capacity (only for new 'join' submissions)
     $status = $_POST['status'] ?? '';
+    // For surveys, auto-set status to 'join' (meaning 'submitted')
+    if (($event['type'] ?? 'event') === 'survey') {
+        $status = 'join';
+    }
     if (!empty($event['capacity']) && $event['capacity'] > 0 && $status === 'join') {
         // Count current 'join' participants
         $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM attendance WHERE event_id = ? AND status = 'join' AND user_id != ?");
@@ -372,9 +376,11 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                 <?php if ($my_attendance): ?>
                     <div class="question-card" style="padding: 20px;">
                         <h3 style="margin-bottom: 15px; color: #333;">あなたの回答</h3>
+                        <?php if (($event['type'] ?? 'event') !== 'survey'): ?>
                         <div style="background: #f5f5f5; padding: 12px 16px; border-radius: 8px; margin-bottom: 10px;">
                             <strong>出欠:</strong> <?php echo getStatusLabel($my_attendance['status']); ?>
                         </div>
+                        <?php endif; ?>
                         <?php if (!empty($form_schema) && !empty($my_answers)): ?>
                             <?php foreach ($form_schema as $index => $q): ?>
                                 <?php if (isset($my_answers[$index])): ?>
@@ -418,12 +424,19 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             <?php if ($my_attendance): ?>
                 <div class="submitted-msg">
                     <h3 style="margin-bottom: 10px;">回答済みです</h3>
-                    <p style="font-size: 14px;">あなたの回答: <strong><?php echo getStatusLabel($my_attendance['status']); ?></strong></p>
+                    <p style="font-size: 14px;">
+                        <?php if (($event['type'] ?? 'event') === 'survey'): ?>
+                            ステータス: <strong>回答済</strong>
+                        <?php else: ?>
+                            あなたの回答: <strong><?php echo getStatusLabel($my_attendance['status']); ?></strong>
+                        <?php endif; ?>
+                    </p>
                     <p style="font-size: 14px; color: #666; margin-top: 5px;">内容を修正する場合は、下記フォームを編集して再度送信してください。</p>
                 </div>
             <?php endif; ?>
 
             <!-- Basic Attendance Status (Always required) -->
+            <?php if (($event['type'] ?? 'event') !== 'survey'): ?>
             <div class="q-card">
                 <div class="q-title">出欠確認 <span class="req-asterisk">*</span></div>
                 <div class="q-options">
@@ -441,6 +454,12 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                     </label>
                 </div>
             </div>
+            <?php else: ?>
+                <input type="hidden" name="status" value="join">
+                <div style="margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.85rem; color: #666; text-align: center;">
+                    <i class="fas fa-info-circle"></i> 回答時に名前と学籍番号が記録されます。
+                </div>
+            <?php endif; ?>
 
             <!-- Dynamic Custom Questions -->
             <?php if (!empty($form_schema)): ?>

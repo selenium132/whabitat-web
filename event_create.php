@@ -47,18 +47,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Capacity (NULL = unlimited)
     $capacity = !empty($_POST['capacity']) ? intval($_POST['capacity']) : null;
 
+    $type = $_POST['type'] ?? 'event';
+
     if ($title) {
         $pdo = getDB();
         
         if ($target_id) {
             // Update
-            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ?, capacity = ? WHERE id = ?");
-            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $open_at, $close_at, $capacity, $target_id]);
+            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ?, capacity = ?, type = ? WHERE id = ?");
+            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $open_at, $close_at, $capacity, $type, $target_id]);
             $event_id_final = $target_id;
         } else {
             // Insert
-            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at, capacity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at, $capacity]);
+            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at, capacity, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at, $capacity, $type]);
             $event_id_final = $pdo->lastInsertId();
         }
 
@@ -117,6 +119,12 @@ if ($edit_mode) {
         $current_admins = $stmt_admins->fetchAll(PDO::FETCH_COLUMN);
     }
 }
+
+// Determine Type
+$type = $_GET['type'] ?? ($event_data['type'] ?? 'event');
+$page_title = ($type === 'survey') ? 'アンケート作成' : '出欠フォーム作成';
+$date_label = ($type === 'survey') ? '締切目安 / 基準日' : 'イベント日時';
+$default_title = ($type === 'survey') ? '無題のアンケート' : '無題のイベント';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -125,7 +133,7 @@ if ($edit_mode) {
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>フォーム作成 | WHABITAT</title>
+    <title><?php echo $page_title; ?> | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -593,14 +601,25 @@ if ($edit_mode) {
             
             <!-- Form Title Card -->
             <div class="title-card">
-                <input type="text" name="title" id="form-title" class="title-input" placeholder="無題のフォーム" value="<?php echo $edit_mode ? htmlspecialchars($event_data['title']) : '新規イベント参加フォーム'; ?>" required>
-                <input type="text" name="description" id="form-desc" class="desc-input" placeholder="フォームの説明" value="<?php echo $edit_mode ? htmlspecialchars($event_data['description']) : ''; ?>">
+                <input type="hidden" name="type" value="<?php echo htmlspecialchars($type); ?>">
+                <input type="text" name="title" id="form-title" class="title-input" placeholder="<?php echo $default_title; ?>" value="<?php echo $edit_mode ? htmlspecialchars($event_data['title']) : ''; ?>" required>
+                <textarea name="description" id="form-desc" class="desc-input" placeholder="説明文を入力してください" rows="3"><?php echo $edit_mode ? htmlspecialchars($event_data['description']) : ''; ?></textarea>
                 
                 <!-- Extra fields for Events table -->
                 <div class="meta-info">
                     <div class="meta-row">
-                        <label style="font-weight: 600;">開催日時:</label>
+                        <label style="font-weight: 600;"><?php echo $date_label; ?>:</label>
                         <input type="datetime-local" name="event_date" value="<?php echo $edit_mode ? date('Y-m-d\TH:i', strtotime($event_data['event_date'])) : ''; ?>" required>
+                    </div>
+                    
+                    <div class="meta-row">
+                        <i class="fas fa-info-circle" style="width: 20px; color: #666;"></i>
+                        <span style="font-size: 0.85rem; color: #666;">
+                            ※ 回答時にメンバーの名前・学籍番号・LINE名が自動的に収集・記録されます。<br>
+                            <?php if ($type !== 'survey'): ?>
+                            ※ 「出欠」ステータスは回答後も変更可能です。
+                            <?php endif; ?>
+                        </span>
                     </div>
                     
                     <!-- Admin Selection -->

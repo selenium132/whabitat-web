@@ -15,8 +15,22 @@ if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty(
 }
 
 // Fetch Upcoming Events
+// Fetch Upcoming Events
 $stmt = $pdo->query("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC, open_at ASC");
-$upcoming_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$all_upcoming = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$attend_checks = [];
+$surveys = [];
+
+foreach ($all_upcoming as $ev) {
+    // Default to 'event' if type is not set (backwards compatibility)
+    $type = $ev['type'] ?? 'event';
+    if ($type === 'survey') {
+        $surveys[] = $ev;
+    } else {
+        $attend_checks[] = $ev;
+    }
+}
 
 // Fetch Past Events
 $stmt = $pdo->query("SELECT * FROM events WHERE event_date < CURDATE() ORDER BY event_date DESC LIMIT 5");
@@ -86,7 +100,8 @@ try {
             <!-- Nav (shared for desktop/mobile via CSS) -->
             <nav>
                 <ul class="nav-list">
-                    <li><a href="#events" class="nav-link">イベント情報</a></li>
+                    <li><a href="#events" class="nav-link">出欠確認</a></li>
+                    <li><a href="#surveys" class="nav-link">アンケート</a></li>
                     <li><a href="#calendar" class="nav-link">カレンダー</a></li>
                     <li><a href="#suggestion" class="nav-link">目安箱</a></li>
                     <li><a href="logout.php" class="nav-link" style="color: var(--text-color);"><i class="fas fa-sign-out-alt"></i></a></li>
@@ -105,7 +120,10 @@ try {
                 <div class="welcome-actions">
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="event_create.php" class="btn-primary">
-                            <i class="fas fa-plus"></i> イベント作成
+                            <i class="fas fa-plus"></i> 出欠作成
+                        </a>
+                        <a href="event_create.php?type=survey" class="btn-primary" style="background-color: #f39c12;">
+                            <i class="fas fa-poll-h"></i> アンケート作成
                         </a>
                         <a href="admin/members.php" class="btn-secondary">
                             <i class="fas fa-users"></i> メンバー管理
@@ -125,15 +143,15 @@ try {
             </div>
 
             <div id="events" style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; scroll-margin-top: 80px;">
-                <h2 class="section-title" style="text-align: left; margin: 0;">イベント情報</h2>
-                <a href="past_events.php" style="font-size: 0.85rem; color: #888; text-decoration: none;">過去のイベント →</a>
+                <h2 class="section-title" style="text-align: left; margin: 0;">出欠確認</h2>
+                <a href="past_events.php" style="font-size: 0.85rem; color: #888; text-decoration: none;">過去の出欠 →</a>
             </div>
-            <?php if (empty($upcoming_events)): ?>
+            <?php if (empty($attend_checks)): ?>
                 <div class="card" style="text-align: center; color: var(--text-light);">
-                    予定されているイベントはありません。
+                    予定されている出欠確認はありません。
                 </div>
             <?php else: ?>
-                <?php foreach ($upcoming_events as $event): ?>
+                <?php foreach ($attend_checks as $event): ?>
                     <div class="card event-card">
                         <div class="event-info">
                             <div class="event-date">
@@ -157,6 +175,42 @@ try {
                         </div>
                         <div class="event-actions">
                             <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer">
+                                回答する
+                            </a>
+                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
+                                回答状況
+                            </a>
+                            
+                            <?php if (isEventAdmin($event['id'])): ?>
+                                <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-edit" title="編集">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+
+            <!-- アンケート Section -->
+            <div id="surveys" style="display: flex; align-items: center; gap: 16px; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">
+                <h2 class="section-title" style="text-align: left; margin: 0;">アンケート</h2>
+            </div>
+            <?php if (empty($surveys)): ?>
+                <div class="card" style="text-align: center; color: var(--text-light);">
+                    現在実施中のアンケートはありません。
+                </div>
+            <?php else: ?>
+                <?php foreach ($surveys as $event): ?>
+                    <div class="card event-card" style="border-left: 5px solid #f39c12;">
+                        <div class="event-info">
+                            <div class="event-date" style="color: #f39c12;">
+                                <i class="fas fa-poll-h"></i> 
+                                <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?> 締切目安
+                            </div>
+                            <h3 class="event-title-text"><?php echo htmlspecialchars($event['title']); ?></h3>
+                        </div>
+                        <div class="event-actions">
+                            <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer" style="background-color: #f39c12;">
                                 回答する
                             </a>
                             <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">

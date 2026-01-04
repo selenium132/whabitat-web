@@ -67,6 +67,8 @@ if (!empty($event['form_schema'])) {
 }
 
 function getStatusLabel($status) {
+    global $event;
+    if (($event['type'] ?? 'event') === 'survey' && $status === 'join') return '回答済';
     if ($status === 'join') return '参加';
     if ($status === 'decline') return '不参加';
     if ($status === 'maybe') return '未定';
@@ -219,7 +221,7 @@ function getStatusLabel($status) {
                     <tr>
                         <th style="width: 150px;">名前</th>
                         <th style="width: 60px;">学年</th>
-                        <th style="width: 80px;">ステータス</th>
+                        <th style="width: 80px;"><?php echo (($event['type'] ?? 'event') === 'survey') ? '回答状況' : 'ステータス'; ?></th>
                         <?php if ($is_admin): ?>
                             <th style="background-color: #f0f4f8;">回答内容 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                             <th style="width: 100px; background-color: #f0f4f8;">学部 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
