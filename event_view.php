@@ -362,10 +362,13 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
 </head>
 <body>
     <header class="header">
-        <div class="header-inner">
+        <div class="header-inner" style="display: flex; justify-content: space-between; align-items: center;">
             <a href="dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
                 <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
             </a>
+            <button type="button" onclick="copyCurrentUrl()" style="background: #495057; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                <i class="fas fa-link"></i> URLをコピー
+            </button>
         </div>
     </header>
 
@@ -620,6 +623,15 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             // Clear Comment (fallback)
             const comments = document.querySelectorAll('input[name="comment"]');
             comments.forEach(c => c.value = '');
+        }
+        
+        // Copy current URL to clipboard
+        function copyCurrentUrl() {
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                alert('URLをコピーしました！');
+            }).catch(function(err) {
+                prompt('URLをコピーしてください:', window.location.href);
+            });
         }
     </script>
 

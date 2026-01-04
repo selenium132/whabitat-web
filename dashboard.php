@@ -228,6 +228,9 @@ try {
                                     <i class="far fa-edit"></i>
                                 </a>
                             <?php endif; ?>
+                            <button type="button" class="btn-secondary btn-edit" title="URLをコピー" onclick="copyEventUrl(<?php echo $event['id']; ?>)">
+                                <i class="fas fa-link"></i>
+                            </button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -263,6 +266,9 @@ try {
                                     <i class="far fa-edit"></i>
                                 </a>
                             <?php endif; ?>
+                            <button type="button" class="btn-secondary btn-edit" title="URLをコピー" onclick="copyEventUrl(<?php echo $event['id']; ?>)">
+                                <i class="fas fa-link"></i>
+                            </button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -774,6 +780,16 @@ try {
     <?php endif; ?>
     
     <script>
+        // Copy event/survey URL to clipboard
+        function copyEventUrl(eventId) {
+            const url = window.location.origin + '/event_view.php?id=' + eventId;
+            navigator.clipboard.writeText(url).then(function() {
+                alert('URLをコピーしました！');
+            }).catch(function(err) {
+                prompt('URLをコピーしてください:', url);
+            });
+        }
+        
         // Mobile menu toggle
         document.querySelector('.menu-toggle').addEventListener('click', function() {
             this.classList.toggle('active');
