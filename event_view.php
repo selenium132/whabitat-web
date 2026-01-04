@@ -25,6 +25,26 @@ if (($event['type'] ?? 'event') === 'survey' && !empty($event['target_users'])) 
     }
 }
 
+// Record survey view for dashboard display
+if (($event['type'] ?? 'event') === 'survey') {
+    try {
+        // Create table if not exists
+        $pdo->exec("CREATE TABLE IF NOT EXISTS survey_views (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            survey_id INT NOT NULL,
+            user_id INT NOT NULL,
+            viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_view (survey_id, user_id)
+        )");
+        
+        // Insert or update view timestamp
+        $stmt = $pdo->prepare("INSERT IGNORE INTO survey_views (survey_id, user_id) VALUES (?, ?)");
+        $stmt->execute([$event_id, $_SESSION['user_id']]);
+    } catch (Exception $e) {
+        // Ignore errors - this is non-critical
+    }
+}
+
 // Handle Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrfToken($_POST['csrf_token'] ?? ''); // CSRF Check

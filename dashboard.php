@@ -36,7 +36,7 @@ foreach ($all_upcoming as $ev) {
     // Default to 'event' if type is not set (backwards compatibility)
     $type = $ev['type'] ?? 'event';
     if ($type === 'survey') {
-        // Surveys visibility: admin, creator, event_admin, or in target_users
+        // Surveys visibility: admin, creator, event_admin, target_users, or has viewed
         $can_see = false;
         
         if ($_SESSION['role'] === 'admin') {
@@ -50,6 +50,19 @@ foreach ($all_upcoming as $ev) {
             $targets = json_decode($ev['target_users'], true);
             if (is_array($targets) && in_array($_SESSION['user_id'], $targets)) {
                 $can_see = true;
+            }
+        }
+        
+        // Also show if user has viewed this survey via URL
+        if (!$can_see) {
+            try {
+                $view_stmt = $pdo->prepare("SELECT 1 FROM survey_views WHERE survey_id = ? AND user_id = ?");
+                $view_stmt->execute([$ev['id'], $_SESSION['user_id']]);
+                if ($view_stmt->fetch()) {
+                    $can_see = true;
+                }
+            } catch (Exception $e) {
+                // Table might not exist yet
             }
         }
         
