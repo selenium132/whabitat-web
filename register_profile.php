@@ -11,12 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $student_id = $_POST['student_id'] ?? '';
     $grade = $_POST['grade'] ?? '';
     $faculty = $_POST['faculty'] ?? '';
+    $gender = $_POST['gender'] ?? '';
 
     // All fields are required
-    if ($name && $student_id && $grade && $faculty) {
+    if ($name && $student_id && $grade && $faculty && $gender) {
         $pdo = getDB();
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ? WHERE id = ?");
-        if ($stmt->execute([$name, $student_id, $grade, $faculty, $_SESSION['user_id']])) {
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ?, gender = ? WHERE id = ?");
+        if ($stmt->execute([$name, $student_id, $grade, $faculty, $gender, $_SESSION['user_id']])) {
             $_SESSION['name'] = $name;
             header("Location: dashboard.php");
             exit;
@@ -34,7 +35,7 @@ $csrf_token = generateCsrfToken();
 $current_user = [];
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT name, student_id, grade, faculty FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT name, student_id, grade, faculty, gender FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $current_user = $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -44,6 +45,7 @@ $name_val = $_POST['name'] ?? $current_user['name'] ?? '';
 $sid_val = $_POST['student_id'] ?? $current_user['student_id'] ?? '';
 $grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
 $faculty_val = $_POST['faculty'] ?? $current_user['faculty'] ?? '';
+$gender_val = $_POST['gender'] ?? $current_user['gender'] ?? '';
 
 // Waseda University faculties
 $waseda_faculties = [
@@ -127,6 +129,15 @@ $is_first_registration = empty($current_user['name']);
                             <?php foreach ($waseda_faculties as $f): ?>
                                 <option value="<?php echo htmlspecialchars($f); ?>" <?php echo $faculty_val === $f ? 'selected' : ''; ?>><?php echo htmlspecialchars($f); ?></option>
                             <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">性別</label>
+                        <select name="gender" class="form-select" required>
+                            <option value="">選択してください</option>
+                            <option value="male" <?php echo $gender_val === 'male' ? 'selected' : ''; ?>>男性</option>
+                            <option value="female" <?php echo $gender_val === 'female' ? 'selected' : ''; ?>>女性</option>
+                            <option value="other" <?php echo $gender_val === 'other' ? 'selected' : ''; ?>>その他</option>
                         </select>
                     </div>
                     <button type="submit" class="btn-primary" style="width: 100%;">

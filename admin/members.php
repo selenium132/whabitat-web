@@ -171,6 +171,7 @@ $csrf_token = generateCsrfToken();
                                 <th>LINE名</th>
                                 <th>代</th>
                                 <th>学部</th>
+                                <th>性別</th>
                                 <th>ステータス</th>
                                 <th>権限</th>
                                 <th>操作</th>
@@ -191,6 +192,13 @@ $csrf_token = generateCsrfToken();
                                     <td><?php echo htmlspecialchars($m['line_name']); ?></td>
                                     <td><?php echo htmlspecialchars($m['grade']); ?></td>
                                     <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
+                                    <td><?php 
+                                        $g = $m['gender'] ?? '';
+                                        if ($g === 'male') echo '男';
+                                        elseif ($g === 'female') echo '女';
+                                        elseif ($g === 'other') echo '他';
+                                        else echo '-';
+                                    ?></td>
                                     <td>
                                         <?php if ($m['is_approved']): ?>
                                             <span style="color: #2ecc71; font-weight: bold;">承認済</span>
