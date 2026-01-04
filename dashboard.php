@@ -36,8 +36,7 @@ foreach ($all_upcoming as $ev) {
     // Default to 'event' if type is not set (backwards compatibility)
     $type = $ev['type'] ?? 'event';
     if ($type === 'survey') {
-        // Surveys are hidden from dashboard for regular users
-        // Only show if: admin, or creator, or event_admin for this survey
+        // Surveys visibility: admin, creator, event_admin, or in target_users
         $can_see = false;
         
         if ($_SESSION['role'] === 'admin') {
@@ -46,6 +45,12 @@ foreach ($all_upcoming as $ev) {
             $can_see = true;
         } elseif (in_array($ev['id'], $user_admin_events)) {
             $can_see = true;
+        } elseif (!empty($ev['target_users'])) {
+            // If target_users is set, show to those users
+            $targets = json_decode($ev['target_users'], true);
+            if (is_array($targets) && in_array($_SESSION['user_id'], $targets)) {
+                $can_see = true;
+            }
         }
         
         if ($can_see) {
