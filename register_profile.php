@@ -137,7 +137,6 @@ $is_first_registration = empty($current_user['name']);
                             <option value="">選択してください</option>
                             <option value="male" <?php echo $gender_val === 'male' ? 'selected' : ''; ?>>男性</option>
                             <option value="female" <?php echo $gender_val === 'female' ? 'selected' : ''; ?>>女性</option>
-                            <option value="other" <?php echo $gender_val === 'other' ? 'selected' : ''; ?>>その他</option>
                         </select>
                     </div>
                     <button type="submit" class="btn-primary" style="width: 100%;">

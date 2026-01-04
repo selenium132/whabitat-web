@@ -196,7 +196,6 @@ $csrf_token = generateCsrfToken();
                                         $g = $m['gender'] ?? '';
                                         if ($g === 'male') echo '男';
                                         elseif ($g === 'female') echo '女';
-                                        elseif ($g === 'other') echo '他';
                                         else echo '-';
                                     ?></td>
                                     <td>

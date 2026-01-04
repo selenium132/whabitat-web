@@ -280,7 +280,6 @@ function getStatusLabel($status) {
                                     $genderLabel = $p['gender'] ?? '';
                                     if ($genderLabel === 'male') echo '男';
                                     elseif ($genderLabel === 'female') echo '女';
-                                    elseif ($genderLabel === 'other') echo '他';
                                     else echo '-';
                                 ?></td>
                                 <td><?php echo htmlspecialchars($p['student_id']); ?></td>
