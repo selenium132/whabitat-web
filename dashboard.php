@@ -22,19 +22,33 @@ $all_upcoming = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $attend_checks = [];
 $surveys = [];
 
+// Fetch event_admins for the user to check if they are survey admin
+$user_admin_events = [];
+try {
+    $admin_stmt = $pdo->prepare("SELECT event_id FROM event_admins WHERE user_id = ?");
+    $admin_stmt->execute([$_SESSION['user_id']]);
+    $user_admin_events = $admin_stmt->fetchAll(PDO::FETCH_COLUMN);
+} catch (Exception $e) {
+    // Table might not exist
+}
+
 foreach ($all_upcoming as $ev) {
     // Default to 'event' if type is not set (backwards compatibility)
     $type = $ev['type'] ?? 'event';
     if ($type === 'survey') {
-        // Check if user is in target_users (NULL = all users)
-        $show = true;
-        if (!empty($ev['target_users'])) {
-            $targets = json_decode($ev['target_users'], true);
-            if (is_array($targets) && !in_array($_SESSION['user_id'], $targets)) {
-                $show = false;
-            }
+        // Surveys are hidden from dashboard for regular users
+        // Only show if: admin, or creator, or event_admin for this survey
+        $can_see = false;
+        
+        if ($_SESSION['role'] === 'admin') {
+            $can_see = true;
+        } elseif ($ev['created_by'] == $_SESSION['user_id']) {
+            $can_see = true;
+        } elseif (in_array($ev['id'], $user_admin_events)) {
+            $can_see = true;
         }
-        if ($show) {
+        
+        if ($can_see) {
             $surveys[] = $ev;
         }
     } else {

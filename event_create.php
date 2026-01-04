@@ -111,15 +111,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Fetch Users for Admin Selection (Exclude Global Admins, Group by Grade)
 $pdo = getDB();
-$users_stmt = $pdo->query("SELECT id, name, grade FROM users WHERE is_approved = 1 AND role != 'admin' ORDER BY grade ASC, name ASC");
+$users_stmt = $pdo->query("SELECT id, name, grade, faculty, gender FROM users WHERE is_approved = 1 AND role != 'admin' ORDER BY grade ASC, name ASC");
 $all_users = $users_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Group users by grade
+// Group users by grade and collect faculties
 $users_by_grade = [];
+$admin_faculties = [];
 foreach ($all_users as $user) {
     $g = $user['grade'] ?: '未設定'; // Handle empty grade
     $users_by_grade[$g][] = $user;
+    if (!empty($user['faculty']) && !in_array($user['faculty'], $admin_faculties)) {
+        $admin_faculties[] = $user['faculty'];
+    }
 }
+sort($admin_faculties);
 
 // Fetch Current Event Admins if editing
 $current_admins = [];
@@ -639,19 +644,47 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                                 <span><i class="fas fa-user-shield"></i> <?php echo ($type === 'survey') ? '管理者設定' : 'イベント管理者設定'; ?></span>
                             </summary>
                             
-                            <div class="admin-checkbox-list">
+                            <!-- Filter/Search Controls -->
+                            <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                                <input type="text" id="adminUserSearch" placeholder="名前で検索..." 
+                                    style="flex: 1; min-width: 120px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9rem;"
+                                    oninput="filterAdminUsers()">
+                                <select id="adminGradeFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" onchange="filterAdminUsers()">
+                                    <option value="">全学年</option>
+                                    <?php foreach (AVAILABLE_GRADES as $g): ?>
+                                        <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <select id="adminFacultyFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" onchange="filterAdminUsers()">
+                                    <option value="">全学部</option>
+                                    <?php foreach ($admin_faculties as $f): ?>
+                                        <option value="<?php echo htmlspecialchars($f); ?>"><?php echo htmlspecialchars($f); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <select id="adminGenderFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" onchange="filterAdminUsers()">
+                                    <option value="">全性別</option>
+                                    <option value="male">男性</option>
+                                    <option value="female">女性</option>
+                                </select>
+                            </div>
+                            
+                            <div class="admin-checkbox-list" id="adminUserList">
                                 <?php if (empty($users_by_grade)): ?>
                                     <div style="color: #999; padding: 10px;">追加可能なメンバーがいません</div>
                                 <?php else: ?>
                                     <?php foreach ($users_by_grade as $grade => $users): ?>
-                                        <div class="grade-group">
+                                        <div class="grade-group admin-grade-group" data-grade="<?php echo htmlspecialchars($grade); ?>">
                                             <div class="grade-header"><?php echo htmlspecialchars($grade); ?></div>
                                             <div class="grade-users">
                                                 <?php foreach ($users as $user): ?>
                                                     <?php 
                                                         $checked = in_array($user['id'], $current_admins) ? 'checked' : '';
                                                     ?>
-                                                    <label class="admin-checkbox-item">
+                                                    <label class="admin-checkbox-item admin-user-item" 
+                                                        data-name="<?php echo htmlspecialchars(strtolower($user['name'])); ?>"
+                                                        data-grade="<?php echo htmlspecialchars($user['grade']); ?>"
+                                                        data-faculty="<?php echo htmlspecialchars($user['faculty'] ?? ''); ?>"
+                                                        data-gender="<?php echo htmlspecialchars($user['gender'] ?? ''); ?>">
                                                         <input type="checkbox" name="event_admins[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?>>
                                                         <?php echo htmlspecialchars($user['name']); ?>
                                                     </label>
@@ -668,7 +701,7 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                     <?php if ($type === 'survey'): ?>
                     <?php 
                         // Fetch all users for target selection
-                        $all_users_stmt = $pdo->query("SELECT id, name, grade, faculty FROM users WHERE is_approved = 1 ORDER BY grade ASC, name ASC");
+                        $all_users_stmt = $pdo->query("SELECT id, name, grade, faculty, gender FROM users WHERE is_approved = 1 ORDER BY grade ASC, name ASC");
                         $all_members = $all_users_stmt->fetchAll(PDO::FETCH_ASSOC);
                         
                         // Get current targets if editing
@@ -715,6 +748,11 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                                         <option value="<?php echo htmlspecialchars($f); ?>"><?php echo htmlspecialchars($f); ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <select id="targetGenderFilter" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;" onchange="filterTargetUsers()">
+                                    <option value="">全性別</option>
+                                    <option value="male">男性</option>
+                                    <option value="female">女性</option>
+                                </select>
                                 <button type="button" onclick="selectAllTargets()" style="padding: 6px 12px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">全選択</button>
                                 <button type="button" onclick="clearAllTargets()" style="padding: 6px 12px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">全解除</button>
                             </div>
@@ -729,7 +767,8 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                                                 <label class="admin-checkbox-item target-user-item" 
                                                     data-name="<?php echo htmlspecialchars(strtolower($user['name'])); ?>"
                                                     data-grade="<?php echo htmlspecialchars($user['grade']); ?>"
-                                                    data-faculty="<?php echo htmlspecialchars($user['faculty']); ?>">
+                                                    data-faculty="<?php echo htmlspecialchars($user['faculty'] ?? ''); ?>"
+                                                    data-gender="<?php echo htmlspecialchars($user['gender'] ?? ''); ?>">
                                                     <input type="checkbox" name="target_users[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?>>
                                                     <?php echo htmlspecialchars($user['name']); ?>
                                                 </label>
@@ -1002,22 +1041,56 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
         }
 
         // ----------------------------------------
+        // Admin User Filter Functions
+        // ----------------------------------------
+        function filterAdminUsers() {
+            const searchVal = (document.getElementById('adminUserSearch')?.value || '').toLowerCase();
+            const gradeVal = document.getElementById('adminGradeFilter')?.value || '';
+            const facultyVal = document.getElementById('adminFacultyFilter')?.value || '';
+            const genderVal = document.getElementById('adminGenderFilter')?.value || '';
+            
+            document.querySelectorAll('.admin-user-item').forEach(function(item) {
+                const name = item.dataset.name || '';
+                const grade = item.dataset.grade || '';
+                const faculty = item.dataset.faculty || '';
+                const gender = item.dataset.gender || '';
+                
+                let show = true;
+                if (searchVal && !name.includes(searchVal)) show = false;
+                if (gradeVal && grade !== gradeVal) show = false;
+                if (facultyVal && faculty !== facultyVal) show = false;
+                if (genderVal && gender !== genderVal) show = false;
+                
+                item.style.display = show ? '' : 'none';
+            });
+            
+            // Hide empty grade groups
+            document.querySelectorAll('#adminUserList .admin-grade-group').forEach(function(group) {
+                const hasVisible = Array.from(group.querySelectorAll('.admin-user-item')).some(i => i.style.display !== 'none');
+                group.style.display = hasVisible ? '' : 'none';
+            });
+        }
+
+        // ----------------------------------------
         // Target User Filter Functions (for Surveys)
         // ----------------------------------------
         function filterTargetUsers() {
             const searchVal = (document.getElementById('targetUserSearch')?.value || '').toLowerCase();
             const gradeVal = document.getElementById('targetGradeFilter')?.value || '';
             const facultyVal = document.getElementById('targetFacultyFilter')?.value || '';
+            const genderVal = document.getElementById('targetGenderFilter')?.value || '';
             
             document.querySelectorAll('.target-user-item').forEach(function(item) {
                 const name = item.dataset.name || '';
                 const grade = item.dataset.grade || '';
                 const faculty = item.dataset.faculty || '';
+                const gender = item.dataset.gender || '';
                 
                 let show = true;
                 if (searchVal && !name.includes(searchVal)) show = false;
                 if (gradeVal && grade !== gradeVal) show = false;
                 if (facultyVal && faculty !== facultyVal) show = false;
+                if (genderVal && gender !== genderVal) show = false;
                 
                 item.style.display = show ? '' : 'none';
             });
