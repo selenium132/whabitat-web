@@ -5,11 +5,11 @@ requireLogin();
 $pdo = getDB();
 
 // Check if profile is complete - redirect if any required field is missing
-$stmt = $pdo->prepare("SELECT name, student_id, grade, faculty FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT name, student_id, grade, faculty, gender FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user_profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty($user_profile['grade']) || empty($user_profile['faculty'])) {
+if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty($user_profile['grade']) || empty($user_profile['faculty']) || empty($user_profile['gender'])) {
     header("Location: register_profile.php");
     exit;
 }

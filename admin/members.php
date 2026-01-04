@@ -45,23 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sid = $_POST['student_id'] ?? '';
             $grade = $_POST['grade'] ?? '';
             $faculty = $_POST['faculty'] ?? '';
+            $gender = $_POST['gender'] ?? '';
             
             if ($name && $sid && $grade) {
-                // Check if faculty column exists
-                try {
-                    $check = $pdo->query("SHOW COLUMNS FROM users LIKE 'faculty'");
-                    $faculty_exists = $check->rowCount() > 0;
-                } catch (Exception $e) {
-                    $faculty_exists = false;
-                }
-                
-                if ($faculty_exists && $faculty) {
-                    $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ? WHERE id = ?");
-                    $stmt->execute([$name, $sid, $grade, $faculty, $target_id]);
-                } else {
-                    $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ? WHERE id = ?");
-                    $stmt->execute([$name, $sid, $grade, $target_id]);
-                }
+                $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ?, gender = ? WHERE id = ?");
+                $stmt->execute([$name, $sid, $grade, $faculty, $gender, $target_id]);
             }
         }
     }
@@ -108,13 +96,15 @@ $csrf_token = generateCsrfToken();
         }
 
         // Modal Logic
-        function openEditModal(id, name, sid, grade, faculty) {
+        function openEditModal(id, name, sid, grade, faculty, gender) {
             document.getElementById('edit_user_id').value = id;
             document.getElementById('edit_name').value = name;
             document.getElementById('edit_sid').value = sid;
             document.getElementById('edit_grade').value = grade;
             var facultyEl = document.getElementById('edit_faculty');
             if (facultyEl) facultyEl.value = faculty || '';
+            var genderEl = document.getElementById('edit_gender');
+            if (genderEl) genderEl.value = gender || '';
             document.getElementById('editModal').style.display = 'flex';
         }
 
@@ -212,7 +202,7 @@ $csrf_token = generateCsrfToken();
                                         <?php if ($m['id'] != $_SESSION['user_id']): ?>
                                             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
                                                 <button type="button" class="btn-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;" 
-                                                    onclick="openEditModal('<?php echo $m['id']; ?>', '<?php echo htmlspecialchars($m['name'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['student_id'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['grade'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['faculty'] ?? '', ENT_QUOTES); ?>')">
+                                                    onclick="openEditModal('<?php echo $m['id']; ?>', '<?php echo htmlspecialchars($m['name'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['student_id'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['grade'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['faculty'] ?? '', ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['gender'] ?? '', ENT_QUOTES); ?>')">
                                                     編集
                                                 </button>
 
@@ -298,6 +288,14 @@ $csrf_token = generateCsrfToken();
                         foreach ($waseda_faculties as $f): ?>
                             <option value="<?php echo htmlspecialchars($f); ?>"><?php echo htmlspecialchars($f); ?></option>
                         <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">性別</label>
+                    <select name="gender" id="edit_gender" class="form-select">
+                        <option value="">選択してください</option>
+                        <option value="male">男性</option>
+                        <option value="female">女性</option>
                     </select>
                 </div>
 
