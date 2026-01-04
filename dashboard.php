@@ -151,7 +151,7 @@ try {
                         <a href="event_create.php" class="btn-primary">
                             <i class="fas fa-plus"></i> 出欠確認作成
                         </a>
-                        <a href="event_create.php?type=survey" class="btn-primary" style="background-color: #f39c12;">
+                        <a href="event_create.php?type=survey" class="btn-secondary">
                             <i class="fas fa-poll-h"></i> アンケート作成
                         </a>
                         <a href="admin/members.php" class="btn-secondary">
@@ -230,16 +230,15 @@ try {
                 </div>
             <?php else: ?>
                 <?php foreach ($surveys as $event): ?>
-                    <div class="card event-card" style="border-left: 5px solid #f39c12;">
+                    <div class="card event-card" style="border-left: 5px solid #6c757d;">
                         <div class="event-info">
-                            <div class="event-date" style="color: #f39c12;">
-                                <i class="fas fa-poll-h"></i> 
-                                <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?> 締切目安
+                            <div class="event-date" style="color: #6c757d;">
+                                <i class="fas fa-poll-h"></i> アンケート
                             </div>
                             <h3 class="event-title-text"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
                         <div class="event-actions">
-                            <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer" style="background-color: #f39c12;">
+                            <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer" style="background-color: #495057;">
                                 回答する
                             </a>
                             <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
