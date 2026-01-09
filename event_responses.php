@@ -228,6 +228,22 @@ function getStatusLabel($status) {
                             <th style="width: 60px; background-color: #f0f4f8;">性別 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                             <th style="width: 100px; background-color: #f0f4f8;">学籍番号 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                             <th style="width: 120px; background-color: #f0f4f8;">LINE名 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
+                        <?php else: ?>
+                            <?php 
+                                // Check if there are any public questions
+                                $has_any_public = false;
+                                if (!empty($form_schema)) {
+                                    foreach ($form_schema as $q) {
+                                        if (!empty($q['public'])) {
+                                            $has_any_public = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if ($has_any_public):
+                            ?>
+                                <th>公開回答</th>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -284,6 +300,39 @@ function getStatusLabel($status) {
                                 ?></td>
                                 <td><?php echo htmlspecialchars($p['student_id']); ?></td>
                                 <td><?php echo htmlspecialchars($p['line_name']); ?></td>
+                            <?php else: ?>
+                                <?php 
+                                    // Non-admin: show only public question responses
+                                    $has_public = false;
+                                    if (!empty($p['response_data']) && !empty($form_schema)) {
+                                        $ans = json_decode($p['response_data'], true);
+                                        if ($ans) {
+                                            foreach ($ans as $idx => $val) {
+                                                if (isset($form_schema[$idx]) && !empty($form_schema[$idx]['public'])) {
+                                                    $has_public = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if ($has_public):
+                                ?>
+                                <td>
+                                    <?php 
+                                        $ans = json_decode($p['response_data'], true);
+                                        foreach ($ans as $idx => $val) {
+                                            if (isset($form_schema[$idx]) && !empty($form_schema[$idx]['public'])) {
+                                                $qTitle = $form_schema[$idx]['title'] ?? "Q".($idx+1);
+                                                $displayVal = is_array($val) ? implode(', ', $val) : $val;
+                                                echo '<div class="custom-ans-block">';
+                                                echo '<span class="q-label">' . htmlspecialchars($qTitle) . ':</span>';
+                                                echo htmlspecialchars($displayVal);
+                                                echo '</div>';
+                                            }
+                                        }
+                                    ?>
+                                </td>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
