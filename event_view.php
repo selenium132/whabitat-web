@@ -2,8 +2,19 @@
 require_once 'config.php';
 requireLogin();
 
-$event_id = $_GET['id'] ?? 0;
 $pdo = getDB();
+
+// Check if profile is complete - redirect if any required field is missing
+$stmt = $pdo->prepare("SELECT name, student_id, grade, faculty, gender FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user_profile = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty($user_profile['grade']) || empty($user_profile['faculty']) || empty($user_profile['gender'])) {
+    header("Location: register_profile.php");
+    exit;
+}
+
+$event_id = $_GET['id'] ?? 0;
 
 // Fetch Event Details
 $stmt = $pdo->prepare("SELECT * FROM events WHERE id = ?");
