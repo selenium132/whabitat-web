@@ -19,7 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ?, gender = ? WHERE id = ?");
         if ($stmt->execute([$name, $student_id, $grade, $faculty, $gender, $_SESSION['user_id']])) {
             $_SESSION['name'] = $name;
-            header("Location: dashboard.php");
+            // Check if there's a return URL to redirect to
+            $return_url = $_POST['return_url'] ?? '';
+            if (!empty($return_url)) {
+                header("Location: " . $return_url);
+            } else {
+                header("Location: dashboard.php");
+            }
             exit;
         } else {
             $error = 'エラーが発生しました。';
@@ -104,6 +110,7 @@ $is_first_registration = empty($current_user['name']);
 
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                    <input type="hidden" name="return_url" value="<?php echo htmlspecialchars($_GET['return'] ?? ''); ?>">
                     
                     <div class="form-group">
                         <label class="form-label">お名前（本名） <span style="font-size: 0.8rem; color: #e74c3c;">※名字と名前の間にスペースは入れないでください</span></label>

@@ -10,7 +10,9 @@ $stmt->execute([$_SESSION['user_id']]);
 $user_profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty($user_profile['grade']) || empty($user_profile['faculty']) || empty($user_profile['gender'])) {
-    header("Location: register_profile.php");
+    // Pass return URL so user comes back after profile completion
+    $return_url = urlencode($_SERVER['REQUEST_URI']);
+    header("Location: register_profile.php?return=" . $return_url);
     exit;
 }
 
