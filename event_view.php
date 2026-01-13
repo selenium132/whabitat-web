@@ -115,6 +115,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comment = $_POST['comment'] ?? '';
     $response_data = $_POST['response_data'] ?? null; // JSON String handling custom answers
     
+    // Server-side validation for required questions
+    $validation_error = false;
+    if ($status && !empty($form_schema) && $response_data) {
+        $answers = json_decode($response_data, true);
+        foreach ($form_schema as $idx => $q) {
+            if (!empty($q['required'])) {
+                $val = $answers[$idx] ?? null;
+                // Check if the required field is empty
+                if ($val === null || $val === '' || (is_array($val) && count($val) === 0)) {
+                    $validation_error = true;
+                    break;
+                }
+            }
+        }
+    }
+    
+    if ($validation_error) {
+        // Redirect back with error
+        header("Location: event_view.php?id=" . $event_id . "&error=required");
+        exit;
+    }
+    
     if ($status) {
         $stmt = $pdo->prepare("INSERT INTO attendance (event_id, user_id, status, comment, response_data) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE status = ?, comment = ?, response_data = ?");
         $stmt->execute([$event_id, $_SESSION['user_id'], $status, $comment, $response_data, $status, $comment, $response_data]);
@@ -579,12 +601,48 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
     </div>
 
     <script>
+        // Form schema for required validation
+        const formSchema = <?php echo json_encode($form_schema); ?>;
+        
         function submitForm() {
+            // Validate required custom questions
+            const customCards = document.querySelectorAll('.custom-q');
+            for (let i = 0; i < customCards.length; i++) {
+                const card = customCards[i];
+                const index = parseInt(card.dataset.index);
+                const type = card.dataset.type;
+                
+                // Check if this question is required
+                if (formSchema[index] && formSchema[index].required) {
+                    let val = null;
+                    let isEmpty = false;
+                    
+                    if (type === 'paragraph') {
+                        val = card.querySelector('input')?.value?.trim() || '';
+                        isEmpty = val === '';
+                    } else if (type === 'radio') {
+                        const checked = card.querySelector('input:checked');
+                        isEmpty = !checked;
+                    } else if (type === 'checkbox') {
+                        const checked = card.querySelectorAll('input:checked');
+                        isEmpty = checked.length === 0;
+                    } else if (type === 'dropdown') {
+                        val = card.querySelector('select')?.value || '';
+                        isEmpty = val === '';
+                    }
+                    
+                    if (isEmpty) {
+                        const qTitle = formSchema[index].title || ('質問' + (index + 1));
+                        alert('「' + qTitle + '」は必須項目です。');
+                        return;
+                    }
+                }
+            }
+            
             // Collect Custom Answers
             const answers = {};
             
             // Loop through our known indices if schema exists
-            const customCards = document.querySelectorAll('.custom-q');
             customCards.forEach(card => {
                 const index = card.dataset.index;
                 const type = card.dataset.type;
