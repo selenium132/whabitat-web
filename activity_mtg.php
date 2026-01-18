@@ -1,4 +1,28 @@
-<?php require_once 'config.php'; ?>
+<?php require_once 'config.php';
+$pdo = getDB();
+
+// Create table if not exists
+$pdo->exec("CREATE TABLE IF NOT EXISTS mtg_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_date DATE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255) DEFAULT NULL,
+    description TEXT,
+    image_path VARCHAR(255) DEFAULT NULL,
+    year_group INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)");
+
+// Fetch MTG history grouped by year
+$entries = $pdo->query("SELECT * FROM mtg_history ORDER BY year_group DESC, event_date DESC")->fetchAll(PDO::FETCH_ASSOC);
+$grouped = [];
+foreach ($entries as $entry) {
+    $grouped[$entry['year_group']][] = $entry;
+}
+
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -57,25 +81,54 @@
 
                 <!-- MTG History -->
                 <section style="margin-top: 5rem;">
-                    <h2 class="section-title"><span>MTG HISTORY</span></h2>
-                    
-                    <div class="history-year-group">
-                        <h3 style="font-size: 1.5rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 2rem; color: var(--primary-color);">2025</h3>
-                        
-                        <div class="history-grid">
-                            <!-- 2025.11.12 Wabi-Tune -->
-                            <article class="history-card" style="display: flex; flex-direction: column; height: 100%;">
-                                <img src="mtg_2024_11_12.png" alt="わびチューン" style="width: 100%; height: 180px; object-fit: cover;">
-                                <div class="history-info" style="flex-grow: 1; display: flex; flex-direction: column;">
-                                    <span class="history-season" style="color: var(--accent-blue); font-weight: bold;">2025.11.12</span>
-                                    <h4 style="margin: 0.5rem 0; font-size: 1.1rem; line-height: 1.4;">わびチューン<br><span style="font-size: 0.9rem; font-weight: normal;">〜3人の美食家を添えて〜</span></h4>
-                                    <p style="font-size: 0.85rem; line-height: 1.6; color: var(--text-color);">
-                                        3人のクセ強審査員（論理派・アホ・のりお）を攻略せよ！「おでんの具は大根か卵か？」「初デートはイタリアンか居酒屋か？」などをテーマに、各班で白熱の議論とプレゼンを行いました。
-                                    </p>
-                                </div>
-                            </article>
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2 class="section-title" style="margin: 0;"><span>MTG HISTORY</span></h2>
+                        <?php if ($is_admin): ?>
+                            <a href="admin/mtg_history.php" style="background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">
+                                <i class="fas fa-plus"></i> 履歴追加
+                            </a>
+                        <?php endif; ?>
                     </div>
+                    
+                    <?php if (empty($grouped)): ?>
+                        <div class="card" style="text-align: center; color: #666;">
+                            MTG履歴はまだありません。
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($grouped as $year => $yearEntries): ?>
+                            <div class="history-year-group">
+                                <h3 style="font-size: 1.5rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 2rem; color: var(--primary-color);"><?php echo $year; ?></h3>
+                                
+                                <div class="history-grid">
+                                    <?php foreach ($yearEntries as $entry): ?>
+                                        <article class="history-card" style="display: flex; flex-direction: column; height: 100%;">
+                                            <?php if ($entry['image_path']): ?>
+                                                <img src="<?php echo htmlspecialchars($entry['image_path']); ?>" alt="<?php echo htmlspecialchars($entry['title']); ?>" style="width: 100%; height: 180px; object-fit: cover;">
+                                            <?php else: ?>
+                                                <div style="width: 100%; height: 180px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                                                    <i class="fas fa-users"></i>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div class="history-info" style="flex-grow: 1; display: flex; flex-direction: column;">
+                                                <span class="history-season" style="color: var(--accent-blue); font-weight: bold;"><?php echo date('Y.m.d', strtotime($entry['event_date'])); ?></span>
+                                                <h4 style="margin: 0.5rem 0; font-size: 1.1rem; line-height: 1.4;">
+                                                    <?php echo htmlspecialchars($entry['title']); ?>
+                                                    <?php if ($entry['subtitle']): ?>
+                                                        <br><span style="font-size: 0.9rem; font-weight: normal;"><?php echo htmlspecialchars($entry['subtitle']); ?></span>
+                                                    <?php endif; ?>
+                                                </h4>
+                                                <?php if ($entry['description']): ?>
+                                                    <p style="font-size: 0.85rem; line-height: 1.6; color: var(--text-color);">
+                                                        <?php echo nl2br(htmlspecialchars($entry['description'])); ?>
+                                                    </p>
+                                                <?php endif; ?>
+                                            </div>
+                                        </article>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </section>
 
             </div>
