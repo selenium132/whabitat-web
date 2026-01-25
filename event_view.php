@@ -205,10 +205,12 @@ if (!empty($event['open_at'])) {
 }
 
 // Check close_at (if set, must be before this time to respond)
+$is_closed = false;
 if (!empty($event['close_at'])) {
     $close_time = new DateTime($event['close_at']);
     if ($now > $close_time) {
         $is_open = false;
+        $is_closed = true;
         $schedule_message = '回答受付は終了しました（締切: ' . $close_time->format('Y年m月d日 H:i') . '）';
     }
 }
@@ -473,6 +475,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                     </div>
                 <?php endif; ?>
                 
+                <?php if ($is_closed): ?>
                 <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: center;">
                     <p style="color: #856404; margin: 0; font-size: 0.9rem;">
                         <i class="fas fa-exclamation-triangle" style="margin-right: 6px;"></i>
@@ -483,6 +486,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                         <?php endif; ?>
                     </p>
                 </div>
+                <?php endif; ?>
                 
                 <div style="text-align: center; margin-top: 20px;">
                     <a href="dashboard.php" class="btn-primary" style="display: inline-block;">ダッシュボードへ戻る</a>
