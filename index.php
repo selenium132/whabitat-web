@@ -136,14 +136,14 @@ try {
 
     <section id="about" class="bg-white">
         <div class="container">
-            <h2 class="section-title"><span>About Us</span></h2>
-            <p style="text-align: center; max-width: 700px; margin: 0 auto 4rem; color: var(--text-light);">
+            <h2 class="section-title fade-in"><span>About Us</span></h2>
+            <p class="fade-in" style="text-align: center; max-width: 700px; margin: 0 auto 4rem; color: var(--text-light);">
                 WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の学生支部です。<br>
                 「誰もがきちんとした場所で暮らせる世界」を目指し、国内外で住居建築支援を行っています。
             </p>
 
-            <div class="about-grid">
-                <div class="info-card">
+            <div class="about-grid stagger-children">
+                <div class="info-card fade-in">
                     <div style="color: var(--accent-green); font-size: 2rem; margin-bottom: 1rem;"><i
                             class="fas fa-university"></i></div>
                     <h3>団体概要</h3>
@@ -154,7 +154,7 @@ try {
                         <li>設立：2006年</li>
                     </ul>
                 </div>
-                <div class="info-card">
+                <div class="info-card fade-in">
                     <div style="color: var(--accent-blue); font-size: 2rem; margin-bottom: 1rem;"><i
                             class="fas fa-users"></i></div>
                     <h3>規模・構成</h3>
@@ -171,10 +171,10 @@ try {
 
     <section id="activities" class="bg-light">
         <div class="container">
-            <h2 class="section-title"><span>Activities</span></h2>
-            <div class="activity-grid">
+            <h2 class="section-title fade-in"><span>Activities</span></h2>
+            <div class="activity-grid stagger-children">
                 <!-- GV -->
-                <a href="activity_gv.php" class="activity-card" style="text-decoration: none; color: inherit; display: block;">
+                <a href="activity_gv.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
                         style="background-image: url('gv_new.jpg?v=<?php echo time(); ?>');">
                     </div>
@@ -190,7 +190,7 @@ try {
                 </a>
 
                 <!-- JV -->
-                <a href="activity_jv.php" class="activity-card" style="text-decoration: none; color: inherit; display: block;">
+                <a href="activity_jv.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
                         style="background-image: url('jv.jpg?v=<?php echo time(); ?>');">
                     </div>
@@ -206,7 +206,7 @@ try {
                 </a>
 
                 <!-- MTG -->
-                <a href="activity_mtg.php" class="activity-card" style="text-decoration: none; color: inherit; display: block;">
+                <a href="activity_mtg.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
                         style="background-image: url('daily.jpg?v=<?php echo time(); ?>');">
                     </div>
@@ -225,7 +225,7 @@ try {
                 </a>
 
                 <!-- Domestic Volunteer -->
-                <a href="activity_domestic.php" class="activity-card" style="text-decoration: none; color: inherit; display: block;">
+                <a href="activity_domestic.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
                         style="background-image: url('domestic.jpg?v=<?php echo time(); ?>');">
                     </div>
@@ -250,8 +250,8 @@ try {
     <!-- Blog Section -->
     <section id="blog" class="bg-white">
         <div class="container">
-            <h2 class="section-title"><span>Blog</span></h2>
-            <p style="text-align: center; color: var(--text-light); margin-bottom: 2.5rem;">活動報告やお知らせ</p>
+            <h2 class="section-title fade-in"><span>Blog</span></h2>
+            <p class="fade-in" style="text-align: center; color: var(--text-light); margin-bottom: 2.5rem;">活動報告やお知らせ</p>
             
             <?php if (!empty($recent_blogs)): ?>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
@@ -293,8 +293,8 @@ try {
 
     <section id="contact" class="bg-white">
         <div class="container">
-            <h2 class="section-title"><span>Contact</span></h2>
-            <div class="contact-form">
+            <h2 class="section-title fade-in"><span>Contact</span></h2>
+            <div class="contact-form fade-in">
                 <?php if (isset($_SESSION['contact_success']) && $_SESSION['contact_success']): ?>
                 <div
                     style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
@@ -350,6 +350,32 @@ try {
                 All Rights Reserved.</p>
         </div>
     </footer>
+
+    <script>
+    // Intersection Observer for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Header scroll effect
+    const header = document.querySelector('.header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    }, { passive: true });
+    </script>
 </body>
 
 </html>
