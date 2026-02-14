@@ -228,22 +228,23 @@ try {
                             <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                 回答状況
                             </a>
-                            
+                        </div>
+                        <div class="event-icons">
                             <?php if (isEventAdmin($event['id'])): ?>
-                                <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-edit" title="編集">
+                                <a href="event_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
                                     <i class="far fa-edit"></i>
                                 </a>
-                                <form method="POST" action="event_archive.php" style="display: inline;">
+                                <form method="POST" action="event_archive.php" style="display:inline;margin:0;">
                                     <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                                     <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
                                     <input type="hidden" name="action" value="archive">
                                     <input type="hidden" name="return" value="dashboard.php#events">
-                                    <button type="submit" class="btn-secondary btn-edit" title="過去のイベントに移動" onclick="return confirm('このイベントを過去のイベントに移動しますか？')">
+                                    <button type="submit" class="icon-btn" title="過去のイベントに移動" onclick="return confirm('このイベントを過去のイベントに移動しますか？')">
                                         <i class="fas fa-archive"></i>
                                     </button>
                                 </form>
                             <?php endif; ?>
-                            <button type="button" class="btn-secondary btn-edit" title="URLをコピー" onclick="copyEventUrl(<?php echo $event['id']; ?>)">
+                            <button type="button" class="icon-btn" title="URLをコピー" onclick="copyEventUrl(<?php echo $event['id']; ?>)">
                                 <i class="fas fa-link"></i>
                             </button>
                         </div>
@@ -275,13 +276,14 @@ try {
                             <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                 回答状況
                             </a>
-                            
+                        </div>
+                        <div class="event-icons">
                             <?php if (isEventAdmin($event['id'])): ?>
-                                <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-edit" title="編集">
+                                <a href="event_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
                                     <i class="far fa-edit"></i>
                                 </a>
                             <?php endif; ?>
-                            <button type="button" class="btn-secondary btn-edit" title="URLをコピー" onclick="copyEventUrl(<?php echo $event['id']; ?>)">
+                            <button type="button" class="icon-btn" title="URLをコピー" onclick="copyEventUrl(<?php echo $event['id']; ?>)">
                                 <i class="fas fa-link"></i>
                             </button>
                         </div>
