@@ -14,9 +14,15 @@ if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty(
     exit;
 }
 
-// Fetch Upcoming Events
-// Fetch Upcoming Events
-$stmt = $pdo->query("SELECT * FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC, open_at ASC");
+// Ensure is_archived column exists
+try {
+    $pdo->exec("ALTER TABLE events ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0");
+} catch (Exception $e) {
+    // Column already exists
+}
+
+// Fetch Upcoming Events (exclude archived)
+$stmt = $pdo->query("SELECT * FROM events WHERE event_date >= CURDATE() AND is_archived = 0 ORDER BY event_date ASC, open_at ASC");
 $all_upcoming = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $attend_checks = [];
@@ -74,8 +80,8 @@ foreach ($all_upcoming as $ev) {
     }
 }
 
-// Fetch Past Events
-$stmt = $pdo->query("SELECT * FROM events WHERE event_date < CURDATE() ORDER BY event_date DESC LIMIT 5");
+// Fetch Past Events (include archived even if date is future)
+$stmt = $pdo->query("SELECT * FROM events WHERE (event_date < CURDATE() OR is_archived = 1) ORDER BY event_date DESC LIMIT 5");
 $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Count unread messages (for admin badge)
@@ -227,6 +233,15 @@ try {
                                 <a href="event_create.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-edit" title="編集">
                                     <i class="far fa-edit"></i>
                                 </a>
+                                <form method="POST" action="event_archive.php" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                    <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                                    <input type="hidden" name="action" value="archive">
+                                    <input type="hidden" name="return" value="dashboard.php#events">
+                                    <button type="submit" class="btn-secondary btn-edit" title="過去のイベントに移動" onclick="return confirm('このイベントを過去のイベントに移動しますか？')">
+                                        <i class="fas fa-archive"></i>
+                                    </button>
+                                </form>
                             <?php endif; ?>
                             <button type="button" class="btn-secondary btn-edit" title="URLをコピー" onclick="copyEventUrl(<?php echo $event['id']; ?>)">
                                 <i class="fas fa-link"></i>

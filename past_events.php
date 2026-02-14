@@ -4,8 +4,15 @@ requireLogin();
 
 $pdo = getDB();
 
-// Fetch past events
-$stmt = $pdo->prepare("SELECT * FROM events WHERE event_date < NOW() ORDER BY event_date DESC");
+// Ensure is_archived column exists
+try {
+    $pdo->exec("ALTER TABLE events ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0");
+} catch (Exception $e) {
+    // Column already exists
+}
+
+// Fetch past events (date passed OR manually archived)
+$stmt = $pdo->prepare("SELECT * FROM events WHERE (event_date < NOW() OR is_archived = 1) ORDER BY event_date DESC");
 $stmt->execute();
 $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -52,6 +59,9 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div>
                             <div style="color: var(--text-light); font-size: 0.9rem;">
                                 <?php echo date('Y年m月d日', strtotime($event['event_date'])); ?>
+                                <?php if (!empty($event['is_archived']) && strtotime($event['event_date']) >= strtotime('today')): ?>
+                                    <span style="background: #6c757d; color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-left: 8px;">アーカイブ済</span>
+                                <?php endif; ?>
                             </div>
                             <h3 style="margin: 0.2rem 0 0; font-size: 1.1rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
@@ -60,6 +70,17 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 回答一覧
                             </a>
                             <?php if ($_SESSION['role'] === 'admin'): ?>
+                                <?php if (!empty($event['is_archived'])): ?>
+                                    <form method="POST" action="event_archive.php" style="display: inline;">
+                                        <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                        <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                                        <input type="hidden" name="action" value="unarchive">
+                                        <input type="hidden" name="return" value="past_events.php">
+                                        <button type="submit" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #28a745; color: white; border: none; cursor: pointer;" title="出欠確認に戻す" onclick="return confirm('このイベントを出欠確認に戻しますか？')">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
                                 <a href="event_delete.php?id=<?php echo $event['id']; ?>" 
                                    onclick="return confirm('このイベントを削除しますか？\nこの操作は取り消せません。');"
                                    class="btn-secondary" 
