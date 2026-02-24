@@ -538,7 +538,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                         <?php endif; ?>
                         
                         <?php if ($q['type'] === 'paragraph'): ?>
-                            <input type="text" class="q-text-input custom-input" name="ans_<?php echo $index; ?>" value="<?php echo htmlspecialchars($prev_val); ?>" placeholder="回答を入力" <?php echo $requiredAttr; ?>>
+                            <textarea class="q-text-input custom-input" name="ans_<?php echo $index; ?>" placeholder="回答を入力" rows="3" style="resize:vertical;" <?php echo $requiredAttr; ?>><?php echo htmlspecialchars($prev_val); ?></textarea>
                             
                         <?php elseif ($q['type'] === 'radio'): ?>
                             <?php foreach ($q['options'] as $opt): ?>

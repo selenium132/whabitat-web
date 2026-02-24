@@ -307,7 +307,7 @@ function getStatusLabel($status) {
                                                     
                                                     echo '<div class="custom-ans-block">';
                                                     echo '<span class="q-label">' . htmlspecialchars($qTitle) . ':</span>';
-                                                    echo htmlspecialchars($displayVal);
+                                                    echo nl2br(htmlspecialchars($displayVal));
                                                     echo '</div>';
                                                 }
                                             }
@@ -349,7 +349,7 @@ function getStatusLabel($status) {
                                                 $displayVal = is_array($val) ? implode(', ', $val) : $val;
                                                 echo '<div class="custom-ans-block">';
                                                 echo '<span class="q-label">' . htmlspecialchars($qTitle) . ':</span>';
-                                                echo htmlspecialchars($displayVal);
+                                                echo nl2br(htmlspecialchars($displayVal));
                                                 echo '</div>';
                                             }
                                         }
