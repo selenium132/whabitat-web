@@ -150,6 +150,11 @@ $is_first_registration = empty($current_user['name']);
                         <?php echo $is_first_registration ? '登録して始める' : '更新する'; ?>
                     </button>
                 </form>
+                <?php if (!$is_first_registration): ?>
+                    <a href="dashboard.php" class="btn-secondary" style="display:block;text-align:center;margin-top:1rem;width:100%;">
+                        <i class="fas fa-arrow-left" style="margin-right:6px;"></i>ダッシュボードに戻る
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
     </main>
