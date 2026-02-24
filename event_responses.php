@@ -17,6 +17,29 @@ if (!$event) {
     exit;
 }
 
+// For surveys: restrict response viewing to admin, creator, event_admin only
+if (($event['type'] ?? 'event') === 'survey') {
+    $can_view_responses = false;
+    if ($_SESSION['role'] === 'admin') {
+        $can_view_responses = true;
+    } elseif ($event['created_by'] == $_SESSION['user_id']) {
+        $can_view_responses = true;
+    } else {
+        // Check event_admins
+        try {
+            $admin_check = $pdo->prepare("SELECT 1 FROM event_admins WHERE event_id = ? AND user_id = ?");
+            $admin_check->execute([$event_id, $_SESSION['user_id']]);
+            if ($admin_check->fetch()) {
+                $can_view_responses = true;
+            }
+        } catch (Exception $e) {}
+    }
+    if (!$can_view_responses) {
+        header("Location: dashboard.php");
+        exit;
+    }
+}
+
 // Fetch All Participants (Only those who joined)
 // We might want to see 'maybe' or 'decline' too? Usually just 'join' is public.
 // Admins might want to see all.

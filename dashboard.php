@@ -276,9 +276,11 @@ try {
                                 <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer">
                                     回答する
                                 </a>
+                                <?php if ($_SESSION['role'] === 'admin' || $event['created_by'] == $_SESSION['user_id'] || in_array($event['id'], $user_admin_events)): ?>
                                 <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                     回答状況
                                 </a>
+                                <?php endif; ?>
                             </div>
                             <div class="event-icons">
                                 <?php if (isEventAdmin($event['id'])): ?>
