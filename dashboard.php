@@ -100,7 +100,7 @@ $view_past = isset($_GET['view_past']) ? true : false;
 // Fetch calendar events for 12 months
 $calendar_events_all = [];
 try {
-    $start_date = $view_past ? date('Y-m-d', strtotime('-12 months')) : date('Y-m-d');
+    $start_date = $view_past ? date('Y-m-d', strtotime('-12 months')) : date('Y-m-01');
     $end_date = $view_past ? date('Y-m-d') : date('Y-m-d', strtotime('+12 months'));
     
     $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE event_date >= ? AND event_date <= ? ORDER BY event_date ASC, start_time ASC");
