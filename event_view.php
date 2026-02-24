@@ -29,12 +29,22 @@ if (!$event) {
 }
 
 // Check access for surveys with target_users
+$survey_not_target = false;
 if (($event['type'] ?? 'event') === 'survey' && !empty($event['target_users'])) {
     $targets = json_decode($event['target_users'], true);
     if (is_array($targets) && !in_array($_SESSION['user_id'], $targets)) {
-        // User not in target list - redirect
-        header("Location: dashboard.php");
-        exit;
+        // Check if user is admin, creator, or event_admin
+        $is_privileged = ($_SESSION['role'] === 'admin') || ($event['created_by'] == $_SESSION['user_id']);
+        if (!$is_privileged) {
+            try {
+                $ea_check = $pdo->prepare("SELECT 1 FROM event_admins WHERE event_id = ? AND user_id = ?");
+                $ea_check->execute([$event_id, $_SESSION['user_id']]);
+                if ($ea_check->fetch()) $is_privileged = true;
+            } catch (Exception $e) {}
+        }
+        if (!$is_privileged) {
+            $survey_not_target = true;
+        }
     }
 }
 
@@ -411,6 +421,24 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
 
     <div class="view-container">
         
+        <?php if ($survey_not_target): ?>
+            <div class="header-card">
+                <h1 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h1>
+            </div>
+            <div class="card" style="text-align:center;padding:2rem;">
+                <i class="fas fa-lock" style="font-size:2rem;color:#999;margin-bottom:1rem;display:block;"></i>
+                <p style="font-size:1.1rem;color:var(--text-color);margin-bottom:0.5rem;">このアンケートの対象者ではないため、回答できません。</p>
+                <p style="color:var(--text-light);font-size:0.9rem;">管理者にお問い合わせください。</p>
+                <a href="dashboard.php" class="btn-secondary" style="display:inline-block;margin-top:1.5rem;">
+                    <i class="fas fa-arrow-left" style="margin-right:6px;"></i>ダッシュボードに戻る
+                </a>
+            </div>
+    </div>
+</main>
+</body>
+</html>
+<?php exit; endif; ?>
+
         <form method="POST" action="" id="entryForm">
             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
             <input type="hidden" name="response_data" id="response_data_input">
