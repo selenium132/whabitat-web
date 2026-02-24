@@ -14,3 +14,4 @@ CREATE TABLE IF NOT EXISTS mtg_history (
 -- Insert existing entry
 INSERT INTO mtg_history (event_date, title, subtitle, description, image_path, year_group) VALUES
 ('2024-11-12', 'わびチューン', '〜3人の美食家を添えて〜', '3人のクセ強審査員（論理派・アホ・のりお）を攻略せよ！「おでんの具は大根か卵か？」「初デートはイタリアンか居酒屋か？」などをテーマに、各班で白熱の議論とプレゼンを行いました。', 'mtg_2024_11_12.png', 2025);
+    

@@ -59,19 +59,6 @@ foreach ($all_upcoming as $ev) {
             }
         }
         
-        // Also show if user has viewed this survey via URL
-        if (!$can_see) {
-            try {
-                $view_stmt = $pdo->prepare("SELECT 1 FROM survey_views WHERE survey_id = ? AND user_id = ?");
-                $view_stmt->execute([$ev['id'], $_SESSION['user_id']]);
-                if ($view_stmt->fetch()) {
-                    $can_see = true;
-                }
-            } catch (Exception $e) {
-                // Table might not exist yet
-            }
-        }
-        
         if ($can_see) {
             $surveys[] = $ev;
         }

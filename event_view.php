@@ -28,27 +28,18 @@ if (!$event) {
     exit;
 }
 
-// Surveys: anyone with the URL can view and respond
-// (survey_views table below records the visit for dashboard visibility)
-
-// Record survey view for dashboard display
+// Surveys: auto-add visitor to target_users
 if (($event['type'] ?? 'event') === 'survey') {
     try {
-        // Create table if not exists
-        $pdo->exec("CREATE TABLE IF NOT EXISTS survey_views (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            survey_id INT NOT NULL,
-            user_id INT NOT NULL,
-            viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY unique_view (survey_id, user_id)
-        )");
-        
-        // Insert or update view timestamp
-        $stmt = $pdo->prepare("INSERT IGNORE INTO survey_views (survey_id, user_id) VALUES (?, ?)");
-        $stmt->execute([$event_id, $_SESSION['user_id']]);
-    } catch (Exception $e) {
-        // Ignore errors - this is non-critical
-    }
+        $targets = json_decode($event['target_users'] ?? '[]', true);
+        if (!is_array($targets)) $targets = [];
+        if (!in_array($_SESSION['user_id'], $targets)) {
+            $targets[] = (int)$_SESSION['user_id'];
+            $stmt = $pdo->prepare("UPDATE events SET target_users = ? WHERE id = ?");
+            $stmt->execute([json_encode($targets), $event_id]);
+            $event['target_users'] = json_encode($targets);
+        }
+    } catch (Exception $e) {}
 }
 
 // Handle Submission
