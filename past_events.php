@@ -81,7 +81,7 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </button>
                                     </form>
                                 <?php endif; ?>
-                                <a href="event_delete.php?id=<?php echo $event['id']; ?>" 
+                                <a href="form_delete.php?id=<?php echo $event['id']; ?>" 
                                    onclick="return confirm('このイベントを削除しますか？\nこの操作は取り消せません。');"
                                    class="btn-secondary" 
                                    style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-color: #dc3545;"
