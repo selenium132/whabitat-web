@@ -162,7 +162,7 @@ try {
         echo "Service Account: <strong>" . htmlspecialchars($debugEmail) . "</strong><br>";
         echo "Project ID: <strong>" . htmlspecialchars($debugProject) . "</strong></p>";
     }
-    echo "<p><a href='event_responses.php?id=$event_id'>戻る</a></p>";
+    echo "<p><a href='form_responses.php?id=$event_id'>戻る</a></p>";
     exit;
 }
 ?>

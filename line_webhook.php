@@ -120,7 +120,7 @@ foreach ($events as $event) {
                     } else {
                         $status = " ⬜未回答";
                     }
-                    $replyText .= "🔹 {$date} ～{$status}\n   {$ev['title']}\n   👉 https://whabitathome.com/event_view.php?id={$ev['id']}\n\n";
+                    $replyText .= "🔹 {$date} ～{$status}\n   {$ev['title']}\n   👉 https://whabitathome.com/form_view.php?id={$ev['id']}\n\n";
                 }
             }
             
@@ -129,7 +129,7 @@ foreach ($events as $event) {
                 $replyText .= "📋 あなた宛のアンケート 📋\n\n";
                 foreach ($user_surveys as $sv) {
                     $answered = isset($user_attended[$sv['id']]) ? " ✅回答済" : " ⬜未回答";
-                    $replyText .= "🔸 {$sv['title']}{$answered}\n   👉 https://whabitathome.com/event_view.php?id={$sv['id']}\n\n";
+                    $replyText .= "🔸 {$sv['title']}{$answered}\n   👉 https://whabitathome.com/form_view.php?id={$sv['id']}\n\n";
                 }
             }
             

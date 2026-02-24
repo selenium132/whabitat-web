@@ -222,11 +222,11 @@ function getStatusLabel($status) {
                     <i class="fas fa-copy"></i> シート用にコピー
                 </button>
                 <?php if (!empty($event['spreadsheet_id'])): ?>
-                    <a href="event_google_sheet.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; background-color: #0f9d58; color: white;">
+                    <a href="form_google_sheet.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; background-color: #0f9d58; color: white;">
                         <i class="fas fa-sync-alt"></i> シートを開く (同期)
                     </a>
                 <?php else: ?>
-                    <a href="event_google_sheet.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; background-color: #0f9d58; color: white;">
+                    <a href="form_google_sheet.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; background-color: #0f9d58; color: white;">
                         <i class="fas fa-file-excel"></i> シート連携
                     </a>
                 <?php endif; ?>

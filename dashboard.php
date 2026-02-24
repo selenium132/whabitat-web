@@ -167,11 +167,11 @@ try {
                     <h1 class="welcome-user"><?php echo htmlspecialchars($_SESSION['name'] ?? 'メンバー'); ?> さん</h1>
                 </div>
                 <div class="welcome-actions">
-                    <a href="event_create.php?type=survey" class="btn-primary">
+                    <a href="form_create.php?type=survey" class="btn-primary">
                         <i class="fas fa-plus"></i> アンケート作成
                     </a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
-                        <a href="event_create.php" class="btn-primary">
+                        <a href="form_create.php" class="btn-primary">
                             <i class="fas fa-plus"></i> 出欠確認作成
                         </a>
                         <a href="admin/members.php" class="btn-secondary">
@@ -225,19 +225,19 @@ try {
                         <div class="event-actions-wrap">
                             <div class="event-actions">
                                 <?php $answered = isset($user_responses[$event['id']]); ?>
-                                <a href="event_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
+                                <a href="form_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
                                     <?php echo $answered ? '<i class="fas fa-check" style="margin-right:4px"></i>回答を変更' : '回答する'; ?>
                                 </a>
-                                <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
+                                <a href="form_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                     回答状況
                                 </a>
                             </div>
                             <div class="event-icons">
                                 <?php if (isEventAdmin($event['id'])): ?>
-                                    <a href="event_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
+                                    <a href="form_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
                                         <i class="far fa-edit"></i><span>編集</span>
                                     </a>
-                                    <form method="POST" action="event_archive.php" style="display:contents;">
+                                    <form method="POST" action="form_archive.php" style="display:contents;">
                                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                                         <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
                                         <input type="hidden" name="action" value="archive">
@@ -276,18 +276,18 @@ try {
                         <div class="event-actions-wrap">
                             <div class="event-actions">
                                 <?php $answered_s = isset($user_responses[$event['id']]); ?>
-                                <a href="event_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered_s ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered_s) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
+                                <a href="form_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered_s ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered_s) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
                                     <?php echo $answered_s ? '<i class="fas fa-check" style="margin-right:4px"></i>回答を変更' : '回答する'; ?>
                                 </a>
                                 <?php if ($_SESSION['role'] === 'admin' || $event['created_by'] == $_SESSION['user_id'] || in_array($event['id'], $user_admin_events)): ?>
-                                <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
+                                <a href="form_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                     回答状況
                                 </a>
                                 <?php endif; ?>
                             </div>
                             <div class="event-icons">
                                 <?php if (isEventAdmin($event['id'])): ?>
-                                    <a href="event_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
+                                    <a href="form_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
                                         <i class="far fa-edit"></i><span>編集</span>
                                     </a>
                                 <?php endif; ?>
@@ -808,7 +808,7 @@ try {
     <script>
         // Copy event/survey URL to clipboard
         function copyEventUrl(eventId) {
-            const url = window.location.origin + '/event_view.php?id=' + eventId;
+            const url = window.location.origin + '/form_view.php?id=' + eventId;
             navigator.clipboard.writeText(url).then(function() {
                 alert('URLをコピーしました！');
             }).catch(function(err) {

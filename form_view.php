@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (!$can_submit) {
         // Redirect back without saving
-        header("Location: event_view.php?id=" . $event_id);
+        header("Location: form_view.php?id=" . $event_id);
         exit;
     }
 
@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($validation_error) {
         // Redirect back with error
-        header("Location: event_view.php?id=" . $event_id . "&error=required");
+        header("Location: form_view.php?id=" . $event_id . "&error=required");
         exit;
     }
     
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO attendance (event_id, user_id, status, comment, response_data) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE status = ?, comment = ?, response_data = ?");
         $stmt->execute([$event_id, $_SESSION['user_id'], $status, $comment, $response_data, $status, $comment, $response_data]);
         // Refresh to show updated data
-        header("Location: event_view.php?id=" . $event_id);
+        header("Location: form_view.php?id=" . $event_id);
         exit;
     }
 }
@@ -605,7 +605,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
         </form>
 
         <div style="text-align: right; margin-top: 10px;">
-            <a href="event_responses.php?id=<?php echo $event_id; ?>" style="color: #1967d2; text-decoration: none; font-size: 14px;">
+            <a href="form_responses.php?id=<?php echo $event_id; ?>" style="color: #1967d2; text-decoration: none; font-size: 14px;">
                 <i class="fas fa-list"></i> みんなの回答を見る
             </a>
         </div>

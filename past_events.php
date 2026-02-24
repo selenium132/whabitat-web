@@ -66,12 +66,12 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <h3 style="margin: 0.2rem 0 0; font-size: 1.1rem;"><?php echo htmlspecialchars($event['title']); ?></h3>
                         </div>
                         <div style="display: flex; gap: 5px; align-items: center;">
-                            <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 1rem;">
+                            <a href="form_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 1rem;">
                                 回答一覧
                             </a>
                             <?php if ($_SESSION['role'] === 'admin'): ?>
                                 <?php if (!empty($event['is_archived'])): ?>
-                                    <form method="POST" action="event_archive.php" style="display: inline;">
+                                    <form method="POST" action="form_archive.php" style="display: inline;">
                                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                                         <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
                                         <input type="hidden" name="action" value="unarchive">
