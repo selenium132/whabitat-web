@@ -15,7 +15,7 @@ function getDBOverwrite() {
 
 try {
     $pdo = getDBOverwrite();
-    $sql = file_get_contents('update_calendar_schema.sql');
+    $sql = file_get_contents(__DIR__ . '/update_calendar_schema.sql');
     $pdo->exec($sql);
     echo "Migration successful!\n";
 } catch (Exception $e) {

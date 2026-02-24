@@ -23,7 +23,7 @@ function getDBOverwrite() {
 
 try {
     $pdo = getDBOverwrite();
-    $sql = file_get_contents('setup_v19.sql');
+    $sql = file_get_contents(__DIR__ . '/setup_v19.sql');
     if (!$sql) die("Could not read setup_v19.sql");
     
     $pdo->exec($sql);
