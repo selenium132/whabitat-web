@@ -22,7 +22,7 @@ try {
 }
 
 // Fetch Upcoming Events (exclude archived)
-$stmt = $pdo->query("SELECT * FROM events WHERE event_date >= CURDATE() AND is_archived = 0 ORDER BY event_date ASC, open_at ASC");
+$stmt = $pdo->query("SELECT * FROM events WHERE is_archived = 0 AND (event_date >= CURDATE() OR (type = 'survey' AND (close_at IS NULL OR close_at >= NOW()))) ORDER BY event_date ASC, open_at ASC");
 $all_upcoming = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $attend_checks = [];
