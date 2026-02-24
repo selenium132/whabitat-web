@@ -44,23 +44,95 @@ foreach ($events as $event) {
     if (preg_match('/(イベント|予定|活動|event)/ui', $userMessage)) {
         
         $pdo = getDB();
-        // Fetch Upcoming Events (exclude archived and surveys)
+        
+        // Identify the LINE user
+        $line_user_id = $event['source']['userId'] ?? null;
+        $db_user_id = null;
+        if ($line_user_id) {
+            $user_stmt = $pdo->prepare("SELECT id FROM users WHERE line_user_id = ?");
+            $user_stmt->execute([$line_user_id]);
+            $db_user = $user_stmt->fetch(PDO::FETCH_ASSOC);
+            if ($db_user) {
+                $db_user_id = $db_user['id'];
+            }
+        }
+        
+        // Fetch user's attendance responses
+        $user_attended = [];
+        if ($db_user_id) {
+            $att_stmt = $pdo->prepare("SELECT event_id, status FROM attendance WHERE user_id = ?");
+            $att_stmt->execute([$db_user_id]);
+            foreach ($att_stmt->fetchAll(PDO::FETCH_ASSOC) as $a) {
+                $user_attended[$a['event_id']] = $a['status'];
+            }
+        }
+        
+        // Fetch Upcoming Events (exclude archived, exclude surveys)
         $stmt = $pdo->prepare("SELECT * FROM events WHERE event_date >= CURDATE() AND (is_archived = 0 OR is_archived IS NULL) AND (type = 'event' OR type IS NULL) ORDER BY event_date ASC LIMIT 10");
         $stmt->execute();
         $upcoming_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Fetch Surveys targeted to this user
+        $user_surveys = [];
+        if ($db_user_id) {
+            $survey_stmt = $pdo->prepare("SELECT * FROM events WHERE event_date >= CURDATE() AND (is_archived = 0 OR is_archived IS NULL) AND type = 'survey' ORDER BY event_date ASC");
+            $survey_stmt->execute();
+            $all_surveys = $survey_stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            foreach ($all_surveys as $sv) {
+                $target_users = json_decode($sv['target_users'] ?? '[]', true);
+                $is_target = empty($target_users) || in_array($db_user_id, $target_users);
+                
+                // Also check if user is admin, creator, or event_admin
+                if (!$is_target) {
+                    try {
+                        $ea_stmt = $pdo->prepare("SELECT 1 FROM event_admins WHERE event_id = ? AND user_id = ?");
+                        $ea_stmt->execute([$sv['id'], $db_user_id]);
+                        if ($ea_stmt->fetch()) $is_target = true;
+                    } catch (Exception $e) {}
+                }
+                if (!$is_target && $sv['created_by'] == $db_user_id) {
+                    $is_target = true;
+                }
+                
+                if ($is_target) {
+                    $user_surveys[] = $sv;
+                }
+            }
+        }
 
         $replyText = "";
 
-        if (empty($upcoming_events)) {
+        // Events section
+        if (empty($upcoming_events) && empty($user_surveys)) {
             $replyText = "現在予定されているイベントはありません。";
         } else {
-            $replyText = "📅 これからのイベント情報 📅\n\n";
-            foreach ($upcoming_events as $ev) {
-                $date = date('m/d H:i', strtotime($ev['event_date']));
-                $replyText .= "🔹 {$date} ～\n   {$ev['title']}\n";
-                // Add link to view if needed, e.g. "https://whabitathome.com/event_view.php?id=" . $ev['id']
-                $replyText .= "   👇 詳細・回答:\n   https://whabitathome.com/event_view.php?id={$ev['id']}\n\n";
+            if (!empty($upcoming_events)) {
+                $replyText .= "📅 これからのイベント 📅\n\n";
+                foreach ($upcoming_events as $ev) {
+                    $date = date('m/d H:i', strtotime($ev['event_date']));
+                    $status = "";
+                    if ($db_user_id && isset($user_attended[$ev['id']])) {
+                        $s = $user_attended[$ev['id']];
+                        if ($s === 'join') $status = " ✅参加";
+                        elseif ($s === 'maybe') $status = " 🤔未定";
+                        elseif ($s === 'decline') $status = " ❌不参加";
+                    } else {
+                        $status = " ⬜未回答";
+                    }
+                    $replyText .= "🔹 {$date} ～{$status}\n   {$ev['title']}\n   👉 https://whabitathome.com/event_view.php?id={$ev['id']}\n\n";
+                }
             }
+            
+            // Surveys section
+            if (!empty($user_surveys)) {
+                $replyText .= "📋 あなた宛のアンケート 📋\n\n";
+                foreach ($user_surveys as $sv) {
+                    $answered = isset($user_attended[$sv['id']]) ? " ✅回答済" : " ⬜未回答";
+                    $replyText .= "🔸 {$sv['title']}{$answered}\n   👉 https://whabitathome.com/event_view.php?id={$sv['id']}\n\n";
+                }
+            }
+            
             $replyText .= "サイトで確認: https://whabitathome.com/dashboard.php";
         }
 
