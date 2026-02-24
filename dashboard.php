@@ -80,6 +80,20 @@ foreach ($all_upcoming as $ev) {
     }
 }
 
+// Fetch user's responses for all upcoming events
+$user_responses = [];
+try {
+    $event_ids = array_column($all_upcoming, 'id');
+    if (!empty($event_ids)) {
+        $placeholders = implode(',', array_fill(0, count($event_ids), '?'));
+        $resp_stmt = $pdo->prepare("SELECT event_id, status FROM attendance WHERE user_id = ? AND event_id IN ($placeholders)");
+        $resp_stmt->execute(array_merge([$_SESSION['user_id']], $event_ids));
+        foreach ($resp_stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $user_responses[$r['event_id']] = $r['status'];
+        }
+    }
+} catch (Exception $e) {}
+
 // Fetch Past Events (include archived even if date is future)
 $stmt = $pdo->query("SELECT * FROM events WHERE (event_date < CURDATE() OR is_archived = 1) ORDER BY event_date DESC LIMIT 5");
 $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -223,8 +237,9 @@ try {
                         </div>
                         <div class="event-actions-wrap">
                             <div class="event-actions">
-                                <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer">
-                                    回答する
+                                <?php $answered = isset($user_responses[$event['id']]); ?>
+                                <a href="event_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
+                                    <?php echo $answered ? '<i class="fas fa-check" style="margin-right:4px"></i>回答済' : '回答する'; ?>
                                 </a>
                                 <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                     回答状況
@@ -273,8 +288,9 @@ try {
                         </div>
                         <div class="event-actions-wrap">
                             <div class="event-actions">
-                                <a href="event_view.php?id=<?php echo $event['id']; ?>" class="btn-primary btn-answer">
-                                    回答する
+                                <?php $answered_s = isset($user_responses[$event['id']]); ?>
+                                <a href="event_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered_s ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered_s) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
+                                    <?php echo $answered_s ? '<i class="fas fa-check" style="margin-right:4px"></i>回答済' : '回答する'; ?>
                                 </a>
                                 <?php if ($_SESSION['role'] === 'admin' || $event['created_by'] == $_SESSION['user_id'] || in_array($event['id'], $user_admin_events)): ?>
                                 <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
