@@ -48,12 +48,14 @@ foreach ($events as $event) {
         // Identify the LINE user
         $line_user_id = $event['source']['userId'] ?? null;
         $db_user_id = null;
+        $db_user_role = 'member';
         if ($line_user_id) {
-            $user_stmt = $pdo->prepare("SELECT id FROM users WHERE line_user_id = ?");
+            $user_stmt = $pdo->prepare("SELECT id, role FROM users WHERE line_user_id = ?");
             $user_stmt->execute([$line_user_id]);
             $db_user = $user_stmt->fetch(PDO::FETCH_ASSOC);
             if ($db_user) {
                 $db_user_id = $db_user['id'];
+                $db_user_role = $db_user['role'] ?? 'member';
             }
         }
         
@@ -75,7 +77,7 @@ foreach ($events as $event) {
         // Fetch Surveys targeted to this user
         $user_surveys = [];
         if ($db_user_id) {
-            $survey_stmt = $pdo->prepare("SELECT * FROM events WHERE event_date >= CURDATE() AND (is_archived = 0 OR is_archived IS NULL) AND type = 'survey' ORDER BY event_date ASC");
+            $survey_stmt = $pdo->prepare("SELECT * FROM events WHERE (is_archived = 0 OR is_archived IS NULL) AND type = 'survey' AND (close_at IS NULL OR close_at >= NOW()) ORDER BY event_date ASC");
             $survey_stmt->execute();
             $all_surveys = $survey_stmt->fetchAll(PDO::FETCH_ASSOC);
             
@@ -85,14 +87,15 @@ foreach ($events as $event) {
                 
                 // Also check if user is admin, creator, or event_admin
                 if (!$is_target) {
-                    try {
-                        $ea_stmt = $pdo->prepare("SELECT 1 FROM event_admins WHERE event_id = ? AND user_id = ?");
-                        $ea_stmt->execute([$sv['id'], $db_user_id]);
-                        if ($ea_stmt->fetch()) $is_target = true;
-                    } catch (Exception $e) {}
-                }
-                if (!$is_target && $sv['created_by'] == $db_user_id) {
-                    $is_target = true;
+                    if ($db_user_role === 'admin' || $sv['created_by'] == $db_user_id) {
+                        $is_target = true;
+                    } else {
+                        try {
+                            $ea_stmt = $pdo->prepare("SELECT 1 FROM event_admins WHERE event_id = ? AND user_id = ?");
+                            $ea_stmt->execute([$sv['id'], $db_user_id]);
+                            if ($ea_stmt->fetch()) $is_target = true;
+                        } catch (Exception $e) {}
+                    }
                 }
                 
                 if ($is_target) {
@@ -105,7 +108,7 @@ foreach ($events as $event) {
 
         // Events section
         if (empty($upcoming_events) && empty($user_surveys)) {
-            $replyText = "現在予定されているイベントはありません。";
+            $replyText = "現在予定されているイベントやアンケートはありません。";
         } else {
             if (!empty($upcoming_events)) {
                 $replyText .= "📅 これからのイベント 📅\n\n";
