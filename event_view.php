@@ -629,7 +629,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                     let isEmpty = false;
                     
                     if (type === 'paragraph') {
-                        val = card.querySelector('input')?.value?.trim() || '';
+                        val = card.querySelector('textarea')?.value?.trim() || '';
                         isEmpty = val === '';
                     } else if (type === 'radio') {
                         const checked = card.querySelector('input:checked');
@@ -660,7 +660,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                 let val = null;
 
                 if (type === 'paragraph') {
-                    val = card.querySelector('input').value;
+                    val = card.querySelector('textarea').value;
                 } else if (type === 'radio') {
                     const checked = card.querySelector('input:checked');
                     val = checked ? checked.value : '';
@@ -693,7 +693,9 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             // Clear Custom Questions
             const customInputs = document.querySelectorAll('.custom-input');
             customInputs.forEach(input => {
-                if (input.type === 'text') {
+                if (input.tagName === 'TEXTAREA') {
+                    input.value = '';
+                } else if (input.type === 'text') {
                     input.value = '';
                 } else if (input.type === 'radio' || input.type === 'checkbox') {
                     input.checked = false;
