@@ -239,7 +239,7 @@ try {
                             <div class="event-actions">
                                 <?php $answered = isset($user_responses[$event['id']]); ?>
                                 <a href="event_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
-                                    <?php echo $answered ? '<i class="fas fa-check" style="margin-right:4px"></i>回答済' : '回答する'; ?>
+                                    <?php echo $answered ? '<i class="fas fa-check" style="margin-right:4px"></i>回答を変更' : '回答する'; ?>
                                 </a>
                                 <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                     回答状況
@@ -290,7 +290,7 @@ try {
                             <div class="event-actions">
                                 <?php $answered_s = isset($user_responses[$event['id']]); ?>
                                 <a href="event_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered_s ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered_s) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
-                                    <?php echo $answered_s ? '<i class="fas fa-check" style="margin-right:4px"></i>回答済' : '回答する'; ?>
+                                    <?php echo $answered_s ? '<i class="fas fa-check" style="margin-right:4px"></i>回答を変更' : '回答する'; ?>
                                 </a>
                                 <?php if ($_SESSION['role'] === 'admin' || $event['created_by'] == $_SESSION['user_id'] || in_array($event['id'], $user_admin_events)): ?>
                                 <a href="event_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
