@@ -167,12 +167,12 @@ try {
                     <h1 class="welcome-user"><?php echo htmlspecialchars($_SESSION['name'] ?? 'メンバー'); ?> さん</h1>
                 </div>
                 <div class="welcome-actions">
+                    <a href="event_create.php?type=survey" class="btn-primary">
+                        <i class="fas fa-plus"></i> アンケート作成
+                    </a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="event_create.php" class="btn-primary">
                             <i class="fas fa-plus"></i> 出欠確認作成
-                        </a>
-                        <a href="event_create.php?type=survey" class="btn-primary">
-                            <i class="fas fa-plus"></i> アンケート作成
                         </a>
                         <a href="admin/members.php" class="btn-secondary">
                             <i class="fas fa-users"></i> メンバー管理
@@ -259,9 +259,6 @@ try {
             <!-- アンケート Section -->
             <div id="surveys" style="display: flex; align-items: center; gap: 16px; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">
                 <h2 class="section-title" style="text-align: left; margin: 0;">アンケート</h2>
-                <a href="event_create.php?type=survey" class="btn-primary" style="font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; white-space: nowrap;">
-                    <i class="fas fa-plus" style="margin-right:4px;"></i>作成
-                </a>
             </div>
             <?php if (empty($surveys)): ?>
                 <div class="card" style="text-align: center; color: var(--text-light);">
