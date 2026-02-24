@@ -95,6 +95,11 @@ $is_first_registration = empty($current_user['name']);
     </header>
     <main>
         <div class="dashboard-container" style="max-width: 500px;">
+            <?php if (!$is_first_registration): ?>
+                <a href="dashboard.php" style="display:inline-flex;align-items:center;gap:6px;color:var(--text-light);text-decoration:none;font-size:0.9rem;margin-bottom:1rem;">
+                    <i class="fas fa-arrow-left"></i>ダッシュボードに戻る
+                </a>
+            <?php endif; ?>
             <div class="card">
                 <?php if ($is_first_registration): ?>
                     <h1 style="text-align: center; font-size: 1.8rem; margin-bottom: 2rem;">プロフィール登録</h1>
@@ -150,11 +155,6 @@ $is_first_registration = empty($current_user['name']);
                         <?php echo $is_first_registration ? '登録して始める' : '更新する'; ?>
                     </button>
                 </form>
-                <?php if (!$is_first_registration): ?>
-                    <a href="dashboard.php" class="btn-secondary" style="display:block;text-align:center;margin-top:1rem;width:100%;">
-                        <i class="fas fa-arrow-left" style="margin-right:6px;"></i>ダッシュボードに戻る
-                    </a>
-                <?php endif; ?>
             </div>
         </div>
     </main>
