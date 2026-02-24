@@ -96,6 +96,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Handle Delete Response
+    if (($_POST['action'] ?? '') === 'delete') {
+        $stmt = $pdo->prepare("DELETE FROM attendance WHERE event_id = ? AND user_id = ?");
+        $stmt->execute([$event_id, $_SESSION['user_id']]);
+        header("Location: form_view.php?id=" . $event_id);
+        exit;
+    }
+
     $comment = $_POST['comment'] ?? '';
     $response_data = $_POST['response_data'] ?? null; // JSON String handling custom answers
     
@@ -597,6 +605,9 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                 <button type="button" onclick="submitForm()" class="btn-submit">
                     <?php echo $my_attendance ? '更新' : '送信'; ?>
                 </button>
+                <?php if ($my_attendance): ?>
+                    <button type="button" onclick="deleteResponse()" class="btn-clear" style="color: var(--accent-red); margin-left: 10px;">回答を削除</button>
+                <?php endif; ?>
                 <button type="button" onclick="clearForm()" class="btn-clear">フォームをクリア</button>
             </div>
 
@@ -707,6 +718,17 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             // Clear Comment (fallback)
             const comments = document.querySelectorAll('input[name="comment"]');
             comments.forEach(c => c.value = '');
+        }
+
+        function deleteResponse() {
+            if(!confirm('本当に回答を削除しますか？\nこの操作は取り消せません。')) return;
+            const form = document.getElementById('entryForm');
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'delete';
+            form.appendChild(actionInput);
+            form.submit();
         }
         
         // Copy current URL to clipboard
