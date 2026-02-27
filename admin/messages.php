@@ -25,6 +25,14 @@ if (isset($_GET['mark_all_read'])) {
     exit;
 }
 
+// Handle Delete
+if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
+    $stmt = $pdo->prepare("DELETE FROM contact_messages WHERE id = ?");
+    $stmt->execute([$_GET['delete']]);
+    header("Location: messages.php" . (isset($_GET['source']) ? "?source=" . $_GET['source'] : ""));
+    exit;
+}
+
 // Filter by source
 $source = $_GET['source'] ?? 'all';
 $sort = $_GET['sort'] ?? 'newest';
@@ -137,21 +145,36 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
         .filter-btn.active:hover {
             background: var(--primary-color);
         }
-        .mark-read-btn {
+        .action-btns {
             position: absolute;
             top: 1rem;
             right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .action-btn {
             padding: 0.3rem 0.8rem;
             font-size: 0.8rem;
             border-radius: 15px;
-            background: #28a745;
             color: white;
             text-decoration: none;
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
         }
-        .mark-read-btn:hover {
+        .btn-read {
+            background: #28a745;
+        }
+        .btn-read:hover {
             background: #218838;
+        }
+        .btn-delete {
+            background: #6c757d;
+        }
+        .btn-delete:hover {
+            background: #dc3545;
         }
         .unread-badge {
             background: #dc3545;
@@ -213,11 +236,16 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                         if ($isSuggestion) $cardClass .= ' suggestion';
                     ?>
                     <div class="<?php echo $cardClass; ?>">
-                        <?php if ($isUnread): ?>
-                            <a href="?mark_read=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="mark-read-btn">
-                                <i class="fas fa-check"></i> 既読にする
+                        <div class="action-btns">
+                            <?php if ($isUnread): ?>
+                                <a href="?mark_read=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="action-btn btn-read">
+                                    <i class="fas fa-check"></i> 既読にする
+                                </a>
+                            <?php endif; ?>
+                            <a href="?delete=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="action-btn btn-delete" onclick="return confirm('本当に削除しますか？\n(スパムや不要なメッセージ)');">
+                                <i class="fas fa-trash"></i> 削除
                             </a>
-                        <?php endif; ?>
+                        </div>
                         <div class="message-meta">
                             <span>
                                 <?php if ($isSuggestion): ?>
