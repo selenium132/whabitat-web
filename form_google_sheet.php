@@ -66,7 +66,7 @@ try {
     // 3. Prepare Data
     // Fetch Participants
     $stmt = $pdo->prepare("
-        SELECT u.name, u.student_id, u.line_name, u.grade, a.status, a.comment, a.response_data, a.updated_at
+        SELECT u.name, u.student_id, u.line_name, u.faculty, u.grade, a.status, a.comment, a.response_data, a.updated_at
         FROM attendance a 
         JOIN users u ON a.user_id = u.id 
         WHERE a.event_id = ? AND a.status = 'join'
@@ -85,7 +85,7 @@ try {
     }
 
     // Build Header Row
-    $headerRow = ['名前', '学年', 'ステータス', 'コメント', '学籍番号', 'LINE名', '回答日時'];
+    $headerRow = ['名前', '学部', '学年', 'ステータス', 'コメント', '学籍番号', 'LINE名', '回答日時'];
     foreach ($form_schema as $q) {
         $headerRow[] = $q['title'];
     }
@@ -97,6 +97,7 @@ try {
     foreach ($participants as $p) {
         $row = [
             $p['name'],
+            $p['faculty'],
             $p['grade'],
             $p['status'],
             $p['comment'],
