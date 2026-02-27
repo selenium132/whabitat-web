@@ -615,11 +615,13 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
 
         </form>
 
+        <?php if (isEventAdmin($event_id) || $event['created_by'] == $_SESSION['user_id']): ?>
         <div style="text-align: right; margin-top: 10px;">
             <a href="form_responses.php?id=<?php echo $event_id; ?>" style="color: #1967d2; text-decoration: none; font-size: 14px;">
                 <i class="fas fa-list"></i> みんなの回答を見る
             </a>
         </div>
+        <?php endif; ?>
     </div>
 
     <script>
