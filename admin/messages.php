@@ -146,11 +146,12 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
             background: var(--primary-color);
         }
         .action-btns {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
             display: flex;
             gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #eee;
         }
         .action-btn {
             padding: 0.3rem 0.8rem;
@@ -236,16 +237,6 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                         if ($isSuggestion) $cardClass .= ' suggestion';
                     ?>
                     <div class="<?php echo $cardClass; ?>">
-                        <div class="action-btns">
-                            <?php if ($isUnread): ?>
-                                <a href="?mark_read=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="action-btn btn-read">
-                                    <i class="fas fa-check"></i> 既読にする
-                                </a>
-                            <?php endif; ?>
-                            <a href="?delete=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="action-btn btn-delete" onclick="return confirm('本当に削除しますか？\n(スパムや不要なメッセージ)');">
-                                <i class="fas fa-trash"></i> 削除
-                            </a>
-                        </div>
                         <div class="message-meta">
                             <span>
                                 <?php if ($isSuggestion): ?>
@@ -261,6 +252,16 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                             <span><?php echo date('Y/m/d H:i', strtotime($msg['created_at'])); ?></span>
                         </div>
                         <div class="message-body"><?php echo htmlspecialchars($msg['message']); ?></div>
+                        <div class="action-btns">
+                            <?php if ($isUnread): ?>
+                                <a href="?mark_read=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="action-btn btn-read">
+                                    <i class="fas fa-check"></i> 既読にする
+                                </a>
+                            <?php endif; ?>
+                            <a href="?delete=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="action-btn btn-delete" onclick="return confirm('本当に削除しますか？\n(スパムや不要なメッセージ)');">
+                                <i class="fas fa-trash"></i> 削除
+                            </a>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
