@@ -58,7 +58,13 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; margin-bottom: 1rem; opacity: 0.9;">
                         <div>
                             <div style="color: var(--text-light); font-size: 0.9rem;">
-                                <?php echo date('Y年m月d日', strtotime($event['event_date'])); ?>
+                                <?php if (($event['type'] ?? 'event') === 'survey'): ?>
+                                    <span style="background: #6c5ce7; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; margin-right: 8px;">アンケート</span>
+                                <?php else: ?>
+                                    <span style="background: #0984e3; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; margin-right: 8px;">出欠確認</span>
+                                    <?php echo date('Y年m月d日', strtotime($event['event_date'])); ?>
+                                <?php endif; ?>
+                                
                                 <?php if (!empty($event['is_archived']) && strtotime($event['event_date']) >= strtotime('today')): ?>
                                     <span style="background: #6c757d; color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-left: 8px;">アーカイブ済</span>
                                 <?php endif; ?>
@@ -76,7 +82,8 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
                                         <input type="hidden" name="action" value="unarchive">
                                         <input type="hidden" name="return" value="past_events.php">
-                                        <button type="submit" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #28a745; color: white; border: none; cursor: pointer;" title="出欠確認に戻す" onclick="return confirm('このイベントを出欠確認に戻しますか？')">
+                                        <?php $unarchiveMsg = (($event['type'] ?? 'event') === 'survey') ? 'このアンケートを一覧に戻しますか？' : 'この出欠確認を一覧に戻しますか？'; ?>
+                                        <button type="submit" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #28a745; color: white; border: none; cursor: pointer;" title="一覧に戻す" onclick="return confirm('<?php echo $unarchiveMsg; ?>')">
                                             <i class="fas fa-undo"></i>
                                         </button>
                                     </form>

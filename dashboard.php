@@ -290,6 +290,15 @@ try {
                                     <a href="form_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
                                         <i class="far fa-edit"></i><span>編集</span>
                                     </a>
+                                    <form method="POST" action="form_archive.php" style="display:contents;">
+                                        <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                        <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                                        <input type="hidden" name="action" value="archive">
+                                        <input type="hidden" name="return" value="dashboard.php#surveys">
+                                        <button type="submit" class="icon-btn" title="過去のアンケートに移動" onclick="return confirm('このアンケートをアーカイブしますか？')">
+                                            <i class="fas fa-archive"></i><span>アーカイブ</span>
+                                        </button>
+                                    </form>
                                 <?php endif; ?>
                                 <button type="button" class="icon-btn" title="URLをコピー" onclick="copyEventUrl(<?php echo $event['id']; ?>)">
                                     <i class="fas fa-link"></i><span>コピー</span>
