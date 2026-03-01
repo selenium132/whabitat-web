@@ -104,8 +104,8 @@ try {
     $start_date = $view_past ? date('Y-m-d', strtotime('-12 months')) : date('Y-m-01');
     $end_date = $view_past ? date('Y-m-d') : date('Y-m-d', strtotime('+12 months'));
     
-    $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE event_date >= ? AND event_date <= ? ORDER BY event_date ASC, start_time ASC");
-    $stmt->execute([$start_date, $end_date]);
+    $stmt = $pdo->prepare("SELECT * FROM calendar_events WHERE event_date <= ? AND COALESCE(end_date, event_date) >= ? ORDER BY event_date ASC, start_time ASC");
+    $stmt->execute([$end_date, $start_date]);
     $all_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Filter: hide 幹部関連 (red #dc3545) events for non-admin users
