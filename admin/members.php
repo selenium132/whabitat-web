@@ -185,9 +185,17 @@ $csrf_token = generateCsrfToken();
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
                 <h1 style="margin: 0;">メンバー管理</h1>
-                <a href="members_export_sheet.php" class="btn-primary" style="display: inline-flex; align-items: center; gap: 5px;">
-                    <i class="fas fa-file-excel"></i> シートに出力
-                </a>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <a href="fix_name_spaces.php" class="btn-secondary" title="全員の氏名にスペースを自動挿入" style="background-color: #f39c12; color: white;">
+                        <i class="fas fa-magic"></i> スペース一括挿入
+                    </a>
+                    <a href="bulk_edit_names.php" class="btn-secondary" title="全員の氏名を手動で素早く修正" style="background-color: #1abc9c; color: white;">
+                        <i class="fas fa-edit"></i> 氏名一括修正
+                    </a>
+                    <a href="members_export_sheet.php" class="btn-primary" style="display: inline-flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-file-excel"></i> シートに出力
+                    </a>
+                </div>
             </div>
             
             <!-- Member Statistics -->
