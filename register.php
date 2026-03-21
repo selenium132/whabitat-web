@@ -144,19 +144,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
             <form method="POST" action="">
                 <div class="form-group">
-                    <label class="form-label">お名前（本名）</label>
-                    <input type="text" name="name" class="form-input" placeholder="例：早稲田 太郎" required>
+                    <label class="form-label">名前 <span style="color: #e74c3c;">*</span></label>
+                    <input type="text" name="name" class="form-input" placeholder="例：早稲田 太郎" required value="<?php echo htmlspecialchars($name); ?>">
                 </div>
                 <div class="form-group">
                     <label class="form-label">学籍番号</label>
                     <input type="text" name="student_id" class="form-input" placeholder="例：1A234567">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">LINEの名前</label>
+                    <label class="form-label">LINE名 <span style="color: #e74c3c;">*</span></label>
                     <input type="text" name="line_name" class="form-input" placeholder="例：Taro Waseda" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">入学年</label>
+                    <label class="form-label">入学年 <span style="color: #e74c3c;">*</span></label>
                     <select name="admission_year" class="form-select" required>
                         <option value="">選択してください</option>
                         <?php 
@@ -168,16 +168,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">メールアドレス</label>
-                    <input type="email" name="email" class="form-input" required>
+                    <label class="form-label">メールアドレス <span style="color: #e74c3c;">*</span></label>
+                    <input type="email" name="email" class="form-input" placeholder="例：waseda@example.com" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">パスワード</label>
-                    <input type="password" name="password" class="form-input" required minlength="6">
+                    <label class="form-label">パスワード <span style="color: #e74c3c;">*</span></label>
+                    <input type="password" name="password" class="form-input" required minlength="8">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">サークル員用パスワード</label>
-                    <input type="text" name="secret" class="form-input" required>
+                    <label class="form-label">自動承認用合言葉 <span style="color: #e74c3c;">*</span></label>
+                    <input type="text" name="secret" class="form-input" placeholder="サークルで共有された合言葉" required>
                     <p class="secret-note">※一般メンバー用または管理者用の合言葉を入力</p>
                 </div>
                 <button type="submit" class="btn-auth">登録する</button>
