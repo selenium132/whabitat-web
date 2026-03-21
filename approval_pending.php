@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
     validateCsrfToken($_POST['csrf_token'] ?? ''); // Validate Token
 
     $input_keyword = trim($_POST['secret_keyword']);
-    // Hardcoded secret keyword for temporary mass registration
-    if ($input_keyword === 'whabitathome2026') {
+    // Check against circle secret for mass registration bypass
+    if ($input_keyword === CIRCLE_SECRET) {
         // Approve User
         $update_stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
         $update_stmt->execute([$_SESSION['user_id']]);

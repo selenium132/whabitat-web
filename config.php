@@ -7,7 +7,7 @@ define('DB_USER', 'xs923565_user');
 define('DB_PASS', '9Z`e*k4#K$bW');
 
 // Circle Secret Code (for registration)
-define('CIRCLE_SECRET', 'whabitat2025');     // 一般メンバー用
+define('CIRCLE_SECRET', 'whabitat20th');     // 一般メンバー用
 define('ADMIN_SECRET', 'whabitat_admin');    // 管理者（幹部）用
 
 // API Key for Google Forms Sync (Change this to a random string)
