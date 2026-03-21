@@ -186,9 +186,6 @@ $csrf_token = generateCsrfToken();
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
                 <h1 style="margin: 0;">メンバー管理</h1>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <a href="bulk_edit_sid.php" class="btn-secondary" title="学籍番号のハイフン以降を削除・手動修正" style="background-color: #9b59b6; color: white;">
-                        <i class="fas fa-id-card"></i> 学籍番号一括修正
-                    </a>
                     <a href="members_export_sheet.php" class="btn-primary" style="display: inline-flex; align-items: center; gap: 5px;">
                         <i class="fas fa-file-excel"></i> シートに出力
                     </a>
