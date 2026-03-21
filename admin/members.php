@@ -202,10 +202,14 @@ $csrf_token = generateCsrfToken();
                         <thead>
                             <tr>
                                 <th>名前</th>
+                                <th>ふりがな</th>
                                 <th>学籍番号</th>
                                 <th>LINE名</th>
                                 <th>代</th>
+                                <th>入学年</th>
                                 <th>学部</th>
+                                <th>学科</th>
+                                <th>性別</th>
                                 <th>ステータス</th>
                                 <th>権限</th>
                                 <th>操作</th>
@@ -222,10 +226,20 @@ $csrf_token = generateCsrfToken();
                                             <strong><?php echo htmlspecialchars($m['name']); ?></strong>
                                         </div>
                                     </td>
+                                    <td><?php echo htmlspecialchars($m['name_kana'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($m['student_id']); ?></td>
                                     <td><?php echo htmlspecialchars($m['line_name']); ?></td>
                                     <td><?php echo htmlspecialchars($m['grade']); ?></td>
+                                    <td><?php echo htmlspecialchars($m['admission_year'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
+                                    <td><?php echo htmlspecialchars($m['department'] ?? ''); ?></td>
+                                    <td><?php 
+                                        $gen = $m['gender'] ?? '';
+                                        if ($gen === 'male') echo '男';
+                                        elseif ($gen === 'female') echo '女';
+                                        elseif ($gen === 'no_answer') echo '未回答';
+                                        else echo '-';
+                                    ?></td>
                                     <td>
                                         <?php if ($m['is_approved']): ?>
                                             <span style="color: #2ecc71; font-weight: bold;">承認済</span>
