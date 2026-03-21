@@ -7,12 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $student_id = $_POST['student_id'] ?? '';
     $line_name = $_POST['line_name'] ?? '';
-    $grade = $_POST['grade'] ?? '';
+    $admission_year = $_POST['admission_year'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $secret = $_POST['secret'] ?? '';
 
-    if ($name && $line_name && $grade && $email && $password && $secret) {
+    if ($name && $line_name && $admission_year && $email && $password && $secret) {
         $role = '';
         if ($secret === ADMIN_SECRET) {
             $role = 'admin';
@@ -25,6 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($role) {
             $pdo = getDB();
             
+            // Calculate grade
+            $adm_year_num = (int)str_replace('年', '', $admission_year);
+            $grade = ($adm_year_num > 2000) ? ($adm_year_num - 2024 + 18) . 'th' : '';
+
             // Check if email already exists
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
             $stmt->execute([$email]);
@@ -33,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 // Register user
                 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO users (name, student_id, line_name, grade, email, password_hash, role) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                if ($stmt->execute([$name, $student_id, $line_name, $grade, $email, $passwordHash, $role])) {
+                $stmt = $pdo->prepare("INSERT INTO users (name, student_id, line_name, grade, admission_year, email, password_hash, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                if ($stmt->execute([$name, $student_id, $line_name, $grade, $admission_year, $email, $passwordHash, $role])) {
                     // Auto login
                     $_SESSION['user_id'] = $pdo->lastInsertId();
                     $_SESSION['role'] = $role;
@@ -152,12 +156,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="line_name" class="form-input" placeholder="例：Taro Waseda" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">代（学年）</label>
-                    <select name="grade" class="form-select" required>
+                    <label class="form-label">入学年</label>
+                    <select name="admission_year" class="form-select" required>
                         <option value="">選択してください</option>
-                        <?php foreach (AVAILABLE_GRADES as $g): ?>
-                            <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
-                        <?php endforeach; ?>
+                        <?php 
+                        $current_year = (int)date('Y');
+                        for ($y = $current_year - 2; $y <= $current_year; $y++) {
+                            echo '<option value="' . $y . '年">' . $y . '年</option>';
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group">

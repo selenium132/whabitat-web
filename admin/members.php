@@ -44,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name = $_POST['name'] ?? '';
             $name_kana = $_POST['name_kana'] ?? '';
             $sid = $_POST['student_id'] ?? '';
-            $grade = $_POST['grade'] ?? '';
             $faculty = $_POST['faculty'] ?? '';
             $department = $_POST['department'] ?? '';
             $admission_year = $_POST['admission_year'] ?? '';
@@ -57,7 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $allergies = $_POST['allergies'] ?? '';
             $notes = $_POST['notes'] ?? '';
             
-            if ($name && $grade) {
+            // Calculate grade
+            $grade = '';
+            if ($admission_year) {
+                $adm_year_num = (int)str_replace('年', '', $admission_year);
+                if ($adm_year_num > 2000) {
+                    $grade = ($adm_year_num - 2024 + 18) . 'th';
+                }
+            }
+
+            if ($name && $admission_year) {
                 // Use Prepared Statements to prevent SQL injection
                 $stmt = $pdo->prepare("UPDATE users SET 
                     name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?, 
@@ -119,7 +127,6 @@ $csrf_token = generateCsrfToken();
             document.getElementById('edit_name').value = userObj.name || '';
             document.getElementById('edit_name_kana').value = userObj.name_kana || '';
             document.getElementById('edit_sid').value = userObj.student_id || '';
-            document.getElementById('edit_grade').value = userObj.grade || '';
             document.getElementById('edit_faculty').value = userObj.faculty || '';
             document.getElementById('edit_department').value = userObj.department || '';
             document.getElementById('edit_admission_year').value = userObj.admission_year || '';
@@ -207,6 +214,7 @@ $csrf_token = generateCsrfToken();
                                 <th>LINE名</th>
                                 <th>代</th>
                                 <th>入学年</th>
+                                <th>今の学年</th>
                                 <th>学部</th>
                                 <th>学科</th>
                                 <th>性別</th>
@@ -231,6 +239,24 @@ $csrf_token = generateCsrfToken();
                                     <td><?php echo htmlspecialchars($m['line_name']); ?></td>
                                     <td><?php echo htmlspecialchars($m['grade']); ?></td>
                                     <td><?php echo htmlspecialchars($m['admission_year'] ?? ''); ?></td>
+                                    <td>
+                                        <?php 
+                                        $uni_year_str = "-";
+                                        if (!empty($m['admission_year'])) {
+                                            $adm_year_num = (int)str_replace('年', '', $m['admission_year']);
+                                            $current_year = (int)date('Y');
+                                            $current_month = (int)date('n');
+                                            $current_academic_year = ($current_month >= 4) ? $current_year : $current_year - 1;
+                                            if ($adm_year_num > 2000) {
+                                                $uni_year = $current_academic_year - $adm_year_num + 1;
+                                                if ($uni_year < 1) $uni_year_str = "入学前";
+                                                elseif ($uni_year > 4) $uni_year_str = "OB/OG";
+                                                else $uni_year_str = $uni_year . "年生";
+                                            }
+                                        }
+                                        echo $uni_year_str;
+                                        ?>
+                                    </td>
                                     <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($m['department'] ?? ''); ?></td>
                                     <td><?php 
@@ -363,20 +389,15 @@ $csrf_token = generateCsrfToken();
                 <div class="edit-section">
                     <div class="edit-section-title">大学情報</div>
                     <div class="form-group">
-                        <label class="form-label">代（学年）</label>
-                        <select name="grade" id="edit_grade" class="form-select" required>
-                            <?php foreach (AVAILABLE_GRADES as $g): ?>
-                                <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label class="form-label">入学年</label>
-                        <select name="admission_year" id="edit_admission_year" class="form-select">
+                        <select name="admission_year" id="edit_admission_year" class="form-select" required>
                             <option value="">選択してください</option>
-                            <option value="2026年">2026年</option>
-                            <option value="2027年">2027年</option>
-                            <option value="2028年">2028年</option>
+                            <?php 
+                            $cy = (int)date('Y');
+                            for ($y = $cy - 2; $y <= $cy; $y++) {
+                                echo '<option value="' . $y . '年">' . $y . '年</option>';
+                            }
+                            ?>
                         </select>
                     </div>
                     <div class="form-group">

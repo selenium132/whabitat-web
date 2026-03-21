@@ -23,8 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allergies = $_POST['allergies'] ?? '';
     $notes = $_POST['notes'] ?? '';
 
+    // Calculate grade
+    $grade = '';
+    if ($admission_year) {
+        $adm_year_num = (int)str_replace('年', '', $admission_year);
+        if ($adm_year_num > 2000) {
+            $grade = ($adm_year_num - 2024 + 18) . 'th';
+        }
+    }
+
     // Required fields validation
-    if ($name && $name_kana && $grade && $faculty && $gender && $admission_year && $zipcode && $address && $phone && $birthdate) {
+    if ($name && $name_kana && $faculty && $gender && $admission_year && $zipcode && $address && $phone && $birthdate) {
         $pdo = getDB();
         $stmt = $pdo->prepare("UPDATE users SET name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?, department = ?, admission_year = ?, gender = ?, zipcode = ?, address = ?, phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ? WHERE id = ?");
         
@@ -91,8 +100,6 @@ $waseda_faculties = [
     'スポーツ科学部',
 ];
 
-$admission_years = ['2026年', '2027年', '2028年'];
-
 // Determine if this is initial registration or profile edit
 $is_first_registration = empty($current_user['name']);
 ?>
@@ -145,13 +152,13 @@ $is_first_registration = empty($current_user['name']);
                         
                         <div class="form-group">
                             <label class="form-label">氏名（正式名フルネーム） <span style="color: #e74c3c;">*</span></label>
-                            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※姓と名の間は1文字空ける</p>
-                            <input type="text" name="name" class="form-input" required placeholder="例：早稲田 太郎" value="<?php echo htmlspecialchars($name_val); ?>">
+                            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※姓と名の間は全角スペースを1文字空ける</p>
+                            <input type="text" name="name" class="form-input" required placeholder="例：早稲田　太郎" value="<?php echo htmlspecialchars($name_val); ?>">
                         </div>
                         <div class="form-group">
                             <label class="form-label">氏名（ふりがな） <span style="color: #e74c3c;">*</span></label>
-                            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※姓と名の間は1文字空ける</p>
-                            <input type="text" name="name_kana" class="form-input" required placeholder="例：わせだ たろう" value="<?php echo htmlspecialchars($name_kana_val); ?>">
+                            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※姓と名の間は全角スペースを1文字空ける</p>
+                            <input type="text" name="name_kana" class="form-input" required placeholder="例：わせだ　たろう" value="<?php echo htmlspecialchars($name_kana_val); ?>">
                         </div>
                         <div class="form-group">
                             <label class="form-label">性別 <span style="color: #e74c3c;">*</span></label>
@@ -172,21 +179,18 @@ $is_first_registration = empty($current_user['name']);
                         <h2 style="font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;"><i class="fas fa-graduation-cap"></i> 大学情報</h2>
 
                         <div class="form-group">
-                            <label class="form-label">代（学年） <span style="color: #e74c3c;">*</span></label>
-                            <select name="grade" class="form-select" required>
-                                <option value="">選択してください</option>
-                                <?php foreach (AVAILABLE_GRADES as $g): ?>
-                                    <option value="<?php echo htmlspecialchars($g); ?>" <?php echo $grade_val === $g ? 'selected' : ''; ?>><?php echo htmlspecialchars($g); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label class="form-label">入学年 <span style="color: #e74c3c;">*</span></label>
                             <select name="admission_year" class="form-select" required>
                                 <option value="">選択してください</option>
-                                <?php foreach ($admission_years as $y): ?>
-                                    <option value="<?php echo htmlspecialchars($y); ?>" <?php echo $admission_year_val === $y ? 'selected' : ''; ?>><?php echo htmlspecialchars($y); ?></option>
-                                <?php endforeach; ?>
+                                <?php 
+                                $current_year = (int)date('Y');
+                                // Include current_year - 2 up to current_year
+                                for ($y = $current_year - 2; $y <= $current_year; $y++) {
+                                    $val = $y . '年';
+                                    $sel = ($admission_year_val === $val) ? 'selected' : '';
+                                    echo "<option value=\"$val\" $sel>$val</option>";
+                                }
+                                ?>
                             </select>
                         </div>
                         <div class="form-group">
