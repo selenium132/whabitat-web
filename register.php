@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $secret = $_POST['secret'] ?? '';
 
-    if ($name && $student_id && $line_name && $grade && $email && $password && $secret) {
+    if ($name && $line_name && $grade && $email && $password && $secret) {
         $role = '';
         if ($secret === ADMIN_SECRET) {
             $role = 'admin';
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="form-group">
                     <label class="form-label">学籍番号</label>
-                    <input type="text" name="student_id" class="form-input" placeholder="例：1A234567" required>
+                    <input type="text" name="student_id" class="form-input" placeholder="例：1A234567">
                 </div>
                 <div class="form-group">
                     <label class="form-label">LINEの名前</label>

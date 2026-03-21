@@ -42,20 +42,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($action === 'update_profile') {
             // Admin Update Profile
             $name = $_POST['name'] ?? '';
+            $name_kana = $_POST['name_kana'] ?? '';
             $sid = $_POST['student_id'] ?? '';
             $grade = $_POST['grade'] ?? '';
             $faculty = $_POST['faculty'] ?? '';
+            $department = $_POST['department'] ?? '';
+            $admission_year = $_POST['admission_year'] ?? '';
             $gender = $_POST['gender'] ?? '';
+            $zipcode = $_POST['zipcode'] ?? '';
+            $address = $_POST['address'] ?? '';
+            $phone = $_POST['phone'] ?? '';
+            $birthdate = $_POST['birthdate'] ?? '';
+            $other_circles = $_POST['other_circles'] ?? '';
+            $allergies = $_POST['allergies'] ?? '';
+            $notes = $_POST['notes'] ?? '';
             
-            if ($name && $sid && $grade) {
-                $stmt = $pdo->prepare("UPDATE users SET name = ?, student_id = ?, grade = ?, faculty = ?, gender = ? WHERE id = ?");
-                $stmt->execute([$name, $sid, $grade, $faculty, $gender, $target_id]);
+            if ($name && $grade) {
+                // Use Prepared Statements to prevent SQL injection
+                $stmt = $pdo->prepare("UPDATE users SET 
+                    name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?, 
+                    department = ?, admission_year = ?, gender = ?, zipcode = ?, address = ?, 
+                    phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ? 
+                    WHERE id = ?");
+                $stmt->execute([
+                    $name, $name_kana, $sid, $grade, $faculty, 
+                    $department, $admission_year, $gender, $zipcode, $address, 
+                    $phone, empty($birthdate) ? null : $birthdate, $other_circles, $allergies, $notes, 
+                    $target_id
+                ]);
             }
         }
     }
 }
 
-// Fetch All Members (Sorted by Grade ASC, then Name in Japanese order)
+// Fetch All Members
 $stmt = $pdo->query("SELECT * FROM users ORDER BY grade ASC, name COLLATE utf8mb4_unicode_ci ASC");
 $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -73,11 +93,9 @@ foreach ($members as $m) {
         $grade_counts[$grade]++;
     }
 }
-// Sort by grade name
 ksort($grade_counts);
 
 $csrf_token = generateCsrfToken();
-
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -96,15 +114,24 @@ $csrf_token = generateCsrfToken();
         }
 
         // Modal Logic
-        function openEditModal(id, name, sid, grade, faculty, gender) {
-            document.getElementById('edit_user_id').value = id;
-            document.getElementById('edit_name').value = name;
-            document.getElementById('edit_sid').value = sid;
-            document.getElementById('edit_grade').value = grade;
-            var facultyEl = document.getElementById('edit_faculty');
-            if (facultyEl) facultyEl.value = faculty || '';
-            var genderEl = document.getElementById('edit_gender');
-            if (genderEl) genderEl.value = gender || '';
+        function openEditModal(userObj) {
+            document.getElementById('edit_user_id').value = userObj.id || '';
+            document.getElementById('edit_name').value = userObj.name || '';
+            document.getElementById('edit_name_kana').value = userObj.name_kana || '';
+            document.getElementById('edit_sid').value = userObj.student_id || '';
+            document.getElementById('edit_grade').value = userObj.grade || '';
+            document.getElementById('edit_faculty').value = userObj.faculty || '';
+            document.getElementById('edit_department').value = userObj.department || '';
+            document.getElementById('edit_admission_year').value = userObj.admission_year || '';
+            document.getElementById('edit_gender').value = userObj.gender || '';
+            document.getElementById('edit_zipcode').value = userObj.zipcode || '';
+            document.getElementById('edit_address').value = userObj.address || '';
+            document.getElementById('edit_phone').value = userObj.phone || '';
+            document.getElementById('edit_birthdate').value = userObj.birthdate || '';
+            document.getElementById('edit_other_circles').value = userObj.other_circles || '';
+            document.getElementById('edit_allergies').value = userObj.allergies || '';
+            document.getElementById('edit_notes').value = userObj.notes || '';
+            
             document.getElementById('editModal').style.display = 'flex';
         }
 
@@ -119,8 +146,21 @@ $csrf_token = generateCsrfToken();
             display: none; align-items: center; justify-content: center;
         }
         .modal-content {
-            background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px;
+            background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px;
+            max-height: 90vh; overflow-y: auto;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .edit-section {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .edit-section-title {
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.4rem;
         }
     </style>
 </head>
@@ -136,9 +176,14 @@ $csrf_token = generateCsrfToken();
     <main>
         <div class="dashboard-container" style="max-width: 1100px;">
 
-            <h1 style="margin-bottom: 2rem;">メンバー管理</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+                <h1 style="margin: 0;">メンバー管理</h1>
+                <a href="members_export_sheet.php" class="btn-primary" style="display: inline-flex; align-items: center; gap: 5px;">
+                    <i class="fas fa-file-excel"></i> シートに出力
+                </a>
+            </div>
             
-            <!-- Member Statistics (Compact) -->
+            <!-- Member Statistics -->
             <div style="margin-bottom: 1rem; padding: 0.8rem 1rem; background: #f8f9fa; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; font-size: 0.9rem;">
                 <span style="font-weight: 600;">👥 <?php echo $total_approved; ?>名</span>
                 <span style="color: #999;">|</span>
@@ -161,7 +206,6 @@ $csrf_token = generateCsrfToken();
                                 <th>LINE名</th>
                                 <th>代</th>
                                 <th>学部</th>
-                                <th>性別</th>
                                 <th>ステータス</th>
                                 <th>権限</th>
                                 <th>操作</th>
@@ -182,12 +226,6 @@ $csrf_token = generateCsrfToken();
                                     <td><?php echo htmlspecialchars($m['line_name']); ?></td>
                                     <td><?php echo htmlspecialchars($m['grade']); ?></td>
                                     <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
-                                    <td><?php 
-                                        $g = $m['gender'] ?? '';
-                                        if ($g === 'male') echo '男';
-                                        elseif ($g === 'female') echo '女';
-                                        else echo '-';
-                                    ?></td>
                                     <td>
                                         <?php if ($m['is_approved']): ?>
                                             <span style="color: #2ecc71; font-weight: bold;">承認済</span>
@@ -201,8 +239,28 @@ $csrf_token = generateCsrfToken();
                                     <td>
                                         <?php if ($m['id'] != $_SESSION['user_id']): ?>
                                             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                                <?php
+                                                    $userJson = json_encode([
+                                                        'id' => $m['id'],
+                                                        'name' => $m['name'],
+                                                        'name_kana' => $m['name_kana'] ?? '',
+                                                        'student_id' => $m['student_id'],
+                                                        'grade' => $m['grade'],
+                                                        'faculty' => $m['faculty'] ?? '',
+                                                        'department' => $m['department'] ?? '',
+                                                        'admission_year' => $m['admission_year'] ?? '',
+                                                        'gender' => $m['gender'] ?? '',
+                                                        'zipcode' => $m['zipcode'] ?? '',
+                                                        'address' => $m['address'] ?? '',
+                                                        'phone' => $m['phone'] ?? '',
+                                                        'birthdate' => $m['birthdate'] ?? '',
+                                                        'other_circles' => $m['other_circles'] ?? '',
+                                                        'allergies' => $m['allergies'] ?? '',
+                                                        'notes' => $m['notes'] ?? ''
+                                                    ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+                                                ?>
                                                 <button type="button" class="btn-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;" 
-                                                    onclick="openEditModal('<?php echo $m['id']; ?>', '<?php echo htmlspecialchars($m['name'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['student_id'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['grade'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['faculty'] ?? '', ENT_QUOTES); ?>', '<?php echo htmlspecialchars($m['gender'] ?? '', ENT_QUOTES); ?>')">
+                                                    onclick='openEditModal(<?php echo $userJson; ?>)'>
                                                     編集
                                                 </button>
 
@@ -263,40 +321,97 @@ $csrf_token = generateCsrfToken();
                 <input type="hidden" name="user_id" id="edit_user_id">
                 <input type="hidden" name="action" value="update_profile">
 
-                <div class="form-group">
-                    <label class="form-label">お名前</label>
-                    <input type="text" name="name" id="edit_name" class="form-input" required>
+                <div class="edit-section">
+                    <div class="edit-section-title">基本情報</div>
+                    <div class="form-group">
+                        <label class="form-label">名前</label>
+                        <input type="text" name="name" id="edit_name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ふりがな</label>
+                        <input type="text" name="name_kana" id="edit_name_kana" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">生年月日</label>
+                        <input type="date" name="birthdate" id="edit_birthdate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">性別</label>
+                        <select name="gender" id="edit_gender" class="form-select">
+                            <option value="">選択してください</option>
+                            <option value="male">男性</option>
+                            <option value="female">女性</option>
+                            <option value="no_answer">回答しない</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">学籍番号</label>
-                    <input type="text" name="student_id" id="edit_sid" class="form-input" required>
+
+                <div class="edit-section">
+                    <div class="edit-section-title">大学情報</div>
+                    <div class="form-group">
+                        <label class="form-label">代（学年）</label>
+                        <select name="grade" id="edit_grade" class="form-select" required>
+                            <?php foreach (AVAILABLE_GRADES as $g): ?>
+                                <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">入学年</label>
+                        <select name="admission_year" id="edit_admission_year" class="form-select">
+                            <option value="">選択してください</option>
+                            <option value="2026年">2026年</option>
+                            <option value="2027年">2027年</option>
+                            <option value="2028年">2028年</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">学部</label>
+                        <select name="faculty" id="edit_faculty" class="form-select">
+                            <option value="">選択してください</option>
+                            <?php 
+                            $waseda_faculties = ['政治経済学部','法学部','教育学部','商学部','社会科学部','国際教養学部','文化構想学部','文学部','基幹理工学部','創造理工学部','先進理工学部','人間科学部','スポーツ科学部'];
+                            foreach ($waseda_faculties as $f): ?>
+                                <option value="<?php echo htmlspecialchars($f); ?>"><?php echo htmlspecialchars($f); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">学科</label>
+                        <input type="text" name="department" id="edit_department" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">学籍番号</label>
+                        <input type="text" name="student_id" id="edit_sid" class="form-input">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">代（学年）</label>
-                    <select name="grade" id="edit_grade" class="form-select" required>
-                        <?php foreach (AVAILABLE_GRADES as $g): ?>
-                            <option value="<?php echo htmlspecialchars($g); ?>"><?php echo htmlspecialchars($g); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">学部</label>
-                    <select name="faculty" id="edit_faculty" class="form-select">
-                        <option value="">選択してください</option>
-                        <?php 
-                        $waseda_faculties = ['政治経済学部','法学部','教育学部','商学部','社会科学部','国際教養学部','文化構想学部','文学部','基幹理工学部','創造理工学部','先進理工学部','人間科学部','スポーツ科学部'];
-                        foreach ($waseda_faculties as $f): ?>
-                            <option value="<?php echo htmlspecialchars($f); ?>"><?php echo htmlspecialchars($f); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">性別</label>
-                    <select name="gender" id="edit_gender" class="form-select">
-                        <option value="">選択してください</option>
-                        <option value="male">男性</option>
-                        <option value="female">女性</option>
-                    </select>
+
+                <div class="edit-section">
+                    <div class="edit-section-title">連絡先・その他</div>
+                    <div class="form-group">
+                        <label class="form-label">郵便番号</label>
+                        <input type="text" name="zipcode" id="edit_zipcode" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">住所</label>
+                        <input type="text" name="address" id="edit_address" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">携帯電話番号</label>
+                        <input type="text" name="phone" id="edit_phone" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">他サークル</label>
+                        <input type="text" name="other_circles" id="edit_other_circles" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">アレルギー</label>
+                        <textarea name="allergies" id="edit_allergies" class="form-input" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">その他</label>
+                        <textarea name="notes" id="edit_notes" class="form-input" rows="2"></textarea>
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
