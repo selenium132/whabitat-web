@@ -90,7 +90,7 @@ function requireLogin() {
     // This prevents banned/deleted users from staying logged in via session
     try {
         $pdo = getDB();
-        $stmt = $pdo->prepare("SELECT id, is_approved, name, role FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT id, is_approved, name, role, name_kana, gender, zipcode, address, phone, birthdate, admission_year FROM users WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -104,20 +104,33 @@ function requireLogin() {
         $_SESSION['is_approved'] = $user['is_approved'];
         $_SESSION['role'] = $user['role']; // Also sync role in case of promotion/demotion
 
+        // Check if profile is missing any of the newly added required fields
+        $profile_incomplete = (
+            empty($user['name_kana']) || 
+            empty($user['gender']) || 
+            empty($user['zipcode']) || 
+            empty($user['address']) || 
+            empty($user['phone']) || 
+            empty($user['birthdate']) || 
+            empty($user['admission_year'])
+        );
+
     } catch (PDOException $e) {
-        // DB Error, maybe serve 500 or just ignore and rely on session (fail open or closed?)
-        // Safe to fail closed
         die("Database Error during auth check.");
     }
     
-    // Check Approval Status (except for pending page)
-    if (empty($_SESSION['is_approved']) && basename($_SERVER['PHP_SELF']) !== 'approval_pending.php' && basename($_SERVER['PHP_SELF']) !== 'promote.php') {
+    $current_page = basename($_SERVER['PHP_SELF']);
+    $allowed_unapproved = ['approval_pending.php', 'promote.php', 'logout.php'];
+    $allowed_incomplete = ['register_profile.php', 'approval_pending.php', 'promote.php', 'logout.php'];
+
+    // Check Approval Status
+    if (empty($_SESSION['is_approved']) && !in_array($current_page, $allowed_unapproved)) {
         header("Location: approval_pending.php");
         exit;
     }
 
-    // Check Profile Completion (except for profile registration page)
-    if (empty($_SESSION['name']) && basename($_SERVER['PHP_SELF']) !== 'register_profile.php' && basename($_SERVER['PHP_SELF']) !== 'approval_pending.php' && basename($_SERVER['PHP_SELF']) !== 'promote.php') {
+    // Check Profile Completion (Force existing & new users to complete their profile)
+    if (!empty($_SESSION['is_approved']) && $profile_incomplete && !in_array($current_page, $allowed_incomplete)) {
         header("Location: register_profile.php");
         exit;
     }
