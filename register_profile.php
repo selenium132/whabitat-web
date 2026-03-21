@@ -184,8 +184,8 @@ $is_first_registration = empty($current_user['name']);
                                 <option value="">選択してください</option>
                                 <?php 
                                 $current_year = (int)date('Y');
-                                // Include current_year - 2 up to current_year
-                                for ($y = $current_year - 2; $y <= $current_year; $y++) {
+                                // Include current_year - 3 up to current_year
+                                for ($y = $current_year - 3; $y <= $current_year; $y++) {
                                     $val = $y . '年';
                                     $sel = ($admission_year_val === $val) ? 'selected' : '';
                                     echo "<option value=\"$val\" $sel>$val</option>";

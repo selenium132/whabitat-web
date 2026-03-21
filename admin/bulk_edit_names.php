@@ -107,7 +107,7 @@ $csrf_token = generateCsrfToken();
                                             <span style="font-size:0.8rem; color:#666;"><?php echo htmlspecialchars($m['admission_year'] ?? ''); ?></span>
                                         </td>
                                         <td>
-                                            <input type="text" name="users[<?php echo $m['id']; ?>][name]" value="<?php echo htmlspecialchars($m['name']); ?>" class="bulk-input" required>
+                                            <input type="text" name="users[<?php echo $m['id']; ?>][name]" value="<?php echo htmlspecialchars($m['name']); ?>" class="bulk-input">
                                         </td>
                                         <td>
                                             <input type="text" name="users[<?php echo $m['id']; ?>][name_kana]" value="<?php echo htmlspecialchars($m['name_kana']); ?>" class="bulk-input">

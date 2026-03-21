@@ -216,6 +216,7 @@ $csrf_token = generateCsrfToken();
                     <table>
                         <thead>
                             <tr>
+                                <th style="width: 40px;"></th>
                                 <th>名前</th>
                                 <th>ふりがな</th>
                                 <th>学籍番号</th>
@@ -235,12 +236,16 @@ $csrf_token = generateCsrfToken();
                             <?php foreach ($members as $m): ?>
                                 <tr>
                                     <td>
-                                        <div style="display: flex; align-items: center; gap: 10px;">
-                                            <?php if ($m['avatar_url']): ?>
-                                                <img src="<?php echo htmlspecialchars($m['avatar_url']); ?>" style="width: 32px; height: 32px; border-radius: 50%;">
-                                            <?php endif; ?>
-                                            <strong><?php echo htmlspecialchars($m['name']); ?></strong>
-                                        </div>
+                                        <?php if ($m['avatar_url']): ?>
+                                            <img src="<?php echo htmlspecialchars($m['avatar_url']); ?>" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                        <?php else: ?>
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background-color: #eee; display: flex; align-items: center; justify-content: center; color: #ccc;">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <strong><?php echo htmlspecialchars($m['name']); ?></strong>
                                     </td>
                                     <td><?php echo htmlspecialchars($m['name_kana'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($m['student_id']); ?></td>
@@ -402,7 +407,7 @@ $csrf_token = generateCsrfToken();
                             <option value="">選択してください</option>
                             <?php 
                             $cy = (int)date('Y');
-                            for ($y = $cy - 2; $y <= $cy; $y++) {
+                            for ($y = $cy - 3; $y <= $cy; $y++) {
                                 echo '<option value="' . $y . '年">' . $y . '年</option>';
                             }
                             ?>

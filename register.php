@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="">選択してください</option>
                         <?php 
                         $current_year = (int)date('Y');
-                        for ($y = $current_year - 2; $y <= $current_year; $y++) {
+                        for ($y = $current_year - 3; $y <= $current_year; $y++) {
                             echo '<option value="' . $y . '年">' . $y . '年</option>';
                         }
                         ?>
