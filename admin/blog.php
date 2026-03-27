@@ -28,13 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Handle file upload
         if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] === UPLOAD_ERR_OK) {
             $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            $max_size = 5 * 1024 * 1024;
             $file = $_FILES['thumbnail_file'];
             
             if (!in_array($file['type'], $allowed_types)) {
                 $error = '画像形式はJPEG, PNG, GIF, WebPのみ対応です。';
-            } elseif ($file['size'] > $max_size) {
-                $error = 'ファイルサイズは5MB以下にしてください。';
             } else {
                 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $filename = 'blog_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
