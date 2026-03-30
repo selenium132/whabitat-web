@@ -136,23 +136,28 @@ function requireLogin() {
     }
 }
 
-// Helper: Check if user is Event Admin (Global Admin OR Assigned Event Admin)
+// Helper: Check if user is Event Admin (Global Admin, Creator, OR Assigned Event Admin)
 function isEventAdmin($event_id) {
     // 1. Global Admin is always allowed
     if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
         return true;
     }
     
-    // 2. Check if user is assigned as admin for this event
     if (isset($_SESSION['user_id'])) {
         try {
             $pdo = getDB();
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM event_admins WHERE event_id = ? AND user_id = ?");
-            $stmt->execute([$event_id, $_SESSION['user_id']]);
-            return $stmt->fetchColumn() > 0;
+            
+            // 2. Check if user is the creator of the event
+            $stmt_creator = $pdo->prepare("SELECT COUNT(*) FROM events WHERE id = ? AND created_by = ?");
+            $stmt_creator->execute([$event_id, $_SESSION['user_id']]);
+            if ($stmt_creator->fetchColumn() > 0) return true;
+            
+            // 3. Check if user is assigned as admin for this event
+            $stmt_admin = $pdo->prepare("SELECT COUNT(*) FROM event_admins WHERE event_id = ? AND user_id = ?");
+            $stmt_admin->execute([$event_id, $_SESSION['user_id']]);
+            if ($stmt_admin->fetchColumn() > 0) return true;
         } catch (PDOException $e) {
-            // Table might not exist yet, treat as not admin
-            return false;
+            // Table might not exist yet, ignore
         }
     }
 

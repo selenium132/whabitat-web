@@ -2,12 +2,6 @@
 require_once 'config.php';
 requireLogin();
 
-// Only admins can archive/unarchive
-if ($_SESSION['role'] !== 'admin') {
-    http_response_code(403);
-    exit;
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     exit;
@@ -20,6 +14,12 @@ $action = $_POST['action'] ?? '';
 
 if (!$event_id || !in_array($action, ['archive', 'unarchive'])) {
     http_response_code(400);
+    exit;
+}
+
+// Only event admins (including creators) can archive/unarchive
+if (!isEventAdmin($event_id)) {
+    http_response_code(403);
     exit;
 }
 

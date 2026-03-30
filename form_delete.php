@@ -2,13 +2,13 @@
 require_once 'config.php';
 requireLogin();
 
-// Check Admin
-if ($_SESSION['role'] !== 'admin') {
+$event_id = $_GET['id'] ?? null;
+
+// Only event admins (including creators) can delete
+if (!$event_id || !isEventAdmin($event_id)) {
     header("Location: dashboard.php");
     exit;
 }
-
-$event_id = $_GET['id'] ?? null;
 
 if ($event_id) {
     $pdo = getDB();
