@@ -17,36 +17,13 @@ if (!$event) {
     exit;
 }
 
-// For surveys: restrict response viewing to admin, creator, event_admin only
-if (($event['type'] ?? 'event') === 'survey') {
-    $can_view_responses = false;
-    if ($_SESSION['role'] === 'admin') {
-        $can_view_responses = true;
-    } elseif ($event['created_by'] == $_SESSION['user_id']) {
-        $can_view_responses = true;
-    } else {
-        // Check event_admins
-        try {
-            $admin_check = $pdo->prepare("SELECT 1 FROM event_admins WHERE event_id = ? AND user_id = ?");
-            $admin_check->execute([$event_id, $_SESSION['user_id']]);
-            if ($admin_check->fetch()) {
-                $can_view_responses = true;
-            }
-        } catch (Exception $e) {}
-    }
-    if (!$can_view_responses) {
-        header("Location: dashboard.php");
-        exit;
-    }
-}
-
-// Fetch All Participants (Only those who joined)
-// We might want to see 'maybe' or 'decline' too? Usually just 'join' is public.
-// Admins might want to see all.
+// Determine manager status (Admin, Creator, or Event Admin)
 $is_admin = ($_SESSION['role'] === 'admin');
+$is_manager = $is_admin || ($event['created_by'] == $_SESSION['user_id']) || isEventAdmin($event_id);
 
-if ($is_admin) {
-    // Admin sees everything
+// Fetch All Participants
+if ($is_manager) {
+    // Managers see everything with detailed data
     $stmt = $pdo->prepare("
         SELECT u.name, u.student_id, u.line_name, u.grade, u.faculty, u.gender, a.status, a.comment, a.response_data, a.updated_at
         FROM attendance a 
@@ -55,9 +32,9 @@ if ($is_admin) {
         ORDER BY FIELD(a.status, 'join', 'maybe', 'decline'), a.updated_at DESC
     ");
 } else {
-    // Members see only 'join'
+    // Normal Members see only 'join' with minimal non-private detailed info
     $stmt = $pdo->prepare("
-        SELECT u.name, u.student_id, u.line_name, u.grade, a.status, a.comment, a.response_data, a.updated_at
+        SELECT u.name, u.grade, a.status, a.comment, a.response_data, a.updated_at
         FROM attendance a 
         JOIN users u ON a.user_id = u.id 
         WHERE a.event_id = ? AND a.status = 'join'
@@ -74,8 +51,8 @@ foreach ($participants as $p) {
         $join_count++;
     }
 }
-// If not admin, all participants are 'join' anyway
-if (!$is_admin) {
+// If not manager, all participants are 'join' anyway
+if (!$is_manager) {
     $join_count = count($participants);
 }
 
@@ -214,7 +191,7 @@ function getStatusLabel($status) {
                 <h1 class="event-title" style="margin-top: 5px;">回答一覧: <?php echo htmlspecialchars($event['title']); ?></h1>
                 <p style="color: var(--text-light); font-size: 14px;">参加予定者数: <?php echo $join_count; ?>名</p>
                 <?php 
-                    $is_manager = $is_admin || isEventAdmin($event['id']);
+                    // $is_manager is prepared at top
                 ?>
             </div>
             <?php if ($is_manager): ?>
@@ -245,7 +222,7 @@ function getStatusLabel($status) {
                         <th style="width: 150px;">名前</th>
                         <th style="width: 60px;">学年</th>
                         <th style="width: 80px;"><?php echo (($event['type'] ?? 'event') === 'survey') ? '回答状況' : 'ステータス'; ?></th>
-                        <?php if ($is_admin): ?>
+                        <?php if ($is_manager): ?>
                             <th style="background-color: #f0f4f8;">回答内容 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                             <th style="width: 100px; background-color: #f0f4f8;">学部 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                             <th style="width: 60px; background-color: #f0f4f8;">性別 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
@@ -284,7 +261,7 @@ function getStatusLabel($status) {
                                     <?php echo getStatusLabel($p['status']); ?>
                                 </span>
                             </td>
-                            <?php if ($is_admin): ?>
+                            <?php if ($is_manager): ?>
                                 <td>
                                     <?php if ($p['comment']): ?>
                                         <div style="font-style: italic; margin-bottom: 5px;">"<?php echo htmlspecialchars($p['comment']); ?>"</div>

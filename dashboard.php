@@ -170,10 +170,10 @@ try {
                     <a href="form_create.php?type=survey" class="btn-primary">
                         <i class="fas fa-plus"></i> アンケート作成
                     </a>
+                    <a href="form_create.php" class="btn-primary">
+                        <i class="fas fa-plus"></i> 出欠確認作成
+                    </a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
-                        <a href="form_create.php" class="btn-primary">
-                            <i class="fas fa-plus"></i> 出欠確認作成
-                        </a>
                         <a href="admin/members.php" class="btn-secondary">
                             <i class="fas fa-users"></i> メンバー管理
                         </a>
@@ -279,11 +279,9 @@ try {
                                 <a href="form_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered_s ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered_s) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
                                     <?php echo $answered_s ? '<i class="fas fa-check" style="margin-right:4px"></i>回答を変更' : '回答する'; ?>
                                 </a>
-                                <?php if ($_SESSION['role'] === 'admin' || $event['created_by'] == $_SESSION['user_id'] || in_array($event['id'], $user_admin_events)): ?>
                                 <a href="form_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
                                     回答状況
                                 </a>
-                                <?php endif; ?>
                             </div>
                             <div class="event-icons">
                                 <?php if (isEventAdmin($event['id'])): ?>

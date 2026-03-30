@@ -12,12 +12,7 @@ if ($event_id) {
         exit;
     }
 } else {
-    // Create Mode: Admin can create anything, anyone can create surveys
-    $creating_survey = ($_GET['type'] ?? '') === 'survey';
-    if ($_SESSION['role'] !== 'admin' && !$creating_survey) {
-        header("Location: dashboard.php");
-        exit;
-    }
+    // Create Mode: Anyone can create events and surveys
 }
 
 $edit_mode = false;
