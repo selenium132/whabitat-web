@@ -187,7 +187,7 @@ $is_first_registration = empty($current_user['name']);
                                 $current_month = (int)date('n');
                                 // 4月以降は今年度卒が最も早い、3月以前は前年度卒が最も早い
                                 $earliest_grad = ($current_month >= 4) ? $current_year + 1 : $current_year;
-                                for ($y = $earliest_grad; $y <= $earliest_grad + 3; $y++) {
+                                for ($y = $earliest_grad; $y <= $earliest_grad + 4; $y++) {
                                     $val = $y . '年';
                                     $sel = ($admission_year_val === $val) ? 'selected' : '';
                                     echo "<option value=\"$val\" $sel>$val</option>";

@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $current_year = (int)date('Y');
                         $current_month = (int)date('n');
                         $earliest_grad = ($current_month >= 4) ? $current_year + 1 : $current_year;
-                        for ($y = $earliest_grad; $y <= $earliest_grad + 3; $y++) {
+                        for ($y = $earliest_grad; $y <= $earliest_grad + 4; $y++) {
                             echo '<option value="' . $y . '年">' . $y . '年</option>';
                         }
                         ?>

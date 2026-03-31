@@ -404,7 +404,7 @@ $csrf_token = generateCsrfToken();
                             $cy = (int)date('Y');
                             $cm = (int)date('n');
                             $eg = ($cm >= 4) ? $cy + 1 : $cy;
-                            for ($y = $eg; $y <= $eg + 3; $y++) {
+                            for ($y = $eg; $y <= $eg + 4; $y++) {
                                 echo '<option value="' . $y . '年">' . $y . '年</option>';
                             }
                             ?>
