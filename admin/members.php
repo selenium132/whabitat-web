@@ -217,7 +217,7 @@ $csrf_token = generateCsrfToken();
                                 <th>LINE名</th>
                                 <th>代</th>
                                 <th>卒業予定年</th>
-                                <th>今の学年</th>
+
                                 <th>学部</th>
                                 <th>学科</th>
                                 <th>性別</th>
@@ -246,25 +246,7 @@ $csrf_token = generateCsrfToken();
                                     <td><?php echo htmlspecialchars($m['line_name']); ?></td>
                                     <td><?php echo htmlspecialchars($m['grade']); ?></td>
                                     <td><?php echo htmlspecialchars($m['admission_year'] ?? ''); ?></td>
-                                    <td>
-                                        <?php 
-                                        $uni_year_str = "-";
-                                        if (!empty($m['admission_year'])) {
-                                            $grad_year_num = (int)str_replace('年', '', $m['admission_year']);
-                                            $current_year = (int)date('Y');
-                                            $current_month = (int)date('n');
-                                            $current_academic_year = ($current_month >= 4) ? $current_year : $current_year - 1;
-                                            if ($grad_year_num > 2000) {
-                                                // 卒業年から今の学年を計算: 4 - (卒業年 - 現在学年度 - 1)
-                                                $uni_year = 4 - ($grad_year_num - $current_academic_year - 1);
-                                                if ($uni_year < 1) $uni_year_str = "入学前";
-                                                elseif ($uni_year > 4) $uni_year_str = "OB/OG";
-                                                else $uni_year_str = $uni_year . "年生";
-                                            }
-                                        }
-                                        echo $uni_year_str;
-                                        ?>
-                                    </td>
+
                                     <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($m['department'] ?? ''); ?></td>
                                     <td><?php 
