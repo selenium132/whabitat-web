@@ -25,9 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($role) {
             $pdo = getDB();
             
-            // Calculate grade
-            $adm_year_num = (int)str_replace('年', '', $admission_year);
-            $grade = ($adm_year_num > 2000) ? ($adm_year_num - 2024 + 18) . 'th' : '';
+            // Calculate grade from graduation year
+            $grad_year_num = (int)str_replace('年', '', $admission_year);
+            $grade = ($grad_year_num > 2000) ? ($grad_year_num - 2028 + 18) . 'th' : '';
 
             // Check if email already exists
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
@@ -156,12 +156,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="line_name" class="form-input" placeholder="例：Taro Waseda" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">入学年 <span style="color: #e74c3c;">*</span></label>
+                    <label class="form-label">卒業予定年 <span style="color: #e74c3c;">*</span></label>
                     <select name="admission_year" class="form-select" required>
                         <option value="">選択してください</option>
                         <?php 
                         $current_year = (int)date('Y');
-                        for ($y = $current_year - 3; $y <= $current_year; $y++) {
+                        $current_month = (int)date('n');
+                        $earliest_grad = ($current_month >= 4) ? $current_year + 1 : $current_year;
+                        for ($y = $earliest_grad; $y <= $earliest_grad + 3; $y++) {
                             echo '<option value="' . $y . '年">' . $y . '年</option>';
                         }
                         ?>

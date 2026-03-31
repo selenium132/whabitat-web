@@ -37,7 +37,7 @@ try {
     
     // Header Row
     $headerRow = [
-        'ID', '名前', 'ふりがな', '学籍番号', '代', '入学年', '今の学年', '学部', '学科', '性別', 
+        'ID', '名前', 'ふりがな', '学籍番号', '代', '卒業予定年', '今の学年', '学部', '学科', '性別', 
         '郵便番号', '住所', '電話番号', '生年月日', 'LINE名', 'メールアドレス', 
         '他サークル', 'アレルギー等', '備考(その他)', 'ステータス', '権限'
     ];
@@ -54,15 +54,15 @@ try {
         elseif ($m['gender'] === 'female') $gender_label = '女性';
         elseif ($m['gender'] === 'no_answer') $gender_label = '回答しない';
         
-        // Calculate uni year
+        // Calculate uni year from graduation year
         $uni_year_str = "-";
         if (!empty($m['admission_year'])) {
-            $adm_year_num = (int)str_replace('年', '', $m['admission_year']);
+            $grad_year_num = (int)str_replace('年', '', $m['admission_year']);
             $current_year = (int)date('Y');
             $current_month = (int)date('n');
             $current_academic_year = ($current_month >= 4) ? $current_year : $current_year - 1;
-            if ($adm_year_num > 2000) {
-                $uni_year = $current_academic_year - $adm_year_num + 1;
+            if ($grad_year_num > 2000) {
+                $uni_year = 4 - ($grad_year_num - $current_academic_year - 1);
                 if ($uni_year < 1) $uni_year_str = "入学前";
                 elseif ($uni_year > 4) $uni_year_str = "OB/OG";
                 else $uni_year_str = $uni_year . "年生";

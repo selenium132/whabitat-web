@@ -56,12 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $allergies = $_POST['allergies'] ?? '';
             $notes = $_POST['notes'] ?? '';
             
-            // Calculate grade
+            // Calculate grade from graduation year
             $grade = '';
             if ($admission_year) {
-                $adm_year_num = (int)str_replace('年', '', $admission_year);
-                if ($adm_year_num > 2000) {
-                    $grade = ($adm_year_num - 2024 + 18) . 'th';
+                $grad_year_num = (int)str_replace('年', '', $admission_year);
+                if ($grad_year_num > 2000) {
+                    $grade = ($grad_year_num - 2028 + 18) . 'th';
                 }
             }
 
@@ -216,7 +216,7 @@ $csrf_token = generateCsrfToken();
                                 <th>学籍番号</th>
                                 <th>LINE名</th>
                                 <th>代</th>
-                                <th>入学年</th>
+                                <th>卒業予定年</th>
                                 <th>今の学年</th>
                                 <th>学部</th>
                                 <th>学科</th>
@@ -250,12 +250,13 @@ $csrf_token = generateCsrfToken();
                                         <?php 
                                         $uni_year_str = "-";
                                         if (!empty($m['admission_year'])) {
-                                            $adm_year_num = (int)str_replace('年', '', $m['admission_year']);
+                                            $grad_year_num = (int)str_replace('年', '', $m['admission_year']);
                                             $current_year = (int)date('Y');
                                             $current_month = (int)date('n');
                                             $current_academic_year = ($current_month >= 4) ? $current_year : $current_year - 1;
-                                            if ($adm_year_num > 2000) {
-                                                $uni_year = $current_academic_year - $adm_year_num + 1;
+                                            if ($grad_year_num > 2000) {
+                                                // 卒業年から今の学年を計算: 4 - (卒業年 - 現在学年度 - 1)
+                                                $uni_year = 4 - ($grad_year_num - $current_academic_year - 1);
                                                 if ($uni_year < 1) $uni_year_str = "入学前";
                                                 elseif ($uni_year > 4) $uni_year_str = "OB/OG";
                                                 else $uni_year_str = $uni_year . "年生";
@@ -396,12 +397,14 @@ $csrf_token = generateCsrfToken();
                 <div class="edit-section">
                     <div class="edit-section-title">大学情報</div>
                     <div class="form-group">
-                        <label class="form-label">入学年</label>
+                        <label class="form-label">卒業予定年</label>
                         <select name="admission_year" id="edit_admission_year" class="form-select" required>
                             <option value="">選択してください</option>
                             <?php 
                             $cy = (int)date('Y');
-                            for ($y = $cy - 3; $y <= $cy; $y++) {
+                            $cm = (int)date('n');
+                            $eg = ($cm >= 4) ? $cy + 1 : $cy;
+                            for ($y = $eg; $y <= $eg + 3; $y++) {
                                 echo '<option value="' . $y . '年">' . $y . '年</option>';
                             }
                             ?>

@@ -23,12 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allergies = $_POST['allergies'] ?? '';
     $notes = $_POST['notes'] ?? '';
 
-    // Calculate grade
+    // Calculate grade from graduation year
     $grade = '';
     if ($admission_year) {
-        $adm_year_num = (int)str_replace('年', '', $admission_year);
-        if ($adm_year_num > 2000) {
-            $grade = ($adm_year_num - 2024 + 18) . 'th';
+        $grad_year_num = (int)str_replace('年', '', $admission_year);
+        if ($grad_year_num > 2000) {
+            $grade = ($grad_year_num - 2028 + 18) . 'th';
         }
     }
 
@@ -179,13 +179,15 @@ $is_first_registration = empty($current_user['name']);
                         <h2 style="font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;"><i class="fas fa-graduation-cap"></i> 大学情報</h2>
 
                         <div class="form-group">
-                            <label class="form-label">入学年 <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">卒業予定年 <span style="color: #e74c3c;">*</span></label>
                             <select name="admission_year" class="form-select" required>
                                 <option value="">選択してください</option>
                                 <?php 
                                 $current_year = (int)date('Y');
-                                // Include current_year - 3 up to current_year
-                                for ($y = $current_year - 3; $y <= $current_year; $y++) {
+                                $current_month = (int)date('n');
+                                // 4月以降は今年度卒が最も早い、3月以前は前年度卒が最も早い
+                                $earliest_grad = ($current_month >= 4) ? $current_year + 1 : $current_year;
+                                for ($y = $earliest_grad; $y <= $earliest_grad + 3; $y++) {
                                     $val = $y . '年';
                                     $sel = ($admission_year_val === $val) ? 'selected' : '';
                                     echo "<option value=\"$val\" $sel>$val</option>";

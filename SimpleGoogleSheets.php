@@ -48,7 +48,7 @@ class SimpleGoogleSheets {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+
 
         $data = json_decode($response, true);
         
@@ -84,7 +84,7 @@ class SimpleGoogleSheets {
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+
 
         if ($httpCode >= 400) {
             throw new Exception("API Error ($httpCode): " . $response);
@@ -122,7 +122,7 @@ class SimpleGoogleSheets {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Important for Apps Script redirects
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+
         
         $data = json_decode($response, true);
         
@@ -165,7 +165,7 @@ class SimpleGoogleSheets {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
-        curl_close($ch);
+
         return json_decode($response, true);
     }
 
@@ -182,7 +182,7 @@ class SimpleGoogleSheets {
         ]);
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+
         return ['httpCode' => $httpCode, 'response' => json_decode($response, true)];
     }
 }

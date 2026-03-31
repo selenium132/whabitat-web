@@ -168,7 +168,7 @@ function replyToLine($replyToken, $text) {
     ]);
     
     $result = curl_exec($ch);
-    curl_close($ch);
+
     
     // Log result if needed
     file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Reply sent to $replyToken: " . $result . "\n", FILE_APPEND);
