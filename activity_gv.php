@@ -17,10 +17,16 @@
             <a href="index.php" class="logo">
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
+            <button class="menu-toggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <nav>
                 <ul class="nav-list">
                     <li><a href="index.php#about" class="nav-link">About</a></li>
                     <li><a href="index.php#activities" class="nav-link">Activities</a></li>
+                    <li><a href="index.php#blog" class="nav-link">Blog</a></li>
                     <li><a href="index.php#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
@@ -35,6 +41,21 @@
             </nav>
         </div>
     </header>
+
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', function () {
+            this.classList.toggle('active');
+            document.querySelector('.nav-list').classList.toggle('nav-open');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-link, .btn-login').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.menu-toggle').classList.remove('active');
+                document.querySelector('.nav-list').classList.remove('nav-open');
+            });
+        });
+    </script>
 
     <main style="padding-top: 120px; padding-bottom: 50px;">
         <div class="container">
