@@ -220,11 +220,15 @@ $is_first_registration = empty($current_user['name']);
 
                         <div class="form-group">
                             <label class="form-label">郵便番号（ハイフンあり） <span style="color: #e74c3c;">*</span></label>
-                            <input type="text" name="zipcode" class="form-input" required placeholder="例：169-8050" value="<?php echo htmlspecialchars($zipcode_val); ?>">
+                            <div style="position: relative;">
+                                <input type="text" name="zipcode" id="zipcode" class="form-input" required placeholder="例：169-8050" value="<?php echo htmlspecialchars($zipcode_val); ?>">
+                                <span id="zipcode-loading" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#999; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> 検索中...</span>
+                            </div>
+                            <p id="zipcode-error" style="font-size:0.8rem; color:#e74c3c; margin-top:0.3rem; display:none;"></p>
                         </div>
                         <div class="form-group">
                             <label class="form-label">住所 <span style="color: #e74c3c;">*</span></label>
-                            <input type="text" name="address" class="form-input" required placeholder="例：東京都新宿区戸塚町1-104" value="<?php echo htmlspecialchars($address_val); ?>">
+                            <input type="text" name="address" id="address" class="form-input" required placeholder="例：東京都新宿区戸塚町1-104" value="<?php echo htmlspecialchars($address_val); ?>">
                         </div>
                         <div class="form-group">
                             <label class="form-label">携帯電話番号 <span style="color: #e74c3c;">*</span></label>
@@ -257,5 +261,65 @@ $is_first_registration = empty($current_user['name']);
             </div>
         </div>
     </main>
+
+    <script>
+    (function() {
+        const zipcodeInput = document.getElementById('zipcode');
+        const addressInput = document.getElementById('address');
+        const loadingEl = document.getElementById('zipcode-loading');
+        const errorEl = document.getElementById('zipcode-error');
+        let debounceTimer = null;
+
+        function lookupZipcode(zipcode) {
+            // ハイフンを除去して数字のみにする
+            const cleaned = zipcode.replace(/[^0-9]/g, '');
+            if (cleaned.length !== 7) {
+                return;
+            }
+
+            loadingEl.style.display = 'inline';
+            errorEl.style.display = 'none';
+
+            // zipcloud API (JSONP)
+            const callbackName = '_zipCallback_' + Date.now();
+            const script = document.createElement('script');
+            script.src = 'https://zipcloud.ibsnet.co.jp/api/get?zipcode=' + cleaned + '&callback=' + callbackName;
+
+            window[callbackName] = function(data) {
+                loadingEl.style.display = 'none';
+                if (data.status === 200 && data.results && data.results.length > 0) {
+                    const result = data.results[0];
+                    const addr = result.address1 + result.address2 + result.address3;
+                    addressInput.value = addr;
+                    addressInput.focus();
+                    errorEl.style.display = 'none';
+                } else {
+                    errorEl.textContent = '該当する住所が見つかりませんでした';
+                    errorEl.style.display = 'block';
+                }
+                // cleanup
+                delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+            };
+
+            script.onerror = function() {
+                loadingEl.style.display = 'none';
+                errorEl.textContent = '住所の検索に失敗しました';
+                errorEl.style.display = 'block';
+                delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+            };
+
+            document.body.appendChild(script);
+        }
+
+        zipcodeInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function() {
+                lookupZipcode(zipcodeInput.value);
+            }, 500);
+        });
+    })();
+    </script>
 </body>
 </html>

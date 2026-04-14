@@ -417,7 +417,11 @@ $csrf_token = generateCsrfToken();
                     <div class="edit-section-title">連絡先・その他</div>
                     <div class="form-group">
                         <label class="form-label">郵便番号</label>
-                        <input type="text" name="zipcode" id="edit_zipcode" class="form-input">
+                        <div style="position: relative;">
+                            <input type="text" name="zipcode" id="edit_zipcode" class="form-input">
+                            <span id="edit-zipcode-loading" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#999; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> 検索中...</span>
+                        </div>
+                        <p id="edit-zipcode-error" style="font-size:0.8rem; color:#e74c3c; margin-top:0.3rem; display:none;"></p>
                     </div>
                     <div class="form-group">
                         <label class="form-label">住所</label>
@@ -448,5 +452,59 @@ $csrf_token = generateCsrfToken();
             </form>
         </div>
     </div>
+
+    <script>
+    (function() {
+        const zipcodeInput = document.getElementById('edit_zipcode');
+        const addressInput = document.getElementById('edit_address');
+        const loadingEl = document.getElementById('edit-zipcode-loading');
+        const errorEl = document.getElementById('edit-zipcode-error');
+        let debounceTimer = null;
+
+        function lookupZipcode(zipcode) {
+            const cleaned = zipcode.replace(/[^0-9]/g, '');
+            if (cleaned.length !== 7) return;
+
+            loadingEl.style.display = 'inline';
+            errorEl.style.display = 'none';
+
+            const callbackName = '_zipCallback_' + Date.now();
+            const script = document.createElement('script');
+            script.src = 'https://zipcloud.ibsnet.co.jp/api/get?zipcode=' + cleaned + '&callback=' + callbackName;
+
+            window[callbackName] = function(data) {
+                loadingEl.style.display = 'none';
+                if (data.status === 200 && data.results && data.results.length > 0) {
+                    const result = data.results[0];
+                    addressInput.value = result.address1 + result.address2 + result.address3;
+                    addressInput.focus();
+                    errorEl.style.display = 'none';
+                } else {
+                    errorEl.textContent = '該当する住所が見つかりませんでした';
+                    errorEl.style.display = 'block';
+                }
+                delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+            };
+
+            script.onerror = function() {
+                loadingEl.style.display = 'none';
+                errorEl.textContent = '住所の検索に失敗しました';
+                errorEl.style.display = 'block';
+                delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+            };
+
+            document.body.appendChild(script);
+        }
+
+        zipcodeInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function() {
+                lookupZipcode(zipcodeInput.value);
+            }, 500);
+        });
+    })();
+    </script>
 </body>
 </html>
