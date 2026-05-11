@@ -10,27 +10,32 @@ if ($_SESSION['role'] !== 'admin') {
 
 $pdo = getDB();
 
-// Handle Mark as Read
-if (isset($_GET['mark_read']) && is_numeric($_GET['mark_read'])) {
-    $stmt = $pdo->prepare("UPDATE contact_messages SET is_read = 1 WHERE id = ?");
-    $stmt->execute([$_GET['mark_read']]);
-    header("Location: messages.php" . (isset($_GET['source']) ? "?source=" . $_GET['source'] : ""));
-    exit;
-}
+// Handle Actions (Must be POST for state changes to prevent CSRF)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validateCsrfToken($_POST['csrf_token'] ?? '');
 
-// Handle Mark All as Read
-if (isset($_GET['mark_all_read'])) {
-    $pdo->exec("UPDATE contact_messages SET is_read = 1");
-    header("Location: messages.php");
-    exit;
-}
+    // Handle Mark as Read
+    if (isset($_POST['mark_read']) && is_numeric($_POST['mark_read'])) {
+        $stmt = $pdo->prepare("UPDATE contact_messages SET is_read = 1 WHERE id = ?");
+        $stmt->execute([$_POST['mark_read']]);
+        header("Location: messages.php" . (isset($_POST['source']) ? "?source=" . $_POST['source'] : ""));
+        exit;
+    }
 
-// Handle Delete
-if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
-    $stmt = $pdo->prepare("DELETE FROM contact_messages WHERE id = ?");
-    $stmt->execute([$_GET['delete']]);
-    header("Location: messages.php" . (isset($_GET['source']) ? "?source=" . $_GET['source'] : ""));
-    exit;
+    // Handle Mark All as Read
+    if (isset($_POST['mark_all_read'])) {
+        $pdo->exec("UPDATE contact_messages SET is_read = 1");
+        header("Location: messages.php");
+        exit;
+    }
+
+    // Handle Delete
+    if (isset($_POST['delete']) && is_numeric($_POST['delete'])) {
+        $stmt = $pdo->prepare("DELETE FROM contact_messages WHERE id = ?");
+        $stmt->execute([$_POST['delete']]);
+        header("Location: messages.php" . (isset($_POST['source']) ? "?source=" . $_POST['source'] : ""));
+        exit;
+    }
 }
 
 // Filter by source
@@ -219,9 +224,13 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                 <a href="?sort=oldest<?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="filter-btn <?php echo $sort === 'oldest' ? 'active' : ''; ?>">古い順</a>
                 
                 <?php if ($unreadCount > 0): ?>
-                    <a href="?mark_all_read=1" class="filter-btn" style="background: #28a745; color: white; border-color: #28a745;">
-                        <i class="fas fa-check-double"></i> すべて既読
-                    </a>
+                    <form method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                        <input type="hidden" name="mark_all_read" value="1">
+                        <button type="submit" class="filter-btn" style="background: #28a745; color: white; border-color: #28a745; border-radius: 20px; padding: 0.5rem 1rem;">
+                            <i class="fas fa-check-double"></i> すべて既読
+                        </button>
+                    </form>
                 <?php endif; ?>
             </div>
             
@@ -254,13 +263,23 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                         <div class="message-body"><?php echo htmlspecialchars($msg['message']); ?></div>
                         <div class="action-btns">
                             <?php if ($isUnread): ?>
-                                <a href="?mark_read=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="action-btn btn-read">
-                                    <i class="fas fa-check"></i> 既読にする
-                                </a>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                    <input type="hidden" name="mark_read" value="<?php echo $msg['id']; ?>">
+                                    <?php if ($source !== 'all'): ?><input type="hidden" name="source" value="<?php echo htmlspecialchars($source); ?>"><?php endif; ?>
+                                    <button type="submit" class="action-btn btn-read">
+                                        <i class="fas fa-check"></i> 既読にする
+                                    </button>
+                                </form>
                             <?php endif; ?>
-                            <a href="?delete=<?php echo $msg['id']; ?><?php echo $source !== 'all' ? '&source=' . $source : ''; ?>" class="action-btn btn-delete" onclick="return confirm('本当に削除しますか？\n(スパムや不要なメッセージ)');">
-                                <i class="fas fa-trash"></i> 削除
-                            </a>
+                            <form method="POST" style="display: inline;" onsubmit="return confirm('本当に削除しますか？\n(スパムや不要なメッセージ)');">
+                                <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                <input type="hidden" name="delete" value="<?php echo $msg['id']; ?>">
+                                <?php if ($source !== 'all'): ?><input type="hidden" name="source" value="<?php echo htmlspecialchars($source); ?>"><?php endif; ?>
+                                <button type="submit" class="action-btn btn-delete">
+                                    <i class="fas fa-trash"></i> 削除
+                                </button>
+                            </form>
                         </div>
                     </div>
                 <?php endforeach; ?>

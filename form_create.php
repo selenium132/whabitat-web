@@ -30,6 +30,7 @@ if ($event_id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validateCsrfToken($_POST['csrf_token'] ?? '');
     $title = $_POST['title'] ?? '無題のイベント';
     $description = $_POST['description'] ?? '';
     $event_date = $_POST['event_date'] ?? date('Y-m-d H:i:s');
