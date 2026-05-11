@@ -88,13 +88,15 @@ $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </button>
                                     </form>
                                 <?php endif; ?>
-                                <a href="form_delete.php?id=<?php echo $event['id']; ?>" 
-                                   onclick="return confirm('このイベントを削除しますか？\nこの操作は取り消せません。');"
-                                   class="btn-secondary" 
-                                   style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-color: #dc3545;"
-                                   title="削除">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
+                                <form method="POST" action="form_delete.php" style="display: inline;" onsubmit="return confirm('このイベントを削除しますか？\nこの操作は取り消せません。');">
+                                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                    <input type="hidden" name="id" value="<?php echo $event['id']; ?>">
+                                    <button type="submit" class="btn-secondary" 
+                                       style="font-size: 0.8rem; padding: 0.4rem 0.8rem; background: #dc3545; color: white; border-color: #dc3545; border: none; cursor: pointer;"
+                                       title="削除">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
                             <?php endif; ?>
                         </div>
                     </div>

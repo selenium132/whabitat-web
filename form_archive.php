@@ -36,7 +36,11 @@ $is_archived = ($action === 'archive') ? 1 : 0;
 $stmt = $pdo->prepare("UPDATE events SET is_archived = ? WHERE id = ?");
 $stmt->execute([$is_archived, $event_id]);
 
-// Redirect back
+// Redirect back (whitelist to prevent open redirect)
+$allowed_returns = ['dashboard.php', 'past_events.php'];
 $return = $_POST['return'] ?? 'dashboard.php';
+if (!in_array(basename($return), $allowed_returns)) {
+    $return = 'dashboard.php';
+}
 header("Location: " . $return);
 exit;
