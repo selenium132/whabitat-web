@@ -11,6 +11,12 @@ jobs:
     steps:
       - name: Get latest code
         uses: actions/checkout@v4
+
+      - name: Create .env from GitHub Secret (base64)
+        run: echo "${{ secrets.ENV_FILE_BASE64 }}" | base64 -d > .env
+
+      - name: Create service-account.json from GitHub Secret (base64)
+        run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 -d > service-account.json
       
       - name: Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -24,3 +30,4 @@ jobs:
             **/.git*/**
             **/node_modules/**
             old_wp_backup/**
+            .env.example

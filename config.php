@@ -3,42 +3,43 @@
 // Load Environment Variables from .env
 // ===========================================
 $env_path = __DIR__ . '/.env';
-if (!file_exists($env_path)) {
-    die('ERROR: .env file not found. Copy .env.example to .env and configure it.');
-}
-$env = parse_ini_file($env_path);
-if ($env === false) {
-    die('ERROR: Failed to parse .env file.');
+if (file_exists($env_path)) {
+    $env = parse_ini_file($env_path);
+    if ($env === false) {
+        $env = [];
+    }
+} else {
+    $env = [];
 }
 
 // Database Configuration
 define('DB_HOST', $env['DB_HOST'] ?? 'localhost');
-define('DB_NAME', $env['DB_NAME'] ?? '');
-define('DB_USER', $env['DB_USER'] ?? '');
-define('DB_PASS', $env['DB_PASS'] ?? '');
+define('DB_NAME', $env['DB_NAME'] ?? 'xs923565_whabitatdb');
+define('DB_USER', $env['DB_USER'] ?? 'xs923565_user');
+define('DB_PASS', $env['DB_PASS'] ?? '9Z`e*k4#K$bW');
 
 // Circle Secret Code (for registration)
-define('CIRCLE_SECRET', $env['CIRCLE_SECRET'] ?? '');    // 一般メンバー用
-define('ADMIN_SECRET', $env['ADMIN_SECRET'] ?? '');    // 管理者（幹部）用
+define('CIRCLE_SECRET', $env['CIRCLE_SECRET'] ?? 'whabitat20thspr');    // 一般メンバー用
+define('ADMIN_SECRET', $env['ADMIN_SECRET'] ?? 'whabitat_admin');    // 管理者（幹部）用
 
 // API Key for Google Forms Sync
-define('API_KEY', $env['API_KEY'] ?? '');
+define('API_KEY', $env['API_KEY'] ?? 'himitsu_no_key_12345');
 
 // Available Grades (Generations)
 define('AVAILABLE_GRADES', ['17th', '18th', '19th', '20th']);
 
 // LINE Login Configuration
-define('LINE_CHANNEL_ID', $env['LINE_CHANNEL_ID'] ?? '');
-define('LINE_CHANNEL_SECRET', $env['LINE_CHANNEL_SECRET'] ?? '');
-define('LINE_CALLBACK_URL', $env['LINE_CALLBACK_URL'] ?? '');
+define('LINE_CHANNEL_ID', $env['LINE_CHANNEL_ID'] ?? '2008588186');
+define('LINE_CHANNEL_SECRET', $env['LINE_CHANNEL_SECRET'] ?? 'b13037697c736acbb99ddf5fa3d1431d');
+define('LINE_CALLBACK_URL', $env['LINE_CALLBACK_URL'] ?? 'https://whabitathome.com/callback.php');
 
 // LINE Messaging API (Bot) Configuration
-define('LINE_BOT_ACCESS_TOKEN', $env['LINE_BOT_ACCESS_TOKEN'] ?? '');
-define('LINE_BOT_CHANNEL_SECRET', $env['LINE_BOT_CHANNEL_SECRET'] ?? '');
+define('LINE_BOT_ACCESS_TOKEN', $env['LINE_BOT_ACCESS_TOKEN'] ?? 'XfDWPXXjPtI7VNVP5tbaUAEnwyxCBaDIaZtwiqZ+2cbmhOI4/CRzlsQQBQqdvHkSr9EXTcM90UQJwa2C8h0AcqI3HVpacr7HdqT4yEJ8mfY6XvGrSxT9xad9aftOPxplReoWpt7ex+BrkohL20yeegdB04t89/1O/w1cDnyilFU=');
+define('LINE_BOT_CHANNEL_SECRET', $env['LINE_BOT_CHANNEL_SECRET'] ?? '71e364600d533ca83747d44d177b92f6');
 
 // reCAPTCHA v2 Configuration
-define('RECAPTCHA_SITE_KEY', $env['RECAPTCHA_SITE_KEY'] ?? '');
-define('RECAPTCHA_SECRET_KEY', $env['RECAPTCHA_SECRET_KEY'] ?? '');
+define('RECAPTCHA_SITE_KEY', $env['RECAPTCHA_SITE_KEY'] ?? '6LdKxjEsAAAAAK4JrVk0-WU_aiEQWyU-1hjdf7p4');
+define('RECAPTCHA_SECRET_KEY', $env['RECAPTCHA_SECRET_KEY'] ?? '6LdKxjEsAAAAABnJLfqMR7C7SlheBCKnXLGgEgTU');
 
 // Security: Session Hardening
 ini_set('session.cookie_httponly', 1);
