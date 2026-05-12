@@ -189,7 +189,7 @@ function getStatusLabel($status) {
         <div class="page-header">
             <div>
                 <h1 class="event-title" style="margin-top: 5px;">回答一覧: <?php echo htmlspecialchars($event['title']); ?></h1>
-                <p style="color: var(--text-light); font-size: 14px;">参加予定者数: <?php echo $join_count; ?>名</p>
+                <p style="color: var(--text-light); font-size: 14px;"><?php echo (($event['type'] ?? 'event') === 'survey') ? '回答者数' : '参加予定者数'; ?>: <?php echo $join_count; ?>名</p>
                 <?php 
                     // $is_manager is prepared at top
                 ?>
@@ -215,13 +215,36 @@ function getStatusLabel($status) {
                 まだ回答はありません。
             </div>
         <?php else: ?>
-            <!-- Desktop/Table View -->
-            <table class="res-table">
+
+            <?php $is_survey = (($event['type'] ?? 'event') === 'survey'); ?>
+
+            <?php if ($is_survey && !$is_manager): ?>
+                <!-- ===== Survey: General Member View (Name + Grade only) ===== -->
+                <div class="p-card" style="padding: 16px 24px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee;">
+                        <i class="fas fa-check-circle" style="color: #1e8e3e;"></i>
+                        <span style="font-weight: 600; color: var(--text-color);">回答済み（<?php echo $join_count; ?>名）</span>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <?php foreach ($participants as $p): ?>
+                            <div style="display: inline-flex; align-items: center; gap: 6px; background: #f0f4f8; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem;">
+                                <span style="font-weight: 500;"><?php echo htmlspecialchars($p['name']); ?></span>
+                                <span style="color: #888; font-size: 0.8rem;"><?php echo htmlspecialchars($p['grade']); ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+            <?php else: ?>
+                <!-- ===== Event / Survey Manager View (Full Table) ===== -->
+                <table class="res-table">
                 <thead>
                     <tr>
                         <th style="width: 150px;">名前</th>
                         <th style="width: 60px;">学年</th>
-                        <th style="width: 80px;"><?php echo (($event['type'] ?? 'event') === 'survey') ? '回答状況' : 'ステータス'; ?></th>
+                        <?php if (!$is_survey): ?>
+                            <th style="width: 80px;">ステータス</th>
+                        <?php endif; ?>
                         <?php if ($is_manager): ?>
                             <th style="background-color: #f0f4f8;">回答内容 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
                             <th style="width: 100px; background-color: #f0f4f8;">学部 <i class="fas fa-lock" style="font-size:12px; color:#888;" title="管理者のみ表示"></i></th>
@@ -256,11 +279,13 @@ function getStatusLabel($status) {
                             <td>
                                 <?php echo htmlspecialchars($p['grade']); ?>
                             </td>
+                            <?php if (!$is_survey): ?>
                             <td>
                                 <span class="status-badge status-<?php echo htmlspecialchars($p['status']); ?>">
                                     <?php echo getStatusLabel($p['status']); ?>
                                 </span>
                             </td>
+                            <?php endif; ?>
                             <?php if ($is_manager): ?>
                                 <td>
                                     <?php if ($p['comment']): ?>
@@ -337,8 +362,9 @@ function getStatusLabel($status) {
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
-                </tbody>
-            </table>
+                </table>
+            <?php endif; ?>
+
         <?php endif; ?>
     </div>
 

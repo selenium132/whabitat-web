@@ -615,10 +615,14 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
 
         </form>
 
-        <?php if (isEventAdmin($event_id) || $event['created_by'] == $_SESSION['user_id']): ?>
+        <?php 
+            $is_survey_view = (($event['type'] ?? 'event') === 'survey');
+            $show_responses_link = $is_survey_view || isEventAdmin($event_id) || $event['created_by'] == $_SESSION['user_id'];
+        ?>
+        <?php if ($show_responses_link): ?>
         <div style="text-align: right; margin-top: 10px;">
             <a href="form_responses.php?id=<?php echo $event_id; ?>" style="color: #1967d2; text-decoration: none; font-size: 14px;">
-                <i class="fas fa-list"></i> みんなの回答を見る
+                <i class="fas fa-list"></i> <?php echo $is_survey_view ? '回答状況を見る' : 'みんなの回答を見る'; ?>
             </a>
         </div>
         <?php endif; ?>
