@@ -679,16 +679,28 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                                             <div class="grade-users">
                                                 <?php foreach ($users as $user): ?>
                                                     <?php 
-                                                        $checked = in_array($user['id'], $current_admins) ? 'checked' : '';
+                                                        $is_creator = false;
+                                                        if ($edit_mode) {
+                                                            $is_creator = ($user['id'] == $event_data['created_by']);
+                                                        } else {
+                                                            $is_creator = ($user['id'] == $_SESSION['user_id']);
+                                                        }
+                                                        $checked = (in_array($user['id'], $current_admins) || $is_creator) ? 'checked' : '';
+                                                        $disabled = $is_creator ? 'disabled' : '';
                                                     ?>
                                                     <label class="admin-checkbox-item admin-user-item" 
                                                         data-name="<?php echo htmlspecialchars(strtolower($user['name'])); ?>"
                                                         data-grade="<?php echo htmlspecialchars($user['grade']); ?>"
                                                         data-faculty="<?php echo htmlspecialchars($user['faculty'] ?? ''); ?>"
-                                                        data-gender="<?php echo htmlspecialchars($user['gender'] ?? ''); ?>">
-                                                        <input type="checkbox" name="event_admins[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?>>
+                                                        data-gender="<?php echo htmlspecialchars($user['gender'] ?? ''); ?>"
+                                                        <?php if ($is_creator) echo 'style="opacity: 0.8; cursor: not-allowed; background: #f0f0f0;" title="作成者は常に管理者となります"'; ?>>
+                                                        <input type="checkbox" name="event_admins[]" value="<?php echo $user['id']; ?>" <?php echo $checked; ?> <?php echo $disabled; ?>>
                                                         <?php echo htmlspecialchars($user['name']); ?>
+                                                        <?php if ($is_creator) echo '<span style="font-size: 0.75rem; color: #d93025; font-weight: bold; margin-left: 4px;">(作成者)</span>'; ?>
                                                     </label>
+                                                    <?php if ($is_creator): ?>
+                                                        <input type="hidden" name="event_admins[]" value="<?php echo $user['id']; ?>">
+                                                    <?php endif; ?>
                                                 <?php endforeach; ?>
                                             </div>
                                         </div>
