@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sid = $_POST['student_id'] ?? '';
             $faculty = $_POST['faculty'] ?? '';
             $department = $_POST['department'] ?? '';
-            $admission_year = $_POST['admission_year'] ?? '';
+            $grade = $_POST['grade'] ?? '';
             $gender = $_POST['gender'] ?? '';
             $zipcode = $_POST['zipcode'] ?? '';
             $address = $_POST['address'] ?? '';
@@ -56,16 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $allergies = $_POST['allergies'] ?? '';
             $notes = $_POST['notes'] ?? '';
             
-            // Calculate grade from graduation year
-            $grade = '';
-            if ($admission_year) {
-                $grad_year_num = (int)str_replace('年', '', $admission_year);
-                if ($grad_year_num > 2000) {
-                    $grade = ($grad_year_num - 2028 + 18) . 'th';
+            // Calculate admission_year from grade
+            $admission_year = '';
+            if ($grade) {
+                $gen_num = (int)str_replace('th', '', $grade);
+                if ($gen_num > 0) {
+                    $admission_year = ($gen_num + 2010) . '年';
                 }
             }
 
-            if ($name && $admission_year) {
+            if ($name && $grade) {
                 // Use Prepared Statements to prevent SQL injection
                 $stmt = $pdo->prepare("UPDATE users SET 
                     name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?, 
@@ -129,7 +129,7 @@ $csrf_token = generateCsrfToken();
             document.getElementById('edit_sid').value = userObj.student_id || '';
             document.getElementById('edit_faculty').value = userObj.faculty || '';
             document.getElementById('edit_department').value = userObj.department || '';
-            document.getElementById('edit_admission_year').value = userObj.admission_year || '';
+            document.getElementById('edit_grade').value = userObj.grade || '';
             document.getElementById('edit_gender').value = userObj.gender || '';
             document.getElementById('edit_zipcode').value = userObj.zipcode || '';
             document.getElementById('edit_address').value = userObj.address || '';
@@ -216,7 +216,6 @@ $csrf_token = generateCsrfToken();
                                 <th>学籍番号</th>
                                 <th>LINE名</th>
                                 <th>代</th>
-                                <th>卒業予定年</th>
 
                                 <th>学部</th>
                                 <th>学科</th>
@@ -245,7 +244,6 @@ $csrf_token = generateCsrfToken();
                                     <td><?php echo htmlspecialchars($m['student_id']); ?></td>
                                     <td><?php echo htmlspecialchars($m['line_name']); ?></td>
                                     <td><?php echo htmlspecialchars($m['grade']); ?></td>
-                                    <td><?php echo htmlspecialchars($m['admission_year'] ?? ''); ?></td>
 
                                     <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($m['department'] ?? ''); ?></td>
@@ -379,15 +377,18 @@ $csrf_token = generateCsrfToken();
                 <div class="edit-section">
                     <div class="edit-section-title">大学情報</div>
                     <div class="form-group">
-                        <label class="form-label">卒業予定年</label>
-                        <select name="admission_year" id="edit_admission_year" class="form-select" required>
+                        <label class="form-label">代</label>
+                        <select name="grade" id="edit_grade" class="form-select" required>
                             <option value="">選択してください</option>
                             <?php 
                             $cy = (int)date('Y');
                             $cm = (int)date('n');
-                            $eg = ($cm >= 4) ? $cy + 1 : $cy;
-                            for ($y = $eg; $y <= $eg + 4; $y++) {
-                                echo '<option value="' . $y . '年">' . $y . '年</option>';
+                            $fy = ($cm >= 4) ? $cy : $cy - 1;
+                            $ng = 20 + ($fy - 2026);
+                            $ming = $ng - 3;
+                            $maxg = $ng + 1;
+                            for ($g = $ming; $g <= $maxg; $g++) {
+                                echo '<option value="' . $g . 'th">' . $g . 'th</option>';
                             }
                             ?>
                         </select>

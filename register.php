@@ -7,12 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $student_id = $_POST['student_id'] ?? '';
     $line_name = $_POST['line_name'] ?? '';
-    $admission_year = $_POST['admission_year'] ?? '';
+    $grade = $_POST['grade'] ?? '';
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $secret = $_POST['secret'] ?? '';
 
-    if ($name && $line_name && $admission_year && $email && $password && $secret) {
+    if ($name && $line_name && $grade && $email && $password && $secret) {
         $role = '';
         if ($secret === ADMIN_SECRET) {
             $role = 'admin';
@@ -25,9 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($role) {
             $pdo = getDB();
             
-            // Calculate grade from graduation year
-            $grad_year_num = (int)str_replace('年', '', $admission_year);
-            $grade = ($grad_year_num > 2000) ? ($grad_year_num - 2028 + 18) . 'th' : '';
+            // Calculate admission_year from grade
+            $gen_num = (int)str_replace('th', '', $grade);
+            $admission_year = ($gen_num > 0) ? ($gen_num + 2010) . '年' : '';
 
             // Check if email already exists
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
@@ -156,15 +156,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="line_name" class="form-input" placeholder="例：Taro Waseda" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">卒業予定年 <span style="color: #e74c3c;">*</span></label>
-                    <select name="admission_year" class="form-select" required>
+                    <label class="form-label">代 <span style="color: #e74c3c;">*</span></label>
+                    <select name="grade" class="form-select" required>
                         <option value="">選択してください</option>
                         <?php 
                         $current_year = (int)date('Y');
                         $current_month = (int)date('n');
-                        $earliest_grad = ($current_month >= 4) ? $current_year + 1 : $current_year;
-                        for ($y = $earliest_grad; $y <= $earliest_grad + 4; $y++) {
-                            echo '<option value="' . $y . '年">' . $y . '年</option>';
+                        $fiscal_year = ($current_month >= 4) ? $current_year : $current_year - 1;
+                        $newest_gen = 20 + ($fiscal_year - 2026);
+                        $min_gen = $newest_gen - 3;
+                        $max_gen = $newest_gen + 1;
+                        for ($g = $min_gen; $g <= $max_gen; $g++) {
+                            echo '<option value="' . $g . 'th">' . $g . 'th</option>';
                         }
                         ?>
                     </select>

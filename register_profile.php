@@ -11,9 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name_kana = $_POST['name_kana'] ?? '';
     $student_id = $_POST['student_id'] ?? '';
     $grade = $_POST['grade'] ?? '';
+    // admission_year is now auto-calculated from grade, not user input
     $faculty = $_POST['faculty'] ?? '';
     $department = $_POST['department'] ?? '';
-    $admission_year = $_POST['admission_year'] ?? '';
+    // Calculate admission_year from grade (Nth -> graduation year)
+    $admission_year = '';
     $gender = $_POST['gender'] ?? '';
     $zipcode = $_POST['zipcode'] ?? '';
     $address = $_POST['address'] ?? '';
@@ -23,17 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allergies = $_POST['allergies'] ?? '';
     $notes = $_POST['notes'] ?? '';
 
-    // Calculate grade from graduation year
-    $grade = '';
-    if ($admission_year) {
-        $grad_year_num = (int)str_replace('年', '', $admission_year);
-        if ($grad_year_num > 2000) {
-            $grade = ($grad_year_num - 2028 + 18) . 'th';
+    // Calculate admission_year (graduation year) from grade
+    if ($grade) {
+        $gen_num = (int)str_replace('th', '', $grade);
+        if ($gen_num > 0) {
+            $grad_year = $gen_num + 2010; // 18th -> 2028年卒
+            $admission_year = $grad_year . '年';
         }
     }
 
     // Required fields validation
-    if ($name && $name_kana && $faculty && $gender && $admission_year && $zipcode && $address && $phone && $birthdate) {
+    if ($name && $name_kana && $faculty && $gender && $grade && $zipcode && $address && $phone && $birthdate) {
         $pdo = getDB();
         $stmt = $pdo->prepare("UPDATE users SET name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?, department = ?, admission_year = ?, gender = ?, zipcode = ?, address = ?, phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ? WHERE id = ?");
         
@@ -73,7 +75,7 @@ $sid_val = $_POST['student_id'] ?? $current_user['student_id'] ?? '';
 $grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
 $faculty_val = $_POST['faculty'] ?? $current_user['faculty'] ?? '';
 $department_val = $_POST['department'] ?? $current_user['department'] ?? '';
-$admission_year_val = $_POST['admission_year'] ?? $current_user['admission_year'] ?? '';
+// admission_year is now auto-calculated, not directly edited
 $gender_val = $_POST['gender'] ?? $current_user['gender'] ?? '';
 $zipcode_val = $_POST['zipcode'] ?? $current_user['zipcode'] ?? '';
 $address_val = $_POST['address'] ?? $current_user['address'] ?? '';
@@ -179,18 +181,27 @@ $is_first_registration = empty($current_user['name']);
                         <h2 style="font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;"><i class="fas fa-graduation-cap"></i> 大学情報</h2>
 
                         <div class="form-group">
-                            <label class="form-label">卒業予定年 <span style="color: #e74c3c;">*</span></label>
-                            <select name="admission_year" class="form-select" required>
+                            <label class="form-label">代 <span style="color: #e74c3c;">*</span></label>
+                            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※自分が何代目か選択してください</p>
+                            <select name="grade" class="form-select" required>
                                 <option value="">選択してください</option>
                                 <?php 
+                                // 代の選択肢を動的に生成
+                                // 基準: 2026年度（2026年4月〜2027年3月）で最新代 = 20th
+                                // 年度が進むと最新代も+1される
                                 $current_year = (int)date('Y');
                                 $current_month = (int)date('n');
-                                // 4月以降は今年度卒が最も早い、3月以前は前年度卒が最も早い
-                                $earliest_grad = ($current_month >= 4) ? $current_year + 1 : $current_year;
-                                for ($y = $earliest_grad; $y <= $earliest_grad + 4; $y++) {
-                                    $val = $y . '年';
-                                    $sel = ($admission_year_val === $val) ? 'selected' : '';
-                                    echo "<option value=\"$val\" $sel>$val</option>";
+                                $fiscal_year = ($current_month >= 4) ? $current_year : $current_year - 1;
+                                $newest_gen = 20 + ($fiscal_year - 2026); // 2026年度→20th, 2027年度→21th...
+                                
+                                // 活動中の代（最新〜最新-2）の前後1つずつ
+                                $min_gen = $newest_gen - 3; // 活動中の最上級生の1つ上
+                                $max_gen = $newest_gen + 1; // 最新の1つ下（来年入ってくる代）
+                                
+                                for ($g = $min_gen; $g <= $max_gen; $g++) {
+                                    $val = $g . 'th';
+                                    $sel = ($grade_val === $val) ? 'selected' : '';
+                                    echo "<option value=\"$val\" $sel>{$g}th</option>";
                                 }
                                 ?>
                             </select>
