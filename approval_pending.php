@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'sheet_sync.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -36,7 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
         // Approve User
         $update_stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
         $update_stmt->execute([$_SESSION['user_id']]);
-        
+        // 承認を名簿スプシに自動反映（連携済みの場合のみ）
+        syncMembersToSheetSafe($pdo);
+
         // Update Session
         $_SESSION['is_approved'] = 1;
         

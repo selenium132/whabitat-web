@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'sheet_sync.php';
 
 $error = '';
 
@@ -43,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['user_id'] = $pdo->lastInsertId();
                     $_SESSION['role'] = $role;
                     $_SESSION['name'] = $name;
+                    // 新規メンバーを名簿スプシに自動反映（連携済みの場合のみ）
+                    syncMembersToSheetSafe($pdo);
                     header("Location: dashboard.php");
                     exit;
                 } else {

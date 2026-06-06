@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'sheet_sync.php';
 requireLogin();
 
 $error = '';
@@ -41,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($stmt->execute([$name, $name_kana, $student_id, $grade, $faculty, $department, $admission_year, $gender, $zipcode, $address, $phone, $birthdate, $other_circles, $allergies, $notes, $_SESSION['user_id']])) {
             $_SESSION['name'] = $name;
+            // プロフィール更新を名簿スプシに自動反映（連携済みの場合のみ）
+            syncMembersToSheetSafe($pdo);
             // Check if there's a return URL to redirect to
             $return_url = $_POST['return_url'] ?? '';
             if (!empty($return_url)) {

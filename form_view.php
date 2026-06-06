@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'sheet_sync.php'; // 回答時の自動スプシ同期
 requireLogin();
 
 $pdo = getDB();
@@ -100,6 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (($_POST['action'] ?? '') === 'delete') {
         $stmt = $pdo->prepare("DELETE FROM attendance WHERE event_id = ? AND user_id = ?");
         $stmt->execute([$event_id, $_SESSION['user_id']]);
+        // 既にスプシ連携済みのイベントなら、取り消しを自動反映（失敗しても削除は妨げない）
+        syncEventToSheetSafe($pdo, $event_id);
         header("Location: form_view.php?id=" . $event_id);
         exit;
     }
@@ -132,6 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($status) {
         $stmt = $pdo->prepare("INSERT INTO attendance (event_id, user_id, status, comment, response_data) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE status = ?, comment = ?, response_data = ?");
         $stmt->execute([$event_id, $_SESSION['user_id'], $status, $comment, $response_data, $status, $comment, $response_data]);
+        // 既にスプシ連携済みのイベントなら、回答を自動反映（失敗しても回答保存は妨げない）
+        syncEventToSheetSafe($pdo, $event_id);
         // Refresh to show updated data
         header("Location: form_view.php?id=" . $event_id);
         exit;

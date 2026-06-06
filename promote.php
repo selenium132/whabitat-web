@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'sheet_sync.php';
 requireLogin();
 
 $message = '';
@@ -14,7 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo = getDB();
         $stmt = $pdo->prepare("UPDATE users SET role = 'admin', is_approved = 1 WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
-        
+        // 権限変更を名簿スプシに自動反映（連携済みの場合のみ）
+        syncMembersToSheetSafe($pdo);
+
         $_SESSION['role'] = 'admin';
         $_SESSION['is_approved'] = 1;
         $message = '管理者権限を取得しました！ダッシュボードに戻ります...';
