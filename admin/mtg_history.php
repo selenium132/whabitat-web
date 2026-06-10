@@ -119,6 +119,7 @@ $csrf_token = generateCsrfToken();
         .alert-error { background: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 20px; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
     </style>
+    <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
 </head>
 <body>
     <header class="header">

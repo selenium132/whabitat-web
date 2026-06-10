@@ -175,6 +175,7 @@ function getStatusLabel($status) {
         }
 
     </style>
+    <link rel="stylesheet" href="member.css?v=<?php echo @filemtime(__DIR__ . '/member.css') ?: '1'; ?>">
 </head>
 <body>
     <header class="header">

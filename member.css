@@ -1,0 +1,117 @@
+/* =========================================================
+   WHABITAT 会員ページ — 見た目の洗練 (member.css)
+   - </head>直前（各ページの<style>より後）に読み込み、
+     色・罫線・影・装飾のみを上書きする。
+   - レイアウト・寸法・操作フローには手を入れない（慣れを壊さない）。
+   - 広報ページ(landing.css)と同じ墨・オフホワイト・罫線の世界観。
+   - カレンダー分類色（イベント/派遣/mtg/幹部）や出欠ステータスなど
+     意味のある色は残し、彩度だけ落ち着かせる。
+   ========================================================= */
+
+:root {
+    --primary-color: #1a1a1a;
+    --accent-blue: #1a1a1a;     /* フォーカス/リンク/強調 → 墨 */
+    --accent-green: #3f7d54;    /* 成功系: 彩度を抑えた緑 */
+    --accent-red: #b0453a;      /* 危険系: 彩度を抑えた赤 */
+    --accent-orange: #a8762e;   /* 注意系: 琥珀 */
+
+    --text-color: #2a2a2a;
+    --text-light: #8d877c;
+
+    --bg-color: #faf9f6;
+    --card-bg: #ffffff;
+    --border-color: #e6e2d9;
+
+    --shadow-sm: 0 1px 2px rgba(26, 26, 26, 0.04);
+    --shadow-md: 0 6px 16px rgba(26, 26, 26, 0.07);
+    --shadow-lg: 0 16px 32px rgba(26, 26, 26, 0.10);
+}
+
+body { background-color: var(--bg-color); }
+
+/* 見出し下線: グラデーションアニメ → 墨の細線 */
+.section-title span::after {
+    background: var(--primary-color);
+    opacity: .28;
+    height: 1px;
+    animation: none;
+}
+
+/* ナビ下線: オレンジ → 墨 */
+.nav-link::after { background-color: var(--primary-color); }
+
+/* カード: 影を弱め、細い罫線で輪郭を出す（landing と同じ呼吸） */
+body .card {
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+}
+
+/* ボタン: フラット墨・グラデーション排除 */
+body .btn-primary { background-color: var(--primary-color); color: #fff; }
+body .btn-primary:hover { background-color: #2e2e2e; }
+body .btn-secondary {
+    background-color: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+body .btn-secondary:hover { border-color: var(--primary-color); background-color: rgba(26, 26, 26, .04); }
+body .btn-danger { background-color: var(--accent-red); color: #fff; }
+body .btn-danger:hover { background-color: #9a3c32; }
+body .btn-submit { background: var(--primary-color); box-shadow: none; }
+body .btn-submit:hover { box-shadow: var(--shadow-md); }
+
+/* 入力欄: 白地 + 罫線、フォーカスは墨の細リング */
+body .form-input, body .form-select, body textarea {
+    background-color: #fff;
+    border-color: var(--border-color);
+}
+body .form-input:focus, body .form-select:focus, body textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.07);
+    background-color: #fff;
+}
+
+/* アイコンボタン・ログアウト */
+body .icon-btn { background: #f2f0ea; }
+body .icon-btn:hover { background: var(--primary-color); color: #fff; }
+.header-logout-btn { background-color: #f2f0ea; }
+
+/* タグ: 青グラデ → フラット */
+.activity-tag { background: #f2f0ea; color: var(--text-light); }
+
+/* フッター: 紺グラデ → 墨 */
+.footer { background: var(--primary-color); }
+.footer-links a::after { background: rgba(255, 255, 255, .7); }
+
+/* テーブル: ヘッダ薄地・罫線色を統一（回答一覧・名簿。カレンダーには影響させない） */
+body .res-table th,
+body .table-responsive table th { background-color: #f2f0ea; }
+body .res-table th, body .res-table td,
+body .table-responsive table th, body .table-responsive table td { border-bottom: 1px solid var(--border-color); }
+
+/* 名簿テーブルのラッパー（クラスだけ存在し未定義だったものを実装） */
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* 出欠ステータス: 意味色は保ちつつトーンを揃える */
+body .status-join    { background: #ecf2ed; color: #3f7d54; }
+body .status-decline { background: #f6ebe9; color: #b0453a; }
+body .status-maybe   { background: #f4eedd; color: #8f6526; }
+
+/* モバイル */
+@media (max-width: 768px) {
+    /* 回答一覧テーブル: はみ出してページ全体を歪ませず、テーブル内だけ横スクロール */
+    body .res-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    body .res-table th, body .res-table td { padding: 12px 14px; font-size: .88rem; }
+
+    /* アイコンボタンの区切り罫線色を統一 */
+    .event-icons .icon-btn + .icon-btn,
+    .event-icons .icon-btn + form .icon-btn,
+    .event-icons form + .icon-btn,
+    .event-icons form + form .icon-btn {
+        border-left-color: var(--border-color);
+    }
+}
