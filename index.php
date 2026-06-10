@@ -150,20 +150,21 @@ try {
         <div class="hero-side-img" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
         <?php elseif ($hero === 'grid'): ?>
         <?php
-        // フィルムストリップの並び: 海外(GV)3枚を1・5・9番目に分散し、間に国内活動を挟む。
+        // フィルムストリップの並び: 活動ごとにグループ化
+        // GV(海外) → MTG → 夏合宿(昼→夕) → 農業 → 雪かき、の流れでループ。
         // 3列目は object-position（同寸クロップ時の見せ位置）。
         $strip_photos = [
-            ['tile3_s.jpg',  'GVでの住居建築',   'center 42%'],
+            ['tile3_s.jpg',  'GVでの住居建築',   'center 55%'],
+            ['tile2_s.jpg',  'GV現地での移動',   ''],
+            ['tile4_s.jpg',  '海外派遣',         'center 45%'],
             ['tile7_s.jpg',  '全体ミーティング', ''],
             ['tile1_s.jpg',  '夏合宿',           ''],
-            ['tile11_s.jpg', '雪かきボランティア', ''],
-            ['tile4_s.jpg',  '海外派遣',         'center 45%'],
-            ['tile10_s.jpg', '農業ボランティア', 'center 58%'],
+            ['tile8_s.jpg',  '夏合宿',           ''],
             ['tile9_s.jpg',  '夏合宿',           ''],
             ['tile5_s.jpg',  '農業ボランティア', ''],
-            ['tile2_s.jpg',  'GV現地での移動',   ''],
-            ['tile8_s.jpg',  '夏合宿',           ''],
+            ['tile10_s.jpg', '農業ボランティア', 'center 78%'],
             ['tile6_s.jpg',  '農業ボランティア', ''],
+            ['tile11_s.jpg', '雪かきボランティア', ''],
         ];
         ?>
         <div class="hero-strip">
@@ -453,7 +454,7 @@ try {
     const stripTrack = document.querySelector('.hero-strip-track');
     if (stripEl && stripTrack) {
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const speed = window.matchMedia('(max-width: 768px)').matches ? 95 : 125; // px/s
+        const speed = window.matchMedia('(max-width: 768px)').matches ? 62 : 80; // px/s
         let offset = 0, setW = 0, dragging = false, lastX = 0, prev = performance.now();
         const measure = () => { setW = stripTrack.scrollWidth / 2; };
         measure();
