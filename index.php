@@ -150,29 +150,28 @@ try {
         <div class="hero-side-img" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
         <?php elseif ($hero === 'grid'): ?>
         <?php
-        // フィルムストリップの並び: 海外(GV)3枚を等間隔に分散し、間に国内活動を挟む。
-        // 縦長(tile3/tile10)も離して配置し、色のリズム（雪の白・空の青・夕暮れ）が単調にならない順。
+        // フィルムストリップの並び: 海外(GV)3枚を1・5・9番目に分散し、間に国内活動を挟む。
+        // 3列目は object-position（同寸クロップ時の見せ位置）。
         $strip_photos = [
-            ['tile3_s.jpg',  'GV｜住居建築'],
-            ['tile7_s.jpg',  '全体ミーティング'],
-            ['tile1_s.jpg',  '夏合宿'],
-            ['tile11_s.jpg', '雪かきボランティア'],
-            ['tile4_s.jpg',  'GV｜インドネシア'],
-            ['tile10_s.jpg', '農業ボランティア'],
-            ['tile9_s.jpg',  '夏合宿'],
-            ['tile5_s.jpg',  '農業ボランティア'],
-            ['tile2_s.jpg',  'GV｜海外派遣'],
-            ['tile8_s.jpg',  '夏合宿'],
-            ['tile6_s.jpg',  '農業ボランティア'],
+            ['tile3_s.jpg',  'GVでの住居建築',   'center 42%'],
+            ['tile7_s.jpg',  '全体ミーティング', ''],
+            ['tile1_s.jpg',  '夏合宿',           ''],
+            ['tile11_s.jpg', '雪かきボランティア', ''],
+            ['tile4_s.jpg',  '海外派遣',         'center 45%'],
+            ['tile10_s.jpg', '農業ボランティア', 'center 58%'],
+            ['tile9_s.jpg',  '夏合宿',           ''],
+            ['tile5_s.jpg',  '農業ボランティア', ''],
+            ['tile2_s.jpg',  'GV現地での移動',   ''],
+            ['tile8_s.jpg',  '夏合宿',           ''],
+            ['tile6_s.jpg',  '農業ボランティア', ''],
         ];
         ?>
         <div class="hero-strip">
             <div class="hero-strip-track">
                 <?php for ($copy = 0; $copy < 2; $copy++): // シームレスループ用に2周分描画 ?>
-                    <?php foreach ($strip_photos as [$file, $label]): ?>
+                    <?php foreach ($strip_photos as [$file, $label, $pos]): ?>
                         <figure class="strip-item"<?php echo $copy ? ' aria-hidden="true"' : ''; ?>>
-                            <img src="<?php echo $file; ?>?v=<?php echo @filemtime(__DIR__ . '/' . $file) ?: '1'; ?>" alt="<?php echo htmlspecialchars($label); ?>" draggable="false">
-                            <figcaption><?php echo htmlspecialchars($label); ?></figcaption>
+                            <img src="<?php echo $file; ?>?v=<?php echo @filemtime(__DIR__ . '/' . $file) ?: '1'; ?>" alt="<?php echo htmlspecialchars($label); ?>"<?php echo $pos ? ' style="object-position: ' . $pos . ';"' : ''; ?> draggable="false">
                         </figure>
                     <?php endforeach; ?>
                 <?php endfor; ?>
@@ -448,6 +447,38 @@ try {
             header.classList.remove('scrolled');
         }
     }, { passive: true });
+
+    // ヒーローのフィルムストリップ: 自動スクロール + ドラッグ/横ホイールで手動送り
+    const stripEl = document.querySelector('.hero-strip');
+    const stripTrack = document.querySelector('.hero-strip-track');
+    if (stripEl && stripTrack) {
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const speed = window.matchMedia('(max-width: 768px)').matches ? 95 : 125; // px/s
+        let offset = 0, setW = 0, dragging = false, lastX = 0, prev = performance.now();
+        const measure = () => { setW = stripTrack.scrollWidth / 2; };
+        measure();
+        window.addEventListener('resize', measure);
+        const tick = (now) => {
+            const dt = Math.min((now - prev) / 1000, 0.1); prev = now;
+            if (!dragging && !reduced) offset += speed * dt;
+            if (setW > 0) offset = ((offset % setW) + setW) % setW;
+            stripTrack.style.transform = 'translate3d(' + (-offset) + 'px, 0, 0)';
+            requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        stripEl.addEventListener('pointerdown', (e) => {
+            dragging = true; lastX = e.clientX;
+            stripEl.setPointerCapture(e.pointerId);
+        });
+        stripEl.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            offset -= (e.clientX - lastX); lastX = e.clientX;
+        });
+        ['pointerup', 'pointercancel'].forEach(t => stripEl.addEventListener(t, () => { dragging = false; }));
+        stripEl.addEventListener('wheel', (e) => {
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { offset += e.deltaX; e.preventDefault(); }
+        }, { passive: false });
+    }
 
     // 実績数字のカウントアップ
     const statFigures = document.querySelectorAll('.stat-figure[data-target]');

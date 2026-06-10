@@ -108,7 +108,7 @@ section { padding: 8rem 0; }
     .hero--split .hero-side-img { width: 100%; min-height: 42vh; }
 }
 
-/* --- grid: 活動写真フィルムストリップ（常時ゆっくり流れ、ホバーで一時停止） --- */
+/* --- grid: 活動写真フィルムストリップ（自動で流れ・ドラッグ/ホイールで手動送り） --- */
 .hero--grid { flex-direction: column; justify-content: center; gap: 3rem; padding: 6rem 0 0; }
 .hero--grid .hero-content { padding: 0 1.5rem; }
 .hero--grid .hero-scroll { display: none; }
@@ -117,49 +117,33 @@ section { padding: 8rem 0; }
     width: 100%;
     overflow: hidden;
     padding-bottom: 10px;
-    /* 両端をふわっと消すマスク（額装感） */
+    cursor: grab;
+    touch-action: pan-y; /* 縦スクロールは妨げず、横ドラッグだけ拾う */
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
-.hero-strip-track {
-    display: flex;
-    width: max-content;
-    animation: stripScroll 110s linear infinite;
-    will-change: transform;
-}
-.hero-strip:hover .hero-strip-track { animation-play-state: paused; }
-@keyframes stripScroll { to { transform: translateX(-50%); } }
+.hero-strip:active { cursor: grabbing; }
+.hero-strip-track { display: flex; width: max-content; will-change: transform; }
 
 .strip-item {
     position: relative; flex: none;
-    height: clamp(240px, 36vh, 400px);
+    height: clamp(240px, 34vh, 380px);
+    aspect-ratio: 3 / 2; /* 全タイル同寸に統一 */
     margin: 0 8px 0 0;
     border-radius: var(--lp-radius);
     overflow: hidden;
 }
 .strip-item img {
-    display: block; height: 100%; width: auto;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    display: block;
     user-select: none; -webkit-user-drag: none;
-}
-.strip-item::after {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(18,20,22,.04) 55%, rgba(18,20,22,.44) 100%);
-    pointer-events: none;
-}
-.strip-item figcaption {
-    position: absolute; left: 14px; bottom: 11px; z-index: 2; margin: 0;
-    font-family: 'Montserrat', 'Noto Sans JP', sans-serif;
-    font-size: .6rem; font-weight: 600; letter-spacing: .16em;
-    color: #fff; opacity: .92; white-space: nowrap;
+    pointer-events: none; /* ドラッグ操作を妨げない */
 }
 
 @media (max-width: 768px) {
     .hero--grid { gap: 2rem; }
-    .strip-item { height: clamp(170px, 27vh, 260px); }
-    .hero-strip-track { animation-duration: 80s; }
-}
-@media (prefers-reduced-motion: reduce) {
-    .hero-strip-track { animation: none; }
+    .strip-item { height: clamp(160px, 24vh, 240px); }
 }
 
 /* --- typo: 写真なし・タイポ主体 --- */
