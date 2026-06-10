@@ -1,7 +1,7 @@
 <?php 
 require_once 'config.php';
 $csrf_token = generateCsrfToken();
-$hero = $_GET['hero'] ?? 'full'; // ヒーロー比較用: full | split | grid | typo
+$hero = $_GET['hero'] ?? 'typo'; // 既定は写真なし(typo)。比較用: full | split | grid | typo
 $hero = in_array($hero, ['full','split','grid','typo'], true) ? $hero : 'full';
 
 // Fetch recent blogs for homepage
@@ -184,20 +184,36 @@ try {
         <div class="container">
             <div class="stats-grid stagger-children">
                 <div class="stat-item fade-in">
-                    <div><span class="stat-figure" data-target="200">0</span><span class="stat-suffix">名+</span></div>
+                    <span class="stat-index">01</span>
+                    <p class="stat-figure-line" aria-label="約150名以上">
+                        <span class="stat-prefix">約</span><span class="stat-figure" data-target="150">0</span><span class="stat-suffix">名+</span>
+                    </p>
                     <p class="stat-label">所属メンバー</p>
+                    <span class="stat-en" aria-hidden="true">Members</span>
                 </div>
                 <div class="stat-item fade-in">
-                    <div><span class="stat-figure" data-target="20">0</span><span class="stat-suffix">年</span></div>
+                    <span class="stat-index">02</span>
+                    <p class="stat-figure-line" aria-label="活動20年">
+                        <span class="stat-figure" data-target="20">0</span><span class="stat-suffix">年</span>
+                    </p>
                     <p class="stat-label">活動の歴史（2006〜）</p>
+                    <span class="stat-en" aria-hidden="true">History</span>
                 </div>
                 <div class="stat-item fade-in">
-                    <div><span class="stat-figure">全</span><span class="stat-suffix">学部</span></div>
+                    <span class="stat-index">03</span>
+                    <p class="stat-figure-line" aria-label="全学部">
+                        <span class="stat-figure stat-figure--word">全学部</span>
+                    </p>
                     <p class="stat-label">文系・理系問わず</p>
+                    <span class="stat-en" aria-hidden="true">Faculties</span>
                 </div>
                 <div class="stat-item fade-in">
-                    <div><span class="stat-figure">4:6</span></div>
+                    <span class="stat-index">04</span>
+                    <p class="stat-figure-line" aria-label="男女比 4対6">
+                        <span class="stat-figure stat-figure--ratio">4:6</span>
+                    </p>
                     <p class="stat-label">男女比（男:女）</p>
+                    <span class="stat-en" aria-hidden="true">Ratio M:F</span>
                 </div>
             </div>
         </div>
