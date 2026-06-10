@@ -28,6 +28,7 @@ try {
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
+    <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
@@ -126,14 +127,22 @@ try {
     </script>
 
     <section class="hero">
+        <div class="hero-bg" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
+        <div class="hero-overlay"></div>
         <div class="hero-content">
             <img src="logo.png" alt="WHABITAT Logo" class="hero-logo-main">
             <h1 class="hero-title">WHABITAT</h1>
+            <p class="hero-catch">誰もが、きちんとした場所で暮らせる世界を。<br>早稲田から、世界と地域に「住まい」を届ける。</p>
             <div class="hero-subtitle-wrapper">
                 <img src="waseda_logo.png" alt="Waseda University Logo" class="hero-logo-sub">
                 <p class="hero-subtitle">WASEDA UNIVERSITY</p>
             </div>
+            <div class="hero-cta">
+                <a href="#activities" class="btn-hero btn-hero-primary"><i class="fas fa-compass"></i> 活動を見る</a>
+                <a href="#contact" class="btn-hero btn-hero-ghost"><i class="far fa-paper-plane"></i> お問い合わせ</a>
+            </div>
         </div>
+        <a href="#about" class="hero-scroll" aria-label="下へスクロール"><span></span></a>
     </section>
 
     <section id="about" class="bg-white">
@@ -166,6 +175,29 @@ try {
                         <li style="margin-bottom: 0.5rem;">学部：全学部（文系理系問わず）</li>
                         <li>早稲田大学の学生限定</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid stagger-children">
+                <div class="stat-item fade-in">
+                    <div><span class="stat-figure" data-target="200">0</span><span class="stat-suffix">名+</span></div>
+                    <p class="stat-label">所属メンバー</p>
+                </div>
+                <div class="stat-item fade-in">
+                    <div><span class="stat-figure" data-target="20">0</span><span class="stat-suffix">年</span></div>
+                    <p class="stat-label">活動の歴史（2006〜）</p>
+                </div>
+                <div class="stat-item fade-in">
+                    <div><span class="stat-figure">全</span><span class="stat-suffix">学部</span></div>
+                    <p class="stat-label">文系・理系問わず</p>
+                </div>
+                <div class="stat-item fade-in">
+                    <div><span class="stat-figure">4:6</span></div>
+                    <p class="stat-label">男女比（男:女）</p>
                 </div>
             </div>
         </div>
@@ -256,19 +288,19 @@ try {
             <p class="fade-in" style="text-align: center; color: var(--text-light); margin-bottom: 2.5rem;">活動報告やお知らせ</p>
             
             <?php if (!empty($recent_blogs)): ?>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+            <div class="blog-grid">
                 <?php foreach ($recent_blogs as $blog): ?>
-                    <a href="blog_view.php?id=<?php echo $blog['id']; ?>" style="text-decoration: none; color: inherit; display: block; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                    <a href="blog_view.php?id=<?php echo (int)$blog['id']; ?>" class="blog-card fade-in">
                         <?php if ($blog['thumbnail']): ?>
-                            <div style="width: 100%; height: 180px; background-image: url('<?php echo htmlspecialchars($blog['thumbnail']); ?>'); background-size: cover; background-position: center;"></div>
+                            <div class="blog-card-img" style="background-image: url('<?php echo htmlspecialchars($blog['thumbnail']); ?>');"></div>
                         <?php else: ?>
-                            <div style="width: 100%; height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-file-alt" style="font-size: 2.5rem; color: rgba(255,255,255,0.5);"></i>
+                            <div class="blog-card-img" style="background: linear-gradient(135deg, var(--lp-accent) 0%, var(--lp-accent-2) 100%); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-alt" style="font-size: 2.5rem; color: rgba(255,255,255,0.6);"></i>
                             </div>
                         <?php endif; ?>
-                        <div style="padding: 1.25rem;">
-                            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.4;"><?php echo htmlspecialchars($blog['title']); ?></h3>
-                            <div style="font-size: 0.8rem; color: #888;">
+                        <div class="blog-card-body">
+                            <h3><?php echo htmlspecialchars($blog['title']); ?></h3>
+                            <div style="font-size: 0.8rem; color: var(--lp-text-soft);">
                                 <i class="far fa-calendar-alt"></i> <?php echo date('Y年m月d日', strtotime($blog['created_at'])); ?>
                             </div>
                         </div>
@@ -377,6 +409,31 @@ try {
             header.classList.remove('scrolled');
         }
     }, { passive: true });
+
+    // 実績数字のカウントアップ
+    const statFigures = document.querySelectorAll('.stat-figure[data-target]');
+    if (statFigures.length) {
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                const target = parseInt(el.dataset.target, 10) || 0;
+                const duration = 1400;
+                let startTime = null;
+                const step = (now) => {
+                    if (startTime === null) startTime = now;
+                    const progress = Math.min((now - startTime) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = Math.floor(eased * target).toLocaleString();
+                    if (progress < 1) requestAnimationFrame(step);
+                    else el.textContent = target.toLocaleString();
+                };
+                requestAnimationFrame(step);
+                statObserver.unobserve(el);
+            });
+        }, { threshold: 0.4 });
+        statFigures.forEach(el => statObserver.observe(el));
+    }
     </script>
 </body>
 
