@@ -50,57 +50,72 @@ section { padding: 8rem 0; }
 }
 
 /* =========================================================
-   ヒーロー：写真を主役に、文字は白＋影でくっきり読ませる
-   （暗くしすぎず、写真の華やかさを活かす控えめな暗幕）
+   ヒーロー（4バリアント比較: full / split / grid / typo）
+   ?hero=full|split|grid|typo で切替
    ========================================================= */
 .hero {
     position: relative;
     min-height: 100vh; min-height: 100svh;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
-    background: #2a2a2a;
+    background: var(--lp-paper-2);
 }
 .hero::before, .hero::after { content: none; }
-.hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.03); }
-/* 写真をしっかり見せつつ、白文字を読ませるための控えめな暗幕（下部のみ少し濃く） */
-.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,20,22,.30) 0%, rgba(18,20,22,.34) 45%, rgba(18,20,22,.58) 100%); }
 
-.hero-content { position: relative; z-index: 2; text-align: center; color: #fff; padding: 6rem 1.5rem; max-width: 760px; }
-.hero-logo-main { width: 66px; height: auto; margin: 0 auto 1.8rem; filter: drop-shadow(0 3px 14px rgba(0,0,0,.35)); }
-.hero-title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    font-size: clamp(2.6rem, 8vw, 4.8rem);
-    letter-spacing: .14em;
-    color: #fff; margin: 0;
-    text-shadow: 0 2px 28px rgba(0,0,0,.45);
-}
-.hero-catch {
-    font-size: clamp(.98rem, 2vw, 1.15rem);
-    font-weight: 500; line-height: 1.95;
-    margin: 1.8rem auto 0; max-width: 30em;
-    color: #fff;
-    text-shadow: 0 1px 16px rgba(0,0,0,.6);
-}
-.hero-subtitle-wrapper { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-top: 1.6rem; opacity: .92; }
-.hero-logo-sub { height: 18px; width: auto; filter: brightness(0) invert(1); opacity: .85; }
-.hero-subtitle-wrapper .hero-subtitle { font-family: 'Montserrat', sans-serif; font-size: .68rem; letter-spacing: .26em; font-weight: 500; color: #fff; margin: 0; text-shadow: 0 1px 10px rgba(0,0,0,.5); }
-
+/* 共通コンテンツ（既定は明るい地＝墨文字。full のみ白に上書き） */
+.hero-content { position: relative; z-index: 2; text-align: center; color: var(--lp-ink); padding: 6rem 1.5rem; max-width: 760px; }
+.hero-logo-main { width: 66px; height: auto; margin: 0 auto 1.8rem; }
+.hero-title { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: clamp(2.6rem, 8vw, 4.8rem); letter-spacing: .14em; color: var(--lp-ink); margin: 0; }
+.hero-catch { font-size: clamp(.98rem, 2vw, 1.15rem); font-weight: 500; line-height: 1.95; margin: 1.8rem auto 0; max-width: 30em; color: var(--lp-muted); }
+.hero-subtitle-wrapper { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-top: 1.6rem; opacity: .85; }
+.hero-logo-sub { height: 18px; width: auto; filter: grayscale(1); opacity: .7; }
+.hero-subtitle-wrapper .hero-subtitle { font-family: 'Montserrat', sans-serif; font-size: .68rem; letter-spacing: .26em; font-weight: 500; color: var(--lp-muted); margin: 0; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: .9rem; justify-content: center; margin-top: 2.8rem; }
-.btn-hero {
-    display: inline-flex; align-items: center; gap: .5rem;
-    padding: .85rem 2rem; font-size: .88rem; font-weight: 500; letter-spacing: .03em;
-    text-decoration: none; border-radius: var(--lp-radius);
-    transition: transform .3s var(--lp-ease), background .3s, color .3s, border-color .3s;
-}
-.btn-hero-primary { background: #fff; color: #1a1a1a; }
-.btn-hero-primary:hover { background: rgba(255,255,255,.88); transform: translateY(-2px); }
-.btn-hero-ghost { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.6); backdrop-filter: blur(2px); }
-.btn-hero-ghost:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); }
-
-.hero-scroll { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); width: 22px; height: 36px; border: 1px solid rgba(255,255,255,.6); border-radius: 12px; z-index: 2; }
-.hero-scroll span { position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: #fff; animation: lpScroll 1.9s var(--lp-ease) infinite; }
+.btn-hero { display: inline-flex; align-items: center; gap: .5rem; padding: .85rem 2rem; font-size: .88rem; font-weight: 500; letter-spacing: .03em; text-decoration: none; border-radius: var(--lp-radius); transition: transform .3s var(--lp-ease), background .3s, color .3s, border-color .3s; }
+.btn-hero-primary { background: var(--lp-ink); color: #fff; }
+.btn-hero-primary:hover { background: var(--lp-ink-2); transform: translateY(-2px); }
+.btn-hero-ghost { background: transparent; color: var(--lp-ink); border: 1px solid var(--lp-line); }
+.btn-hero-ghost:hover { background: rgba(26,26,26,.04); border-color: var(--lp-ink); transform: translateY(-2px); }
+.hero-scroll { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); width: 22px; height: 36px; border: 1px solid rgba(26,26,26,.25); border-radius: 12px; z-index: 3; }
+.hero-scroll span { position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: var(--lp-ink); animation: lpScroll 1.9s var(--lp-ease) infinite; }
 @keyframes lpScroll { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(12px); } }
+
+/* --- full: 全面写真＋白文字 --- */
+.hero--full { background: #2a2a2a; }
+.hero--full .hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.03); }
+.hero--full .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,20,22,.30) 0%, rgba(18,20,22,.34) 45%, rgba(18,20,22,.58) 100%); }
+.hero--full .hero-content, .hero--full .hero-title, .hero--full .hero-subtitle { color: #fff; }
+.hero--full .hero-catch { color: #fff; text-shadow: 0 1px 16px rgba(0,0,0,.6); }
+.hero--full .hero-title { text-shadow: 0 2px 28px rgba(0,0,0,.45); }
+.hero--full .hero-logo-main { filter: drop-shadow(0 3px 14px rgba(0,0,0,.35)); }
+.hero--full .hero-logo-sub { filter: brightness(0) invert(1); opacity: .85; }
+.hero--full .btn-hero-primary { background: #fff; color: #1a1a1a; }
+.hero--full .btn-hero-primary:hover { background: rgba(255,255,255,.88); }
+.hero--full .btn-hero-ghost { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.6); }
+.hero--full .btn-hero-ghost:hover { background: rgba(255,255,255,.18); }
+.hero--full .hero-scroll { border-color: rgba(255,255,255,.6); }
+.hero--full .hero-scroll span { background: #fff; }
+
+/* --- split: 左テキスト / 右写真 --- */
+.hero--split { flex-direction: row; align-items: stretch; }
+.hero--split .hero-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; max-width: none; padding: 4rem clamp(2rem, 5vw, 5rem); }
+.hero--split .hero-subtitle-wrapper, .hero--split .hero-cta { justify-content: flex-start; }
+.hero--split .hero-side-img { flex: 1; background-size: cover; background-position: center; min-height: 50vh; }
+@media (max-width: 768px) {
+    .hero--split { flex-direction: column; }
+    .hero--split .hero-content { align-items: center; text-align: center; padding: 5rem 1.5rem 3rem; }
+    .hero--split .hero-subtitle-wrapper, .hero--split .hero-cta { justify-content: center; }
+    .hero--split .hero-side-img { width: 100%; min-height: 42vh; }
+}
+
+/* --- grid: 上テキスト / 下に写真タイル --- */
+.hero--grid { flex-direction: column; justify-content: center; gap: 2.5rem; padding-top: 4rem; }
+.hero-grid-imgs { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; height: 38vh; }
+.hero-grid-imgs > div { background-size: cover; background-position: center; }
+@media (max-width: 768px) { .hero-grid-imgs { grid-template-columns: repeat(2, 1fr); height: 44vh; } }
+
+/* --- typo: 写真なし・タイポ主体 --- */
+.hero--typo { background: var(--lp-paper-2); }
 
 /* =========================================================
    数字：墨地に白、区切り線のみ

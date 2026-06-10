@@ -1,6 +1,8 @@
 <?php 
-require_once 'config.php'; 
+require_once 'config.php';
 $csrf_token = generateCsrfToken();
+$hero = $_GET['hero'] ?? 'full'; // ヒーロー比較用: full | split | grid | typo
+$hero = in_array($hero, ['full','split','grid','typo'], true) ? $hero : 'full';
 
 // Fetch recent blogs for homepage
 $pdo = getDB();
@@ -20,7 +22,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHABITAT | 早稲田大学ボランティアサークル</title>
-    <meta name="description" content="WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の学生支部です。「誰もがきちんとした場所で暮らせる世界」を目指し、国内外で住居建築支援を行っています。">
+    <meta name="description" content="WHABITAT（ワビタット）は、国際NGO Habitat for Humanity の早稲田大学学生支部です。海外での住居建築ボランティア（GV）と、国内の地域に根ざしたボランティア活動に取り組んでいます。">
     <link rel="canonical" href="https://whabitathome.com/">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
@@ -126,13 +128,15 @@ try {
         });
     </script>
 
-    <section class="hero">
+    <section class="hero hero--<?php echo htmlspecialchars($hero); ?>">
+        <?php if ($hero === 'full'): ?>
         <div class="hero-bg" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
         <div class="hero-overlay"></div>
+        <?php endif; ?>
         <div class="hero-content">
             <img src="logo.png" alt="WHABITAT Logo" class="hero-logo-main">
             <h1 class="hero-title">WHABITAT</h1>
-            <p class="hero-catch">誰もが、きちんとした場所で暮らせる世界を。<br>早稲田から、世界と地域に「住まい」を届ける。</p>
+            <p class="hero-catch">誰もが、きちんとした場所で暮らせる世界へ。</p>
             <div class="hero-subtitle-wrapper">
                 <img src="waseda_logo.png" alt="Waseda University Logo" class="hero-logo-sub">
                 <p class="hero-subtitle">WASEDA UNIVERSITY</p>
@@ -142,6 +146,16 @@ try {
                 <a href="#contact" class="btn-hero btn-hero-ghost"><i class="far fa-paper-plane"></i> お問い合わせ</a>
             </div>
         </div>
+        <?php if ($hero === 'split'): ?>
+        <div class="hero-side-img" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
+        <?php elseif ($hero === 'grid'): ?>
+        <div class="hero-grid-imgs">
+            <div style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
+            <div style="background-image: url('jv.jpg?v=<?php echo @filemtime(__DIR__ . '/jv.jpg') ?: '1'; ?>');"></div>
+            <div style="background-image: url('daily.jpg?v=<?php echo @filemtime(__DIR__ . '/daily.jpg') ?: '1'; ?>');"></div>
+            <div style="background-image: url('domestic.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic.jpg') ?: '1'; ?>');"></div>
+        </div>
+        <?php endif; ?>
         <a href="#about" class="hero-scroll" aria-label="下へスクロール"><span></span></a>
     </section>
 
@@ -151,7 +165,7 @@ try {
                 <div class="about-intro fade-in">
                     <span class="about-label">About Us</span>
                     <h2 class="about-statement">「誰もが、きちんとした場所で<br>暮らせる世界」を目指して。</h2>
-                    <p class="about-lead">WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の早稲田大学学生支部です。国内外で住居建築支援を行い、「住まい」から社会課題に向き合っています。</p>
+                    <p class="about-lead">WHABITAT（ワビタット）は、国際NGO Habitat for Humanity の早稲田大学学生支部です。海外では現地での住居建築ボランティア（GV）に参加し、国内では農業・ゴミ拾い・清掃・ビーチクリーンなど、地域に根ざしたボランティア活動に取り組んでいます。</p>
                 </div>
                 <div class="about-facts fade-in">
                     <dl class="fact-list">
