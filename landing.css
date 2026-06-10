@@ -115,15 +115,17 @@ section { padding: 8rem 0; }
 }
 
 /* =========================================================
-   About / 情報カード：ボーダー主体、影なし
+   About：エディトリアル（左ステートメント / 右概要リスト）
    ========================================================= */
-.about-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 860px; margin: 0 auto; }
-.info-card { background: var(--lp-paper); border: 1px solid var(--lp-line); border-radius: var(--lp-radius); padding: 2.5rem 2rem; box-shadow: none; transition: border-color .3s var(--lp-ease); }
-.info-card:hover { border-color: var(--lp-ink); transform: none; }
-.info-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--lp-ink); margin-bottom: 1rem; }
-/* インラインで色指定されたアイコン等を墨に統一 */
-.info-card [style*="color"] { color: var(--lp-ink) !important; }
-@media (max-width: 680px) { .about-grid { grid-template-columns: 1fr; } }
+.about-layout { display: grid; grid-template-columns: 1.05fr .95fr; gap: 4.5rem; align-items: start; max-width: 1040px; margin: 0 auto; }
+.about-label { font-family: 'Montserrat', sans-serif; font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--lp-muted); display: block; margin-bottom: 1.4rem; }
+.about-statement { font-size: clamp(1.5rem, 3.2vw, 2.15rem); font-weight: 600; line-height: 1.55; letter-spacing: .01em; color: var(--lp-ink); margin: 0 0 1.6rem; }
+.about-lead { font-size: 1rem; line-height: 1.95; color: var(--lp-muted); margin: 0; }
+.fact-list { margin: 0; border-top: 1px solid var(--lp-line); }
+.fact-row { display: grid; grid-template-columns: 4.5em 1fr; gap: 1.2rem; padding: 1.05rem 0; border-bottom: 1px solid var(--lp-line); }
+.fact-row dt { font-size: .8rem; font-weight: 600; color: var(--lp-muted); letter-spacing: .06em; padding-top: .15rem; }
+.fact-row dd { font-size: .94rem; color: var(--lp-ink); margin: 0; line-height: 1.65; }
+@media (max-width: 768px) { .about-layout { grid-template-columns: 1fr; gap: 2.5rem; } }
 
 /* =========================================================
    Activities カード：グレースケール写真→ホバーで発色

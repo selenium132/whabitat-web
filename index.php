@@ -127,8 +127,6 @@ try {
     </script>
 
     <section class="hero">
-        <div class="hero-bg" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
-        <div class="hero-overlay"></div>
         <div class="hero-content">
             <img src="logo.png" alt="WHABITAT Logo" class="hero-logo-main">
             <h1 class="hero-title">WHABITAT</h1>
@@ -147,34 +145,20 @@ try {
 
     <section id="about" class="bg-white">
         <div class="container">
-            <h2 class="section-title fade-in"><span>About Us</span></h2>
-            <p class="fade-in" style="text-align: center; max-width: 700px; margin: 0 auto 4rem; color: var(--text-light);">
-                WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の学生支部です。<br>
-                「誰もがきちんとした場所で暮らせる世界」を目指し、国内外で住居建築支援を行っています。
-            </p>
-
-            <div class="about-grid stagger-children">
-                <div class="info-card fade-in">
-                    <div style="color: var(--accent-green); font-size: 2rem; margin-bottom: 1rem;"><i
-                            class="fas fa-university"></i></div>
-                    <h3>団体概要</h3>
-                    <ul style="font-size: 0.95rem; color: var(--text-color);">
-                        <li style="margin-bottom: 0.5rem;">早稲田大学公認サークル</li>
-                        <li style="margin-bottom: 0.5rem;">WAVOC 公認</li>
-                        <li style="margin-bottom: 0.5rem;">国際NGO Habitat for Humanity Japan 学生支部</li>
-                        <li>設立：2006年</li>
-                    </ul>
+            <div class="about-layout">
+                <div class="about-intro fade-in">
+                    <span class="about-label">About Us</span>
+                    <h2 class="about-statement">「誰もが、きちんとした場所で<br>暮らせる世界」を目指して。</h2>
+                    <p class="about-lead">WHABITAT（ワビタット）は、国際NGO Habitat for Humanity Japan の早稲田大学学生支部です。国内外で住居建築支援を行い、「住まい」から社会課題に向き合っています。</p>
                 </div>
-                <div class="info-card fade-in">
-                    <div style="color: var(--accent-blue); font-size: 2rem; margin-bottom: 1rem;"><i
-                            class="fas fa-users"></i></div>
-                    <h3>規模・構成</h3>
-                    <ul style="font-size: 0.95rem; color: var(--text-color);">
-                        <li style="margin-bottom: 0.5rem;">人数：約200名</li>
-                        <li style="margin-bottom: 0.5rem;">男女比：4:6</li>
-                        <li style="margin-bottom: 0.5rem;">学部：全学部（文系理系問わず）</li>
-                        <li>早稲田大学の学生限定</li>
-                    </ul>
+                <div class="about-facts fade-in">
+                    <dl class="fact-list">
+                        <div class="fact-row"><dt>所属</dt><dd>早稲田大学公認サークル / WAVOC 公認</dd></div>
+                        <div class="fact-row"><dt>母体</dt><dd>国際NGO Habitat for Humanity Japan 学生支部</dd></div>
+                        <div class="fact-row"><dt>設立</dt><dd>2006年</dd></div>
+                        <div class="fact-row"><dt>規模</dt><dd>約200名（男女比 4:6）</dd></div>
+                        <div class="fact-row"><dt>構成</dt><dd>全学部・早稲田大学の学生限定</dd></div>
+                    </dl>
                 </div>
             </div>
         </div>
