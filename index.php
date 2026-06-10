@@ -226,7 +226,7 @@ try {
                 <!-- GV -->
                 <a href="activity_gv.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_hero.jpg') ?: '1'; ?>'); background-position: center 55%;">
+                        style="background-image: url('gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_hero.jpg') ?: '1'; ?>'); background-position: center 52%;">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Main Event</span>
@@ -277,7 +277,7 @@ try {
                 <!-- Domestic Volunteer -->
                 <a href="activity_domestic.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 45%;">
+                        style="background-image: url('domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 62%;">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Domestic Volunteer</span>
