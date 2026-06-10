@@ -97,6 +97,22 @@ body .status-join    { background: #ecf2ed; color: #3f7d54; }
 body .status-decline { background: #f6ebe9; color: #b0453a; }
 body .status-maybe   { background: #f4eedd; color: #8f6526; }
 
+/* ページ固有の原色を世界観に合わせて調和 */
+/* past_events: 復元モーダルの選択枠（紫 → 墨） */
+body .restore-option:hover { border-color: var(--primary-color); background: #f7f5f0; }
+body .restore-option.selected { border-color: var(--primary-color); background: #f2f0ea; }
+/* form_create: 保存/追加ボタンのホバー（青暗 → 墨2） */
+body .float-btn.add-q:hover, body .btn-save:hover { background-color: #2e2e2e; }
+/* admin/mtg_history: 編集ボタン・戻るリンク（紫 → 墨）、削除は減彩赤 */
+body .btn-edit { background: var(--primary-color); }
+body .btn-delete { background: var(--accent-red); }
+body .back-link { color: var(--text-light); }
+/* admin/messages: 未読/目安箱の意味色は保ち彩度を抑える */
+body .message-card.unread { border-left-color: var(--accent-red); background: #fbf6f4; }
+body .message-card.suggestion { border-left-color: #7d6a8e; }
+body .source-badge.contact { background: #ecf0f2; color: #51666e; }
+body .source-badge.suggestion { background: #f0edf2; color: #7d6a8e; }
+
 /* モバイル */
 @media (max-width: 768px) {
     /* 回答一覧テーブル: はみ出してページ全体を歪ませず、テーブル内だけ横スクロール */
