@@ -150,10 +150,11 @@ try {
         <div class="hero-side-img" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
         <?php elseif ($hero === 'grid'): ?>
         <div class="hero-grid-imgs">
-            <div style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
-            <div style="background-image: url('jv.jpg?v=<?php echo @filemtime(__DIR__ . '/jv.jpg') ?: '1'; ?>');"></div>
-            <div style="background-image: url('daily.jpg?v=<?php echo @filemtime(__DIR__ . '/daily.jpg') ?: '1'; ?>');"></div>
-            <div style="background-image: url('domestic.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic.jpg') ?: '1'; ?>');"></div>
+            <div class="gt-1" style="background-image: url('tile3.jpg?v=<?php echo @filemtime(__DIR__ . '/tile3.jpg') ?: '1'; ?>'); background-position: center 40%;"></div>
+            <div class="gt-2" style="background-image: url('tile4.jpg?v=<?php echo @filemtime(__DIR__ . '/tile4.jpg') ?: '1'; ?>'); background-position: center 35%;"></div>
+            <div class="gt-3" style="background-image: url('tile2.jpg?v=<?php echo @filemtime(__DIR__ . '/tile2.jpg') ?: '1'; ?>');"></div>
+            <div class="gt-4" style="background-image: url('tile6.jpg?v=<?php echo @filemtime(__DIR__ . '/tile6.jpg') ?: '1'; ?>'); background-position: center 30%;"></div>
+            <div class="gt-5" style="background-image: url('tile9.jpg?v=<?php echo @filemtime(__DIR__ . '/tile9.jpg') ?: '1'; ?>'); background-position: center 40%;"></div>
         </div>
         <?php endif; ?>
         <a href="#about" class="hero-scroll" aria-label="下へスクロール"><span></span></a>

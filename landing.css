@@ -108,14 +108,59 @@ section { padding: 8rem 0; }
     .hero--split .hero-side-img { width: 100%; min-height: 42vh; }
 }
 
-/* --- grid: 上テキスト / 下に写真タイル（余白・角丸・繊細なホバーで上品に） --- */
-.hero--grid { flex-direction: column; justify-content: center; gap: 3rem; padding: 6rem 0 0; }
+/* --- grid: エディトリアル写真タイル（非対称レイアウト＋時差フェードイン） --- */
+.hero--grid { flex-direction: column; justify-content: center; gap: 2.5rem; padding: 6rem 0 0; }
 .hero--grid .hero-content { padding: 0 1.5rem; }
-.hero-grid-imgs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 1360px; height: 40vh; padding: 0 8px 8px; box-sizing: border-box; }
-.hero-grid-imgs > div { position: relative; background-size: cover; background-position: center; border-radius: var(--lp-radius); overflow: hidden; transition: opacity .45s var(--lp-ease); }
-.hero-grid-imgs > div::after { content: ""; position: absolute; inset: 0; background: rgba(18,20,22,.10); transition: background .45s var(--lp-ease); }
+.hero-grid-imgs {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr 1fr 0.85fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+    width: 100%; max-width: 1360px;
+    height: 52vh; min-height: 260px;
+    padding: 0 8px 8px;
+    box-sizing: border-box;
+}
+/* 非対称スパン: 左縦長・上中横長・下右横長 */
+.hero-grid-imgs .gt-1 { grid-row: 1 / 3; }
+.hero-grid-imgs .gt-2 { grid-column: 2 / 4; }
+.hero-grid-imgs .gt-5 { grid-column: 3 / 5; }
+
+.hero-grid-imgs > div {
+    position: relative;
+    background-size: cover; background-position: center;
+    border-radius: var(--lp-radius);
+    overflow: hidden;
+    opacity: 0;
+    animation: tileIn 0.9s var(--lp-ease) forwards;
+    transition: transform 0.45s var(--lp-ease);
+}
+.hero-grid-imgs > div:nth-child(1) { animation-delay: 0.05s; }
+.hero-grid-imgs > div:nth-child(2) { animation-delay: 0.18s; }
+.hero-grid-imgs > div:nth-child(3) { animation-delay: 0.31s; }
+.hero-grid-imgs > div:nth-child(4) { animation-delay: 0.44s; }
+.hero-grid-imgs > div:nth-child(5) { animation-delay: 0.57s; }
+@keyframes tileIn { from { opacity: 0; } to { opacity: 1; } }
+
+.hero-grid-imgs > div::after {
+    content: ""; position: absolute; inset: 0;
+    background: rgba(18,20,22,.12);
+    transition: background .45s var(--lp-ease);
+}
+.hero-grid-imgs > div:hover { transform: scale(1.018); z-index: 2; }
 .hero-grid-imgs > div:hover::after { background: rgba(18,20,22,0); }
-@media (max-width: 768px) { .hero-grid-imgs { grid-template-columns: repeat(2, 1fr); height: 52vh; } }
+
+@media (max-width: 768px) {
+    .hero-grid-imgs {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(2, 1fr);
+        height: 50vh;
+    }
+    .hero-grid-imgs .gt-1,
+    .hero-grid-imgs .gt-2,
+    .hero-grid-imgs .gt-5 { grid-row: auto; grid-column: auto; }
+    .hero-grid-imgs > div:nth-child(n+5) { display: none; }
+}
 
 /* --- typo: 写真なし・タイポ主体 --- */
 .hero--typo { background: var(--lp-paper-2); }
