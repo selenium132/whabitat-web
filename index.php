@@ -1,7 +1,7 @@
 <?php 
 require_once 'config.php';
 $csrf_token = generateCsrfToken();
-$hero = $_GET['hero'] ?? 'typo'; // 既定は写真なし(typo)。比較用: full | split | grid | typo
+$hero = $_GET['hero'] ?? 'grid'; // 既定は写真タイル(grid)。比較用: full | split | grid | typo
 $hero = in_array($hero, ['full','split','grid','typo'], true) ? $hero : 'full';
 
 // Fetch recent blogs for homepage
