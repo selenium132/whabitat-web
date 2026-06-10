@@ -149,12 +149,34 @@ try {
         <?php if ($hero === 'split'): ?>
         <div class="hero-side-img" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
         <?php elseif ($hero === 'grid'): ?>
-        <div class="hero-grid-imgs">
-            <div class="gt-1" style="background-image: url('tile3.jpg?v=<?php echo @filemtime(__DIR__ . '/tile3.jpg') ?: '1'; ?>'); background-position: center 40%;"></div>
-            <div class="gt-2" style="background-image: url('tile4.jpg?v=<?php echo @filemtime(__DIR__ . '/tile4.jpg') ?: '1'; ?>'); background-position: center 35%;"></div>
-            <div class="gt-3" style="background-image: url('tile2.jpg?v=<?php echo @filemtime(__DIR__ . '/tile2.jpg') ?: '1'; ?>');"></div>
-            <div class="gt-4" style="background-image: url('tile6.jpg?v=<?php echo @filemtime(__DIR__ . '/tile6.jpg') ?: '1'; ?>'); background-position: center 30%;"></div>
-            <div class="gt-5" style="background-image: url('tile9.jpg?v=<?php echo @filemtime(__DIR__ . '/tile9.jpg') ?: '1'; ?>'); background-position: center 40%;"></div>
+        <?php
+        // フィルムストリップの並び: 海外(GV)3枚を等間隔に分散し、間に国内活動を挟む。
+        // 縦長(tile3/tile10)も離して配置し、色のリズム（雪の白・空の青・夕暮れ）が単調にならない順。
+        $strip_photos = [
+            ['tile3_s.jpg',  'GV｜住居建築'],
+            ['tile7_s.jpg',  '全体ミーティング'],
+            ['tile1_s.jpg',  '夏合宿'],
+            ['tile11_s.jpg', '雪かきボランティア'],
+            ['tile4_s.jpg',  'GV｜インドネシア'],
+            ['tile10_s.jpg', '農業ボランティア'],
+            ['tile9_s.jpg',  '夏合宿'],
+            ['tile5_s.jpg',  '農業ボランティア'],
+            ['tile2_s.jpg',  'GV｜海外派遣'],
+            ['tile8_s.jpg',  '夏合宿'],
+            ['tile6_s.jpg',  '農業ボランティア'],
+        ];
+        ?>
+        <div class="hero-strip">
+            <div class="hero-strip-track">
+                <?php for ($copy = 0; $copy < 2; $copy++): // シームレスループ用に2周分描画 ?>
+                    <?php foreach ($strip_photos as [$file, $label]): ?>
+                        <figure class="strip-item"<?php echo $copy ? ' aria-hidden="true"' : ''; ?>>
+                            <img src="<?php echo $file; ?>?v=<?php echo @filemtime(__DIR__ . '/' . $file) ?: '1'; ?>" alt="<?php echo htmlspecialchars($label); ?>" draggable="false">
+                            <figcaption><?php echo htmlspecialchars($label); ?></figcaption>
+                        </figure>
+                    <?php endforeach; ?>
+                <?php endfor; ?>
+            </div>
         </div>
         <?php endif; ?>
         <a href="#about" class="hero-scroll" aria-label="下へスクロール"><span></span></a>
