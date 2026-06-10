@@ -3,16 +3,23 @@ require_once 'config.php';
 
 $code = $_GET['code'] ?? '';
 
-// LINE in-app browser completely blocks cookies, so we can't reliably validate state
-// LINE OAuth security is already provided by the code exchange mechanism
-// Just verify that we got a code parameter
 if (empty($code)) {
     die('Invalid Request - 認証コードがありません。<br><a href="index.php">トップページへ</a>');
 }
 
-// Clear any existing state cookies/session just in case
+// CSRF対策: state の検証。
+// セッションに state が保持されている通常環境では厳密に検証する。
+// （LINEアプリ内ブラウザ等でセッションCookieが維持されず state が空になる場合のみ、
+//  後方互換でスキップし正規ユーザーのログインを妨げない）
+$state = $_GET['state'] ?? '';
+$saved_state = $_SESSION['line_state'] ?? '';
+unset($_SESSION['line_state']);
 setcookie('line_state', '', time() - 3600, '/');
-if (isset($_SESSION['line_state'])) unset($_SESSION['line_state']);
+if (!empty($saved_state)) {
+    if (empty($state) || !hash_equals($saved_state, $state)) {
+        die('セッションの有効期限が切れたか、不正なアクセスです。<br><a href="login.php">もう一度ログイン</a>');
+    }
+}
 
 // 1. Get Access Token
 $ch = curl_init();
@@ -27,10 +34,13 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
 ]));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($ch);
+$token_http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
 $token_data = json_decode($response, true);
 
-if (!isset($token_data['access_token'])) {
-    die('Token Error: ' . $response);
+if ($token_http !== 200 || !isset($token_data['access_token'])) {
+    error_log('LINE token exchange failed: HTTP ' . $token_http . ' ' . $response);
+    die('LINEログインに失敗しました。<br><a href="login.php">もう一度ログイン</a>');
 }
 
 // 2. Get User Profile
@@ -40,10 +50,18 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Authorization: Bearer ' . $token_data['access_token']
 ]);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$profile = json_decode(curl_exec($ch), true);
+$profile_response = curl_exec($ch);
+$profile_http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+$profile = json_decode($profile_response, true);
+
+if ($profile_http !== 200 || empty($profile['userId'])) {
+    error_log('LINE profile fetch failed: HTTP ' . $profile_http . ' ' . $profile_response);
+    die('LINEプロフィールの取得に失敗しました。<br><a href="login.php">もう一度ログイン</a>');
+}
 
 $line_user_id = $profile['userId'];
-$line_name = $profile['displayName'];
+$line_name = $profile['displayName'] ?? '';
 $avatar_url = $profile['pictureUrl'] ?? '';
 
 // 3. Check DB
@@ -56,7 +74,9 @@ if ($user) {
     // Existing User - Update LINE name and avatar in case they changed
     $stmt = $pdo->prepare("UPDATE users SET line_name = ?, avatar_url = ? WHERE id = ?");
     $stmt->execute([$line_name, $avatar_url, $user['id']]);
-    
+
+    // セッション固定対策: ログイン確定時にセッションIDを再生成
+    session_regenerate_id(true);
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['role'] = $user['role'];
     $_SESSION['name'] = $user['name'];
@@ -78,7 +98,9 @@ if ($user) {
     // New User -> Create basic record and redirect to profile fill
     $stmt = $pdo->prepare("INSERT INTO users (line_user_id, line_name, avatar_url) VALUES (?, ?, ?)");
     $stmt->execute([$line_user_id, $line_name, $avatar_url]);
-    
+
+    // セッション固定対策: ログイン確定時にセッションIDを再生成
+    session_regenerate_id(true);
     $_SESSION['user_id'] = $pdo->lastInsertId();
     $_SESSION['role'] = 'member';
     

@@ -193,7 +193,7 @@ try {
 
             <div id="events" style="display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; scroll-margin-top: 80px;">
                 <h2 class="section-title" style="text-align: left; margin: 0;">出欠確認</h2>
-                <a href="past_events.php" style="font-size: 0.85rem; color: #888; text-decoration: none;">過去の出欠 →</a>
+                <a href="past_events.php" style="font-size: 0.85rem; color: #555; text-decoration: none; padding: 8px 4px; display: inline-block;">過去の出欠 <span aria-hidden="true">→</span></a>
             </div>
             <?php if (empty($attend_checks)): ?>
                 <div class="card" style="text-align: center; color: var(--text-light);">
@@ -308,7 +308,7 @@ try {
             <?php endif; ?>
 
             <!-- わびカレンダー -->
-            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem; scroll-margin-top: 80px;">📅 わびカレンダー</h2>
+            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem; scroll-margin-top: 80px;"><span aria-hidden="true">📅</span> わびカレンダー</h2>
             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.75rem;">
                 <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #667eea; border-radius: 2px;"></span>イベント</span>
                 <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #28a745; border-radius: 2px;"></span>派遣</span>
@@ -633,13 +633,19 @@ try {
             </div>
 
             <!-- 目安箱 (Suggestion Box) -->
-            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">📮 目安箱</h2>
+            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;"><span aria-hidden="true">📮</span> 目安箱</h2>
             <div class="card" style="padding: 2rem;">
                 <?php if (isset($_SESSION['suggestion_success']) && $_SESSION['suggestion_success']): ?>
                     <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
                         ✅ 送信しました！ご意見ありがとうございます。
                     </div>
                     <?php unset($_SESSION['suggestion_success']); ?>
+                <?php endif; ?>
+                <?php if (!empty($_SESSION['suggestion_error'])): ?>
+                    <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
+                        ⚠️ <?php echo htmlspecialchars($_SESSION['suggestion_error'], ENT_QUOTES, 'UTF-8'); ?>
+                    </div>
+                    <?php unset($_SESSION['suggestion_error']); ?>
                 <?php endif; ?>
                 <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.95rem;">
                     サークルへのご意見・ご要望があればお気軽にどうぞ！<br>
@@ -715,8 +721,8 @@ try {
         }
         
         .event-bar {
-            color: white; 
-            font-size: 0.55rem; 
+            color: white;
+            font-size: 0.7rem;
             padding: 0; /* padding 0 for container */
             border-radius: 0; 
             margin-bottom: 1px; 
@@ -978,12 +984,33 @@ try {
             formData.append('action', 'delete');
             formData.append('id', currentEventId);
             formData.append('csrf_token', document.querySelector('[name="csrf_token"]').value);
-            
+
+            const deleteBtn = document.getElementById('deleteBtn');
+            const originalLabel = deleteBtn ? deleteBtn.textContent : null;
+            if (deleteBtn) {
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = '削除中...';
+            }
+
             fetch('calendar_api.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .then(res => {
-                    if (res.success) location.reload();
-                    else alert(res.error || 'エラー');
+                    if (res.success) {
+                        location.reload();
+                    } else {
+                        alert(res.error || 'エラー');
+                        if (deleteBtn) {
+                            deleteBtn.disabled = false;
+                            deleteBtn.textContent = originalLabel;
+                        }
+                    }
+                })
+                .catch(function() {
+                    alert('削除に失敗しました。通信状況をご確認ください。');
+                    if (deleteBtn) {
+                        deleteBtn.disabled = false;
+                        deleteBtn.textContent = originalLabel;
+                    }
                 });
         }
         
@@ -992,12 +1019,33 @@ try {
             e.preventDefault();
             const formData = new FormData(this);
             formData.append('action', currentEventId ? 'update' : 'add');
-            
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalLabel = submitBtn ? submitBtn.textContent : null;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '保存中...';
+            }
+
             fetch('calendar_api.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .then(res => {
-                    if (res.success) location.reload();
-                    else alert(res.error || 'エラー');
+                    if (res.success) {
+                        location.reload();
+                    } else {
+                        alert(res.error || 'エラー');
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalLabel;
+                        }
+                    }
+                })
+                .catch(function() {
+                    alert('保存に失敗しました。通信状況をご確認ください。');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalLabel;
+                    }
                 });
         });
         

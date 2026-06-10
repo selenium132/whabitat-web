@@ -54,6 +54,19 @@ ul {
     list-style: none;
 }
 
+/* --- Accessibility: Visible keyboard focus --- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.icon-btn:focus-visible,
+.menu-toggle:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
 /* --- Typography --- */
 h1,
 h2,
@@ -251,7 +264,8 @@ h3 {
 }
 
 .hero {
-    height: 90vh;
+    min-height: 90vh;
+    min-height: 90dvh;
     position: relative;
     display: flex;
     align-items: center;
@@ -880,6 +894,7 @@ textarea:focus {
         right: -100%;
         width: 70%;
         height: 100vh;
+        height: 100dvh;
         background-color: rgba(255, 255, 255, 0.98);
         padding-top: 100px;
         transition: right 0.4s ease;
@@ -993,132 +1008,6 @@ textarea:focus {
     text-align: center;
     max-width: 800px;
     margin: 0 auto 5rem;
-}
-
-/* Modern Vertical Timeline */
-.timeline-modern {
-    position: relative;
-    max-width: 800px;
-    margin: 0 auto 2rem;
-    /* Reduced from 4rem */
-    padding: 1rem 0;
-    /* Reduced from 2rem */
-}
-
-.timeline-modern::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 2px;
-    background: #e0e0e0;
-    margin-left: -1px;
-}
-
-.timeline-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Changed from flex-start to center for better balance in compact mode */
-    margin-bottom: 0;
-    /* Removed margin to rely on fixed height for spacing */
-    position: relative;
-    width: 100%;
-    height: 100px;
-    /* Reduced from 140px */
-}
-
-.timeline-time {
-    width: 45%;
-    text-align: right;
-    padding-right: 2rem;
-    /* Reduced from 3rem */
-    position: relative;
-}
-
-.timeline-content-side {
-    width: 45%;
-    padding-left: 2rem;
-    /* Reduced from 3rem */
-    text-align: left;
-}
-
-/* Connectors */
-.timeline-row::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    /* Center vertically */
-    transform: translate(-50%, -50%);
-    /* Center perfectly */
-    width: 12px;
-    /* Slightly smaller dot */
-    height: 12px;
-    background: white;
-    border: 3px solid var(--accent-orange);
-    border-radius: 50%;
-    z-index: 10;
-}
-
-.timeline-month {
-    font-size: 1.3rem;
-    /* Slightly smaller */
-    font-weight: 800;
-    color: var(--primary-color);
-    line-height: 1;
-}
-
-.timeline-detail {
-    /* Removed background/shadow for cleaner compact look, just text aligned */
-    padding: 0;
-    background: transparent;
-    box-shadow: none;
-    border-radius: 0;
-    position: relative;
-}
-
-.timeline-detail p {
-    margin: 0;
-    line-height: 1.4;
-    /* Tighter line height */
-    color: var(--text-color);
-    font-size: 0.9rem;
-}
-
-/* Responsive Timeline */
-@media (max-width: 768px) {
-    .timeline-modern::before {
-        left: 20px;
-    }
-
-    .timeline-row {
-        flex-direction: column;
-        margin-bottom: 2rem;
-        padding-left: 45px;
-    }
-
-    .timeline-time {
-        width: 100%;
-        text-align: left;
-        padding-right: 0;
-        margin-bottom: 0.5rem;
-    }
-
-    .timeline-content-side {
-        width: 100%;
-        padding-left: 0;
-    }
-
-    .timeline-row::after {
-        left: 20px;
-        top: 5px;
-    }
-
-    .timeline-detail::before {
-        display: none;
-    }
 }
 
 /* Modern Vertical Timeline */
@@ -1744,4 +1633,37 @@ textarea:focus {
 /* Smooth scroll */
 html {
     scroll-behavior: smooth;
+}
+
+/* ==============================
+   Reduced Motion Preference
+   ============================== */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .hero::before {
+        animation: none;
+    }
+
+    .section-title span::after {
+        animation: none;
+    }
+
+    .fade-in,
+    .fade-in-left,
+    .fade-in-right {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
 }

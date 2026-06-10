@@ -407,7 +407,14 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
     </header>
 
     <div class="view-container">
-        
+
+
+        <?php if (($_GET['error'] ?? '') === 'required'): ?>
+        <div style="background: #fdecea; border: 1px solid #f5c6cb; padding: 12px 16px; border-radius: 8px; margin-bottom: 1.5rem; color: #a94442;">
+            <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>
+            必須項目が未入力です。入力内容をご確認のうえ、再度送信してください。
+        </div>
+        <?php endif; ?>
 
         <form method="POST" action="" id="entryForm">
             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
@@ -635,7 +642,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
 
     <script>
         // Form schema for required validation
-        const formSchema = <?php echo json_encode($form_schema); ?>;
+        const formSchema = <?php echo json_encode($form_schema, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
         
         function submitForm() {
             // Validate required custom questions

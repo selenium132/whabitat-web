@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>国内単発ボランティア | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="style.css?v=20260610">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
@@ -62,7 +62,7 @@
             <h1 class="section-title"><span>国内単発ボランティア</span></h1>
             
             <!-- Top Image (JV Style) -->
-            <img src="domestic.jpg?v=<?php echo time(); ?>" alt="Domestic Volunteer" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 12px; margin-bottom: 4rem; box-shadow: var(--shadow-md);">
+            <img src="domestic.jpg?v=20260610" alt="Domestic Volunteer" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 12px; margin-bottom: 4rem; box-shadow: var(--shadow-md);">
 
             <div class="domestic-intro">
                 <h3 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color); font-size: 1.5rem;">なぜ、ワビタットでボランティア？</h3>
@@ -79,7 +79,7 @@
                         真剣に全力で活動しながらも、仲間と笑顔で楽しめるのが魅力です。
                     </p>
 
-                    <p style="text-align: justify; text-align-last: center;">
+                    <p style="text-align: center;">
                         ワビタットの国内ボランティアは、大きく分けて<strong>「日帰り（1日）」</strong>と<strong>「短期合宿（1泊〜）」</strong>の2種類があります。（※長期の派遣ボランティアについては <a href="activity_gv.php" style="color: var(--accent-blue);">GV</a> や <a href="activity_jv.php" style="color: var(--accent-orange);">JV</a> のページをご覧ください）
                     </p>
                 </div>

@@ -64,7 +64,8 @@ function getDB() {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     } catch (PDOException $e) {
-        die("Database Connection Failed: " . $e->getMessage());
+        error_log("DB connection failed: " . $e->getMessage());
+        die("システムエラーが発生しました。時間をおいて再度お試しください。");
     }
 }
 
@@ -134,8 +135,8 @@ function requireLogin() {
     }
     
     $current_page = basename($_SERVER['PHP_SELF']);
-    $allowed_unapproved = ['approval_pending.php', 'promote.php', 'logout.php'];
-    $allowed_incomplete = ['register_profile.php', 'approval_pending.php', 'promote.php', 'logout.php'];
+    $allowed_unapproved = ['approval_pending.php', 'logout.php'];
+    $allowed_incomplete = ['register_profile.php', 'approval_pending.php', 'logout.php'];
 
     // Check Approval Status
     if (empty($_SESSION['is_approved']) && !in_array($current_page, $allowed_unapproved)) {
@@ -152,11 +153,15 @@ function requireLogin() {
 
 // Helper: Check if user is Event Admin (Global Admin, Creator, OR Assigned Event Admin)
 function isEventAdmin($event_id) {
+    $event_id = (int)$event_id;
     // 1. Global Admin is always allowed
     if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
         return true;
     }
-    
+
+    // 不正/空のIDは以降のDB判定不要
+    if ($event_id <= 0) return false;
+
     if (isset($_SESSION['user_id'])) {
         try {
             $pdo = getDB();

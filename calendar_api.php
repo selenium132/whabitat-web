@@ -104,5 +104,6 @@ try {
             echo json_encode(['error' => 'Invalid action']);
     }
 } catch (Exception $e) {
-    echo json_encode(['error' => $e->getMessage()]);
+    error_log('calendar_api error: ' . $e->getMessage());
+    echo json_encode(['error' => '処理に失敗しました']);
 }

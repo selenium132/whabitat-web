@@ -70,8 +70,12 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                         <a href="blog_view.php?id=<?php echo $blog['id']; ?>" class="card" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;">
                             <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
                                 <!-- Thumbnail -->
-                                <?php if ($blog['thumbnail']): ?>
-                                    <div style="width: 160px; height: 100px; flex-shrink: 0; border-radius: 8px; background-image: url('<?php echo htmlspecialchars($blog['thumbnail']); ?>'); background-size: cover; background-position: center;"></div>
+                                <?php
+                                    // CSS url() コンテキスト用にサニタイズ（引用符・括弧・空白・バックスラッシュ等を除去してブレイクアウトを防止）
+                                    $thumb_css = preg_replace('/[\'"()\\\\\s]/', '', (string)$blog['thumbnail']);
+                                ?>
+                                <?php if ($thumb_css !== ''): ?>
+                                    <div style="width: 160px; height: 100px; flex-shrink: 0; border-radius: 8px; background-image: url('<?php echo htmlspecialchars($thumb_css, ENT_QUOTES); ?>'); background-size: cover; background-position: center;"></div>
                                 <?php else: ?>
                                     <div style="width: 160px; height: 100px; flex-shrink: 0; border-radius: 8px; background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
                                         <i class="fas fa-file-alt" style="font-size: 1.5rem; color: rgba(255,255,255,0.5);"></i>

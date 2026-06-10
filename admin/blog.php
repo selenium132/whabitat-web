@@ -27,16 +27,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Handle file upload
         if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] === UPLOAD_ERR_OK) {
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             $file = $_FILES['thumbnail_file'];
-            
-            if (!in_array($file['type'], $allowed_types)) {
+            // Verify the actual image type (do not trust client-declared MIME / filename)
+            $allowed_ext = [
+                IMAGETYPE_JPEG => 'jpg',
+                IMAGETYPE_PNG  => 'png',
+                IMAGETYPE_GIF  => 'gif',
+                IMAGETYPE_WEBP => 'webp',
+            ];
+            $image_info = @getimagesize($file['tmp_name']);
+            $detected_type = $image_info[2] ?? null;
+
+            if (!$detected_type || !isset($allowed_ext[$detected_type])) {
                 $error = '画像形式はJPEG, PNG, GIF, WebPのみ対応です。';
             } else {
-                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $ext = $allowed_ext[$detected_type];
                 $filename = 'blog_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
                 $upload_dir = '../uploads/blog/';
                 if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+                // Ensure PHP execution is disabled in the upload directory
+                $htaccess_path = $upload_dir . '.htaccess';
+                if (!file_exists($htaccess_path)) {
+                    @file_put_contents($htaccess_path, "php_flag engine off\n<FilesMatch \"\\.(php|php3|php4|php5|php7|phtml|pht)$\">\n    Require all denied\n</FilesMatch>\n");
+                }
                 if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
                     $thumbnail = 'uploads/blog/' . $filename;
                 }

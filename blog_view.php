@@ -144,11 +144,27 @@ try {
                 
                 <!-- Content -->
                 <div class="article-content">
-                    <?php 
+                    <?php
                     // WYSIWYG editor saves HTML directly, so we just output it
                     // Only allow safe HTML tags
                     $allowed_tags = '<h1><h2><h3><p><br><strong><b><em><i><u><a><img><ul><ol><li><blockquote><hr><div><span>';
-                    echo strip_tags($blog['content'], $allowed_tags);
+                    $safe_content = strip_tags($blog['content'], $allowed_tags);
+                    // Strip on* event handler attributes (e.g. onclick/onerror) to prevent stored XSS
+                    $safe_content = preg_replace('/\son[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $safe_content);
+                    // Neutralize dangerous URL schemes in href/src (javascript:/data:/vbscript:)
+                    $safe_content = preg_replace_callback(
+                        '/\b(href|src)\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i',
+                        function ($m) {
+                            $val = trim($m[2], '"\'');
+                            $scheme = preg_replace('/\s+/', '', $val);
+                            if (preg_match('/^\s*(javascript|data|vbscript)\s*:/i', $scheme)) {
+                                return $m[1] . '="#"';
+                            }
+                            return $m[0];
+                        },
+                        $safe_content
+                    );
+                    echo $safe_content;
                     ?>
                 </div>
                 

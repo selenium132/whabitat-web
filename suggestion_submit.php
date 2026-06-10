@@ -26,11 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['suggestion_success'] = true;
 
         // Redirect back to dashboard
-        header("Location: dashboard.php");
+        header("Location: dashboard.php#suggestion");
         exit;
     }
+
+    // Message was empty: give feedback instead of silently returning
+    $_SESSION['suggestion_error'] = '内容を入力してください。';
+    header("Location: dashboard.php#suggestion");
+    exit;
 }
 
 // If invalid, redirect back
-header("Location: dashboard.php");
+header("Location: dashboard.php#suggestion");
 exit;

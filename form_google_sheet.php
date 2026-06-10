@@ -24,16 +24,11 @@ try {
     exit;
 
 } catch (Exception $e) {
-    // Basic Error Handling
+    // 詳細はサーバーログにのみ記録し、画面には汎用メッセージのみ表示する
+    error_log('form_google_sheet sync failed (event_id=' . $event_id . '): ' . $e->getMessage());
     echo "<h1>Error</h1>";
-    echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
-    $creds = @json_decode(@file_get_contents(__DIR__ . '/service-account.json'), true);
-    if (is_array($creds) && isset($creds['client_email'])) {
-        echo "<hr><p>Debug Info:<br>";
-        echo "Service Account: <strong>" . htmlspecialchars($creds['client_email']) . "</strong><br>";
-        echo "Project ID: <strong>" . htmlspecialchars($creds['project_id'] ?? '') . "</strong></p>";
-    }
-    echo "<p><a href='form_responses.php?id=$event_id'>戻る</a></p>";
+    echo "<p>同期処理に失敗しました。時間をおいて再度お試しください。</p>";
+    echo "<p><a href='form_responses.php?id=" . htmlspecialchars(urlencode((string)$event_id)) . "'>戻る</a></p>";
     exit;
 }
 ?>

@@ -52,3 +52,7 @@ uploads/*
 test_db.php
 check_db.php
 migrate_*.php
+diagnose.php
+update_db*.php
+*.db
+*.sqlite

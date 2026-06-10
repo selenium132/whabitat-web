@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/SimpleGoogleSheets.php';
 
+// Apps Script deploy URL for creating spreadsheets (uses user's Drive storage, not service account).
+// 2関数で共有するため定数に集約（旧来は各関数内にハードコードで重複していた）。
+if (!defined('APPS_SCRIPT_URL')) {
+    define('APPS_SCRIPT_URL', 'https://script.google.com/macros/s/AKfycbxITwm-W_e9-1axQqFgzlqo48tBPSJJHEr90r6aoAa74Md1ETZLAwLMOMPdiJYthBWS/exec');
+}
+
 /**
  * イベントの参加者・アンケート回答を Google スプレッドシートへ同期する。
  *
@@ -18,7 +24,7 @@ require_once __DIR__ . '/SimpleGoogleSheets.php';
  */
 function syncEventToSheet(PDO $pdo, $event_id, $autoCreate = false, $forceReset = false) {
     // Apps Script URL for creating spreadsheets (uses user's Drive storage, not service account)
-    $appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxITwm-W_e9-1axQqFgzlqo48tBPSJJHEr90r6aoAa74Md1ETZLAwLMOMPdiJYthBWS/exec';
+    $appsScriptUrl = APPS_SCRIPT_URL;
 
     $stmt = $pdo->prepare("SELECT * FROM events WHERE id = ?");
     $stmt->execute([$event_id]);
@@ -175,7 +181,7 @@ function syncEventToSheetSafe(PDO $pdo, $event_id) {
  * @throws Exception 認証・API エラー時
  */
 function syncMembersToSheet(PDO $pdo, $autoCreate = false, $forceReset = false) {
-    $appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxITwm-W_e9-1axQqFgzlqo48tBPSJJHEr90r6aoAa74Md1ETZLAwLMOMPdiJYthBWS/exec';
+    $appsScriptUrl = APPS_SCRIPT_URL;
     $sheetIdFile = __DIR__ . '/admin/members_sheet_id.txt';
 
     $gs = new SimpleGoogleSheets(__DIR__ . '/service-account.json');

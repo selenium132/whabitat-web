@@ -52,17 +52,35 @@ http_response_code(404);
             color: white;
             text-align: center;
         }
-        .container { padding: 2rem; }
+        .container { padding: 2rem; max-width: 600px; }
+        .logo { display: block; margin: 0 auto 1.5rem; height: 56px; width: auto; }
         h1 { font-size: 4rem; margin: 0; }
         p { font-size: 1.2rem; opacity: 0.9; }
         a { color: white; text-decoration: underline; }
+        .links {
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        .links a { white-space: nowrap; }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="/"><img src="/logo.png" alt="WHABITAT" class="logo"></a>
         <h1>404</h1>
         <p>お探しのページは見つかりませんでした。</p>
         <p><a href="/">トップページへ戻る</a></p>
+        <nav class="links" aria-label="主要ページ">
+            <a href="/#about">About</a>
+            <a href="/#activities">Activities</a>
+            <a href="/blog.php">Blog</a>
+            <a href="/#contact">Contact</a>
+            <a href="/login.php">ログイン</a>
+        </nav>
     </div>
 </body>
 </html>

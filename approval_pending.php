@@ -31,23 +31,40 @@ $csrf_token = generateCsrfToken(); // Generate Token
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
     validateCsrfToken($_POST['csrf_token'] ?? ''); // Validate Token
 
-    $input_keyword = trim($_POST['secret_keyword']);
-    // Check against circle secret for mass registration bypass
-    if ($input_keyword === CIRCLE_SECRET) {
-        // Approve User
-        $update_stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
-        $update_stmt->execute([$_SESSION['user_id']]);
-        // 承認を名簿スプシに自動反映（連携済みの場合のみ）
-        syncMembersToSheetSafe($pdo);
+    // 総当たり対策: 直近10分間で5回失敗したら一時的にロックする
+    $now = time();
+    if (!isset($_SESSION['approval_attempts']) || !is_array($_SESSION['approval_attempts'])) {
+        $_SESSION['approval_attempts'] = [];
+    }
+    // 10分より古い試行記録を破棄
+    $_SESSION['approval_attempts'] = array_values(array_filter(
+        $_SESSION['approval_attempts'],
+        function ($t) use ($now) { return $t > $now - 600; }
+    ));
 
-        // Update Session
-        $_SESSION['is_approved'] = 1;
-        
-        // Redirect to Profile Registration
-        header("Location: register_profile.php");
-        exit;
+    if (count($_SESSION['approval_attempts']) >= 5) {
+        $error_msg = '試行回数が多すぎます。しばらく時間をおいてから再度お試しください。';
     } else {
-        $error_msg = '合言葉が間違っています。';
+        $input_keyword = trim($_POST['secret_keyword']);
+        // Check against circle secret for mass registration bypass（タイミング攻撃対策にhash_equals）
+        if (CIRCLE_SECRET !== '' && hash_equals(CIRCLE_SECRET, $input_keyword)) {
+            // Approve User
+            $update_stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
+            $update_stmt->execute([$_SESSION['user_id']]);
+            // 承認を名簿スプシに自動反映（連携済みの場合のみ）
+            syncMembersToSheetSafe($pdo);
+
+            // Update Session
+            $_SESSION['is_approved'] = 1;
+            unset($_SESSION['approval_attempts']);
+
+            // Redirect to Profile Registration
+            header("Location: register_profile.php");
+            exit;
+        } else {
+            $_SESSION['approval_attempts'][] = $now;
+            $error_msg = '合言葉が間違っています。';
+        }
     }
 }
 ?>

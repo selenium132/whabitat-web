@@ -10,7 +10,7 @@ $headers = getallheaders();
 $signature = $headers['X-Line-Signature'] ?? null;
 
 if (empty($signature) || empty($input)) {
-    file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Error: Empty signature or input\n", FILE_APPEND);
+    error_log('line_webhook: Empty signature or input');
     http_response_code(400);
     exit;
 }
@@ -18,12 +18,10 @@ if (empty($signature) || empty($input)) {
 // HMAC-SHA256 signature validation
 $hash = base64_encode(hash_hmac('sha256', $input, LINE_BOT_CHANNEL_SECRET, true));
 if (!hash_equals($hash, $signature)) {
-    file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Error: Signature mismatch. Config Secret: " . substr(LINE_BOT_CHANNEL_SECRET, 0, 5) . "...\n", FILE_APPEND);
+    error_log('line_webhook: Signature mismatch');
     http_response_code(400);
     exit;
 }
-
-file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Success: Signature valid. Processing events...\n", FILE_APPEND);
 
 // 3. Parse Event
 $events = json_decode($input, true)['events'] ?? [];
@@ -31,13 +29,11 @@ $events = json_decode($input, true)['events'] ?? [];
 foreach ($events as $event) {
     // Only handle message events
     if ($event['type'] !== 'message' || $event['message']['type'] !== 'text') {
-        file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Info: Ignored event type: " . $event['type'] . "\n", FILE_APPEND);
         continue;
     }
 
     $replyToken = $event['replyToken'];
     $userMessage = $event['message']['text'];
-    file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Received message: " . $userMessage . "\n", FILE_APPEND);
 
     // 4. Logic: Check if user asks about events
     // Triggers: "イベント", "予定", "活動", "event"
@@ -168,9 +164,9 @@ function replyToLine($replyToken, $text) {
     ]);
     
     $result = curl_exec($ch);
-
-    
-    // Log result if needed
-    file_put_contents('webhook_log.txt', date('Y-m-d H:i:s') . " - Reply sent to $replyToken: " . $result . "\n", FILE_APPEND);
+    if ($result === false) {
+        error_log('line_webhook: reply request failed: ' . curl_error($ch));
+    }
+    curl_close($ch);
 }
 ?>

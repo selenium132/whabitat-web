@@ -27,7 +27,7 @@ try {
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
@@ -81,13 +81,13 @@ try {
             <a href="#" class="logo">
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
-            <button class="menu-toggle" aria-label="Toggle Menu">
+            <button class="menu-toggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="nav-list">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
             <nav>
-                <ul class="nav-list">
+                <ul class="nav-list" id="nav-list">
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#activities" class="nav-link">Activities</a></li>
                     <li><a href="#blog" class="nav-link">Blog</a></li>
@@ -111,13 +111,15 @@ try {
     <script>
         document.querySelector('.menu-toggle').addEventListener('click', function () {
             this.classList.toggle('active');
-            document.querySelector('.nav-list').classList.toggle('nav-open');
+            const isOpen = document.querySelector('.nav-list').classList.toggle('nav-open');
+            this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
 
         // Close menu when a link is clicked
         document.querySelectorAll('.nav-link, .btn-login').forEach(link => {
             link.addEventListener('click', () => {
                 document.querySelector('.menu-toggle').classList.remove('active');
+                document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
                 document.querySelector('.nav-list').classList.remove('nav-open');
             });
         });
@@ -176,7 +178,7 @@ try {
                 <!-- GV -->
                 <a href="activity_gv.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('gv_new.jpg?v=<?php echo time(); ?>');">
+                        style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Main Event</span>
@@ -192,7 +194,7 @@ try {
                 <!-- JV -->
                 <a href="activity_jv.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('jv.jpg?v=<?php echo time(); ?>');">
+                        style="background-image: url('jv.jpg?v=<?php echo @filemtime(__DIR__ . '/jv.jpg') ?: '1'; ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Domestic</span>
@@ -208,7 +210,7 @@ try {
                 <!-- MTG -->
                 <a href="activity_mtg.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('daily.jpg?v=<?php echo time(); ?>');">
+                        style="background-image: url('daily.jpg?v=<?php echo @filemtime(__DIR__ . '/daily.jpg') ?: '1'; ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Meeting</span>
@@ -227,7 +229,7 @@ try {
                 <!-- Domestic Volunteer -->
                 <a href="activity_domestic.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('domestic.jpg?v=<?php echo time(); ?>');">
+                        style="background-image: url('domestic.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic.jpg') ?: '1'; ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Domestic Volunteer</span>
