@@ -127,6 +127,8 @@ try {
     </script>
 
     <section class="hero">
+        <div class="hero-bg" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
+        <div class="hero-overlay"></div>
         <div class="hero-content">
             <img src="logo.png" alt="WHABITAT Logo" class="hero-logo-main">
             <h1 class="hero-title">WHABITAT</h1>

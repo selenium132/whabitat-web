@@ -60,8 +60,9 @@ section { padding: 8rem 0; }
     background: var(--lp-paper-2);
 }
 .hero::before, .hero::after { content: none; }
-.hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
-.hero-overlay { position: absolute; inset: 0; background: rgba(255, 255, 255, .35); }
+.hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: blur(1.5px) saturate(1.05); transform: scale(1.06); }
+/* 写真をうっすら見せつつ墨タイポを読みやすく。上下を少し明るめにして文字を確保 */
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(250,249,246,.62) 0%, rgba(250,249,246,.40) 45%, rgba(250,249,246,.66) 100%); }
 
 .hero-content { position: relative; z-index: 2; text-align: center; color: var(--lp-ink); padding: 6rem 1.5rem; max-width: 760px; }
 .hero-logo-main { width: 66px; height: auto; margin: 0 auto 2rem; }
@@ -134,8 +135,8 @@ section { padding: 8rem 0; }
 .activity-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 980px; margin: 0 auto; }
 .activity-card { background: var(--lp-paper); border: 1px solid var(--lp-line); border-radius: var(--lp-radius); overflow: hidden; box-shadow: none; transition: border-color .35s var(--lp-ease), transform .35s var(--lp-ease); }
 .activity-card:hover { border-color: var(--lp-ink); transform: translateY(-4px); }
-.activity-img { height: 240px; background-size: cover; background-position: center; filter: grayscale(1) contrast(1.02); transition: filter .6s var(--lp-ease), transform .7s var(--lp-ease); }
-.activity-card:hover .activity-img { filter: grayscale(0); transform: scale(1.04); }
+.activity-img { height: 240px; background-size: cover; background-position: center; transition: transform .7s var(--lp-ease); }
+.activity-card:hover .activity-img { transform: scale(1.04); }
 .activity-content { padding: 1.8rem; }
 .activity-content h3 { font-size: 1.18rem; font-weight: 600; color: var(--lp-ink); margin-bottom: .6rem; }
 .activity-tag {
@@ -154,8 +155,7 @@ section { padding: 8rem 0; }
 .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
 .blog-card { display: block; text-decoration: none; color: inherit; background: var(--lp-paper); border: 1px solid var(--lp-line); border-radius: var(--lp-radius); overflow: hidden; transition: border-color .35s var(--lp-ease), transform .35s var(--lp-ease); }
 .blog-card:hover { border-color: var(--lp-ink); transform: translateY(-4px); }
-.blog-card-img { width: 100%; height: 180px; background-size: cover; background-position: center; filter: grayscale(1); transition: filter .6s var(--lp-ease); }
-.blog-card:hover .blog-card-img { filter: grayscale(0); }
+.blog-card-img { width: 100%; height: 180px; background-size: cover; background-position: center; }
 .blog-card-body { padding: 1.3rem 1.4rem; }
 .blog-card-body h3 { font-size: 1.02rem; font-weight: 600; color: var(--lp-ink); line-height: 1.5; margin-bottom: .5rem; }
 
