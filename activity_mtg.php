@@ -219,7 +219,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
     <main class="mtg-main">
         <section class="page-hero">
-            <div class="page-hero-bg" style="background-image: url('daily.jpg?v=<?php echo @filemtime(__DIR__ . '/daily.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-bg" style="background-image: url('mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/mtg_hero.jpg') ?: '1'; ?>');"></div>
             <div class="page-hero-overlay"></div>
             <div class="page-hero-inner">
                 <p class="page-hero-eyebrow">Weekly Meeting</p>

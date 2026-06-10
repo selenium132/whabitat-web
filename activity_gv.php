@@ -180,7 +180,7 @@
 
     <main class="gv-main">
         <section class="page-hero">
-            <div class="page-hero-bg" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-bg" style="background-image: url('gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_hero.jpg') ?: '1'; ?>'); background-position: center 55%;"></div>
             <div class="page-hero-overlay"></div>
             <div class="page-hero-inner">
                 <p class="page-hero-eyebrow">Main Event</p>
