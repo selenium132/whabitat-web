@@ -229,7 +229,7 @@ section { padding: 8rem 0; }
    ========================================================= */
 .about-layout { display: grid; grid-template-columns: 1.05fr .95fr; gap: 4.5rem; align-items: start; max-width: 1040px; margin: 0 auto; }
 .about-label { font-family: 'Montserrat', sans-serif; font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--lp-muted); display: block; margin-bottom: 1.4rem; }
-.about-statement { font-size: clamp(1.5rem, 3.2vw, 2.15rem); font-weight: 600; line-height: 1.55; letter-spacing: .01em; color: var(--lp-ink); margin: 0 0 1.6rem; }
+.about-statement { font-size: clamp(1.5rem, 3.2vw, 2.15rem); font-weight: 600; line-height: 1.55; letter-spacing: .01em; color: var(--lp-ink); margin: 0 0 1.6rem; text-wrap: balance; }
 .about-lead { font-size: 1rem; line-height: 1.95; color: var(--lp-muted); margin: 0; }
 .fact-list { margin: 0; border-top: 1px solid var(--lp-line); }
 .fact-row { display: grid; grid-template-columns: 4.5em 1fr; gap: 1.2rem; padding: 1.05rem 0; border-bottom: 1px solid var(--lp-line); }
@@ -264,7 +264,7 @@ section { padding: 8rem 0; }
 /* =========================================================
    Blog カード
    ========================================================= */
-.blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+.blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 1.5rem; }
 .blog-card { display: block; text-decoration: none; color: inherit; background: var(--lp-paper); border: 1px solid var(--lp-line); border-radius: var(--lp-radius); overflow: hidden; transition: border-color .35s var(--lp-ease), transform .35s var(--lp-ease); }
 .blog-card:hover { border-color: var(--lp-ink); transform: translateY(-4px); }
 .blog-card-img { width: 100%; height: 180px; background-size: cover; background-position: center; }
