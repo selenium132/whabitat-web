@@ -33,7 +33,143 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <title>全体ミーティング (MTG) | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ===== MTGページ固有：ミニマル/モノトーン（landing.cssトーンに統一） ===== */
+        .mtg-main { padding-top: 120px; padding-bottom: 6rem; }
+
+        /* リード（写真なし・タイポ主体で上品に） */
+        .mtg-lead {
+            max-width: 760px;
+            margin: 0 auto 4.5rem;
+            text-align: center;
+        }
+        .mtg-lead .about-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+            color: var(--lp-muted); display: block; margin-bottom: 1.2rem;
+        }
+        .mtg-lead h1.section-title { margin-bottom: 1.6rem; }
+        .mtg-lead-text {
+            font-size: 1rem; line-height: 1.95; color: var(--lp-muted); margin: 0;
+        }
+
+        /* 主写真：カラーのまま・軽い暗幕は不要だが大きすぎないよう抑制 */
+        .mtg-photo {
+            width: 100%; max-height: 420px; object-fit: cover;
+            border-radius: var(--lp-radius);
+            border: 1px solid var(--lp-line);
+            display: block;
+            margin: 0 auto 4rem;
+        }
+
+        /* 概要カード（罫線基調・影なし、index の info/fact トーン） */
+        .mtg-info-card {
+            max-width: 760px; margin: 0 auto;
+            background: var(--lp-paper);
+            border: 1px solid var(--lp-line);
+            border-radius: var(--lp-radius);
+            padding: 2.5rem;
+            transition: border-color .35s var(--lp-ease);
+        }
+        .mtg-info-card:hover { border-color: var(--lp-ink); }
+        .mtg-info-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem; font-weight: 600; color: var(--lp-ink);
+            margin: 0 0 1.2rem;
+        }
+        .mtg-info-card p { line-height: 1.95; color: var(--lp-muted); margin: 0 0 1.8rem; }
+        .mtg-meta { margin: 0; border-top: 1px solid var(--lp-line); }
+        .mtg-meta .fact-row { display: grid; grid-template-columns: 4.5em 1fr; gap: 1.2rem; padding: 1rem 0; border-bottom: 1px solid var(--lp-line); }
+        .mtg-meta .fact-row dt { font-size: .8rem; font-weight: 600; color: var(--lp-muted); letter-spacing: .06em; }
+        .mtg-meta .fact-row dd { font-size: .94rem; color: var(--lp-ink); margin: 0; line-height: 1.65; }
+
+        /* History 見出し行 */
+        .mtg-history { margin-top: 7rem; }
+        .mtg-history-head {
+            display: flex; justify-content: center; align-items: center;
+            position: relative; margin-bottom: 3.5rem;
+        }
+        .mtg-history-head .section-title { margin: 0; }
+        .mtg-add-btn {
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+            display: inline-flex; align-items: center; gap: .45rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+            color: var(--lp-ink); text-decoration: none;
+            border: 1px solid var(--lp-line); border-radius: 999px;
+            padding: .4rem 1rem; transition: border-color .3s, background .3s;
+        }
+        .mtg-add-btn:hover { border-color: var(--lp-ink); background: rgba(26,26,26,.04); }
+
+        /* 年グループ見出し */
+        .history-year-group { margin-bottom: 4rem; }
+        .history-year-group .year-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4rem; font-weight: 600; color: var(--lp-ink);
+            letter-spacing: .04em;
+            border-bottom: 1px solid var(--lp-line);
+            padding-bottom: .7rem; margin: 0 0 2rem;
+        }
+
+        /* History グリッド/カード（活動カードと同トーン） */
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .history-card {
+            display: flex; flex-direction: column; height: 100%;
+            background: var(--lp-paper);
+            border: 1px solid var(--lp-line);
+            border-radius: var(--lp-radius);
+            overflow: hidden; box-shadow: none;
+            transition: border-color .35s var(--lp-ease), transform .35s var(--lp-ease);
+        }
+        .history-card:hover { border-color: var(--lp-ink); transform: translateY(-4px); }
+        .history-card-img { width: 100%; height: 180px; background-size: cover; background-position: center; }
+        .history-card-placeholder {
+            width: 100%; height: 180px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--lp-paper-2);
+            border-bottom: 1px solid var(--lp-line);
+            color: var(--lp-muted); font-size: 1.6rem;
+        }
+        .history-info { flex-grow: 1; display: flex; flex-direction: column; padding: 1.3rem 1.4rem; }
+        .history-date {
+            font-family: 'Montserrat', sans-serif;
+            font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+            color: var(--lp-muted);
+        }
+        .history-info h4 {
+            margin: .55rem 0; font-size: 1.05rem; font-weight: 600;
+            line-height: 1.45; color: var(--lp-ink);
+        }
+        .history-info h4 .history-subtitle {
+            display: block; margin-top: .25rem;
+            font-size: .85rem; font-weight: 400; color: var(--lp-muted);
+        }
+        .history-info p {
+            font-size: .85rem; line-height: 1.7; color: var(--lp-muted); margin: 0;
+        }
+
+        .mtg-empty {
+            max-width: 760px; margin: 0 auto; text-align: center;
+            color: var(--lp-muted);
+            background: var(--lp-paper);
+            border: 1px solid var(--lp-line);
+            border-radius: var(--lp-radius);
+            padding: 2.5rem;
+        }
+
+        @media (max-width: 680px) {
+            .mtg-main { padding-top: 100px; }
+            .mtg-info-card { padding: 1.8rem; }
+            .mtg-history-head { flex-direction: column; gap: 1rem; }
+            .mtg-add-btn { position: static; transform: none; }
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -81,78 +217,81 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         });
     </script>
 
-    <main style="padding-top: 120px; padding-bottom: 50px;">
+    <main class="mtg-main">
         <div class="container">
-            <h1 class="section-title"><span>全体ミーティング (MTG)</span></h1>
-            <div class="activity-detail-content">
-                <img src="daily.jpg?v=<?php echo time(); ?>" alt="MTG" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 12px; margin-bottom: 2rem; box-shadow: var(--shadow-md);">
-                
-                <div class="card">
-                    <h3>週に一度の交流と学びの場</h3>
-                    <p style="line-height: 1.8; margin-bottom: 1.5rem;">
-                        毎週水曜日の6限後に集まり、全体ミーティングを行っています。<br>
-                        アイスブレイクで学年を超えた交流を深めたり、貧困問題や環境問題、ボランティアの意義について学ぶワークショップを行ったりしています。
-                    </p>
-                    <div style="margin-bottom: 1rem;">
-                        <strong style="color: var(--accent-blue);">日時:</strong> 毎週水曜 6限（19:00〜）<br>
-                        <strong style="color: var(--text-color);">場所:</strong> 早稲田キャンパス15号館、または奉仕園
-                    </div>
-                </div>
-                </div>
-
-                <!-- MTG History -->
-                <section style="margin-top: 5rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                        <h2 class="section-title" style="margin: 0;"><span>MTG HISTORY</span></h2>
-                        <?php if ($is_admin): ?>
-                            <a href="admin/mtg_history.php" style="background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">
-                                <i class="fas fa-plus"></i> 履歴追加
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <?php if (empty($grouped)): ?>
-                        <div class="card" style="text-align: center; color: #666;">
-                            MTG履歴はまだありません。
-                        </div>
-                    <?php else: ?>
-                        <?php foreach ($grouped as $year => $yearEntries): ?>
-                            <div class="history-year-group">
-                                <h3 style="font-size: 1.5rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 2rem; color: var(--primary-color);"><?php echo $year; ?></h3>
-                                
-                                <div class="history-grid">
-                                    <?php foreach ($yearEntries as $entry): ?>
-                                        <article class="history-card" style="display: flex; flex-direction: column; height: 100%;">
-                                            <?php if ($entry['image_path']): ?>
-                                                <img src="<?php echo htmlspecialchars($entry['image_path']); ?>" alt="<?php echo htmlspecialchars($entry['title']); ?>" style="width: 100%; height: 180px; object-fit: cover;">
-                                            <?php else: ?>
-                                                <div style="width: 100%; height: 180px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
-                                                    <i class="fas fa-users"></i>
-                                                </div>
-                                            <?php endif; ?>
-                                            <div class="history-info" style="flex-grow: 1; display: flex; flex-direction: column;">
-                                                <span class="history-season" style="color: var(--accent-blue); font-weight: bold;"><?php echo date('Y.m.d', strtotime($entry['event_date'])); ?></span>
-                                                <h4 style="margin: 0.5rem 0; font-size: 1.1rem; line-height: 1.4;">
-                                                    <?php echo htmlspecialchars($entry['title']); ?>
-                                                    <?php if ($entry['subtitle']): ?>
-                                                        <br><span style="font-size: 0.9rem; font-weight: normal;"><?php echo htmlspecialchars($entry['subtitle']); ?></span>
-                                                    <?php endif; ?>
-                                                </h4>
-                                                <?php if ($entry['description']): ?>
-                                                    <p style="font-size: 0.85rem; line-height: 1.6; color: var(--text-color);">
-                                                        <?php echo nl2br(htmlspecialchars($entry['description'])); ?>
-                                                    </p>
-                                                <?php endif; ?>
-                                            </div>
-                                        </article>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </section>
-
+            <div class="mtg-lead">
+                <span class="about-label">Weekly Meeting</span>
+                <h1 class="section-title"><span>全体ミーティング (MTG)</span></h1>
+                <p class="mtg-lead-text">
+                    毎週水曜日の6限後に集まり、全体ミーティングを行っています。アイスブレイクで学年を超えた交流を深めたり、貧困問題や環境問題、ボランティアの意義について学ぶワークショップを行ったりしています。
+                </p>
             </div>
+
+            <img src="daily.jpg?v=<?php echo time(); ?>" alt="MTG" class="mtg-photo">
+
+            <div class="mtg-info-card">
+                <h3>週に一度の交流と学びの場</h3>
+                <p>
+                    毎週水曜日の6限後に集まり、全体ミーティングを行っています。<br>
+                    アイスブレイクで学年を超えた交流を深めたり、貧困問題や環境問題、ボランティアの意義について学ぶワークショップを行ったりしています。
+                </p>
+                <dl class="mtg-meta">
+                    <div class="fact-row"><dt>日時</dt><dd>毎週水曜 6限（19:00〜）</dd></div>
+                    <div class="fact-row"><dt>場所</dt><dd>早稲田キャンパス15号館、または奉仕園</dd></div>
+                </dl>
+            </div>
+
+            <!-- MTG History -->
+            <section class="mtg-history">
+                <div class="mtg-history-head">
+                    <h2 class="section-title"><span>MTG History</span></h2>
+                    <?php if ($is_admin): ?>
+                        <a href="admin/mtg_history.php" class="mtg-add-btn">
+                            <i class="fas fa-plus"></i> 履歴追加
+                        </a>
+                    <?php endif; ?>
+                </div>
+
+                <?php if (empty($grouped)): ?>
+                    <div class="mtg-empty">
+                        MTG履歴はまだありません。
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($grouped as $year => $yearEntries): ?>
+                        <div class="history-year-group">
+                            <h3 class="year-label"><?php echo htmlspecialchars($year); ?></h3>
+
+                            <div class="history-grid">
+                                <?php foreach ($yearEntries as $entry): ?>
+                                    <article class="history-card">
+                                        <?php if ($entry['image_path']): ?>
+                                            <div class="history-card-img" style="background-image: url('<?php echo htmlspecialchars($entry['image_path']); ?>');" role="img" aria-label="<?php echo htmlspecialchars($entry['title']); ?>"></div>
+                                        <?php else: ?>
+                                            <div class="history-card-placeholder">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="history-info">
+                                            <span class="history-date"><?php echo date('Y.m.d', strtotime($entry['event_date'])); ?></span>
+                                            <h4>
+                                                <?php echo htmlspecialchars($entry['title']); ?>
+                                                <?php if ($entry['subtitle']): ?>
+                                                    <span class="history-subtitle"><?php echo htmlspecialchars($entry['subtitle']); ?></span>
+                                                <?php endif; ?>
+                                            </h4>
+                                            <?php if ($entry['description']): ?>
+                                                <p>
+                                                    <?php echo nl2br(htmlspecialchars($entry['description'])); ?>
+                                                </p>
+                                            <?php endif; ?>
+                                        </div>
+                                    </article>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </section>
         </div>
     </main>
 

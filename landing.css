@@ -108,11 +108,14 @@ section { padding: 8rem 0; }
     .hero--split .hero-side-img { width: 100%; min-height: 42vh; }
 }
 
-/* --- grid: 上テキスト / 下に写真タイル --- */
-.hero--grid { flex-direction: column; justify-content: center; gap: 2.5rem; padding-top: 4rem; }
-.hero-grid-imgs { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; height: 38vh; }
-.hero-grid-imgs > div { background-size: cover; background-position: center; }
-@media (max-width: 768px) { .hero-grid-imgs { grid-template-columns: repeat(2, 1fr); height: 44vh; } }
+/* --- grid: 上テキスト / 下に写真タイル（余白・角丸・繊細なホバーで上品に） --- */
+.hero--grid { flex-direction: column; justify-content: center; gap: 3rem; padding: 6rem 0 0; }
+.hero--grid .hero-content { padding: 0 1.5rem; }
+.hero-grid-imgs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 1360px; height: 40vh; padding: 0 8px 8px; box-sizing: border-box; }
+.hero-grid-imgs > div { position: relative; background-size: cover; background-position: center; border-radius: var(--lp-radius); overflow: hidden; transition: opacity .45s var(--lp-ease); }
+.hero-grid-imgs > div::after { content: ""; position: absolute; inset: 0; background: rgba(18,20,22,.10); transition: background .45s var(--lp-ease); }
+.hero-grid-imgs > div:hover::after { background: rgba(18,20,22,0); }
+@media (max-width: 768px) { .hero-grid-imgs { grid-template-columns: repeat(2, 1fr); height: 52vh; } }
 
 /* --- typo: 写真なし・タイポ主体 --- */
 .hero--typo { background: var(--lp-paper-2); }
