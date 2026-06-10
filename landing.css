@@ -164,7 +164,14 @@ section { padding: 8rem 0; }
 .page-crumb a { color: var(--lp-muted); text-decoration: none; transition: color .2s; }
 .page-crumb a:hover { color: var(--lp-ink); }
 .page-crumb span { margin: 0 .55em; opacity: .55; }
-@media (max-width: 768px) { .page-hero { min-height: clamp(260px, 50vh, 380px); } }
+@media (max-width: 768px) {
+    .page-hero { min-height: clamp(260px, 50vh, 380px); }
+    /* 狭い画面では写真の情報量が増えるためサブ文の足元を少し暗く */
+    .page-hero-overlay { background: linear-gradient(180deg, rgba(18,20,22,.18) 0%, rgba(18,20,22,.36) 50%, rgba(18,20,22,.74) 100%); }
+}
+
+/* 記事本文: エディタ不具合で保存された空画像(src="#")を表示しない */
+.article-content img[src="#"], .article-content img[src=""] { display: none; }
 
 /* =========================================================
    数字：墨地に白、区切り線のみ
@@ -228,7 +235,11 @@ section { padding: 8rem 0; }
 .fact-row { display: grid; grid-template-columns: 4.5em 1fr; gap: 1.2rem; padding: 1.05rem 0; border-bottom: 1px solid var(--lp-line); }
 .fact-row dt { font-size: .8rem; font-weight: 600; color: var(--lp-muted); letter-spacing: .06em; padding-top: .15rem; }
 .fact-row dd { font-size: .94rem; color: var(--lp-ink); margin: 0; line-height: 1.65; }
-@media (max-width: 768px) { .about-layout { grid-template-columns: 1fr; gap: 2.5rem; } }
+@media (max-width: 768px) {
+    .about-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+    /* PC用の改行は幅が狭いと孤立行を作るため無効化 */
+    .about-statement br { display: none; }
+}
 
 /* =========================================================
    Activities カード：グレースケール写真→ホバーで発色
