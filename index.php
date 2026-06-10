@@ -226,7 +226,7 @@ try {
                 <!-- GV -->
                 <a href="activity_gv.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');">
+                        style="background-image: url('gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_hero.jpg') ?: '1'; ?>'); background-position: center 55%;">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Main Event</span>
@@ -258,7 +258,7 @@ try {
                 <!-- MTG -->
                 <a href="activity_mtg.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('daily.jpg?v=<?php echo @filemtime(__DIR__ . '/daily.jpg') ?: '1'; ?>');">
+                        style="background-image: url('mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/mtg_hero.jpg') ?: '1'; ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Meeting</span>
@@ -277,7 +277,7 @@ try {
                 <!-- Domestic Volunteer -->
                 <a href="activity_domestic.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('domestic.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic.jpg') ?: '1'; ?>');">
+                        style="background-image: url('domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 45%;">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Domestic Volunteer</span>

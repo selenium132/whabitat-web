@@ -204,7 +204,7 @@
 
     <main class="dm-main">
         <section class="page-hero">
-            <div class="page-hero-bg" style="background-image: url('domestic.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-bg" style="background-image: url('domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 45%;"></div>
             <div class="page-hero-overlay"></div>
             <div class="page-hero-inner">
                 <p class="page-hero-eyebrow">Domestic Volunteer</p>
