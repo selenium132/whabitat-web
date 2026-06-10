@@ -172,7 +172,7 @@ try {
                         <div class="fact-row"><dt>所属</dt><dd>早稲田大学公認サークル / WAVOC 公認</dd></div>
                         <div class="fact-row"><dt>母体</dt><dd>国際NGO Habitat for Humanity Japan 学生支部</dd></div>
                         <div class="fact-row"><dt>設立</dt><dd>2006年</dd></div>
-                        <div class="fact-row"><dt>規模</dt><dd>約200名（男女比 4:6）</dd></div>
+                        <div class="fact-row"><dt>規模</dt><dd>約150名（男女比 4:6）</dd></div>
                         <div class="fact-row"><dt>構成</dt><dd>全学部・早稲田大学の学生限定</dd></div>
                     </dl>
                 </div>

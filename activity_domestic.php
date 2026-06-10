@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* ===== 国内単発ボランティア — ページ固有（ミニマル / モノトーン） ===== */
-        .dm-main { padding-top: 120px; padding-bottom: 6rem; }
+        .dm-main { padding-top: 0; padding-bottom: 6rem; }
 
         /* ページ見出し */
         .dm-head { text-align: center; margin-bottom: 3rem; }
@@ -203,16 +203,21 @@
     </script>
 
     <main class="dm-main">
-        <div class="container">
-            <div class="dm-head fade-in">
-                <span class="dm-eyebrow">Domestic Volunteer</span>
-                <h1>国内単発ボランティア</h1>
+        <section class="page-hero">
+            <div class="page-hero-bg" style="background-image: url('domestic.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-overlay"></div>
+            <div class="page-hero-inner">
+                <p class="page-hero-eyebrow">Domestic Volunteer</p>
+                <h1 class="page-hero-title">国内単発ボランティア</h1>
+                <p class="page-hero-sub">ゴミ拾い・農業・地域のお手伝い。身近なところから始める、地域に根ざしたボランティア。</p>
             </div>
+        </section>
 
-            <!-- Top Image -->
-            <div class="dm-hero fade-in">
-                <img src="domestic.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic.jpg') ?: '1'; ?>" alt="Domestic Volunteer">
-            </div>
+        <nav class="page-crumb" aria-label="パンくず">
+            <a href="index.php">Home</a><span>/</span><a href="index.php#activities">Activities</a><span>/</span>国内単発
+        </nav>
+
+        <div class="container">
 
             <!-- Intro -->
             <div class="dm-intro fade-in">

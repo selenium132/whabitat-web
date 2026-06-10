@@ -37,7 +37,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* ===== MTGページ固有：ミニマル/モノトーン（landing.cssトーンに統一） ===== */
-        .mtg-main { padding-top: 120px; padding-bottom: 6rem; }
+        .mtg-main { padding-top: 0; padding-bottom: 6rem; }
 
         /* リード（写真なし・タイポ主体で上品に） */
         .mtg-lead {
@@ -164,7 +164,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         }
 
         @media (max-width: 680px) {
-            .mtg-main { padding-top: 100px; }
+            .mtg-main { padding-top: 0; }
             .mtg-info-card { padding: 1.8rem; }
             .mtg-history-head { flex-direction: column; gap: 1rem; }
             .mtg-add-btn { position: static; transform: none; }
@@ -218,16 +218,21 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </script>
 
     <main class="mtg-main">
-        <div class="container">
-            <div class="mtg-lead">
-                <span class="about-label">Weekly Meeting</span>
-                <h1 class="section-title"><span>全体ミーティング (MTG)</span></h1>
-                <p class="mtg-lead-text">
-                    毎週水曜日の6限後に集まり、全体ミーティングを行っています。アイスブレイクで学年を超えた交流を深めたり、貧困問題や環境問題、ボランティアの意義について学ぶワークショップを行ったりしています。
-                </p>
+        <section class="page-hero">
+            <div class="page-hero-bg" style="background-image: url('daily.jpg?v=<?php echo @filemtime(__DIR__ . '/daily.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-overlay"></div>
+            <div class="page-hero-inner">
+                <p class="page-hero-eyebrow">Weekly Meeting</p>
+                <h1 class="page-hero-title">全体ミーティング (MTG)</h1>
+                <p class="page-hero-sub">毎週水曜6限後。学年を超えた交流と、ボランティアの意義を学ぶ場。</p>
             </div>
+        </section>
 
-            <img src="daily.jpg?v=<?php echo time(); ?>" alt="MTG" class="mtg-photo">
+        <nav class="page-crumb" aria-label="パンくず">
+            <a href="index.php">Home</a><span>/</span><a href="index.php#activities">Activities</a><span>/</span>MTG
+        </nav>
+
+        <div class="container">
 
             <div class="mtg-info-card">
                 <h3>週に一度の交流と学びの場</h3>

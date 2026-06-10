@@ -17,7 +17,7 @@
            GV ページ固有スタイル — ミニマル / モノトーン
            landing.css の変数（--lp-*）を踏襲。色は写真にのみ持たせる。
            ========================================================= */
-        .gv-main { padding-top: 120px; padding-bottom: 0; }
+        .gv-main { padding-top: 0; padding-bottom: 0; }
         .gv-narrow { max-width: 940px; }
 
         /* ページ見出し（ヒーロー代わりの上品な導入） */
@@ -179,22 +179,19 @@
     </script>
 
     <main class="gv-main">
-        <div class="container">
-            <!-- Intro -->
-            <div class="gv-lead-head fade-in">
-                <span class="gv-eyebrow">Main Event</span>
-                <h1 class="gv-page-title">GV<small>Global Village</small></h1>
-                <p class="gv-lead-text">
-                    GV（Global Village）は、国際NGO Habitat for Humanity が世界中で展開する
-                    <strong>「海外住居建築ボランティア」</strong>プログラムです。
-                </p>
+        <section class="page-hero">
+            <div class="page-hero-bg" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-overlay"></div>
+            <div class="page-hero-inner">
+                <p class="page-hero-eyebrow">Main Event</p>
+                <h1 class="page-hero-title">GV (Global Village)</h1>
+                <p class="page-hero-sub">国際NGO Habitat for Humanity が世界で展開する、海外住居建築ボランティア。開発途上国へ渡航し、現地で家づくりに参加します。</p>
             </div>
+        </section>
 
-            <!-- キービジュアル -->
-            <div class="gv-hero-img fade-in">
-                <img src="gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>" alt="GV 現地での建築活動">
-            </div>
-        </div>
+        <nav class="page-crumb" aria-label="パンくず">
+            <a href="index.php">Home</a><span>/</span><a href="index.php#activities">Activities</a><span>/</span>GV
+        </nav>
 
         <!-- What is GV -->
         <section class="gv-section bg-light">

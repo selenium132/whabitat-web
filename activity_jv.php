@@ -375,17 +375,17 @@
 
     <main>
         <!-- Hero -->
-        <section class="jv-hero">
-            <div class="jv-hero-bg" style="background-image: url('jv.jpg?v=<?php echo @filemtime(__DIR__ . '/jv.jpg') ?: '1'; ?>');"></div>
-            <div class="jv-hero-overlay"></div>
-            <div class="jv-hero-inner">
-                <p class="jv-hero-eyebrow">Domestic Volunteer</p>
-                <h1 class="jv-hero-title">JV (Japan Village)</h1>
-                <p class="jv-hero-sub">日本全国の地域へ、夏休みの1週間。国内派遣型ボランティア。</p>
+        <section class="page-hero">
+            <div class="page-hero-bg" style="background-image: url('jv.jpg?v=<?php echo @filemtime(__DIR__ . '/jv.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-overlay"></div>
+            <div class="page-hero-inner">
+                <p class="page-hero-eyebrow">Domestic Volunteer</p>
+                <h1 class="page-hero-title">JV (Japan Village)</h1>
+                <p class="page-hero-sub">日本全国の地域へ、夏休みの1週間。国内派遣型ボランティア。</p>
             </div>
         </section>
 
-        <nav class="jv-breadcrumb" aria-label="パンくず">
+        <nav class="page-crumb" aria-label="パンくず">
             <a href="index.php">Home</a><span>/</span><a href="index.php#activities">Activities</a><span>/</span>JV
         </nav>
 

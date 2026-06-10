@@ -121,6 +121,23 @@ section { padding: 8rem 0; }
 .hero--typo { background: var(--lp-paper-2); }
 
 /* =========================================================
+   下層ページ共通の帯ヒーロー（写真＋白文字）＋パンくず
+   activity_* / 各下層ページで使用。固定ヘッダー直下に密着。
+   ========================================================= */
+.page-hero { position: relative; margin-top: var(--header-height, 80px); min-height: clamp(320px, 46vh, 460px); display: flex; align-items: flex-end; overflow: hidden; background: var(--lp-paper-2); }
+.page-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.page-hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,20,22,.16) 0%, rgba(18,20,22,.32) 50%, rgba(18,20,22,.68) 100%); }
+.page-hero-inner { position: relative; z-index: 2; width: 100%; max-width: var(--lp-max); margin: 0 auto; padding: 0 1.5rem 2.8rem; color: #fff; }
+.page-hero-eyebrow { font-family: 'Montserrat', sans-serif; font-size: .7rem; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; opacity: .9; margin: 0 0 .7rem; color: #fff; }
+.page-hero-title { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: clamp(1.9rem, 5vw, 2.9rem); letter-spacing: .04em; line-height: 1.15; margin: 0; color: #fff; }
+.page-hero-sub { margin: .8rem 0 0; font-size: .92rem; font-weight: 400; line-height: 1.7; letter-spacing: .04em; opacity: .92; color: #fff; max-width: 40em; }
+.page-crumb { max-width: var(--lp-max); margin: 0 auto; padding: 1.4rem 1.5rem 0; font-size: .78rem; color: var(--lp-muted); letter-spacing: .04em; }
+.page-crumb a { color: var(--lp-muted); text-decoration: none; transition: color .2s; }
+.page-crumb a:hover { color: var(--lp-ink); }
+.page-crumb span { margin: 0 .55em; opacity: .55; }
+@media (max-width: 768px) { .page-hero { min-height: clamp(260px, 50vh, 380px); } }
+
+/* =========================================================
    数字：墨地に白、区切り線のみ
    ========================================================= */
 .stats-section { background: var(--lp-paper); color: var(--lp-ink); padding: 5rem 0; border-top: 1px solid var(--lp-line); border-bottom: 1px solid var(--lp-line); }
