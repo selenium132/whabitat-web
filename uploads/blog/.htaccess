@@ -1,0 +1,18 @@
+# Disable PHP execution in this upload directory.
+# php_flag is only valid when mod_php is loaded; guard with IfModule so that
+# PHP-FPM/FastCGI/SuPHP environments don't return "Invalid command 'php_flag'" (500).
+# (admin/blog.php の ensureUploadHtaccess() と内容を揃えること)
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php5.c>
+    php_flag engine off
+</IfModule>
+
+# Deny direct access to any executable script (SAPI-independent, case-insensitive)
+<FilesMatch "(?i)\.(php|php3|php4|php5|php7|phtml|pht|phar)$">
+    Require all denied
+</FilesMatch>

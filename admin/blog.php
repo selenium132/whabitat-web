@@ -14,6 +14,23 @@ $success = '';
 $edit_blog = null;
 
 /**
+ * アップロードディレクトリのPHP実行禁止 .htaccess を安全な形式で常に上書きする。
+ * 注意: 裸の php_flag は PHP-FPM/FastCGI 環境で「Invalid command」となり
+ * ディレクトリ全体が500になるため、必ず IfModule で囲む（毎回上書き＝自己修復）。
+ */
+function ensureUploadHtaccess($upload_dir) {
+    $safe = "# Disable PHP execution in this upload directory.\n"
+        . "<IfModule mod_php.c>\n    php_flag engine off\n</IfModule>\n"
+        . "<IfModule mod_php7.c>\n    php_flag engine off\n</IfModule>\n"
+        . "<IfModule mod_php5.c>\n    php_flag engine off\n</IfModule>\n\n"
+        . "<FilesMatch \"(?i)\\.(php|php3|php4|php5|php7|phtml|pht|phar)$\">\n    Require all denied\n</FilesMatch>\n";
+    $path = $upload_dir . '.htaccess';
+    if (@file_get_contents($path) !== $safe) {
+        @file_put_contents($path, $safe);
+    }
+}
+
+/**
  * 本文内の base64 画像（Quill画像ボタン/ドラッグ&ドロップが埋め込む形式）を
  * uploads/blog/ のファイルに変換し、URL参照へ書き換える。
  * 表示側(blog_view.php)は XSS対策で data: スキームを無効化するため、
@@ -39,10 +56,7 @@ function convertInlineImagesToFiles($content) {
             if (!$type || !isset($allowed_ext[$type])) return '';
 
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
-            $htaccess_path = $upload_dir . '.htaccess';
-            if (!file_exists($htaccess_path)) {
-                @file_put_contents($htaccess_path, "php_flag engine off\n<FilesMatch \"\\.(php|php3|php4|php5|php7|phtml|pht)$\">\n    Require all denied\n</FilesMatch>\n");
-            }
+            ensureUploadHtaccess($upload_dir);
 
             $filename = 'blog_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $allowed_ext[$type];
             if (@file_put_contents($upload_dir . $filename, $data) === false) return '';
@@ -88,11 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $filename = 'blog_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
                 $upload_dir = '../uploads/blog/';
                 if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
-                // Ensure PHP execution is disabled in the upload directory
-                $htaccess_path = $upload_dir . '.htaccess';
-                if (!file_exists($htaccess_path)) {
-                    @file_put_contents($htaccess_path, "php_flag engine off\n<FilesMatch \"\\.(php|php3|php4|php5|php7|phtml|pht)$\">\n    Require all denied\n</FilesMatch>\n");
-                }
+                ensureUploadHtaccess($upload_dir);
                 if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
                     $thumbnail = 'uploads/blog/' . $filename;
                 }
