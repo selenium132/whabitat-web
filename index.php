@@ -393,33 +393,19 @@ try {
                 <li class="join-step fade-in">
                     <span class="join-num">02</span>
                     <div>
-                        <h3>会費を入金する</h3>
-                        <p>案内される口座に会費3,000円（半期分）を入金します。</p>
+                        <h3>会費を入金して連絡する</h3>
+                        <p>案内される口座に会費3,000円（半期分）を入金し、完了したらその旨を連絡してください。</p>
                     </div>
                 </li>
                 <li class="join-step fade-in">
                     <span class="join-num">03</span>
                     <div>
-                        <h3>入金した旨を連絡する</h3>
-                        <p>入金が済んだら、その旨を返信してください。</p>
+                        <h3>会員専用ページに登録する</h3>
+                        <p>案内に沿ってこのサイトの会員専用ページにログインし、必要事項を入力します。終わったら一言連絡してください。</p>
                     </div>
                 </li>
                 <li class="join-step fade-in">
                     <span class="join-num">04</span>
-                    <div>
-                        <h3>会員専用ページに登録する</h3>
-                        <p>案内されるホームページの会員専用ページで、必要事項を入力してログインします。</p>
-                    </div>
-                </li>
-                <li class="join-step fade-in">
-                    <span class="join-num">05</span>
-                    <div>
-                        <h3>登録完了を連絡する</h3>
-                        <p>入力が終わったら、一言連絡してください。</p>
-                    </div>
-                </li>
-                <li class="join-step fade-in">
-                    <span class="join-num">06</span>
                     <div>
                         <h3>正規グループへ招待</h3>
                         <p>確認が取れ次第、WHABITATの正規LINEグループに招待します。一緒に活動しましょう！</p>
