@@ -8,6 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JV (Japan Village) | WHABITAT</title>
     <meta name="description" content="JV (Japan Village) は、WHABITAT の国内派遣型ボランティアです。日本全国の地域へ夏休みの1週間、チームで派遣され、農作業・環境整備・文化交流などに取り組みます。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WHABITAT">
+    <meta property="og:title" content="JV (Japan Village) | WHABITAT">
+    <meta property="og:description" content="日本全国の地域へ、夏休みの1週間、国内派遣型ボランティア。農作業・環境整備・文化交流などに取り組みます。">
+    <meta property="og:url" content="https://whabitathome.com/activity_jv.php">
+    <meta property="og:image" content="https://whabitathome.com/jv.jpg">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
@@ -341,6 +349,7 @@
                     <li><a href="index.php#about" class="nav-link">About</a></li>
                     <li><a href="index.php#activities" class="nav-link">Activities</a></li>
                     <li><a href="index.php#blog" class="nav-link">Blog</a></li>
+                    <li><a href="index.php#join" class="nav-link">Join</a></li>
                     <li><a href="index.php#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>

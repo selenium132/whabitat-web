@@ -61,3 +61,4 @@ diagnose.php
 update_db*.php
 *.db
 *.sqlite
+db_backups/

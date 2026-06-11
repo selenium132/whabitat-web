@@ -31,6 +31,58 @@ function ensureUploadHtaccess($upload_dir) {
 }
 
 /**
+ * 画像バイナリを長辺1600pxに縮小して再圧縮する（スマホ写真の数MB対策）。
+ * - GIFはアニメーションを壊すため無加工
+ * - GD未導入・デコード失敗時は元データをそのまま返す
+ */
+function resizeImageData($data, $imagetype) {
+    if ($imagetype === IMAGETYPE_GIF || !function_exists('imagecreatefromstring')) return $data;
+
+    $src = @imagecreatefromstring($data);
+    if (!$src) return $data;
+
+    $w = imagesx($src);
+    $h = imagesy($src);
+    $max = 1600;
+    $needResize = max($w, $h) > $max;
+
+    // 小さい画像でも500KB超のJPEGは再圧縮の価値あり
+    if (!$needResize && !($imagetype === IMAGETYPE_JPEG && strlen($data) > 500 * 1024)) {
+        return $data;
+    }
+
+    if ($needResize) {
+        $scale = $max / max($w, $h);
+        // IMG_BICUBIC はアルファ付き画像で false を返すことがあるため既定補間を使う
+        $dst = imagescale($src, (int)round($w * $scale), (int)round($h * $scale));
+        if ($dst) $src = $dst;
+    }
+
+    ob_start();
+    $ok = false;
+    switch ($imagetype) {
+        case IMAGETYPE_PNG:
+            imagesavealpha($src, true);
+            $ok = imagepng($src, null, 8);
+            break;
+        case IMAGETYPE_WEBP:
+            $ok = function_exists('imagewebp') ? imagewebp($src, null, 80) : false;
+            break;
+        default: // JPEG
+            $ok = imagejpeg($src, null, 80);
+    }
+    $out = ob_get_clean();
+
+    if (!$ok || $out === false || $out === '') return $data;
+    // 縮小した場合は寸法削減を優先して採用（フラットなPNG等でバイト数が微増しても可）。
+    // 再圧縮のみの場合は小さくなった時だけ採用。
+    if ($needResize) {
+        return strlen($out) < strlen($data) * 1.5 ? $out : $data;
+    }
+    return strlen($out) < strlen($data) ? $out : $data;
+}
+
+/**
  * 本文内の base64 画像（Quill画像ボタン/ドラッグ&ドロップが埋め込む形式）を
  * uploads/blog/ のファイルに変換し、URL参照へ書き換える。
  * 表示側(blog_view.php)は XSS対策で data: スキームを無効化するため、
@@ -58,6 +110,7 @@ function convertInlineImagesToFiles($content) {
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
             ensureUploadHtaccess($upload_dir);
 
+            $data = resizeImageData($data, $type);
             $filename = 'blog_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $allowed_ext[$type];
             if (@file_put_contents($upload_dir . $filename, $data) === false) return '';
 
@@ -103,7 +156,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $upload_dir = '../uploads/blog/';
                 if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
                 ensureUploadHtaccess($upload_dir);
-                if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
+                $data = file_get_contents($file['tmp_name']);
+                $data = resizeImageData($data, $detected_type);
+                if ($data !== false && @file_put_contents($upload_dir . $filename, $data) !== false) {
                     $thumbnail = 'uploads/blog/' . $filename;
                 }
             }

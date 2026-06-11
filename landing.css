@@ -262,6 +262,24 @@ section { padding: 8rem 0; }
 @media (max-width: 680px) { .activity-grid { grid-template-columns: 1fr; } }
 
 /* =========================================================
+   Join Us：入会の流れ（番号付きステップ・罫線基調）
+   ========================================================= */
+.join-lead { text-align: center; color: var(--lp-muted); margin: -2.4rem auto 3.4rem; max-width: 40em; font-size: .98rem; line-height: 1.95; }
+.join-steps { list-style: none; max-width: 760px; margin: 0 auto; padding: 0; border-top: 1px solid var(--lp-line); }
+.join-step { display: grid; grid-template-columns: 3.2em 1fr; gap: 1.2rem; padding: 1.6rem 0; border-bottom: 1px solid var(--lp-line); }
+.join-num { font-family: 'Montserrat', sans-serif; font-size: .8rem; font-weight: 600; letter-spacing: .18em; color: var(--lp-muted); padding-top: .2rem; }
+.join-step h3 { font-size: 1.02rem; font-weight: 600; color: var(--lp-ink); margin: 0 0 .4rem; }
+.join-step p { margin: 0; color: var(--lp-muted); font-size: .92rem; line-height: 1.85; }
+.join-cta { display: flex; flex-wrap: wrap; gap: .9rem; justify-content: center; margin-top: 2.8rem; }
+.join-cta .btn-secondary, .join-cta .btn-hero { font-size: .9rem; }
+@media (max-width: 680px) {
+    .join-lead { margin-top: -1.6rem; }
+    .join-step { grid-template-columns: 2.4em 1fr; gap: .9rem; padding: 1.3rem 0; }
+    .join-cta { flex-direction: column; align-items: stretch; text-align: center; }
+    .join-cta .btn-secondary, .join-cta .btn-hero { justify-content: center; }
+}
+
+/* =========================================================
    Blog カード
    ========================================================= */
 .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 1.5rem; }

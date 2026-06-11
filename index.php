@@ -24,6 +24,18 @@ try {
     <title>WHABITAT | 早稲田大学ボランティアサークル</title>
     <meta name="description" content="WHABITAT（ワビタット）は、国際NGO Habitat for Humanity の早稲田大学学生支部です。海外での住居建築ボランティア（GV）と、国内の地域に根ざしたボランティア活動に取り組んでいます。">
     <link rel="canonical" href="https://whabitathome.com/">
+
+    <!-- OGP / SNSシェア用 -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WHABITAT">
+    <meta property="og:title" content="WHABITAT | 早稲田大学ボランティアサークル">
+    <meta property="og:description" content="国際NGO Habitat for Humanity の早稲田大学学生支部。海外での住居建築ボランティア（GV）と、国内の地域に根ざしたボランティア活動に取り組んでいます。">
+    <meta property="og:url" content="https://whabitathome.com/">
+    <meta property="og:image" content="https://whabitathome.com/ogp.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     <link
@@ -94,6 +106,7 @@ try {
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#activities" class="nav-link">Activities</a></li>
                     <li><a href="#blog" class="nav-link">Blog</a></li>
+                    <li><a href="#join" class="nav-link">Join</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i
@@ -172,7 +185,7 @@ try {
                 <?php for ($copy = 0; $copy < 2; $copy++): // シームレスループ用に2周分描画 ?>
                     <?php foreach ($strip_photos as [$file, $label, $pos]): ?>
                         <figure class="strip-item"<?php echo $copy ? ' aria-hidden="true"' : ''; ?>>
-                            <img src="<?php echo $file; ?>?v=<?php echo @filemtime(__DIR__ . '/' . $file) ?: '1'; ?>" alt="<?php echo htmlspecialchars($label); ?>"<?php echo $pos ? ' style="object-position: ' . $pos . ';"' : ''; ?> draggable="false">
+                            <img src="<?php echo $file; ?>?v=<?php echo @filemtime(__DIR__ . '/' . $file) ?: '1'; ?>" alt="<?php echo htmlspecialchars($label); ?>"<?php echo $pos ? ' style="object-position: ' . $pos . ';"' : ''; ?><?php echo $copy ? ' loading="lazy"' : ''; ?> draggable="false">
                         </figure>
                     <?php endforeach; ?>
                 <?php endfor; ?>
@@ -363,6 +376,62 @@ try {
         </div>
     </section>
 
+
+    <!-- Join Section -->
+    <section id="join" class="bg-light">
+        <div class="container">
+            <h2 class="section-title fade-in"><span>Join Us</span></h2>
+            <p class="join-lead fade-in">WHABITATは年中入会可能です（会費は半期3,000円）。<br>InstagramのDM、または下のお問い合わせフォームからお気軽にどうぞ。</p>
+            <ol class="join-steps stagger-children">
+                <li class="join-step fade-in">
+                    <span class="join-num">01</span>
+                    <div>
+                        <h3>入会したい旨を連絡する</h3>
+                        <p>InstagramのDM（または本ページのお問い合わせフォーム）で「入会したい」と送ってください。学部・学年・フルネームを添えてもらえるとスムーズです。</p>
+                    </div>
+                </li>
+                <li class="join-step fade-in">
+                    <span class="join-num">02</span>
+                    <div>
+                        <h3>会費を入金する</h3>
+                        <p>案内される口座に会費3,000円（半期分）を入金します。</p>
+                    </div>
+                </li>
+                <li class="join-step fade-in">
+                    <span class="join-num">03</span>
+                    <div>
+                        <h3>入金した旨を連絡する</h3>
+                        <p>入金が済んだら、その旨を返信してください。</p>
+                    </div>
+                </li>
+                <li class="join-step fade-in">
+                    <span class="join-num">04</span>
+                    <div>
+                        <h3>会員専用ページに登録する</h3>
+                        <p>案内されるホームページの会員専用ページで、必要事項を入力してログインします。</p>
+                    </div>
+                </li>
+                <li class="join-step fade-in">
+                    <span class="join-num">05</span>
+                    <div>
+                        <h3>登録完了を連絡する</h3>
+                        <p>入力が終わったら、一言連絡してください。</p>
+                    </div>
+                </li>
+                <li class="join-step fade-in">
+                    <span class="join-num">06</span>
+                    <div>
+                        <h3>正規グループへ招待</h3>
+                        <p>確認が取れ次第、WHABITATの正規LINEグループに招待します。一緒に活動しましょう！</p>
+                    </div>
+                </li>
+            </ol>
+            <div class="join-cta fade-in">
+                <a href="https://www.instagram.com/whabinsta" target="_blank" class="btn-secondary"><i class="fab fa-instagram"></i> Instagram DMで連絡する</a>
+                <a href="#contact" class="btn-hero btn-hero-ghost"><i class="far fa-paper-plane"></i> フォームから問い合わせる</a>
+            </div>
+        </div>
+    </section>
 
     <section id="contact" class="bg-white">
         <div class="container">

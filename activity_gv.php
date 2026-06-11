@@ -8,6 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GV (Global Village) | WHABITAT</title>
     <meta name="description" content="GV（Global Village）は、国際NGO Habitat for Humanity が世界中で展開する海外住居建築ボランティアプログラムです。WHABITATの渡航実績やGVの流れ、よくある質問を紹介します。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WHABITAT">
+    <meta property="og:title" content="GV (Global Village) | WHABITAT">
+    <meta property="og:description" content="国際NGO Habitat for Humanity が世界で展開する、海外住居建築ボランティア。開発途上国へ渡航し、現地で家づくりに参加します。">
+    <meta property="og:url" content="https://whabitathome.com/activity_gv.php">
+    <meta property="og:image" content="https://whabitathome.com/gv_hero.jpg">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
@@ -146,6 +154,7 @@
                     <li><a href="index.php#about" class="nav-link">About</a></li>
                     <li><a href="index.php#activities" class="nav-link">Activities</a></li>
                     <li><a href="index.php#blog" class="nav-link">Blog</a></li>
+                    <li><a href="index.php#join" class="nav-link">Join</a></li>
                     <li><a href="index.php#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>

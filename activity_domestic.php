@@ -7,6 +7,14 @@
     <link rel="apple-touch-icon" href="logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>国内単発ボランティア | WHABITAT</title>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WHABITAT">
+    <meta property="og:title" content="国内単発ボランティア | WHABITAT">
+    <meta property="og:description" content="ゴミ拾い・農業・地域のお手伝い。身近なところから始める、地域に根ざしたボランティア。">
+    <meta property="og:url" content="https://whabitathome.com/activity_domestic.php">
+    <meta property="og:image" content="https://whabitathome.com/domestic_hero.jpg">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
@@ -172,6 +180,7 @@
                     <li><a href="index.php#about" class="nav-link">About</a></li>
                     <li><a href="index.php#activities" class="nav-link">Activities</a></li>
                     <li><a href="index.php#blog" class="nav-link">Blog</a></li>
+                    <li><a href="index.php#join" class="nav-link">Join</a></li>
                     <li><a href="index.php#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>

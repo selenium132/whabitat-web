@@ -22,6 +22,14 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog | WHABITAT</title>
     <meta name="description" content="WHABITAT（ワビタット）の活動報告やお知らせをお届けします。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WHABITAT">
+    <meta property="og:title" content="Blog | WHABITAT">
+    <meta property="og:description" content="WHABITAT（早稲田大学ボランティアサークル）の活動報告やお知らせ。">
+    <meta property="og:url" content="https://whabitathome.com/blog.php">
+    <meta property="og:image" content="https://whabitathome.com/ogp.jpg">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     <link

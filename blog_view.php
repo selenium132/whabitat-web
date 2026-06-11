@@ -31,6 +31,13 @@ try {
     $stmt->execute([$blog_id]);
     $related = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {}
+
+// OGP用: 本文の抜粋とサムネイルの絶対URL
+$og_description = mb_substr(trim(preg_replace('/\s+/u', ' ', strip_tags($blog['content']))), 0, 90);
+$og_image = !empty($blog['thumbnail'])
+    ? 'https://whabitathome.com/' . ltrim($blog['thumbnail'], '/')
+    : 'https://whabitathome.com/ogp.jpg';
+$og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -38,6 +45,18 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($blog['title']); ?> | WHABITAT</title>
+
+    <!-- OGP / SNSシェア用（記事ごと） -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="WHABITAT">
+    <meta property="og:title" content="<?php echo htmlspecialchars($blog['title']); ?> | WHABITAT">
+    <meta property="og:description" content="<?php echo htmlspecialchars($og_description); ?>">
+    <meta property="og:url" content="<?php echo htmlspecialchars($og_url); ?>">
+    <meta property="og:image" content="<?php echo htmlspecialchars($og_image); ?>">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="description" content="<?php echo htmlspecialchars($og_description); ?>">
+
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     <link
@@ -356,6 +375,8 @@ try {
                             },
                             $safe_content
                         );
+                        // 本文画像は遅延読み込み（ファーストビュー外の写真でページを重くしない）
+                        $safe_content = preg_replace('/<img\b/i', '<img loading="lazy" decoding="async"', $safe_content);
                         echo $safe_content;
                         ?>
                     </div>
