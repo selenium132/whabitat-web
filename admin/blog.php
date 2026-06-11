@@ -13,6 +13,46 @@ $error = '';
 $success = '';
 $edit_blog = null;
 
+/**
+ * 本文内の base64 画像（Quill画像ボタン/ドラッグ&ドロップが埋め込む形式）を
+ * uploads/blog/ のファイルに変換し、URL参照へ書き換える。
+ * 表示側(blog_view.php)は XSS対策で data: スキームを無効化するため、
+ * base64のまま保存すると画像が表示されない。
+ */
+function convertInlineImagesToFiles($content) {
+    $upload_dir = __DIR__ . '/../uploads/blog/';
+    return preg_replace_callback(
+        '/<img([^>]*?)src\s*=\s*(["\'])data:image\/(jpeg|jpg|png|gif|webp);base64,([^"\']+)\2([^>]*)>/i',
+        function ($m) use ($upload_dir) {
+            $data = base64_decode($m[4], true);
+            if ($data === false) return ''; // 壊れたデータは除去
+
+            // 実際の画像形式を検証（宣言された形式は信用しない）
+            $allowed_ext = [
+                IMAGETYPE_JPEG => 'jpg',
+                IMAGETYPE_PNG  => 'png',
+                IMAGETYPE_GIF  => 'gif',
+                IMAGETYPE_WEBP => 'webp',
+            ];
+            $info = @getimagesizefromstring($data);
+            $type = $info[2] ?? null;
+            if (!$type || !isset($allowed_ext[$type])) return '';
+
+            if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+            $htaccess_path = $upload_dir . '.htaccess';
+            if (!file_exists($htaccess_path)) {
+                @file_put_contents($htaccess_path, "php_flag engine off\n<FilesMatch \"\\.(php|php3|php4|php5|php7|phtml|pht)$\">\n    Require all denied\n</FilesMatch>\n");
+            }
+
+            $filename = 'blog_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $allowed_ext[$type];
+            if (@file_put_contents($upload_dir . $filename, $data) === false) return '';
+
+            return '<img' . $m[1] . 'src="uploads/blog/' . $filename . '"' . $m[5] . '>';
+        },
+        $content
+    );
+}
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrfToken($_POST['csrf_token'] ?? '');
@@ -24,6 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $content = $_POST['content'] ?? '';
         $thumbnail = $_POST['thumbnail'] ?? '';
         $is_published = isset($_POST['is_published']) ? 1 : 0;
+
+        // base64埋め込み画像をファイル化（過去記事の再保存でも修復される）
+        $content = convertInlineImagesToFiles($content);
         
         // Handle file upload
         if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] === UPLOAD_ERR_OK) {
