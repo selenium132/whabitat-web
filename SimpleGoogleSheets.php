@@ -147,6 +147,10 @@ class SimpleGoogleSheets {
 
     public function addPermission($fileId, $role, $type, $email = null) {
         $url = "https://www.googleapis.com/drive/v3/files/$fileId/permissions";
+        // ユーザー/グループ共有時は通知メールを送らない（共有のたびにメールが飛ぶのを防ぐ）
+        if ($type === 'user' || $type === 'group') {
+            $url .= '?sendNotificationEmail=false';
+        }
         $body = [
             'role' => $role,
             'type' => $type

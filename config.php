@@ -40,6 +40,11 @@ define('LINE_BOT_CHANNEL_SECRET', $env['LINE_BOT_CHANNEL_SECRET'] ?? '');
 define('RECAPTCHA_SITE_KEY', $env['RECAPTCHA_SITE_KEY'] ?? '');
 define('RECAPTCHA_SECRET_KEY', $env['RECAPTCHA_SECRET_KEY'] ?? '');
 
+// Google OAuth (スプシ出力時に押した本人のGoogleアカウントを特定し、そのアカウントだけに共有するため)
+define('GOOGLE_OAUTH_CLIENT_ID', $env['GOOGLE_OAUTH_CLIENT_ID'] ?? '');
+define('GOOGLE_OAUTH_CLIENT_SECRET', $env['GOOGLE_OAUTH_CLIENT_SECRET'] ?? '');
+define('GOOGLE_OAUTH_REDIRECT_URI', $env['GOOGLE_OAUTH_REDIRECT_URI'] ?? '');
+
 // Security: Session Hardening
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
@@ -180,6 +185,32 @@ function isEventAdmin($event_id) {
     return false;
 }
 
+
+// Helper: Google アカウント認証（スプシ共有用）。
+// セッションに検証済みGoogleメールが無ければ Google OAuth を開始し（state付き）、
+// 認証後に $return_uri（ルート相対パス）へ戻る。既にあれば検証済みメールを返す。
+function requireGoogleAccount($return_uri) {
+    if (!empty($_SESSION['google_email'])) {
+        return $_SESSION['google_email'];
+    }
+    if (GOOGLE_OAUTH_CLIENT_ID === '' || GOOGLE_OAUTH_REDIRECT_URI === '') {
+        die('Google連携が未設定です（.env の GOOGLE_OAUTH_* を確認してください）。');
+    }
+    $_SESSION['google_oauth_return'] = $return_uri;
+    $state = bin2hex(random_bytes(32));
+    $_SESSION['google_oauth_state'] = $state;
+    $params = http_build_query([
+        'client_id'     => GOOGLE_OAUTH_CLIENT_ID,
+        'redirect_uri'  => GOOGLE_OAUTH_REDIRECT_URI,
+        'response_type' => 'code',
+        'scope'         => 'openid email',
+        'state'         => $state,
+        'access_type'   => 'online',
+        'prompt'        => 'select_account',
+    ]);
+    header('Location: https://accounts.google.com/o/oauth2/v2/auth?' . $params);
+    exit;
+}
 
 // Helper: Get DB Connection
 ?>

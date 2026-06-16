@@ -11,12 +11,23 @@ if (!isEventAdmin($event_id)) {
     exit;
 }
 
+// 出力する“本人”のGoogleアカウントを確認（未認証ならOAuthへ。認証後ここへ戻る）
+$googleEmail = requireGoogleAccount('form_google_sheet.php?id=' . (int)$event_id);
+
 $pdo = getDB();
 
 try {
     // 手動の同期ボタン: シートが無ければ新規作成し、最新データへ更新する
     $result = syncEventToSheet($pdo, $event_id, true, isset($_GET['reset']));
     $spreadsheetId = $result['spreadsheetId'];
+
+    // 押した本人のGoogleアカウントにだけ共有（編集可）。anyone 公開共有は廃止済み。
+    try {
+        $gs = new SimpleGoogleSheets(__DIR__ . '/service-account.json');
+        $gs->addPermission($spreadsheetId, 'writer', 'user', $googleEmail);
+    } catch (Exception $e) {
+        error_log('Event sheet share failed for ' . $googleEmail . ' (event_id=' . $event_id . '): ' . $e->getMessage());
+    }
 
     // Redirect directly to the spreadsheet (simpler UX)
     $sheetUrl = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/edit";
