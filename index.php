@@ -54,21 +54,6 @@ try {
 } catch (Exception $e) {
     // 既定値のまま（公開ページを壊さない）
 }
-
-// TEMP DEBUG（確認後すぐ削除）
-if (isset($_GET['statdebug']) && $_GET['statdebug'] === 'wh2026') {
-    header('Content-Type: text/plain; charset=utf-8');
-    $dbg = [];
-    if (!empty($rows)) {
-        foreach ($rows as $r) { $n=(int)preg_replace('/\D/','',(string)($r['grade']??'')); $dbg[$n]=($dbg[$n]??0)+1; }
-        ksort($dbg);
-    }
-    echo "rows=".(isset($rows)?count($rows):'unset')."\n";
-    echo "gen=>count=".json_encode($dbg)."\n";
-    echo "active_from=".($active_from ?? 'unset')."\n";
-    echo "stat_members=$stat_members ratio=$stat_ratio_m:$stat_ratio_f\n";
-    exit;
-}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
