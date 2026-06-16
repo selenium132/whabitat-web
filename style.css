@@ -279,7 +279,7 @@ h3 {
     content: '';
     position: absolute;
     inset: 0;
-    background: url('gv.jpg') no-repeat center center/cover;
+    background: url('images/gv/gv.jpg') no-repeat center center/cover;
     animation: heroZoom 20s ease-in-out infinite alternate;
     z-index: 0;
 }

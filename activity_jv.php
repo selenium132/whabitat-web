@@ -13,7 +13,7 @@
     <meta property="og:title" content="JV (Japan Village) | WHABITAT">
     <meta property="og:description" content="日本全国の地域へ、夏休みの1週間、国内派遣型ボランティア。農作業・環境整備・文化交流などに取り組みます。">
     <meta property="og:url" content="https://whabitathome.com/activity_jv.php">
-    <meta property="og:image" content="https://whabitathome.com/jv.jpg">
+    <meta property="og:image" content="https://whabitathome.com/images/jv/jv.jpg">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
@@ -385,7 +385,7 @@
     <main>
         <!-- Hero -->
         <section class="page-hero">
-            <div class="page-hero-bg" style="background-image: url('jv.jpg?v=<?php echo @filemtime(__DIR__ . '/jv.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-bg" style="background-image: url('images/jv/jv.jpg?v=<?php echo @filemtime(__DIR__ . '/images/jv/jv.jpg') ?: '1'; ?>');"></div>
             <div class="page-hero-overlay"></div>
             <div class="page-hero-inner">
                 <p class="page-hero-eyebrow">Domestic Volunteer</p>
@@ -545,7 +545,7 @@
                         <!-- Misara-chi JV -->
                         <a href="https://www.instagram.com/oi.jv2025" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_misarachi.jpg" alt="Misara-chi JV">
+                                <img src="images/jv/jv_misarachi.jpg" alt="Misara-chi JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Tokushima</span>
@@ -556,7 +556,7 @@
                         <!-- Teyanoppe JV -->
                         <a href="https://www.instagram.com/teyanope_jv" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_teyanoppe.jpg" alt="Teyanoppe JV">
+                                <img src="images/jv/jv_teyanoppe.jpg" alt="Teyanoppe JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Nagano</span>
@@ -567,7 +567,7 @@
                         <!-- PepePON! JV -->
                         <a href="https://www.instagram.com/pepepon_jv" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_pepepon.jpg" alt="PepePON! JV">
+                                <img src="images/jv/jv_pepepon.jpg" alt="PepePON! JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Tochigi</span>
@@ -578,7 +578,7 @@
                         <!-- Japparedan JV -->
                         <a href="https://www.instagram.com/pepepon_jv" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_japparedan.jpg" alt="Japparedan JV">
+                                <img src="images/jv/jv_japparedan.jpg" alt="Japparedan JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Aomori</span>
@@ -589,7 +589,7 @@
                         <!-- Menkepokko JV -->
                         <a href="https://www.instagram.com/jyapparedan_jv" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_menkepokko.jpg" alt="Menkepokko JV">
+                                <img src="images/jv/jv_menkepokko.jpg" alt="Menkepokko JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Akita</span>
@@ -600,7 +600,7 @@
                         <!-- Fukudeppora JV -->
                         <a href="https://www.instagram.com/fukudeppo" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_fukudeppora.jpg" alt="Fukudeppora JV">
+                                <img src="images/jv/jv_fukudeppora.jpg" alt="Fukudeppora JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Fukushima</span>
@@ -611,7 +611,7 @@
                         <!-- Kamaquran JV -->
                         <a href="https://www.instagram.com/kamaqran_jv2025" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_kamaquran.jpg" alt="Kamaquran JV">
+                                <img src="images/jv/jv_kamaquran.jpg" alt="Kamaquran JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Nagano</span>
@@ -622,7 +622,7 @@
                         <!-- Gyabamiccha JV -->
                         <a href="https://www.instagram.com/kamaqran_jv2025" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_gyabamiccha.jpg" alt="Gyabamiccha JV">
+                                <img src="images/jv/jv_gyabamiccha.jpg" alt="Gyabamiccha JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Fukuoka</span>
@@ -633,7 +633,7 @@
                         <!-- Konorei48 JV -->
                         <a href="https://www.instagram.com/konorei48jv2025" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_konorei48.jpg" alt="Konorei48 JV">
+                                <img src="images/jv/jv_konorei48.jpg" alt="Konorei48 JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Mie</span>
@@ -644,7 +644,7 @@
                         <!-- Nacha JV -->
                         <a href="https://www.instagram.com/konorei48jv2025" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_nacha.jpg" alt="Nacha JV">
+                                <img src="images/jv/jv_nacha.jpg" alt="Nacha JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Toyama</span>
@@ -655,7 +655,7 @@
                         <!-- Tsumugururin JV -->
                         <a href="https://www.instagram.com/tsumugururin_jv" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_tsumugururin.png" alt="Tsumugururin JV">
+                                <img src="images/jv/jv_tsumugururin.png" alt="Tsumugururin JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Niigata</span>
@@ -666,7 +666,7 @@
                         <!-- Rimochun JV -->
                         <a href="https://www.instagram.com/rimochunnn_jv" target="_blank" class="jv-history-card">
                             <div class="jv-history-thumb">
-                                <img src="jv_rimochun.jpg" alt="Rimochun JV">
+                                <img src="images/jv/jv_rimochun.jpg" alt="Rimochun JV">
                             </div>
                             <div class="jv-history-info">
                                 <span class="jv-history-region">Shiga</span>

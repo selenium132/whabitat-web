@@ -183,7 +183,7 @@ try {
 
     <section class="hero hero--<?php echo htmlspecialchars($hero); ?>">
         <?php if ($hero === 'full'): ?>
-        <div class="hero-bg" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
+        <div class="hero-bg" style="background-image: url('images/gv/gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/images/gv/gv_new.jpg') ?: '1'; ?>');"></div>
         <div class="hero-overlay"></div>
         <?php endif; ?>
         <div class="hero-content">
@@ -191,7 +191,7 @@ try {
             <h1 class="hero-title">WHABITAT</h1>
             <p class="hero-catch">誰もが、きちんとした場所で暮らせる世界へ。</p>
             <div class="hero-subtitle-wrapper">
-                <img src="waseda_logo.png" alt="Waseda University Logo" class="hero-logo-sub">
+                <img src="images/common/waseda_logo.png" alt="Waseda University Logo" class="hero-logo-sub">
                 <p class="hero-subtitle">WASEDA UNIVERSITY</p>
             </div>
             <div class="hero-cta">
@@ -200,26 +200,26 @@ try {
             </div>
         </div>
         <?php if ($hero === 'split'): ?>
-        <div class="hero-side-img" style="background-image: url('gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_new.jpg') ?: '1'; ?>');"></div>
+        <div class="hero-side-img" style="background-image: url('images/gv/gv_new.jpg?v=<?php echo @filemtime(__DIR__ . '/images/gv/gv_new.jpg') ?: '1'; ?>');"></div>
         <?php elseif ($hero === 'grid'): ?>
         <?php
         // フィルムストリップの並び: 活動ごとにグループ化
         // GV(海外) → MTG → 夏合宿(昼→夕) → 農業 → 雪かき、の流れでループ。
         // 3列目は object-position（同寸クロップ時の見せ位置）。
         $strip_photos = [
-            ['tile3_s.jpg',  'GVでの住居建築',   'center 55%'],
-            ['tile2_s.jpg',  'GV現地での移動',   ''],
-            ['tile4_s.jpg',  '海外派遣',         'center 45%'],
-            ['tile7_s.jpg',  '全体ミーティング', ''],
-            ['tile12_s.jpg', '夏合宿',           'center 60%'],
-            ['tile1_s.jpg',  '夏合宿',           ''],
-            ['tile8_s.jpg',  '夏合宿',           ''],
-            ['tile9_s.jpg',  '夏合宿',           ''],
-            ['tile13_s.jpg', '夏合宿',           'center 55%'],
-            ['tile5_s.jpg',  '農業ボランティア', ''],
-            ['tile10_s.jpg', '農業ボランティア', 'center 78%'],
-            ['tile6_s.jpg',  '農業ボランティア', ''],
-            ['tile11_s.jpg', '雪かきボランティア', ''],
+            ['images/tiles/tile3_s.jpg',  'GVでの住居建築',   'center 55%'],
+            ['images/tiles/tile2_s.jpg',  'GV現地での移動',   ''],
+            ['images/tiles/tile4_s.jpg',  '海外派遣',         'center 45%'],
+            ['images/tiles/tile7_s.jpg',  '全体ミーティング', ''],
+            ['images/tiles/tile12_s.jpg', '夏合宿',           'center 60%'],
+            ['images/tiles/tile1_s.jpg',  '夏合宿',           ''],
+            ['images/tiles/tile8_s.jpg',  '夏合宿',           ''],
+            ['images/tiles/tile9_s.jpg',  '夏合宿',           ''],
+            ['images/tiles/tile13_s.jpg', '夏合宿',           'center 55%'],
+            ['images/tiles/tile5_s.jpg',  '農業ボランティア', ''],
+            ['images/tiles/tile10_s.jpg', '農業ボランティア', 'center 78%'],
+            ['images/tiles/tile6_s.jpg',  '農業ボランティア', ''],
+            ['images/tiles/tile11_s.jpg', '雪かきボランティア', ''],
         ];
         ?>
         <div class="hero-strip">
@@ -304,7 +304,7 @@ try {
                 <!-- GV -->
                 <a href="activity_gv.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_hero.jpg') ?: '1'; ?>'); background-position: center 52%;">
+                        style="background-image: url('images/gv/gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/gv/gv_hero.jpg') ?: '1'; ?>'); background-position: center 52%;">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Main Event</span>
@@ -320,7 +320,7 @@ try {
                 <!-- JV -->
                 <a href="activity_jv.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('jv.jpg?v=<?php echo @filemtime(__DIR__ . '/jv.jpg') ?: '1'; ?>');">
+                        style="background-image: url('images/jv/jv.jpg?v=<?php echo @filemtime(__DIR__ . '/images/jv/jv.jpg') ?: '1'; ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Domestic</span>
@@ -336,7 +336,7 @@ try {
                 <!-- MTG -->
                 <a href="activity_mtg.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/mtg_hero.jpg') ?: '1'; ?>');">
+                        style="background-image: url('images/common/mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/common/mtg_hero.jpg') ?: '1'; ?>');">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Meeting</span>
@@ -355,7 +355,7 @@ try {
                 <!-- Domestic Volunteer -->
                 <a href="activity_domestic.php" class="activity-card fade-in" style="text-decoration: none; color: inherit; display: block;">
                     <div class="activity-img"
-                        style="background-image: url('domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 62%;">
+                        style="background-image: url('images/domestic/domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/domestic/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 62%;">
                     </div>
                     <div class="activity-content">
                         <span class="activity-tag">Domestic Volunteer</span>

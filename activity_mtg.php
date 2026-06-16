@@ -36,7 +36,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta property="og:title" content="全体ミーティング (MTG) | WHABITAT">
     <meta property="og:description" content="毎週水曜6限後。学年を超えた交流と、ボランティアの意義を学ぶ場。">
     <meta property="og:url" content="https://whabitathome.com/activity_mtg.php">
-    <meta property="og:image" content="https://whabitathome.com/mtg_hero.jpg">
+    <meta property="og:image" content="https://whabitathome.com/images/common/mtg_hero.jpg">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
@@ -228,7 +228,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
     <main class="mtg-main">
         <section class="page-hero">
-            <div class="page-hero-bg" style="background-image: url('mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/mtg_hero.jpg') ?: '1'; ?>');"></div>
+            <div class="page-hero-bg" style="background-image: url('images/common/mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/common/mtg_hero.jpg') ?: '1'; ?>');"></div>
             <div class="page-hero-overlay"></div>
             <div class="page-hero-inner">
                 <p class="page-hero-eyebrow">Weekly Meeting</p>

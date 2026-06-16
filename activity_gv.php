@@ -13,7 +13,7 @@
     <meta property="og:title" content="GV (Global Village) | WHABITAT">
     <meta property="og:description" content="国際NGO Habitat for Humanity が世界で展開する、海外住居建築ボランティア。開発途上国へ渡航し、現地で家づくりに参加します。">
     <meta property="og:url" content="https://whabitathome.com/activity_gv.php">
-    <meta property="og:image" content="https://whabitathome.com/gv_hero.jpg">
+    <meta property="og:image" content="https://whabitathome.com/images/gv/gv_hero.jpg">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
@@ -189,7 +189,7 @@
 
     <main class="gv-main">
         <section class="page-hero">
-            <div class="page-hero-bg" style="background-image: url('gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/gv_hero.jpg') ?: '1'; ?>'); background-position: center 52%;"></div>
+            <div class="page-hero-bg" style="background-image: url('images/gv/gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/gv/gv_hero.jpg') ?: '1'; ?>'); background-position: center 52%;"></div>
             <div class="page-hero-overlay"></div>
             <div class="page-hero-inner">
                 <p class="page-hero-eyebrow">Main Event</p>
@@ -316,14 +316,14 @@
                     <h3 class="gv-year-title">2020</h3>
                     <div class="gv-history-grid">
                         <a href="https://www.instagram.com/sakanto_gv" target="_blank" class="gv-history-card">
-                            <img src="gv_sakanto.jpg" alt="さかんとGV">
+                            <img src="images/gv/gv_sakanto.jpg" alt="さかんとGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Spring</span><span>India</span></div>
                                 <h4 class="gv-history-team">さかんとGV</h4>
                             </div>
                         </a>
                         <a href="https://www.instagram.com/habitat_paruparu_gv/" target="_blank" class="gv-history-card">
-                            <img src="gv_paruparu.jpg" alt="ぱるぱるGV">
+                            <img src="images/gv/gv_paruparu.jpg" alt="ぱるぱるGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Spring</span><span>Vietnam</span></div>
                                 <h4 class="gv-history-team">ぱるぱるGV</h4>
@@ -336,7 +336,7 @@
                     <h3 class="gv-year-title">2023</h3>
                     <div class="gv-history-grid">
                         <a href="https://www.instagram.com/tantangood_whabitat2023" target="_blank" class="gv-history-card">
-                            <img src="gv_tantangood.jpg" alt="たんたんぐGV">
+                            <img src="images/gv/gv_tantangood.jpg" alt="たんたんぐGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Summer</span><span>Indonesia</span></div>
                                 <h4 class="gv-history-team">たんたんぐGV</h4>
@@ -349,21 +349,21 @@
                     <h3 class="gv-year-title">2024</h3>
                     <div class="gv-history-grid">
                         <a href="https://www.instagram.com/yupurumu_whabitat" target="_blank" class="gv-history-card">
-                            <img src="gv_yupurumu.jpg" alt="ゆぷるむGV">
+                            <img src="images/gv/gv_yupurumu.jpg" alt="ゆぷるむGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Spring</span><span>Cambodia</span></div>
                                 <h4 class="gv-history-team">ゆぷるむGV</h4>
                             </div>
                         </a>
                         <a href="https://www.instagram.com/magkarawn_gv" target="_blank" class="gv-history-card">
-                            <img src="gv_magkarawn.jpg" alt="マカランGV">
+                            <img src="images/gv/gv_magkarawn.jpg" alt="マカランGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Spring</span><span>Philippines</span></div>
                                 <h4 class="gv-history-team">マカランGV</h4>
                             </div>
                         </a>
                         <a href="https://www.instagram.com/sukairu.gv_whabitat" target="_blank" class="gv-history-card">
-                            <img src="gv_sukairu.jpg" alt="すかいるGV">
+                            <img src="images/gv/gv_sukairu.jpg" alt="すかいるGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Summer</span><span>Cambodia</span></div>
                                 <h4 class="gv-history-team">すかいるGV</h4>
@@ -376,28 +376,28 @@
                     <h3 class="gv-year-title">2025</h3>
                     <div class="gv-history-grid">
                         <a href="https://www.instagram.com/bangalgv" target="_blank" class="gv-history-card">
-                            <img src="gv_bangal.jpg" alt="ばんがるGV">
+                            <img src="images/gv/gv_bangal.jpg" alt="ばんがるGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Spring</span><span>Nepal</span></div>
                                 <h4 class="gv-history-team">ばんがるGV</h4>
                             </div>
                         </a>
                         <a href="https://www.instagram.com/wabarumahgv" target="_blank" class="gv-history-card">
-                            <img src="gv_wabarumah.jpg" alt="わばるまGV">
+                            <img src="images/gv/gv_wabarumah.jpg" alt="わばるまGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Spring</span><span>Indonesia</span></div>
                                 <h4 class="gv-history-team">わばるまGV</h4>
                             </div>
                         </a>
                         <a href="https://www.instagram.com/dangan_gv" target="_blank" class="gv-history-card">
-                            <img src="gv_dangan.jpg" alt="ダンガンGV">
+                            <img src="images/gv/gv_dangan.jpg" alt="ダンガンGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Spring</span><span>Vietnam</span></div>
                                 <h4 class="gv-history-team">ダンガンGV</h4>
                             </div>
                         </a>
                         <a href="https://www.instagram.com/erumela_gv" target="_blank" class="gv-history-card">
-                            <img src="gv_erumela.jpg" alt="エルメラGV">
+                            <img src="images/gv/gv_erumela.jpg" alt="エルメラGV">
                             <div class="gv-history-body">
                                 <div class="gv-history-meta"><span>Summer</span><span>Indonesia</span></div>
                                 <h4 class="gv-history-team">エルメラGV</h4>

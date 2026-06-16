@@ -12,7 +12,7 @@
     <meta property="og:title" content="国内単発ボランティア | WHABITAT">
     <meta property="og:description" content="ゴミ拾い・農業・地域のお手伝い。身近なところから始める、地域に根ざしたボランティア。">
     <meta property="og:url" content="https://whabitathome.com/activity_domestic.php">
-    <meta property="og:image" content="https://whabitathome.com/domestic_hero.jpg">
+    <meta property="og:image" content="https://whabitathome.com/images/domestic/domestic_hero.jpg">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
@@ -213,7 +213,7 @@
 
     <main class="dm-main">
         <section class="page-hero">
-            <div class="page-hero-bg" style="background-image: url('domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 62%;"></div>
+            <div class="page-hero-bg" style="background-image: url('images/domestic/domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/domestic/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 62%;"></div>
             <div class="page-hero-overlay"></div>
             <div class="page-hero-inner">
                 <p class="page-hero-eyebrow">Domestic Volunteer</p>
@@ -294,7 +294,7 @@
                 <h3 class="dm-subtitle">ゴミ拾い・ビーチクリーン</h3>
                 <div class="dm-grid">
                     <div class="dm-card dm-card-wide">
-                        <div class="dm-card-img"><img src="domestic_trash_picking.jpg" alt="ゴミ拾い・ビーチクリーン"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_trash_picking.jpg" alt="ゴミ拾い・ビーチクリーン"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Trash Picking &amp; Beach Clean</span>
                             <h4>ゴミ拾い・ビーチクリーン</h4>
@@ -309,7 +309,7 @@
                 <h3 class="dm-subtitle">農業ボランティア (援農)</h3>
                 <div class="dm-grid">
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="domestic_iijima_farm.jpg" alt="飯島農園"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_iijima_farm.jpg" alt="飯島農園"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Chiba</span>
                             <h4>北習志野</h4>
@@ -317,7 +317,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="domestic_earth_farm.jpg" alt="東京地球農園"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_earth_farm.jpg" alt="東京地球農園"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Tokyo</span>
                             <h4>あきる野</h4>
@@ -329,7 +329,7 @@
                 <h3 class="dm-subtitle">地域連携・その他</h3>
                 <div class="dm-grid">
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="domestic_omikoshi.jpg" alt="お神輿・お祭り手伝い"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_omikoshi.jpg" alt="お神輿・お祭り手伝い"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Festival</span>
                             <h4>お神輿・お祭り手伝い</h4>
@@ -337,7 +337,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="domestic_bosai.jpg" alt="地域防災訓練"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_bosai.jpg" alt="地域防災訓練"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Bosai</span>
                             <h4>地域防災訓練</h4>
@@ -353,7 +353,7 @@
                 <p class="dm-section-desc">1泊〜3泊4日程度。事前・事後の活動が少ないため、気軽に参加できるのが特徴です。</p>
                 <div class="dm-grid">
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="domestic_teradomari.jpg" alt="寺泊 (新潟県長岡市)" style="object-position: 60% 50%;"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_teradomari.jpg" alt="寺泊 (新潟県長岡市)" style="object-position: 60% 50%;"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Niigata</span>
                             <h4>寺泊</h4>
@@ -361,7 +361,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="domestic_nishiwaga.jpg" alt="西和賀（岩手県）" style="object-position: right bottom;"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_nishiwaga.jpg" alt="西和賀（岩手県）" style="object-position: right bottom;"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Iwate</span>
                             <h4>西和賀</h4>
@@ -369,7 +369,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="domestic_bukeyashiki.jpg" alt="武家屋敷 (東京都日の出町)"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_bukeyashiki.jpg" alt="武家屋敷 (東京都日の出町)"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Tokyo</span>
                             <h4>武家屋敷</h4>
@@ -377,7 +377,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="domestic_tabayama.jpg" alt="丹波山村 (山梨県)"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_tabayama.jpg" alt="丹波山村 (山梨県)"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Yamanashi</span>
                             <h4>丹波山</h4>
