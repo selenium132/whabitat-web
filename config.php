@@ -186,6 +186,18 @@ function isEventAdmin($event_id) {
 }
 
 
+// Helper: アプリ内ブラウザ（LINE/Facebook/Instagram等の埋め込みWebView）判定。
+// これらの中ではGoogleのOAuthが "disallowed_useragent" でブロックされるため検知する。
+function isInAppBrowser() {
+    $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    if ($ua === '') return false;
+    if (preg_match('/Line\//i', $ua)) return true;                 // LINE
+    if (strpos($ua, 'FBAN') !== false || strpos($ua, 'FBAV') !== false) return true; // Facebook/Messenger
+    if (strpos($ua, 'Instagram') !== false) return true;           // Instagram
+    if (preg_match('/; wv\)/', $ua)) return true;                  // Android WebView
+    return false;
+}
+
 // Helper: Google アカウント認証（スプシ共有用）。
 // セッションに検証済みGoogleメールが無ければ Google OAuth を開始し（state付き）、
 // 認証後に $return_uri（ルート相対パス）へ戻る。既にあれば検証済みメールを返す。
@@ -195,6 +207,27 @@ function requireGoogleAccount($return_uri) {
     }
     if (GOOGLE_OAUTH_CLIENT_ID === '' || GOOGLE_OAUTH_REDIRECT_URI === '') {
         die('Google連携が未設定です（.env の GOOGLE_OAUTH_* を確認してください）。');
+    }
+    // アプリ内ブラウザではGoogle認証がブロックされる(disallowed_useragent)ため、
+    // 外部ブラウザ(Safari/Chrome)で開き直すよう案内する。LINEは openExternalBrowser=1 で外部起動。
+    if (isInAppBrowser()) {
+        $cur = 'https://' . ($_SERVER['HTTP_HOST'] ?? 'whabitathome.com') . ($_SERVER['REQUEST_URI'] ?? '/');
+        $ext = $cur . (strpos($cur, '?') !== false ? '&' : '?') . 'openExternalBrowser=1';
+        $ext_h = htmlspecialchars($ext, ENT_QUOTES);
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">'
+           . '<meta name="viewport" content="width=device-width, initial-scale=1">'
+           . '<title>ブラウザで開いてください</title>'
+           . '<style>body{font-family:"Noto Sans JP",sans-serif;background:#faf9f6;color:#2a2a2a;margin:0;padding:2rem 1.2rem;line-height:1.8}'
+           . '.box{max-width:480px;margin:1.5rem auto;background:#fff;border:1px solid #e6e2d9;border-radius:12px;padding:1.6rem}'
+           . 'h1{font-size:1.15rem;margin:0 0 1rem}a.btn{display:block;text-align:center;background:#1a1a1a;color:#fff;text-decoration:none;padding:0.9rem;border-radius:8px;font-weight:600;margin:1.2rem 0}'
+           . '.muted{color:#8d877c;font-size:.86rem}</style></head><body><div class="box">'
+           . '<h1>ブラウザで開いてください</h1>'
+           . '<p>Googleの仕様により、LINEなどの<strong>アプリ内ブラウザではGoogleログインができません</strong>（エラー: disallowed_useragent）。Safari / Chrome で開くと出力できます。</p>'
+           . '<a class="btn" href="' . $ext_h . '">ブラウザで開いて続ける</a>'
+           . '<p class="muted">ボタンで開けない場合は、画面右上のメニューから「ブラウザで開く」(Safari/Chrome) を選び、もう一度「シートに出力」を押してください。PCのブラウザでもOKです。</p>'
+           . '</div></body></html>';
+        exit;
     }
     $_SESSION['google_oauth_return'] = $return_uri;
     $state = bin2hex(random_bytes(32));
