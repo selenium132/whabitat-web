@@ -22,17 +22,33 @@ $stat_members = 150; // フォールバック既定値
 $stat_ratio_m = 4;   // 男女比（男）
 $stat_ratio_f = 6;   // 男女比（女）
 try {
-    // 承認済みメンバー数を所属メンバー数として集計
-    $cnt = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE is_approved = 1")->fetchColumn();
-    if ($cnt > 0) {
-        $stat_members = $cnt;
-        // 男女比（回答済みのみ。男:女 を合計10へ正規化）
-        $g = $pdo->query("SELECT SUM(gender = 'male') AS m, SUM(gender = 'female') AS f FROM users WHERE is_approved = 1")->fetch(PDO::FETCH_ASSOC);
-        $m = (int)($g['m'] ?? 0);
-        $f = (int)($g['f'] ?? 0);
-        if ($m + $f > 0) {
-            $stat_ratio_m = (int)round($m / ($m + $f) * 10);
-            $stat_ratio_f = 10 - $stat_ratio_m;
+    // 在籍中の「最新3代」の承認済みメンバーだけを集計する。
+    // ・卒業生(4代以上前)は自動で除外 → DBに永遠に残っても人数に影響しない
+    // ・新入生が実際に登録し始めると窓が自動で1つ進む（4月固定でなくデータ基準）
+    //   → 年度跨ぎの端境期に人数が急減しない。引き継ぎ時もコード変更不要。
+    $rows = $pdo->query("SELECT grade, gender FROM users WHERE is_approved = 1")->fetchAll(PDO::FETCH_ASSOC);
+    $gens = [];
+    foreach ($rows as $r) {
+        $n = (int)preg_replace('/\D/', '', (string)($r['grade'] ?? ''));
+        if ($n > 0) $gens[] = $n;
+    }
+    if ($gens) {
+        $active_from = max($gens) - 2; // 最新3代ぶん（最新代・最新-1・最新-2）
+        $cnt = 0; $m = 0; $f = 0;
+        foreach ($rows as $r) {
+            $n = (int)preg_replace('/\D/', '', (string)($r['grade'] ?? ''));
+            if ($n <= 0 || $n < $active_from) continue;
+            $cnt++;
+            if ($r['gender'] === 'male') $m++;
+            elseif ($r['gender'] === 'female') $f++;
+        }
+        if ($cnt > 0) {
+            $stat_members = $cnt;
+            // 男女比（回答済みのみ。男:女 を合計10へ正規化）
+            if ($m + $f > 0) {
+                $stat_ratio_m = (int)round($m / ($m + $f) * 10);
+                $stat_ratio_f = 10 - $stat_ratio_m;
+            }
         }
     }
 } catch (Exception $e) {
