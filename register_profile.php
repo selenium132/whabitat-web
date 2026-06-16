@@ -44,13 +44,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['name'] = $name;
             // プロフィール更新を名簿スプシに自動反映（連携済みの場合のみ）
             syncMembersToSheetSafe($pdo);
-            // Check if there's a return URL to redirect to
-            $return_url = $_POST['return_url'] ?? '';
-            if (!empty($return_url)) {
-                header("Location: " . $return_url);
-            } else {
-                header("Location: dashboard.php");
+            // Check if there's a return URL to redirect to.
+            // オープンリダイレクト対策: 自サイト内の相対パス/同一ホストのみ許可（login.php と同方針）。
+            // form_view.php からは urlencode された REQUEST_URI が渡るため、まず urldecode する。
+            $return_url = urldecode($_POST['return_url'] ?? '');
+            $safe_return = 'dashboard.php';
+            if ($return_url !== '') {
+                $normalized = str_replace('\\', '/', $return_url);
+                if (strncmp($normalized, '//', 2) !== 0) {
+                    $parsed = parse_url($return_url);
+                    if (empty($parsed['host'])) {
+                        if (isset($return_url[0]) && $return_url[0] === '/') {
+                            $safe_return = $return_url;
+                        }
+                    } elseif ($parsed['host'] === ($_SERVER['HTTP_HOST'] ?? '') || $parsed['host'] === 'whabitathome.com') {
+                        $safe_return = $return_url;
+                    }
+                }
             }
+            header("Location: " . $safe_return);
             exit;
         } else {
             $error = 'エラーが発生しました。';

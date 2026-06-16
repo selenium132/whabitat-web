@@ -21,9 +21,6 @@ define('DB_PASS', $env['DB_PASS'] ?? '');
 define('CIRCLE_SECRET', $env['CIRCLE_SECRET'] ?? '');    // 一般メンバー用
 define('ADMIN_SECRET', $env['ADMIN_SECRET'] ?? '');    // 管理者（幹部）用
 
-// API Key for Google Forms Sync
-define('API_KEY', $env['API_KEY'] ?? '');
-
 // Available Grades (Generations) - dynamically calculated
 // Base: fiscal year 2026 -> newest gen = 20th
 $current_fy = ((int)date('n') >= 4) ? (int)date('Y') : (int)date('Y') - 1;

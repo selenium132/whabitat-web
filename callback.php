@@ -7,18 +7,15 @@ if (empty($code)) {
     die('Invalid Request - 認証コードがありません。<br><a href="index.php">トップページへ</a>');
 }
 
-// CSRF対策: state の検証。
-// セッションに state が保持されている通常環境では厳密に検証する。
-// （LINEアプリ内ブラウザ等でセッションCookieが維持されず state が空になる場合のみ、
-//  後方互換でスキップし正規ユーザーのログインを妨げない）
+// CSRF対策: state を常に検証する（スキップ経路なし）。
+// 通常はセッションの state を使い、セッションCookieが維持されない環境
+// （LINEアプリ内ブラウザ等）では login.php が併載した Cookie の state で検証する。
 $state = $_GET['state'] ?? '';
-$saved_state = $_SESSION['line_state'] ?? '';
+$saved_state = $_SESSION['line_state'] ?? ($_COOKIE['line_state'] ?? '');
 unset($_SESSION['line_state']);
 setcookie('line_state', '', time() - 3600, '/');
-if (!empty($saved_state)) {
-    if (empty($state) || !hash_equals($saved_state, $state)) {
-        die('セッションの有効期限が切れたか、不正なアクセスです。<br><a href="login.php">もう一度ログイン</a>');
-    }
+if (empty($saved_state) || empty($state) || !hash_equals($saved_state, $state)) {
+    die('セッションの有効期限が切れたか、不正なアクセスです。<br><a href="login.php">もう一度ログイン</a>');
 }
 
 // 1. Get Access Token

@@ -14,6 +14,30 @@ try {
     // Table might not exist yet
     $recent_blogs = [];
 }
+
+// --- トップページ実績統計（メンバーDBと動的同期。失敗時は安全な既定値でページを壊さない） ---
+$founding_year = 2006;
+$stat_years   = max(1, (int)date('Y') - $founding_year); // 設立からの活動年数（毎年自動で増える）
+$stat_members = 150; // フォールバック既定値
+$stat_ratio_m = 4;   // 男女比（男）
+$stat_ratio_f = 6;   // 男女比（女）
+try {
+    // 承認済みメンバー数を所属メンバー数として集計
+    $cnt = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE is_approved = 1")->fetchColumn();
+    if ($cnt > 0) {
+        $stat_members = $cnt;
+        // 男女比（回答済みのみ。男:女 を合計10へ正規化）
+        $g = $pdo->query("SELECT SUM(gender = 'male') AS m, SUM(gender = 'female') AS f FROM users WHERE is_approved = 1")->fetch(PDO::FETCH_ASSOC);
+        $m = (int)($g['m'] ?? 0);
+        $f = (int)($g['f'] ?? 0);
+        if ($m + $f > 0) {
+            $stat_ratio_m = (int)round($m / ($m + $f) * 10);
+            $stat_ratio_f = 10 - $stat_ratio_m;
+        }
+    }
+} catch (Exception $e) {
+    // 既定値のまま（公開ページを壊さない）
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -210,7 +234,7 @@ try {
                         <div class="fact-row"><dt>所属</dt><dd>早稲田大学公認サークル / WAVOC 公認</dd></div>
                         <div class="fact-row"><dt>母体</dt><dd>国際NGO Habitat for Humanity Japan 学生支部</dd></div>
                         <div class="fact-row"><dt>設立</dt><dd>2006年</dd></div>
-                        <div class="fact-row"><dt>規模</dt><dd>約150名（男女比 4:6）</dd></div>
+                        <div class="fact-row"><dt>規模</dt><dd><?php echo $stat_members; ?>名（男女比 <?php echo $stat_ratio_m; ?>:<?php echo $stat_ratio_f; ?>）</dd></div>
                         <div class="fact-row"><dt>構成</dt><dd>全学部・早稲田大学の学生限定</dd></div>
                     </dl>
                 </div>
@@ -223,19 +247,19 @@ try {
             <div class="stats-grid stagger-children">
                 <div class="stat-item fade-in">
                     <span class="stat-index">01</span>
-                    <p class="stat-figure-line" aria-label="約150名以上">
-                        <span class="stat-prefix">約</span><span class="stat-figure" data-target="150">0</span><span class="stat-suffix">名+</span>
+                    <p class="stat-figure-line" aria-label="所属メンバー<?php echo $stat_members; ?>名">
+                        <span class="stat-figure" data-target="<?php echo $stat_members; ?>">0</span><span class="stat-suffix">名</span>
                     </p>
                     <p class="stat-label">所属メンバー</p>
                     <span class="stat-en" aria-hidden="true">Members</span>
                 </div>
                 <div class="stat-item fade-in">
                     <span class="stat-index">02</span>
-                    <p class="stat-figure-line" aria-label="活動20年">
-                        <span class="stat-figure" data-target="20">0</span><span class="stat-suffix">年</span>
+                    <p class="stat-figure-line" aria-label="設立<?php echo $founding_year; ?>年から<?php echo $stat_years; ?>年">
+                        <span class="stat-figure" data-target="<?php echo $stat_years; ?>">0</span><span class="stat-suffix">年</span>
                     </p>
-                    <p class="stat-label">活動の歴史（2006〜）</p>
-                    <span class="stat-en" aria-hidden="true">History</span>
+                    <p class="stat-label">活動の歴史</p>
+                    <span class="stat-en" aria-hidden="true">Since <?php echo $founding_year; ?></span>
                 </div>
                 <div class="stat-item fade-in">
                     <span class="stat-index">03</span>
@@ -247,8 +271,8 @@ try {
                 </div>
                 <div class="stat-item fade-in">
                     <span class="stat-index">04</span>
-                    <p class="stat-figure-line" aria-label="男女比 4対6">
-                        <span class="stat-figure stat-figure--ratio">4:6</span>
+                    <p class="stat-figure-line" aria-label="男女比 男<?php echo $stat_ratio_m; ?>対女<?php echo $stat_ratio_f; ?>">
+                        <span class="stat-figure stat-figure--ratio"><?php echo $stat_ratio_m; ?>:<?php echo $stat_ratio_f; ?></span>
                     </p>
                     <p class="stat-label">男女比（男:女）</p>
                     <span class="stat-en" aria-hidden="true">Ratio M:F</span>

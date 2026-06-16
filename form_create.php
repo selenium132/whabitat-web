@@ -36,7 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $event_date = $_POST['event_date'] ?? date('Y-m-d H:i:s');
     $form_schema = $_POST['form_schema'] ?? '[]';
     $target_id = $_POST['event_id'] ?? null;
-    
+
+    // 認可: 更新は対象イベントの管理者のみ許可する。
+    // GETの id ではなく、実際に更新する $target_id に対して再判定することで、
+    // 「id無しのCreateモードに見せかけて他人のイベントをUPDATEする」IDORを防ぐ。
+    if ($target_id && !isEventAdmin($target_id)) {
+        header("Location: dashboard.php");
+        exit;
+    }
+
     // Response schedule (NULL = default behavior)
     $open_at = !empty($_POST['open_at']) ? $_POST['open_at'] : null;
     $close_at = !empty($_POST['close_at']) ? $_POST['close_at'] : null;

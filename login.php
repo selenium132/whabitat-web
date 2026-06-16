@@ -1,9 +1,19 @@
 <?php
 require_once 'config.php';
 
-// Generate state (kept for compatibility, but not strictly validated due to LINE in-app browser)
+// CSRF対策: state を生成。セッションに加え、Cookie にも併載する。
+// LINEアプリ内ブラウザ等でセッションCookieが維持されない環境でも、
+// SameSite=Lax の専用Cookie 経由で callback 側が state を検証できるようにし、
+// 「state検証スキップ」経路を無くす（ログインCSRF対策）。
 $state = bin2hex(random_bytes(32));
 $_SESSION['line_state'] = $state;
+setcookie('line_state', $state, [
+    'expires'  => time() + 600, // 10分
+    'path'     => '/',
+    'secure'   => true,
+    'httponly' => true,
+    'samesite' => 'Lax', // OAuthリダイレクト(トップレベルGET)で送出される
+]);
 
 // Check for redirect URL passed from requireLogin (supports hash/fragments)
 if (!empty($_GET['next'])) {

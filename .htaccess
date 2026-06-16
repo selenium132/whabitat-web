@@ -1,8 +1,10 @@
-# Block access to sensitive files
-<FilesMatch "^\.env|^service-account\.json$">
-    Order allow,deny
-    Deny from all
+# Block access to sensitive files (拡張子ベースで広く拒否。.bak/.sql/.log 等も対象)
+<FilesMatch "(?i)(^\.env|^service-account\.json|\.(bak|sql|log|ini|sh)$|\.json\.bak)">
+    Require all denied
 </FilesMatch>
+
+# ディレクトリ一覧表示の禁止
+Options -Indexes
 
 # Error handling
 ErrorDocument 404 /404.php

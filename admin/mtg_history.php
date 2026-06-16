@@ -41,20 +41,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Handle image upload
         $image_path = $_POST['existing_image'] ?? '';
-        if (!empty($_FILES['image']['name'])) {
+        if (!empty($_FILES['image']['name']) && ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
             $upload_dir = '../uploads/mtg/';
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0755, true);
             }
-            $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $filename = 'mtg_' . date('Y_m_d_His') . '.' . $ext;
-            $target = $upload_dir . $filename;
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
-                $image_path = 'uploads/mtg/' . $filename;
+            // PHP実行を二重に禁止（親 uploads/.htaccess に加え専用ディレクトリにも設置）
+            $ht = $upload_dir . '.htaccess';
+            if (!file_exists($ht)) {
+                file_put_contents($ht, "<IfModule mod_php.c>\nphp_flag engine off\n</IfModule>\n<FilesMatch \"(?i)\\.(php|php3|php4|php5|php7|phtml|pht|phar)$\">\nRequire all denied\n</FilesMatch>\n");
+            }
+            // クライアント申告の拡張子は信用せず、マジックバイトで実形式を判定する
+            $imageInfo = getimagesize($_FILES['image']['tmp_name']);
+            $allowed = [IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png', IMAGETYPE_GIF => 'gif', IMAGETYPE_WEBP => 'webp'];
+            if ($imageInfo === false || !isset($allowed[$imageInfo[2]])) {
+                $error = '画像ファイル（JPEG / PNG / GIF / WebP）のみアップロードできます。';
+            } else {
+                $ext = $allowed[$imageInfo[2]];
+                $filename = 'mtg_' . date('Y_m_d_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                $target = $upload_dir . $filename;
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+                    $image_path = 'uploads/mtg/' . $filename;
+                }
             }
         }
-        
-        if ($title && $event_date) {
+
+        if ($title && $event_date && !$error) {
             if ($action === 'add') {
                 $stmt = $pdo->prepare("INSERT INTO mtg_history (event_date, title, subtitle, description, image_path, year_group) VALUES (?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$event_date, $title, $subtitle, $description, $image_path, $year_group]);

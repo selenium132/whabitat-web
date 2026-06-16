@@ -139,14 +139,12 @@ function syncEventToSheet(PDO $pdo, $event_id, $autoCreate = false, $forceReset 
     // Write new data
     $gs->updateValues($spreadsheetId, $sheetName . '!A1', $dataRows);
 
-    // Set Permissions (if new) - make accessible to anyone with link for easy admin sharing
-    if ($isNew) {
-        try {
-            $gs->addPermission($spreadsheetId, 'writer', 'anyone');
-        } catch (Exception $e) {
-            // This might fail if service account doesn't have permission - that's OK
-        }
-    }
+    // セキュリティ: 以前は 'anyone'(リンクを知る全員) に writer 共有していたが、
+    // 参加者の個人情報が誰でも閲覧・編集できる重大リスクのため廃止した。
+    // シートは Apps Script 実行者の Google ドライブ所有のままとし、公開共有はしない
+    // （所有者はドライブから直接アクセス可。サービスアカウントの書き込み権限は作成時に付与済みで、
+    //   この公開共有が無くても同期は動作する）。
+    // 他の幹部へ共有する必要が出たら、各自のGoogleアカウントへ明示共有する方式（動的OAuth）を別途実装する。
 
     return ['status' => 'ok', 'spreadsheetId' => $spreadsheetId, 'isNew' => $isNew];
 }
@@ -280,11 +278,11 @@ function syncMembersToSheet(PDO $pdo, $autoCreate = false, $forceReset = false) 
 
     $gs->updateValues($spreadsheetId, $sheetName . '!A1', $dataRows);
 
-    if ($isNew) {
-        try {
-            $gs->addPermission($spreadsheetId, 'writer', 'anyone');
-        } catch (Exception $e) {}
-    }
+    // セキュリティ: 個人情報(住所/電話/生年月日等)を含む名簿を 'anyone'(リンクを知る全員) に
+    // writer 共有するのは重大リスクのため廃止した。シートは Apps Script 実行者の
+    // Google ドライブ所有のままとし、公開共有はしない（所有者はドライブから直接アクセス可。
+    // サービスアカウントの書き込み権限は作成時に付与済みで、公開共有が無くても同期は動作する）。
+    // 他の幹部へ共有が必要になったら、各自のGoogleアカウントへ明示共有する方式（動的OAuth）を別途実装する。
 
     return ['status' => 'ok', 'spreadsheetId' => $spreadsheetId, 'isNew' => $isNew];
 }
