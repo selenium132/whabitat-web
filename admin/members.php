@@ -57,25 +57,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $allergies = $_POST['allergies'] ?? '';
             $notes = $_POST['notes'] ?? '';
 
-            // Calculate admission_year from grade
-            $admission_year = '';
-            if ($grade) {
-                $gen_num = (int)str_replace('th', '', $grade);
-                if ($gen_num > 0) {
-                    $admission_year = ($gen_num + 2010) . '年';
-                }
-            }
-
             if ($name && $grade) {
                 // Use Prepared Statements to prevent SQL injection
                 $stmt = $pdo->prepare("UPDATE users SET
                     name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?,
-                    department = ?, admission_year = ?, gender = ?, zipcode = ?, address = ?,
+                    department = ?, gender = ?, zipcode = ?, address = ?,
                     phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ?
                     WHERE id = ?");
                 $stmt->execute([
                     $name, $name_kana, $sid, $grade, $faculty,
-                    $department, $admission_year, $gender, $zipcode, $address,
+                    $department, $gender, $zipcode, $address,
                     $phone, empty($birthdate) ? null : $birthdate, $other_circles, $allergies, $notes,
                     $target_id
                 ]);
@@ -133,7 +124,6 @@ foreach ($members as $m) {
         'name_kana'      => $m['name_kana'] ?? '',
         'student_id'     => $m['student_id'] ?? '',
         'grade'          => $m['grade'] ?? '',
-        'admission_year' => $m['admission_year'] ?? '',
         'faculty'        => $m['faculty'] ?? '',
         'department'     => $m['department'] ?? '',
         'gender'         => m_gender_ja($m['gender'] ?? ''),
@@ -347,7 +337,6 @@ $csrf_token = generateCsrfToken();
                                 <th class="sortable" data-type="text">学籍番号<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable" data-type="text">LINE名<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable" data-type="num">代<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
-                                <th class="sortable col-detail" data-type="num">卒業予定<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable" data-type="text">学部<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable col-detail" data-type="text">学科<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable" data-type="text">性別<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
@@ -372,7 +361,6 @@ $csrf_token = generateCsrfToken();
                                         $m['address'] ?? '', $m['phone'] ?? '', $m['other_circles'] ?? '',
                                     ])));
                                     $grade_num = (int)preg_replace('/\D/', '', $m['grade'] ?? '');
-                                    $grad_num  = (int)preg_replace('/\D/', '', $m['admission_year'] ?? '');
                                 ?>
                                 <tr data-id="<?php echo (int)$m['id']; ?>"
                                     data-grade="<?php echo htmlspecialchars($m['grade'] ?? ''); ?>"
@@ -397,7 +385,6 @@ $csrf_token = generateCsrfToken();
                                     <td><?php echo htmlspecialchars($m['student_id'] ?? ''); ?></td>
                                     <td class="cell-muted"><?php echo htmlspecialchars($m['line_name'] ?? ''); ?></td>
                                     <td data-sort="<?php echo $grade_num; ?>"><?php echo htmlspecialchars($m['grade'] ?? ''); ?></td>
-                                    <td class="col-detail" data-sort="<?php echo $grad_num; ?>"><?php echo htmlspecialchars($m['admission_year'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
                                     <td class="col-detail"><?php echo htmlspecialchars($m['department'] ?? ''); ?></td>
                                     <td data-sort="<?php echo htmlspecialchars($m['gender'] ?? ''); ?>"><?php echo htmlspecialchars(m_gender_ja($m['gender'] ?? '')) ?: '<span class="cell-muted">-</span>'; ?></td>
@@ -434,7 +421,6 @@ $csrf_token = generateCsrfToken();
                                                         'grade' => $m['grade'],
                                                         'faculty' => $m['faculty'] ?? '',
                                                         'department' => $m['department'] ?? '',
-                                                        'admission_year' => $m['admission_year'] ?? '',
                                                         'gender' => $m['gender'] ?? '',
                                                         'zipcode' => $m['zipcode'] ?? '',
                                                         'address' => $m['address'] ?? '',
@@ -490,7 +476,7 @@ $csrf_token = generateCsrfToken();
                                 </tr>
                             <?php endforeach; ?>
                             <tr class="empty-row" id="emptyRow" style="display: none;">
-                                <td colspan="18">条件に一致するメンバーがいません。</td>
+                                <td colspan="17">条件に一致するメンバーがいません。</td>
                             </tr>
                         </tbody>
                     </table>
@@ -685,8 +671,8 @@ $csrf_token = generateCsrfToken();
         document.getElementById('csvBtn').addEventListener('click', () => {
             const ids = visibleIds();
             const byId = {}; MEMBERS.forEach(m => byId[m.id] = m);
-            const headerRow = ['ID','名前','ふりがな','学籍番号','代','卒業予定年','学部','学科','性別','生年月日','郵便番号','住所','電話番号','LINE名','メールアドレス','他サークル','アレルギー等','備考','ステータス','権限'];
-            const keys = ['id','name','name_kana','student_id','grade','admission_year','faculty','department','gender','birthdate','zipcode','address','phone','line_name','email','other_circles','allergies','notes','status','role'];
+            const headerRow = ['ID','名前','ふりがな','学籍番号','代','学部','学科','性別','生年月日','郵便番号','住所','電話番号','LINE名','メールアドレス','他サークル','アレルギー等','備考','ステータス','権限'];
+            const keys = ['id','name','name_kana','student_id','grade','faculty','department','gender','birthdate','zipcode','address','phone','line_name','email','other_circles','allergies','notes','status','role'];
             const esc = v => {
                 let s = (v === null || v === undefined) ? '' : String(v);
                 // CSV数式インジェクション対策: 先頭が = + - @ TAB CR のセルは ' を前置し、

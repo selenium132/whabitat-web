@@ -104,7 +104,7 @@ function gus_build_members_rows(PDO $pdo) {
     $stmt = $pdo->query("SELECT * FROM users ORDER BY grade ASC, name COLLATE utf8mb4_unicode_ci ASC");
     $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $rows = [[
-        'ID', '名前', 'ふりがな', '学籍番号', '代', '卒業予定年', '今の学年', '学部', '学科', '性別',
+        'ID', '名前', 'ふりがな', '学籍番号', '代', '今の学年', '学部', '学科', '性別',
         '郵便番号', '住所', '電話番号', '生年月日', 'LINE名', 'メールアドレス', '他サークル', 'アレルギー等', '備考(その他)', 'ステータス', '権限'
     ]];
     foreach ($members as $m) {
@@ -112,19 +112,19 @@ function gus_build_members_rows(PDO $pdo) {
         $role = ($m['role'] ?? '') === 'admin' ? '管理者' : '一般';
         $g = $m['gender'] ?? '';
         $gender_label = $g === 'male' ? '男性' : ($g === 'female' ? '女性' : ($g === 'no_answer' ? '回答しない' : $g));
+        // 今の学年は「代」から算出（卒業予定年は廃止。内部計算のみで非保存・非表示）
         $uni = '-';
-        if (!empty($m['admission_year'])) {
-            $gy = (int)str_replace('年', '', $m['admission_year']);
+        $gen = (int)preg_replace('/\D/', '', $m['grade'] ?? '');
+        if ($gen > 0) {
+            $gy = $gen + 2010; // 代 → 卒業予定年(内部計算のみ)
             $cy = (int)date('Y'); $cm = (int)date('n');
             $cay = ($cm >= 4) ? $cy : $cy - 1;
-            if ($gy > 2000) {
-                $uy = 4 - ($gy - $cay - 1);
-                $uni = $uy < 1 ? '入学前' : ($uy > 4 ? 'OB/OG' : $uy . '年生');
-            }
+            $uy = 4 - ($gy - $cay - 1);
+            $uni = $uy < 1 ? '入学前' : ($uy > 4 ? 'OB/OG' : $uy . '年生');
         }
         $rows[] = [
             $m['id'], $m['name'], $m['name_kana'] ?? '', $m['student_id'], $m['grade'],
-            $m['admission_year'] ?? '', $uni, $m['faculty'] ?? '', $m['department'] ?? '', $gender_label,
+            $uni, $m['faculty'] ?? '', $m['department'] ?? '', $gender_label,
             $m['zipcode'] ?? '', $m['address'] ?? '', $m['phone'] ?? '', $m['birthdate'] ?? '', $m['line_name'],
             $m['email'] ?? '', $m['other_circles'] ?? '', $m['allergies'] ?? '', $m['notes'] ?? '', $status, $role
         ];

@@ -12,11 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name_kana = $_POST['name_kana'] ?? '';
     $student_id = $_POST['student_id'] ?? '';
     $grade = $_POST['grade'] ?? '';
-    // admission_year is now auto-calculated from grade, not user input
     $faculty = $_POST['faculty'] ?? '';
     $department = $_POST['department'] ?? '';
-    // Calculate admission_year from grade (Nth -> graduation year)
-    $admission_year = '';
     $gender = $_POST['gender'] ?? '';
     $zipcode = $_POST['zipcode'] ?? '';
     $address = $_POST['address'] ?? '';
@@ -26,21 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allergies = $_POST['allergies'] ?? '';
     $notes = $_POST['notes'] ?? '';
 
-    // Calculate admission_year (graduation year) from grade
-    if ($grade) {
-        $gen_num = (int)str_replace('th', '', $grade);
-        if ($gen_num > 0) {
-            $grad_year = $gen_num + 2010; // 18th -> 2028年卒
-            $admission_year = $grad_year . '年';
-        }
-    }
-
     // Required fields validation
     if ($name && $name_kana && $faculty && $gender && $grade && $zipcode && $address && $phone && $birthdate) {
         $pdo = getDB();
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?, department = ?, admission_year = ?, gender = ?, zipcode = ?, address = ?, phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ? WHERE id = ?");
-        
-        if ($stmt->execute([$name, $name_kana, $student_id, $grade, $faculty, $department, $admission_year, $gender, $zipcode, $address, $phone, $birthdate, $other_circles, $allergies, $notes, $_SESSION['user_id']])) {
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?, department = ?, gender = ?, zipcode = ?, address = ?, phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ? WHERE id = ?");
+
+        if ($stmt->execute([$name, $name_kana, $student_id, $grade, $faculty, $department, $gender, $zipcode, $address, $phone, $birthdate, $other_circles, $allergies, $notes, $_SESSION['user_id']])) {
             $_SESSION['name'] = $name;
             // Check if there's a return URL to redirect to.
             // オープンリダイレクト対策: 自サイト内の相対パス/同一ホストのみ許可（login.php と同方針）。
@@ -76,7 +64,7 @@ $csrf_token = generateCsrfToken();
 $current_user = [];
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT name, name_kana, student_id, grade, faculty, department, admission_year, gender, zipcode, address, phone, birthdate, other_circles, allergies, notes FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT name, name_kana, student_id, grade, faculty, department, gender, zipcode, address, phone, birthdate, other_circles, allergies, notes FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $current_user = $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -88,7 +76,6 @@ $sid_val = $_POST['student_id'] ?? $current_user['student_id'] ?? '';
 $grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
 $faculty_val = $_POST['faculty'] ?? $current_user['faculty'] ?? '';
 $department_val = $_POST['department'] ?? $current_user['department'] ?? '';
-// admission_year is now auto-calculated, not directly edited
 $gender_val = $_POST['gender'] ?? $current_user['gender'] ?? '';
 $zipcode_val = $_POST['zipcode'] ?? $current_user['zipcode'] ?? '';
 $address_val = $_POST['address'] ?? $current_user['address'] ?? '';
