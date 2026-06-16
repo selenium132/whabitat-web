@@ -26,12 +26,15 @@ try {
         $rec = gus_get_record($_SESSION['user_id']);
         if ($rec) { unset($rec['refresh_token']); gus_set_record($_SESSION['user_id'], $rec); }
     }
+    $reconnect = (strncmp($msg, 'TOKEN_REFRESH_FAILED', 20) === 0);
     header('Content-Type: text/html; charset=utf-8');
     echo '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
-       . '<title>出力エラー</title></head><body style="font-family:sans-serif;max-width:560px;margin:2rem auto;padding:0 1.2rem;line-height:1.7;color:#2a2a2a">'
+       . '<title>出力に失敗しました</title></head><body style="font-family:sans-serif;max-width:520px;margin:2rem auto;padding:0 1.2rem;line-height:1.7;color:#2a2a2a">'
        . '<h1 style="font-size:1.15rem">シート出力に失敗しました</h1>'
-       . '<p>原因調査用のエラー内容（管理者にのみ表示）:</p>'
-       . '<pre style="background:#f2f0ea;padding:1rem;border-radius:8px;white-space:pre-wrap;word-break:break-all;font-size:.8rem">' . htmlspecialchars($msg) . '</pre>'
+       . '<p>' . ($reconnect
+            ? 'Google連携の有効期限が切れたか、アクセスが取り消された可能性があります。もう一度「シートに出力」を押すと再連携できます。'
+            : '時間をおいて、もう一度「シートに出力」をお試しください。解消しない場合は管理者にお問い合わせください。')
+       . '</p>'
        . '<p><a href="members.php">メンバー管理へ戻る</a></p></body></html>';
     exit;
 }
