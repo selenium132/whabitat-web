@@ -92,7 +92,9 @@ function requireLogin() {
         // Use JavaScript redirect to capture the full URL including hash (anchor)
         // Fallback to PHP session storage if JS fails (or for API calls) can happen in login.php via 'next' param
         
-        $login_url = 'login.php';
+        // ルート絶対パスにする。相対 'login.php' だと /admin/ 配下から呼ばれた際に
+        // /admin/login.php を参照して404になるため（login.php はサイトルートにある）。
+        $login_url = '/login.php';
         
         // Output simple HTML with JS redirect
         // We pass the current full URL as 'next' parameter to login.php
