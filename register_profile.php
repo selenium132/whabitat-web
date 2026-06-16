@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name = $_POST['name'] ?? '';
     $name_kana = $_POST['name_kana'] ?? '';
+    $email = trim($_POST['email'] ?? '');
     $student_id = $_POST['student_id'] ?? '';
     $grade = $_POST['grade'] ?? '';
     $faculty = $_POST['faculty'] ?? '';
@@ -23,12 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allergies = $_POST['allergies'] ?? '';
     $notes = $_POST['notes'] ?? '';
 
-    // Required fields validation
-    if ($name && $name_kana && $faculty && $gender && $grade && $zipcode && $address && $phone && $birthdate) {
+    // Required fields validation（メールアドレスも必須＋形式チェック）
+    $email_valid = ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL));
+    if ($name && $name_kana && $email_valid && $faculty && $gender && $grade && $zipcode && $address && $phone && $birthdate) {
         $pdo = getDB();
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?, department = ?, gender = ?, zipcode = ?, address = ?, phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ? WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, name_kana = ?, email = ?, student_id = ?, grade = ?, faculty = ?, department = ?, gender = ?, zipcode = ?, address = ?, phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ? WHERE id = ?");
 
-        if ($stmt->execute([$name, $name_kana, $student_id, $grade, $faculty, $department, $gender, $zipcode, $address, $phone, $birthdate, $other_circles, $allergies, $notes, $_SESSION['user_id']])) {
+        if ($stmt->execute([$name, $name_kana, $email, $student_id, $grade, $faculty, $department, $gender, $zipcode, $address, $phone, $birthdate, $other_circles, $allergies, $notes, $_SESSION['user_id']])) {
             $_SESSION['name'] = $name;
             // Check if there's a return URL to redirect to.
             // オープンリダイレクト対策: 自サイト内の相対パス/同一ホストのみ許可（login.php と同方針）。
@@ -54,7 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'エラーが発生しました。';
         }
     } else {
-        $error = '必須項目をすべて入力してください。';
+        if ($email !== '' && !$email_valid) {
+            $error = 'メールアドレスの形式が正しくありません。';
+        } else {
+            $error = '必須項目をすべて入力してください。';
+        }
     }
 }
 
@@ -64,7 +70,7 @@ $csrf_token = generateCsrfToken();
 $current_user = [];
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT name, name_kana, student_id, grade, faculty, department, gender, zipcode, address, phone, birthdate, other_circles, allergies, notes FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT name, name_kana, email, student_id, grade, faculty, department, gender, zipcode, address, phone, birthdate, other_circles, allergies, notes FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $current_user = $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -72,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Use POST data if available (e.g. after error), otherwise DB data, otherwise empty
 $name_val = $_POST['name'] ?? $current_user['name'] ?? '';
 $name_kana_val = $_POST['name_kana'] ?? $current_user['name_kana'] ?? '';
+$email_val = $_POST['email'] ?? $current_user['email'] ?? '';
 $sid_val = $_POST['student_id'] ?? $current_user['student_id'] ?? '';
 $grade_val = $_POST['grade'] ?? $current_user['grade'] ?? '';
 $faculty_val = $_POST['faculty'] ?? $current_user['faculty'] ?? '';
@@ -162,6 +169,10 @@ $is_first_registration = empty($current_user['name']);
                             <label class="form-label">氏名（ふりがな） <span style="color: #e74c3c;">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※姓と名の間は全角スペースを1文字空ける</p>
                             <input type="text" name="name_kana" class="form-input" required placeholder="例：わせだ　たろう" value="<?php echo htmlspecialchars($name_kana_val); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">メールアドレス <span style="color: #e74c3c;">*</span></label>
+                            <input type="email" name="email" class="form-input" required placeholder="例：waseda@example.com" value="<?php echo htmlspecialchars($email_val); ?>">
                         </div>
                         <div class="form-group">
                             <label class="form-label">性別 <span style="color: #e74c3c;">*</span></label>

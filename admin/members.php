@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Admin Update Profile
             $name = $_POST['name'] ?? '';
             $name_kana = $_POST['name_kana'] ?? '';
+            $email = trim($_POST['email'] ?? '');
             $sid = $_POST['student_id'] ?? '';
             $faculty = $_POST['faculty'] ?? '';
             $department = $_POST['department'] ?? '';
@@ -60,12 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($name && $grade) {
                 // Use Prepared Statements to prevent SQL injection
                 $stmt = $pdo->prepare("UPDATE users SET
-                    name = ?, name_kana = ?, student_id = ?, grade = ?, faculty = ?,
+                    name = ?, name_kana = ?, email = ?, student_id = ?, grade = ?, faculty = ?,
                     department = ?, gender = ?, zipcode = ?, address = ?,
                     phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ?
                     WHERE id = ?");
                 $stmt->execute([
-                    $name, $name_kana, $sid, $grade, $faculty,
+                    $name, $name_kana, $email, $sid, $grade, $faculty,
                     $department, $gender, $zipcode, $address,
                     $phone, empty($birthdate) ? null : $birthdate, $other_circles, $allergies, $notes,
                     $target_id
@@ -231,6 +232,7 @@ $csrf_token = generateCsrfToken();
             document.getElementById('edit_user_id').value = userObj.id || '';
             document.getElementById('edit_name').value = userObj.name || '';
             document.getElementById('edit_name_kana').value = userObj.name_kana || '';
+            document.getElementById('edit_email').value = userObj.email || '';
             document.getElementById('edit_sid').value = userObj.student_id || '';
             document.getElementById('edit_faculty').value = userObj.faculty || '';
             document.getElementById('edit_department').value = userObj.department || '';
@@ -417,6 +419,7 @@ $csrf_token = generateCsrfToken();
                                                         'id' => $m['id'],
                                                         'name' => $m['name'],
                                                         'name_kana' => $m['name_kana'] ?? '',
+                                                        'email' => $m['email'] ?? '',
                                                         'student_id' => $m['student_id'],
                                                         'grade' => $m['grade'],
                                                         'faculty' => $m['faculty'] ?? '',
@@ -503,6 +506,10 @@ $csrf_token = generateCsrfToken();
                     <div class="form-group">
                         <label class="form-label">ふりがな</label>
                         <input type="text" name="name_kana" id="edit_name_kana" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">メールアドレス</label>
+                        <input type="email" name="email" id="edit_email" class="form-input">
                     </div>
                     <div class="form-group">
                         <label class="form-label">生年月日</label>

@@ -109,7 +109,7 @@ function requireLogin() {
     // This prevents banned/deleted users from staying logged in via session
     try {
         $pdo = getDB();
-        $stmt = $pdo->prepare("SELECT id, is_approved, name, role, name_kana, gender, zipcode, address, phone, birthdate, grade FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT id, is_approved, name, role, name_kana, gender, zipcode, address, phone, birthdate, grade, email FROM users WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -125,12 +125,13 @@ function requireLogin() {
 
         // Check if profile is missing any of the newly added required fields
         $profile_incomplete = (
-            empty($user['name_kana']) || 
-            empty($user['gender']) || 
-            empty($user['zipcode']) || 
-            empty($user['address']) || 
-            empty($user['phone']) || 
-            empty($user['birthdate']) || 
+            empty($user['name_kana']) ||
+            empty($user['email']) ||
+            empty($user['gender']) ||
+            empty($user['zipcode']) ||
+            empty($user['address']) ||
+            empty($user['phone']) ||
+            empty($user['birthdate']) ||
             empty($user['grade'])
         );
 
