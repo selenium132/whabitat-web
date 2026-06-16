@@ -83,8 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // メンバー情報の変更を名簿スプシに自動反映（連携済みの場合のみ・失敗しても処理継続）
-    syncMembersToSheetSafe($pdo);
 }
 
 // Fetch All Members

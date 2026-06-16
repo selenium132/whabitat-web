@@ -200,12 +200,14 @@ function isInAppBrowser() {
     return false;
 }
 
-// Helper: Google アカウント認証（スプシ共有用）。
-// セッションに検証済みGoogleメールが無ければ Google OAuth を開始し（state付き）、
-// 認証後に $return_uri（ルート相対パス）へ戻る。既にあれば検証済みメールを返す。
-function requireGoogleAccount($return_uri) {
-    if (!empty($_SESSION['google_email'])) {
-        return $_SESSION['google_email'];
+// Helper: 本人のGoogle Drive連携を要求（各自アカウントで名簿シートを作るため）。
+// 連携済み（リフレッシュトークン保存済み）ならそのレコードを返す。
+// 未連携なら Google OAuth（drive.file + オフライン）を開始し、認証後 $return_uri へ戻る。
+function requireGoogleDriveConnection($return_uri) {
+    require_once __DIR__ . '/google_user_sheets.php';
+    $rec = gus_get_record($_SESSION['user_id'] ?? 0);
+    if ($rec && !empty($rec['refresh_token'])) {
+        return $rec;
     }
     if (GOOGLE_OAUTH_CLIENT_ID === '' || GOOGLE_OAUTH_REDIRECT_URI === '') {
         die('Google連携が未設定です（.env の GOOGLE_OAUTH_* を確認してください）。');
@@ -238,10 +240,10 @@ function requireGoogleAccount($return_uri) {
         'client_id'     => GOOGLE_OAUTH_CLIENT_ID,
         'redirect_uri'  => GOOGLE_OAUTH_REDIRECT_URI,
         'response_type' => 'code',
-        'scope'         => 'openid email',
+        'scope'         => 'openid email https://www.googleapis.com/auth/drive.file',
         'state'         => $state,
-        'access_type'   => 'online',
-        'prompt'        => 'select_account',
+        'access_type'   => 'offline',
+        'prompt'        => 'consent',
     ]);
     header('Location: https://accounts.google.com/o/oauth2/v2/auth?' . $params);
     exit;
