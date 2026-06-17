@@ -22,7 +22,7 @@ try {
 }
 
 // Fetch Upcoming Events (exclude archived)
-$stmt = $pdo->query("SELECT * FROM events WHERE is_archived = 0 AND (event_date >= CURDATE() OR (type = 'survey' AND (close_at IS NULL OR close_at >= NOW()))) ORDER BY event_date ASC, open_at ASC");
+$stmt = $pdo->query("SELECT * FROM events WHERE is_archived = 0 AND (event_date >= NOW() OR (type = 'survey' AND (close_at IS NULL OR close_at >= NOW()))) ORDER BY event_date ASC, open_at ASC");
 $all_upcoming = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $attend_checks = [];
@@ -82,7 +82,7 @@ try {
 } catch (Exception $e) {}
 
 // Fetch Past Events (include archived even if date is future)
-$stmt = $pdo->query("SELECT * FROM events WHERE (event_date < CURDATE() OR is_archived = 1) ORDER BY event_date DESC LIMIT 5");
+$stmt = $pdo->query("SELECT * FROM events WHERE (event_date < NOW() OR is_archived = 1) ORDER BY event_date DESC LIMIT 5");
 $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Count unread messages (for admin badge)
