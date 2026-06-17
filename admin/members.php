@@ -228,10 +228,11 @@ $csrf_token = generateCsrfToken();
             /* スマホ: テーブルを詰めてメンバー列を小さく、ふりがなは省略 */
             .table-responsive table { font-size: 0.78rem; }
             .table-responsive th, .table-responsive td { padding: 0.4rem 0.5rem; }
-            .table-responsive th.col-name, .table-responsive td.col-name { max-width: 112px; }
+            .table-responsive th.col-name, .table-responsive td.col-name { max-width: 160px; }
             .member-id-cell { gap: 6px; }
             .member-id-cell img, .member-id-cell .avatar-fallback { width: 22px; height: 22px; }
-            .member-id-cell .name-kana { display: none; }
+            /* ふりがなは極小で表示（メンバー列に残す） */
+            .member-id-cell .name-kana { font-size: 0.6rem; }
         }
     </style>
     <script>
