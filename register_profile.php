@@ -2,6 +2,7 @@
 require_once 'config.php';
 require_once 'sheet_sync.php';
 requireLogin();
+ensureUsersEmailColumn(getDB()); // email カラムが無い既存DBでも動くように
 
 $error = '';
 

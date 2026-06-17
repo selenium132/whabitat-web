@@ -71,6 +71,20 @@ function getDB() {
     }
 }
 
+// Helper: users.email カラムが無い既存DBに自動でカラムを追加する（既にあれば何もしない）。
+// email を使うページ(プロフィール登録・メンバー管理)の冒頭で呼ぶ。
+function ensureUsersEmailColumn(PDO $pdo) {
+    try {
+        $pdo->query("SELECT email FROM users LIMIT 1");
+    } catch (PDOException $e) {
+        try {
+            $pdo->exec("ALTER TABLE users ADD COLUMN email VARCHAR(255) NULL DEFAULT NULL");
+        } catch (PDOException $e2) {
+            error_log('ensureUsersEmailColumn failed: ' . $e2->getMessage());
+        }
+    }
+}
+
 // Helper: Generate CSRF Token
 function generateCsrfToken() {
     if (empty($_SESSION['csrf_token'])) {
@@ -109,7 +123,7 @@ function requireLogin() {
     // This prevents banned/deleted users from staying logged in via session
     try {
         $pdo = getDB();
-        $stmt = $pdo->prepare("SELECT id, is_approved, name, role, name_kana, gender, zipcode, address, phone, birthdate, grade, email FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT id, is_approved, name, role, name_kana, gender, zipcode, address, phone, birthdate, grade FROM users WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -126,7 +140,6 @@ function requireLogin() {
         // Check if profile is missing any of the newly added required fields
         $profile_incomplete = (
             empty($user['name_kana']) ||
-            empty($user['email']) ||
             empty($user['gender']) ||
             empty($user['zipcode']) ||
             empty($user['address']) ||

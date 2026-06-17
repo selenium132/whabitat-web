@@ -10,6 +10,7 @@ if ($_SESSION['role'] !== 'admin') {
 }
 
 $pdo = getDB();
+ensureUsersEmailColumn($pdo); // email カラムが無い既存DBでも動くように
 
 // Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
