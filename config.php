@@ -124,7 +124,7 @@ function requireLogin() {
     try {
         $pdo = getDB();
         ensureUsersEmailColumn($pdo); // emailカラムが無い既存DBでもauth checkが落ちないように先に確保
-        $stmt = $pdo->prepare("SELECT id, is_approved, name, role, name_kana, gender, zipcode, address, phone, birthdate, grade, email FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT id, is_approved, name, role, name_kana, gender, zipcode, address, phone, birthdate, grade, email, student_id FROM users WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
