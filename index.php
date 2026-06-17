@@ -71,7 +71,7 @@ try {
     <meta property="og:title" content="WHABITAT | 早稲田大学ボランティアサークル">
     <meta property="og:description" content="国際NGO Habitat for Humanity の早稲田大学学生支部。海外での住居建築ボランティア（GV）と、国内の地域に根ざしたボランティア活動に取り組んでいます。">
     <meta property="og:url" content="https://whabitathome.com/">
-    <meta property="og:image" content="https://whabitathome.com/ogp.jpg">
+    <meta property="og:image" content="https://whabitathome.com/ogp.jpg?v=20260617">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="ja_JP">
