@@ -130,7 +130,7 @@ function requireLogin() {
 
         if (!$user) {
             // User deleted
-            header("Location: logout.php");
+            header("Location: /logout.php");
             exit;
         }
 
@@ -147,7 +147,8 @@ function requireLogin() {
             empty($user['address']) ||
             empty($user['phone']) ||
             empty($user['birthdate']) ||
-            empty($user['grade'])
+            empty($user['grade']) ||
+            empty($user['student_id'])
         );
 
     } catch (PDOException $e) {
@@ -160,13 +161,13 @@ function requireLogin() {
 
     // Check Approval Status
     if (empty($_SESSION['is_approved']) && !in_array($current_page, $allowed_unapproved)) {
-        header("Location: approval_pending.php");
+        header("Location: /approval_pending.php");
         exit;
     }
 
     // Check Profile Completion (Force existing & new users to complete their profile)
     if (!empty($_SESSION['is_approved']) && $profile_incomplete && !in_array($current_page, $allowed_incomplete)) {
-        header("Location: register_profile.php");
+        header("Location: /register_profile.php");
         exit;
     }
 }

@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Required fields validation（メールアドレスも必須＋形式チェック）
     $email_valid = ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL));
-    if ($name && $name_kana && $email_valid && $faculty && $gender && $grade && $zipcode && $address && $phone && $birthdate) {
+    if ($name && $name_kana && $email_valid && $student_id && $faculty && $gender && $grade && $zipcode && $address && $phone && $birthdate) {
         $pdo = getDB();
         $stmt = $pdo->prepare("UPDATE users SET name = ?, name_kana = ?, email = ?, student_id = ?, grade = ?, faculty = ?, department = ?, gender = ?, zipcode = ?, address = ?, phone = ?, birthdate = ?, other_circles = ?, allergies = ?, notes = ? WHERE id = ?");
 
@@ -233,8 +233,8 @@ $is_first_registration = empty($current_user['name']);
                             <input type="text" name="department" class="form-input" placeholder="任意" value="<?php echo htmlspecialchars($department_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">学籍番号（ハイフン以下不要）</label>
-                            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※現在学籍番号がない方は空欄で構いません。後日入力をお願いします。</p>
+                            <label class="form-label">学籍番号（ハイフン以下不要）<span style="color:red;">*</span></label>
+                            <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※必須です。ハイフン以下（－以降）は入力不要です。学籍番号がまだ無い方は運営に連絡してください。</p>
                             <input type="text" name="student_id" class="form-input" placeholder="例：1A234567" value="<?php echo htmlspecialchars($sid_val); ?>">
                         </div>
                     </div>
