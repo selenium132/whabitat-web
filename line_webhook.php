@@ -66,7 +66,7 @@ foreach ($events as $event) {
         }
         
         // Fetch Upcoming Events (exclude archived, exclude surveys)
-        $stmt = $pdo->prepare("SELECT * FROM events WHERE event_date >= NOW() AND (is_archived = 0 OR is_archived IS NULL) AND (type = 'event' OR type IS NULL) ORDER BY event_date ASC LIMIT 10");
+        $stmt = $pdo->prepare("SELECT * FROM events WHERE event_date >= CURDATE() AND (is_archived = 0 OR is_archived IS NULL) AND (type = 'event' OR type IS NULL) ORDER BY event_date ASC LIMIT 10");
         $stmt->execute();
         $upcoming_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         

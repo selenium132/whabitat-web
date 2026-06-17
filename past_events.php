@@ -11,8 +11,8 @@ try {
     // Column already exists
 }
 
-// Fetch past events (date passed OR manually archived)
-$stmt = $pdo->prepare("SELECT e.*, u.name as creator_name FROM events e LEFT JOIN users u ON e.created_by = u.id WHERE (e.event_date < NOW() OR e.is_archived = 1) ORDER BY e.event_date DESC");
+// Fetch past events (当日いっぱいは残す: 日付が変わってから過去へ。手動アーカイブは即時)
+$stmt = $pdo->prepare("SELECT e.*, u.name as creator_name FROM events e LEFT JOIN users u ON e.created_by = u.id WHERE (e.event_date < CURDATE() OR e.is_archived = 1) ORDER BY e.event_date DESC");
 $stmt->execute();
 $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
