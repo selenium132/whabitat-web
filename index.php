@@ -423,7 +423,7 @@ try {
     <section id="join" class="bg-light">
         <div class="container">
             <h2 class="section-title fade-in"><span>Join Us</span></h2>
-            <p class="join-lead fade-in">WHABITATは年中入会可能です（会費は半期3,000円）。<br>InstagramのDM、または下のお問い合わせフォームからお気軽にどうぞ。</p>
+            <p class="join-lead fade-in">WHABITATは年中入会可能です（会費は半期3,000円）。<br>InstagramのDM、または下のお問い合わせフォームからお気軽にどうぞ。<br><strong>※ご入会は早稲田大学の学生に限らせていただいています。</strong></p>
             <ol class="join-steps stagger-children">
                 <li class="join-step fade-in">
                     <span class="join-num">01</span>
