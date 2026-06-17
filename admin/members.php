@@ -178,15 +178,17 @@ $csrf_token = generateCsrfToken();
         .table-responsive th.col-name, .table-responsive td.col-name {
             position: sticky; left: 0; z-index: 2; background: #ffffff;
             box-shadow: 1px 0 0 var(--border-color, #e6e2d9);
+            max-width: 190px;
         }
         .table-responsive th.col-name { z-index: 3; background: #f2f0ea; }
         .member-id-cell { display: flex; align-items: center; gap: 8px; }
         .member-id-cell img, .member-id-cell .avatar-fallback {
-            width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
         }
+        .member-id-cell > div { min-width: 0; }
         .member-id-cell .avatar-fallback { background: #f2f0ea; display: flex; align-items: center; justify-content: center; color: #bdb8ad; font-size: 0.8rem; }
-        .member-id-cell .name-main { font-weight: 600; line-height: 1.2; }
-        .member-id-cell .name-kana { font-size: 0.72rem; color: var(--text-muted, #8d877c); line-height: 1.2; }
+        .member-id-cell .name-main { font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .member-id-cell .name-kana { font-size: 0.72rem; color: var(--text-muted, #8d877c); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .cell-muted { color: var(--text-muted, #8d877c); }
         .cell-clip { max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
@@ -223,6 +225,13 @@ $csrf_token = generateCsrfToken();
 
         @media (max-width: 700px) {
             .members-toolbar select { flex: 1 1 calc(50% - 0.3rem); min-width: 0; }
+            /* スマホ: テーブルを詰めてメンバー列を小さく、ふりがなは省略 */
+            .table-responsive table { font-size: 0.78rem; }
+            .table-responsive th, .table-responsive td { padding: 0.4rem 0.5rem; }
+            .table-responsive th.col-name, .table-responsive td.col-name { max-width: 112px; }
+            .member-id-cell { gap: 6px; }
+            .member-id-cell img, .member-id-cell .avatar-fallback { width: 22px; height: 22px; }
+            .member-id-cell .name-kana { display: none; }
         }
     </style>
     <script>
@@ -347,6 +356,7 @@ $csrf_token = generateCsrfToken();
                                 <th class="col-detail">郵便番号</th>
                                 <th class="col-detail">住所</th>
                                 <th class="col-detail">電話</th>
+                                <th class="sortable col-detail" data-type="text">メール<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="col-detail">他サークル</th>
                                 <th class="col-detail">アレルギー</th>
                                 <th class="col-detail">備考</th>
@@ -360,7 +370,7 @@ $csrf_token = generateCsrfToken();
                                 <?php
                                     $search_blob = mb_strtolower(implode(' ', array_filter([
                                         $m['name'] ?? '', $m['name_kana'] ?? '', $m['student_id'] ?? '',
-                                        $m['line_name'] ?? '', $m['faculty'] ?? '', $m['department'] ?? '',
+                                        $m['line_name'] ?? '', $m['email'] ?? '', $m['faculty'] ?? '', $m['department'] ?? '',
                                         $m['address'] ?? '', $m['phone'] ?? '', $m['other_circles'] ?? '',
                                     ])));
                                     $grade_num = (int)preg_replace('/\D/', '', $m['grade'] ?? '');
@@ -395,6 +405,7 @@ $csrf_token = generateCsrfToken();
                                     <td class="col-detail"><?php echo htmlspecialchars($m['zipcode'] ?? ''); ?></td>
                                     <td class="col-detail cell-clip" title="<?php echo htmlspecialchars($m['address'] ?? ''); ?>"><?php echo htmlspecialchars($m['address'] ?? ''); ?></td>
                                     <td class="col-detail"><?php echo htmlspecialchars($m['phone'] ?? ''); ?></td>
+                                    <td class="col-detail cell-clip" title="<?php echo htmlspecialchars($m['email'] ?? ''); ?>"><?php echo htmlspecialchars($m['email'] ?? ''); ?></td>
                                     <td class="col-detail"><?php echo htmlspecialchars($m['other_circles'] ?? ''); ?></td>
                                     <td class="col-detail cell-clip" title="<?php echo htmlspecialchars($m['allergies'] ?? ''); ?>"><?php echo htmlspecialchars($m['allergies'] ?? ''); ?></td>
                                     <td class="col-detail cell-clip" title="<?php echo htmlspecialchars($m['notes'] ?? ''); ?>"><?php echo htmlspecialchars($m['notes'] ?? ''); ?></td>
@@ -480,7 +491,7 @@ $csrf_token = generateCsrfToken();
                                 </tr>
                             <?php endforeach; ?>
                             <tr class="empty-row" id="emptyRow" style="display: none;">
-                                <td colspan="17">条件に一致するメンバーがいません。</td>
+                                <td colspan="18">条件に一致するメンバーがいません。</td>
                             </tr>
                         </tbody>
                     </table>
