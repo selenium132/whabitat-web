@@ -42,7 +42,7 @@
 - 会員名簿の管理は `admin/members.php`（検索・フィルター・ソート・全項目表示・CSV出力）でサイト内完結。
 - 名簿の Google スプレッドシート出力は **「各自アカウント方式」**：
   `requireGoogleDriveConnection()` → `google_oauth_callback.php`（リフレッシュトークンを `private/` に保存）→ `google_user_sheets.php` が本人の OAuth トークンで **本人の Drive に**シートを作成/更新（本人が所有者＝編集可）。
-  Google Cloud（プロジェクト whabitat-web）で **Google Sheets API + Drive API を有効化**、同意画面に `drive.file` スコープ、テストモード＋テストユーザー運用が前提。
+  Google Cloud（プロジェクト whabitat-web）で **Google Sheets API + Drive API を有効化**、同意画面に `drive.file` スコープ。OAuth同意画面は **本番環境（In production）で公開済み・未確認アプリのまま運用**（外部・ユーザー上限100）。未確認のため初回連携時に「未確認アプリ」警告が出るが続行でOK。本番公開なのでリフレッシュトークンは長期保持（テストモードの7日失効は無い）。警告を完全に消すにはGoogle確認申請が必要だが小規模運用では不要。
   ※サービスアカウントは Drive 容量0でシートを作成/所有/他人共有が一切できない（実APIで確認済み）。anyone 共有は禁止。
 - DBスキーマはリポジトリに無い（本番DB管理。`scripts/db_backup.php` が `SHOW CREATE TABLE` でダンプ）。
 
