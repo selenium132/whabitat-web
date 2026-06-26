@@ -20,17 +20,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($target_id) {
+        // 監査ログ用に対象者名を先に取得（削除前に名前を残すため）
+        $audit_target_name = null;
+        try { $tns = $pdo->prepare("SELECT name FROM users WHERE id = ?"); $tns->execute([$target_id]); $audit_target_name = $tns->fetchColumn() ?: null; } catch (Exception $e) {}
+
         if ($action === 'approve') {
             $stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
             $stmt->execute([$target_id]);
+            auditLog('approve', $target_id, $audit_target_name);
         } elseif ($action === 'disapprove') {
             $stmt = $pdo->prepare("UPDATE users SET is_approved = 0 WHERE id = ?");
             $stmt->execute([$target_id]);
+            auditLog('disapprove', $target_id, $audit_target_name);
         } elseif ($action === 'delete') {
             // Prevent deleting self
             if ($target_id != $_SESSION['user_id']) {
                 $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
                 $stmt->execute([$target_id]);
+                auditLog('delete', $target_id, $audit_target_name);
             }
         } elseif ($action === 'update_role') {
             $new_role = $_POST['role'] ?? '';
@@ -39,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($target_id != $_SESSION['user_id'] || $new_role === 'admin') {
                     $stmt = $pdo->prepare("UPDATE users SET role = ? WHERE id = ?");
                     $stmt->execute([$new_role, $target_id]);
+                    auditLog('update_role', $target_id, $audit_target_name, '権限を ' . $new_role . ' に変更');
                 }
             }
         } elseif ($action === 'update_profile') {
@@ -72,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $phone, empty($birthdate) ? null : $birthdate, $other_circles, $allergies, $notes,
                     $target_id
                 ]);
+                auditLog('update_profile', $target_id, $name);
             }
         }
     }
@@ -284,6 +293,12 @@ $csrf_token = generateCsrfToken();
                     </button>
                     <a href="members_export_sheet.php" class="btn-primary btn-mini">
                         <i class="fas fa-file-excel"></i> シートに出力
+                    </a>
+                    <a href="members_incomplete.php" class="btn-secondary btn-mini">
+                        <i class="fas fa-user-clock"></i> 未入力者
+                    </a>
+                    <a href="audit_log.php" class="btn-secondary btn-mini">
+                        <i class="fas fa-clipboard-list"></i> 監査ログ
                     </a>
                 </div>
             </div>

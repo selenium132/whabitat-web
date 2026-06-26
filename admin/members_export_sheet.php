@@ -39,6 +39,11 @@ try {
     exit;
 }
 
+// 監査ログ: 誰がいつ名簿全件をスプレッドシートへ吸い出したかを記録（持続コピーが作られる操作のため特に重要）
+$export_count = 0;
+try { $export_count = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(); } catch (Exception $e) {}
+auditLog('export_sheet', null, null, '名簿をGoogleスプレッドシートへ出力（' . $export_count . '件）');
+
 // 成功。アプリ内ブラウザ（LINE等）では docs.google.com を直接開くと Google ログインで弾かれるため、
 // 「Sheetsアプリで開く」案内を表示する。実ブラウザならそのまま遷移。
 if (isInAppBrowser()) {

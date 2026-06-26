@@ -85,6 +85,51 @@ function ensureUsersEmailColumn(PDO $pdo) {
     }
 }
 
+// Helper: 監査ログ用テーブルを自動作成（無ければ作る。ensureUsersEmailColumn と同じ流儀）
+function ensureAuditLogTable(PDO $pdo) {
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS audit_log (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            admin_id INT NULL,
+            admin_name VARCHAR(255) NULL,
+            action VARCHAR(64) NOT NULL,
+            target_id INT NULL,
+            target_name VARCHAR(255) NULL,
+            detail TEXT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    } catch (Exception $e) {
+        error_log('ensureAuditLogTable failed: ' . $e->getMessage());
+    }
+}
+
+// Helper: 管理者操作を監査ログに記録する。
+// 失敗しても呼び出し元の操作（承認・削除等）を絶対に止めないよう、全体を try/catch で握りつぶす。
+function auditLog($action, $targetId = null, $targetName = null, $detail = null) {
+    try {
+        $pdo = getDB();
+        ensureAuditLogTable($pdo);
+        $adminId = $_SESSION['user_id'] ?? null;
+        $adminName = $_SESSION['name'] ?? '';
+        if ($adminName === '' && $adminId) {
+            $s = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+            $s->execute([$adminId]);
+            $adminName = $s->fetchColumn() ?: '';
+        }
+        $stmt = $pdo->prepare("INSERT INTO audit_log (admin_id, admin_name, action, target_id, target_name, detail) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([
+            $adminId,
+            $adminName !== '' ? $adminName : null,
+            (string)$action,
+            $targetId !== null ? (int)$targetId : null,
+            $targetName,
+            $detail,
+        ]);
+    } catch (Exception $e) {
+        error_log('auditLog failed: ' . $e->getMessage());
+    }
+}
+
 // Helper: Generate CSRF Token
 function generateCsrfToken() {
     if (empty($_SESSION['csrf_token'])) {
