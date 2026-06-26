@@ -291,7 +291,7 @@ $csrf_token = generateCsrfToken();
                     <button type="button" id="csvBtn" class="btn-secondary btn-mini">
                         <i class="fas fa-download"></i> CSV出力
                     </button>
-                    <a href="members_export_sheet.php" class="btn-primary btn-mini">
+                    <a href="members_export_sheet.php" class="btn-primary btn-mini" target="_blank" rel="noopener">
                         <i class="fas fa-file-excel"></i> シートに出力
                     </a>
                     <a href="members_incomplete.php" class="btn-secondary btn-mini">
