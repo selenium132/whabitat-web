@@ -49,7 +49,10 @@ define('GOOGLE_OAUTH_REDIRECT_URI', $env['GOOGLE_OAUTH_REDIRECT_URI'] ?? '');
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
 ini_set('session.cookie_secure', 1); // Enable for HTTPS
-ini_set('session.cookie_samesite', 'None'); // Required for OAuth redirects (LINE login)
+// Lax で十分: OAuthのリダイレクト遷移はトップレベルGETのため Lax でも Cookie は送出される
+// （login.php の line_state Cookie が同じ前提で既に本番稼働しており実証済み）。
+// None にすると全クロスサイトリクエストでCookieが送出されCSRF面が不要に広がるため避ける。
+ini_set('session.cookie_samesite', 'Lax');
 
 // Security: Disable Error Display in Production
 ini_set('display_errors', 0);

@@ -37,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // オープンリダイレクト対策: 自サイト内の相対パス/同一ホストのみ許可（login.php と同方針）。
             // form_view.php からは urlencode された REQUEST_URI が渡るため、まず urldecode する。
             $return_url = urldecode($_POST['return_url'] ?? '');
+            // 制御文字（タブ/改行等）を含む場合は無効化する。
+            // 例: "/\t/evil.com" はブラウザがタブを除去して "//evil.com"（外部誘導）に化けるため。
+            if (preg_match('/[\x00-\x1f\x7f]/', $return_url)) {
+                $return_url = '';
+            }
             $safe_return = 'dashboard.php';
             if ($return_url !== '') {
                 $normalized = str_replace('\\', '/', $return_url);

@@ -29,18 +29,13 @@ if (!$event) {
     exit;
 }
 
-// Surveys: auto-add visitor to target_users
-if (($event['type'] ?? 'event') === 'survey') {
-    try {
-        $targets = json_decode($event['target_users'] ?? '[]', true);
-        if (!is_array($targets)) $targets = [];
-        if (!in_array($_SESSION['user_id'], $targets)) {
-            $targets[] = (int)$_SESSION['user_id'];
-            $stmt = $pdo->prepare("UPDATE events SET target_users = ? WHERE id = ?");
-            $stmt->execute([json_encode($targets), $event_id]);
-            $event['target_users'] = json_encode($targets);
-        }
-    } catch (Exception $e) {}
+// Parse Schema（POSTの必須項目サーバ側検証で参照するため、送信処理より前に用意する）
+$form_schema = [];
+if (!empty($event['form_schema'])) {
+    $decoded = json_decode($event['form_schema'], true);
+    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+        $form_schema = $decoded;
+    }
 }
 
 // Handle Submission
@@ -135,6 +130,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($status) {
         $stmt = $pdo->prepare("INSERT INTO attendance (event_id, user_id, status, comment, response_data) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE status = ?, comment = ?, response_data = ?");
         $stmt->execute([$event_id, $_SESSION['user_id'], $status, $comment, $response_data, $status, $comment, $response_data]);
+        // アンケートは「回答送信時」に対象者へ追加する（旧: 閲覧時のGET書き込みは
+        // CSRF・ID列挙の温床だったため廃止）。ここはCSRF検証済みPOST経路。
+        if (($event['type'] ?? 'event') === 'survey') {
+            try {
+                $targets = json_decode($event['target_users'] ?? '[]', true);
+                if (!is_array($targets)) $targets = [];
+                if (!in_array($_SESSION['user_id'], $targets)) {
+                    $targets[] = (int)$_SESSION['user_id'];
+                    $upd = $pdo->prepare("UPDATE events SET target_users = ? WHERE id = ?");
+                    $upd->execute([json_encode($targets), $event_id]);
+                }
+            } catch (Exception $e) {}
+        }
         // 既にスプシ連携済みのイベントなら、回答を自動反映（失敗しても回答保存は妨げない）
         syncEventToSheetSafe($pdo, $event_id);
         // Refresh to show updated data
@@ -167,16 +175,7 @@ function getStatusLabel($status) {
 }
 
 $is_admin = ($_SESSION['role'] === 'admin');
-$csrf_token = generateCsrfToken(); 
-
-// Parse Schema
-$form_schema = [];
-if (!empty($event['form_schema'])) {
-    $decoded = json_decode($event['form_schema'], true);
-    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-        $form_schema = $decoded;
-    }
-}
+$csrf_token = generateCsrfToken();
 
 // Parse My Responses
 $my_answers = [];

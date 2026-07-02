@@ -362,14 +362,33 @@ $og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
                         $safe_content = strip_tags($blog['content'], $allowed_tags);
                         // Strip on* event handler attributes (e.g. onclick/onerror) to prevent stored XSS
                         $safe_content = preg_replace('/\son[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $safe_content);
-                        // Neutralize dangerous URL schemes in href/src (javascript:/data:/vbscript:)
+                        // Neutralize dangerous URL schemes in href/src.
+                        // スキームは許可リスト方式（http/https/mailto/tel と相対パスのみ）。
+                        // 判定前にHTMLエンティティを復号し制御文字/空白を除去することで、
+                        // &#x6a;avascript: のようなエンコード回避や先頭制御文字の混入も無害化する。
                         $safe_content = preg_replace_callback(
                             '/\b(href|src)\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i',
                             function ($m) {
                                 $val = trim($m[2], '"\'');
-                                $scheme = preg_replace('/\s+/', '', $val);
-                                if (preg_match('/^\s*(javascript|data|vbscript)\s*:/i', $scheme)) {
-                                    return $m[1] . '="#"';
+                                $decoded = html_entity_decode($val, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                                $decoded = preg_replace('/[\s\x00-\x20]+/', '', $decoded);
+                                if (preg_match('/^([a-z][a-z0-9+.\-]*):/i', $decoded, $sm)) {
+                                    $allowed = ['http', 'https', 'mailto', 'tel'];
+                                    if (!in_array(strtolower($sm[1]), $allowed, true)) {
+                                        return $m[1] . '="#"';
+                                    }
+                                }
+                                return $m[0];
+                            },
+                            $safe_content
+                        );
+                        // style 属性内の危険なCSS（url()/expression/JSスキーム/@import）を含む場合は
+                        // その style 属性ごと除去する。色・整列などの通常装飾は保持される。
+                        $safe_content = preg_replace_callback(
+                            '/\sstyle\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i',
+                            function ($m) {
+                                if (preg_match('/url\s*\(|expression\s*\(|javascript\s*:|@import/i', $m[1])) {
+                                    return '';
                                 }
                                 return $m[0];
                             },

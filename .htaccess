@@ -1,5 +1,5 @@
 # Block access to sensitive files (拡張子ベースで広く拒否。.bak/.sql/.log 等も対象)
-<FilesMatch "(?i)(^\.env|^service-account\.json|^members_sheet_id\.txt$|\.(bak|sql|log|ini|sh)$|\.json\.bak)">
+<FilesMatch "(?i)(^\.env|^service-account\.json|^members_sheet_id\.txt$|^google_tokens\.json$|\.(bak|sql|log|ini|sh)$|\.sql\.gz$|\.json\.bak)">
     Require all denied
 </FilesMatch>
 

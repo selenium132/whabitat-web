@@ -28,6 +28,9 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          # 暗号化転送を強制（.env / service-account.json 等のシークレットを平文で流さない）。
+          # Xserver は Explicit FTPS 対応。もし接続に失敗する場合は要サーバ設定確認。
+          protocol: ftps
           server-dir: ./
           exclude: |
             **/.git*

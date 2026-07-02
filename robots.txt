@@ -6,9 +6,7 @@ Allow: /
 # Sitemap location
 Sitemap: https://whabitathome.com/sitemap.xml
 
-# Disallow admin pages and internal files
+# Disallow admin pages
+# 個別の機密ファイル名はここに列挙しない（攻撃者に存在を教える地図になるため）。
+# これらは .htaccess の Require all denied と認証で保護している。
 Disallow: /admin/
-Disallow: /config.php
-Disallow: /callback.php
-Disallow: /*.sql
-Disallow: /service-account.json

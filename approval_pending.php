@@ -31,8 +31,26 @@ $csrf_token = generateCsrfToken(); // Generate Token
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
     validateCsrfToken($_POST['csrf_token'] ?? ''); // Validate Token
 
-    // 総当たり対策: 直近10分間で5回失敗したら一時的にロックする
+    // 総当たり対策: 直近10分間で5回失敗したら一時的にロックする。
+    // 判定は「IP単位のDB記録」を主軸にする（ログアウト→再ログインで新セッションにしても
+    // リセットされないようにするため）。従来のセッション単位カウントも併用する多層防御。
     $now = time();
+    $client_ip = $_SERVER['REMOTE_ADDR'] ?? '';
+
+    // IP単位の失敗記録テーブルを自動生成（audit_log と同じ流儀。無ければ作る）
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS secret_attempts (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            ip VARCHAR(45) NOT NULL,
+            attempted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_ip_time (ip, attempted_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        // 古い記録（1日以上前）を掃除してテーブルの肥大化を防ぐ
+        $pdo->prepare("DELETE FROM secret_attempts WHERE attempted_at < (NOW() - INTERVAL 1 DAY)")->execute();
+    } catch (Exception $e) {
+        error_log('ensure secret_attempts failed: ' . $e->getMessage());
+    }
+
     if (!isset($_SESSION['approval_attempts']) || !is_array($_SESSION['approval_attempts'])) {
         $_SESSION['approval_attempts'] = [];
     }
@@ -42,7 +60,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
         function ($t) use ($now) { return $t > $now - 600; }
     ));
 
-    if (count($_SESSION['approval_attempts']) >= 5) {
+    // IP単位の直近10分の失敗回数
+    $ip_attempts = 0;
+    try {
+        $cnt = $pdo->prepare("SELECT COUNT(*) FROM secret_attempts WHERE ip = ? AND attempted_at > (NOW() - INTERVAL 10 MINUTE)");
+        $cnt->execute([$client_ip]);
+        $ip_attempts = (int)$cnt->fetchColumn();
+    } catch (Exception $e) {
+        error_log('count secret_attempts failed: ' . $e->getMessage());
+    }
+
+    if (count($_SESSION['approval_attempts']) >= 5 || $ip_attempts >= 5) {
         $error_msg = '試行回数が多すぎます。しばらく時間をおいてから再度お試しください。';
     } else {
         $input_keyword = trim($_POST['secret_keyword']);
@@ -55,12 +83,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
             // Update Session
             $_SESSION['is_approved'] = 1;
             unset($_SESSION['approval_attempts']);
+            // 成功したらこのIPの失敗記録も消す（正規ユーザーを後で締め出さない）
+            try {
+                $del = $pdo->prepare("DELETE FROM secret_attempts WHERE ip = ?");
+                $del->execute([$client_ip]);
+            } catch (Exception $e) {}
 
             // Redirect to Profile Registration
             header("Location: register_profile.php");
             exit;
         } else {
             $_SESSION['approval_attempts'][] = $now;
+            // 失敗をIP単位でも記録（セッションを捨てても残る）
+            try {
+                $ins = $pdo->prepare("INSERT INTO secret_attempts (ip) VALUES (?)");
+                $ins->execute([$client_ip]);
+            } catch (Exception $e) {}
             $error_msg = '合言葉が間違っています。';
         }
     }
