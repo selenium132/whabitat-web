@@ -48,19 +48,22 @@
 ## ローカル開発
 
 ```bash
-# 1. 環境変数を用意
-cp .env.example .env   # 各値を設定（DB / LINE / Google OAuth など）
+# 1. ローカルDBを一発セットアップ（テーブル構造 + ダミーデータ投入）
+#    事前に MySQL を起動しておく（例: brew install mysql && mysql.server start）
+./scripts/local_setup.sh
 
-# 2. MySQL にテーブル構造を用意（schema/schema.sql をバージョン管理している）
-mysql -uroot your_local_db < schema/schema.sql
+# 2. 環境変数を用意（DB_* はスクリプトの出力に合わせる。LINE/Google等はログイン機能を
+#    使わないならダミー値でOK）
+cp .env.example .env
 
 # 3. PHP で配信
 php -S localhost:8000
 ```
 
-DBスキーマは本番運用（Xserver）のため、変更のたびに
-`php scripts/export_schema.php > schema/schema.sql` で書き出してコミットする
-（詳細は [schema/README.md](schema/README.md)）。
+DBスキーマは本番運用（Xserver）のため、変更のたびに本番サーバー上で
+`php scripts/export_schema.php > schema/schema.sql` を実行してコミットする
+（詳細は [schema/README.md](schema/README.md)）。`schema/seed.sql` はダミーの
+会員・イベント・ブログデータで、実データは一切含まない。
 
 ## デプロイ
 
