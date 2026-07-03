@@ -51,11 +51,16 @@
 # 1. 環境変数を用意
 cp .env.example .env   # 各値を設定（DB / LINE / Google OAuth など）
 
-# 2. MySQL に users / events / blogs などのテーブルを用意
+# 2. MySQL にテーブル構造を用意（schema/schema.sql をバージョン管理している）
+mysql -uroot your_local_db < schema/schema.sql
 
 # 3. PHP で配信
 php -S localhost:8000
 ```
+
+DBスキーマは本番運用（Xserver）のため、変更のたびに
+`php scripts/export_schema.php > schema/schema.sql` で書き出してコミットする
+（詳細は [schema/README.md](schema/README.md)）。
 
 ## デプロイ
 
