@@ -14,18 +14,29 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
     exit;
 }
 
+// エラー時に「戻る」先。ダッシュボード経由の二度手間を避けるため、
+// 可能なら元の出力ページ（$_SESSION['google_oauth_return']）に戻す。
+// オープンリダイレクト対策として members_export_sheet.php:81 と同じホワイトリストで検証。
+function gocReturnUrl() {
+    $return = $_SESSION['google_oauth_return'] ?? 'dashboard.php';
+    if (!preg_match('#^(admin/members_export_sheet\.php|form_google_sheet\.php)(\?[^\s]*)?$#', $return)) {
+        $return = 'dashboard.php';
+    }
+    return $return;
+}
+
 // CSRF: state を必須検証
 $state = $_GET['state'] ?? '';
 $saved_state = $_SESSION['google_oauth_state'] ?? '';
 unset($_SESSION['google_oauth_state']);
 if (empty($saved_state) || empty($state) || !hash_equals($saved_state, $state)) {
-    die('不正なアクセス（stateが一致しません）。<br><a href="dashboard.php">ダッシュボードへ</a>');
+    die('連携の有効期限が切れました。もう一度お試しください。<br><a href="' . htmlspecialchars(gocReturnUrl(), ENT_QUOTES) . '">もう一度試す</a>');
 }
 
 $code = $_GET['code'] ?? '';
 if (empty($code)) {
     $err = $_GET['error'] ?? 'コードがありません';
-    die('Google連携がキャンセル/失敗しました（' . htmlspecialchars($err) . '）。<br><a href="dashboard.php">ダッシュボードへ</a>');
+    die('Google連携がキャンセル/失敗しました（' . htmlspecialchars($err) . '）。<br><a href="' . htmlspecialchars(gocReturnUrl(), ENT_QUOTES) . '">もう一度試す</a>');
 }
 
 // 1. 認可コード → トークン交換（refresh_token + id_token を取得）
@@ -45,7 +56,7 @@ curl_close($ch);
 $data = json_decode($resp, true);
 if ($http !== 200 || empty($data['id_token'])) {
     error_log('Google token exchange failed: HTTP ' . $http . ' ' . $resp);
-    die('Google連携に失敗しました。<br><a href="dashboard.php">ダッシュボードへ</a>');
+    die('Google連携に失敗しました。<br><a href="' . htmlspecialchars(gocReturnUrl(), ENT_QUOTES) . '">もう一度試す</a>');
 }
 
 // 2. id_token を Google の tokeninfo で検証してメールを取得（aud/email_verified を厳格確認）
@@ -58,7 +69,7 @@ $claims = json_decode($vresp, true);
 $email_verified = (($claims['email_verified'] ?? '') === true) || (($claims['email_verified'] ?? '') === 'true');
 if ($vhttp !== 200 || empty($claims['email']) || !$email_verified || ($claims['aud'] ?? '') !== GOOGLE_OAUTH_CLIENT_ID) {
     error_log('Google id_token verify failed: HTTP ' . $vhttp . ' ' . $vresp);
-    die('Googleアカウントの確認に失敗しました。<br><a href="dashboard.php">ダッシュボードへ</a>');
+    die('Googleアカウントの確認に失敗しました。<br><a href="' . htmlspecialchars(gocReturnUrl(), ENT_QUOTES) . '">もう一度試す</a>');
 }
 
 // 3. リフレッシュトークンを本人(user_id)に紐づけて保存
@@ -71,15 +82,12 @@ if (!empty($data['refresh_token'])) {
 }
 if (empty($rec['refresh_token'])) {
     error_log('Google OAuth: refresh_token not returned for user ' . $uid);
-    die('Google連携でリフレッシュトークンが取得できませんでした。Googleアカウントの「サードパーティ アクセス」から本アプリを一度解除し、再度お試しください。<br><a href="dashboard.php">ダッシュボードへ</a>');
+    die('Google連携でリフレッシュトークンが取得できませんでした。Googleアカウントの「サードパーティ アクセス」から本アプリを一度解除し、再度お試しください。<br><a href="' . htmlspecialchars(gocReturnUrl(), ENT_QUOTES) . '">もう一度試す</a>');
 }
 gus_set_record($uid, $rec);
 
 // 4. 元の出力ページへ戻る（ホワイトリスト検証）
-$return = $_SESSION['google_oauth_return'] ?? 'dashboard.php';
+$return = gocReturnUrl();
 unset($_SESSION['google_oauth_return']);
-if (!preg_match('#^(admin/members_export_sheet\.php|form_google_sheet\.php)(\?[^\s]*)?$#', $return)) {
-    $return = 'dashboard.php';
-}
 header('Location: ' . $return);
 exit;
