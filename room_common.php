@@ -49,13 +49,31 @@ function ensureRoomTables(PDO $pdo) {
             CONSTRAINT room_reservations_ibfk_1 FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
             CONSTRAINT room_reservations_ibfk_2 FOREIGN KEY (cancelled_by) REFERENCES users (id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+        // source ENUMに'auto'（日付またぎの自動退室用）を追加。既存環境向けの後方互換マイグレーション。
+        $pdo->exec("ALTER TABLE room_checkinout_log MODIFY source ENUM('web','line','auto') NOT NULL DEFAULT 'web'");
     } catch (Exception $e) {
         error_log('ensureRoomTables failed: ' . $e->getMessage());
     }
 }
 
+// 日付をまたいで残っている在室記録を自動的に強制退室させる（退室押し忘れ対策）。
+// 「部室利用状況」は1日単位でリセットする運用のため、日付が変わった時点で
+// 前日以前から続く在室レコードは自動的に閉じる。
+function expireStalePresence(PDO $pdo) {
+    $stmt = $pdo->prepare("SELECT user_id FROM room_presence WHERE room_id = ? AND checked_in_at < CURDATE()");
+    $stmt->execute([ROOM_ID]);
+    $stale = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    if (empty($stale)) return;
+
+    $pdo->prepare("DELETE FROM room_presence WHERE room_id = ? AND checked_in_at < CURDATE()")->execute([ROOM_ID]);
+    foreach ($stale as $userId) {
+        logRoomAction($pdo, $userId, 'check_out', 'auto');
+    }
+}
+
 // 指定ユーザーが現在在室中か
 function isUserPresent(PDO $pdo, $userId) {
+    expireStalePresence($pdo);
     $stmt = $pdo->prepare("SELECT 1 FROM room_presence WHERE room_id = ? AND user_id = ?");
     $stmt->execute([ROOM_ID, $userId]);
     return (bool)$stmt->fetch();
@@ -63,6 +81,7 @@ function isUserPresent(PDO $pdo, $userId) {
 
 // 現在の在室者一覧（入室が古い順）
 function getCurrentOccupants(PDO $pdo) {
+    expireStalePresence($pdo);
     $stmt = $pdo->prepare("SELECT u.id, u.name, u.avatar_url, rp.checked_in_at
         FROM room_presence rp JOIN users u ON u.id = rp.user_id
         WHERE rp.room_id = ? ORDER BY rp.checked_in_at ASC");
@@ -86,6 +105,7 @@ function getActiveReservation(PDO $pdo, $date = null, $time = null) {
 
 // 入室処理。予約時間帯に本人以外が入ろうとした場合はブロックする。
 function roomCheckIn(PDO $pdo, $userId, $source) {
+    expireStalePresence($pdo);
     $active = getActiveReservation($pdo);
     if ($active && (int)$active['user_id'] !== (int)$userId) {
         $timeRange = substr($active['start_time'], 0, 5) . '〜' . substr($active['end_time'], 0, 5);

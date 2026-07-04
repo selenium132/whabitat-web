@@ -131,7 +131,7 @@ CREATE TABLE `room_checkinout_log` (
   `room_id` tinyint(3) unsigned NOT NULL DEFAULT 1,
   `user_id` int(11) NOT NULL,
   `action` enum('check_in','check_out') NOT NULL,
-  `source` enum('web','line') NOT NULL DEFAULT 'web',
+  `source` enum('web','line','auto') NOT NULL DEFAULT 'web',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`),
