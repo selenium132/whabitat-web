@@ -125,6 +125,52 @@ CREATE TABLE `mtg_history` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+DROP TABLE IF EXISTS `room_checkinout_log`;
+CREATE TABLE `room_checkinout_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_id` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `user_id` int(11) NOT NULL,
+  `action` enum('check_in','check_out') NOT NULL,
+  `source` enum('web','line') NOT NULL DEFAULT 'web',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_created_at` (`created_at`),
+  CONSTRAINT `room_checkinout_log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `room_presence`;
+CREATE TABLE `room_presence` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_id` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `user_id` int(11) NOT NULL,
+  `checked_in_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `source` enum('web','line') NOT NULL DEFAULT 'web',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_room_user` (`room_id`,`user_id`),
+  KEY `idx_checked_in_at` (`checked_in_at`),
+  CONSTRAINT `room_presence_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `room_reservations`;
+CREATE TABLE `room_reservations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_id` tinyint(3) unsigned NOT NULL DEFAULT 1,
+  `user_id` int(11) NOT NULL,
+  `reserved_date` date NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `purpose` varchar(255) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `cancelled_at` datetime DEFAULT NULL,
+  `cancelled_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_room_date_time` (`room_id`,`reserved_date`,`start_time`,`end_time`),
+  CONSTRAINT `room_reservations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `room_reservations_ibfk_2` FOREIGN KEY (`cancelled_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 DROP TABLE IF EXISTS `survey_views`;
 CREATE TABLE `survey_views` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

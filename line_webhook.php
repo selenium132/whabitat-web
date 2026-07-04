@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'room_common.php';
 
 // 1. Get Request Body
 $input = file_get_contents('php://input');
@@ -27,6 +28,13 @@ if (!hash_equals($hash, $signature)) {
 $events = json_decode($input, true)['events'] ?? [];
 
 foreach ($events as $event) {
+  try {
+    // 部室の入退室リッチメニュー（postbackイベント）
+    if ($event['type'] === 'postback') {
+        handleRoomPostback($event);
+        continue;
+    }
+
     // Only handle message events
     if ($event['type'] !== 'message' || $event['message']['type'] !== 'text') {
         continue;
@@ -137,6 +145,59 @@ foreach ($events as $event) {
 
         // 5. Send Reply
         replyToLine($replyToken, $replyText);
+    }
+  } catch (Exception $e) {
+      // 1件のイベント処理が失敗しても他のイベントやHTTP 200応答を妨げない
+      error_log('line_webhook event error: ' . $e->getMessage());
+  }
+}
+
+// 部室の入退室・利用状況確認（リッチメニューのpostbackイベント）
+function handleRoomPostback($event) {
+    $replyToken = $event['replyToken'] ?? null;
+    if (!$replyToken) return;
+
+    parse_str($event['postback']['data'] ?? '', $data);
+    $action = $data['action'] ?? '';
+    if (!in_array($action, ['checkin', 'checkout', 'status'], true)) {
+        return;
+    }
+
+    $lineUserId = $event['source']['userId'] ?? null;
+    if (!$lineUserId) return;
+
+    $pdo = getDB();
+    ensureRoomTables($pdo);
+
+    $stmt = $pdo->prepare("SELECT id, is_approved FROM users WHERE line_user_id = ?");
+    $stmt->execute([$lineUserId]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        replyToLine($replyToken, "LINEアカウントとWHABITATの会員情報が連携されていません。\nhttps://whabitathome.com でログインしてからお試しください。");
+        return;
+    }
+    if (empty($user['is_approved'])) {
+        replyToLine($replyToken, "会員承認をお待ちください。承認後に入退室機能がご利用いただけます。");
+        return;
+    }
+
+    $userId = (int)$user['id'];
+
+    switch ($action) {
+        case 'checkin':
+            $result = roomCheckIn($pdo, $userId, 'line');
+            replyToLine($replyToken, $result['success'] ? "✅ 入室しました。" : "⚠️ " . $result['error']);
+            break;
+
+        case 'checkout':
+            $result = roomCheckOut($pdo, $userId, 'line');
+            replyToLine($replyToken, $result['success'] ? "👋 退室しました。" : "⚠️ " . $result['error']);
+            break;
+
+        case 'status':
+            replyToLine($replyToken, formatOccupantsForLineText(getCurrentOccupants($pdo), getActiveReservation($pdo)));
+            break;
     }
 }
 
