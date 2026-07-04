@@ -555,9 +555,6 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             </div>
             <?php else: ?>
                 <input type="hidden" name="status" value="join">
-                <div style="margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 0.85rem; color: #666; text-align: center;">
-                    <i class="fas fa-info-circle"></i> 回答時に名前・学籍番号・学部・性別が記録されます。
-                </div>
             <?php endif; ?>
 
             <!-- Dynamic Custom Questions -->

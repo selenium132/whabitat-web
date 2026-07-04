@@ -246,28 +246,41 @@ try {
             </div>
 
             <div class="card room-reserve-card">
-                <h3 class="room-reserve-title"><i class="far fa-calendar-plus"></i> 部室予約</h3>
-                <form id="roomReserveForm" class="room-reserve-form">
-                    <div class="room-reserve-field">
-                        <label>日付</label>
-                        <input type="date" name="reserved_date" required class="form-input" min="<?php echo date('Y-m-d'); ?>">
-                    </div>
-                    <div class="room-reserve-field">
-                        <label>開始</label>
-                        <input type="time" name="start_time" required class="form-input">
-                    </div>
-                    <div class="room-reserve-field">
-                        <label>終了</label>
-                        <input type="time" name="end_time" required class="form-input">
-                    </div>
-                    <div class="room-reserve-field room-reserve-field-purpose">
-                        <label>目的（任意）</label>
-                        <input type="text" name="purpose" class="form-input" placeholder="例: mtg">
-                    </div>
-                    <button type="submit" class="room-toggle-btn room-reserve-submit"><i class="fas fa-plus"></i> 予約する</button>
-                </form>
-                <div id="roomReserveError" class="room-error"></div>
+                <div class="room-reserve-header">
+                    <h3 class="room-reserve-title"><i class="far fa-calendar-plus"></i> 部室予約</h3>
+                    <button type="button" class="room-toggle-btn" onclick="openRoomReserveModal()"><i class="fas fa-plus"></i> 予約する</button>
+                </div>
                 <div id="roomReservationList" class="room-reservation-list"></div>
+            </div>
+
+            <!-- 部室予約モーダル -->
+            <div id="roomReserveModal" class="room-reserve-modal">
+                <div class="room-reserve-modal-box">
+                    <div class="room-reserve-modal-header">
+                        <h3>部室を予約</h3>
+                        <button type="button" class="room-reserve-modal-close" onclick="closeRoomReserveModal()" aria-label="閉じる">&times;</button>
+                    </div>
+                    <form id="roomReserveForm" class="room-reserve-form">
+                        <div class="room-reserve-field">
+                            <label>日付</label>
+                            <input type="date" name="reserved_date" required class="form-input" min="<?php echo date('Y-m-d'); ?>">
+                        </div>
+                        <div class="room-reserve-field">
+                            <label>開始</label>
+                            <input type="time" name="start_time" required class="form-input">
+                        </div>
+                        <div class="room-reserve-field">
+                            <label>終了</label>
+                            <input type="time" name="end_time" required class="form-input">
+                        </div>
+                        <div class="room-reserve-field room-reserve-field-purpose">
+                            <label>目的（任意）</label>
+                            <input type="text" name="purpose" class="form-input" placeholder="例: mtg">
+                        </div>
+                        <div id="roomReserveError" class="room-error"></div>
+                        <button type="submit" class="room-toggle-btn room-reserve-submit">予約する</button>
+                    </form>
+                </div>
             </div>
 
             <div id="events" style="display: flex; align-items: center; gap: 16px; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">
@@ -314,7 +327,7 @@ try {
                             <div class="event-icons">
                                 <?php if (isEventAdmin($event['id'])): ?>
                                     <a href="form_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
-                                        <i class="far fa-edit"></i><span>編集</span>
+                                        <i class="fas fa-pen-to-square"></i><span>編集</span>
                                     </a>
                                     <form method="POST" action="form_archive.php" style="display:contents;">
                                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
@@ -365,7 +378,7 @@ try {
                             <div class="event-icons">
                                 <?php if (isEventAdmin($event['id'])): ?>
                                     <a href="form_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
-                                        <i class="far fa-edit"></i><span>編集</span>
+                                        <i class="fas fa-pen-to-square"></i><span>編集</span>
                                     </a>
                                     <form method="POST" action="form_archive.php" style="display:contents;">
                                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
@@ -937,19 +950,67 @@ try {
 
         /* 部室予約カード */
         .room-reserve-card { padding: 1.8rem; margin-top: 1rem; }
+        .room-reserve-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
         .room-reserve-title {
-            margin: 0 0 1.2rem;
+            margin: 0;
             font-size: 1rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
+        /* 予約フォームのモーダル */
+        .room-reserve-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .room-reserve-modal.show { display: flex; }
+        .room-reserve-modal-box {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 100%;
+            padding: 1.6rem;
+            box-shadow: var(--shadow-lg, 0 20px 40px rgba(0, 0, 0, 0.15));
+            max-height: 90vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .room-reserve-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        .room-reserve-modal-header h3 { margin: 0; font-size: 1.1rem; }
+        .room-reserve-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            line-height: 1;
+            cursor: pointer;
+            color: #888;
+            padding: 0;
+        }
+
         .room-reserve-form {
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: flex-end;
+            flex-direction: column;
+            gap: 14px;
         }
         .room-reserve-field label {
             display: block;
@@ -957,9 +1018,8 @@ try {
             color: var(--text-light, #8d877c);
             margin-bottom: 5px;
         }
-        .room-reserve-field-purpose { flex: 1; min-width: 160px; }
-        .room-reserve-field-purpose input { width: 100%; box-sizing: border-box; }
-        .room-reserve-submit { padding: 0.7rem 1.5rem; }
+        .room-reserve-field input { width: 100%; box-sizing: border-box; }
+        .room-reserve-submit { padding: 0.75rem 1.5rem; justify-content: center; margin-top: 4px; }
 
         .room-reservation-list {
             margin-top: 1.4rem;
@@ -1023,9 +1083,9 @@ try {
             .room-occupant-list { gap: 16px; margin-top: 1.2rem; padding-top: 1rem; }
             .room-avatar, .room-avatar-fallback { width: 42px; height: 42px; }
 
-            .room-reserve-title { font-size: 0.92rem; margin-bottom: 1rem; }
-            .room-reserve-form { flex-direction: column; align-items: stretch; gap: 10px; }
-            .room-reserve-field, .room-reserve-field-purpose { min-width: 0; width: 100%; box-sizing: border-box; }
+            .room-reserve-header { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+            .room-reserve-title { font-size: 0.92rem; }
+            .room-reserve-modal-box { padding: 1.3rem; }
 
             /* iOS Safariはdate/time inputにform-inputの1remパディングを適用すると
                縦に間延びして見た目が崩れる上、UAスタイルがCSSのheight/paddingに
@@ -1373,6 +1433,17 @@ try {
                 .catch(() => alert('通信に失敗しました。'));
         }
 
+        function openRoomReserveModal() {
+            document.getElementById('roomReserveModal').classList.add('show');
+        }
+        function closeRoomReserveModal() {
+            document.getElementById('roomReserveModal').classList.remove('show');
+            document.getElementById('roomReserveError').style.display = 'none';
+        }
+        document.getElementById('roomReserveModal').addEventListener('click', function(e) {
+            if (e.target === this) closeRoomReserveModal();
+        });
+
         document.getElementById('roomReserveForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const errBox = document.getElementById('roomReserveError');
@@ -1394,6 +1465,7 @@ try {
                     submitBtn.innerHTML = originalLabel;
                     if (res.success) {
                         document.getElementById('roomReserveForm').reset();
+                        closeRoomReserveModal();
                         loadRoomReservations();
                         loadRoomStatus();
                     } else {

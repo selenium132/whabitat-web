@@ -44,6 +44,12 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* button要素はUAスタイルでfont-familyを継承しない(既定でArial等になる)ため、
+   <a>で作った同じ見た目のボタンと字形が食い違って見える。全体で明示的に継承させる。 */
+button {
+    font-family: inherit;
+}
+
 a {
     text-decoration: none;
     color: inherit;
