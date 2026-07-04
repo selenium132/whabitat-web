@@ -1028,14 +1028,20 @@ try {
             .room-reserve-field, .room-reserve-field-purpose { min-width: 0; width: 100%; box-sizing: border-box; }
 
             /* iOS Safariはdate/time inputにform-inputの1remパディングを適用すると
-               縦に間延びして見た目が崩れるため、モバイルでは高さ・paddingを詰める */
+               縦に間延びして見た目が崩れる上、UAスタイルがCSSのheight/paddingに
+               優先することがあるため、appearanceをリセットした上で!importantで固定する */
             .room-reserve-field input,
             .room-reserve-field-purpose input {
-                width: 100%;
-                box-sizing: border-box;
-                height: 44px;
-                padding: 0.5rem 0.8rem;
-                font-size: 0.92rem;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                height: 44px !important;
+                min-height: 44px !important;
+                max-height: 44px !important;
+                padding: 0 0.8rem !important;
+                font-size: 0.92rem !important;
+                line-height: 44px !important;
+                -webkit-appearance: none;
+                appearance: none;
             }
             .room-reserve-submit { justify-content: center; padding: 0.65rem 1.2rem; font-size: 0.9rem; }
 
