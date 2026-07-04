@@ -574,6 +574,7 @@ textarea:focus {
     font-weight: 600;
     cursor: pointer;
     display: inline-block;
+    line-height: 1.3;
     transition: all 0.3s;
     border: none;
 }
@@ -736,8 +737,8 @@ textarea:focus {
         flex-direction: column;
         align-items: stretch;
         text-align: center;
-        padding: 1.5rem;
-        gap: 1.5rem;
+        padding: 1.2rem;
+        gap: 1rem;
     }
 
     .event-card {
@@ -765,7 +766,7 @@ textarea:focus {
         justify-content: center;
         flex-direction: column;
         width: 100%;
-        gap: 0.8rem;
+        gap: 0.6rem;
     }
 
     .event-actions-wrap {
@@ -839,10 +840,16 @@ textarea:focus {
         display: block;
         text-align: center;
         margin: 0;
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
     }
 
     .welcome-user {
         font-size: 1.5rem;
+    }
+
+    .welcome-label {
+        font-size: 0.8rem;
     }
 }
 
