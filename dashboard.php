@@ -326,9 +326,9 @@ try {
                             </div>
                             <div class="event-icons">
                                 <?php if (isEventAdmin($event['id'])): ?>
-                                    <a href="form_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
+                                    <button type="button" class="icon-btn" title="編集" onclick="location.href='form_create.php?id=<?php echo (int)$event['id']; ?>'">
                                         <i class="fas fa-pen-to-square"></i><span>編集</span>
-                                    </a>
+                                    </button>
                                     <form method="POST" action="form_archive.php" style="display:contents;">
                                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                                         <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
@@ -377,9 +377,9 @@ try {
                             </div>
                             <div class="event-icons">
                                 <?php if (isEventAdmin($event['id'])): ?>
-                                    <a href="form_create.php?id=<?php echo $event['id']; ?>" class="icon-btn" title="編集">
+                                    <button type="button" class="icon-btn" title="編集" onclick="location.href='form_create.php?id=<?php echo (int)$event['id']; ?>'">
                                         <i class="fas fa-pen-to-square"></i><span>編集</span>
-                                    </a>
+                                    </button>
                                     <form method="POST" action="form_archive.php" style="display:contents;">
                                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                                         <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
