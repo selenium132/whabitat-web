@@ -701,6 +701,14 @@ textarea:focus {
     display: none;
 }
 
+/* 訪問済みリンクの:visitedはブラウザのUAスタイルが強く効くことがあり、
+   同じ.icon-btnでも<a>(編集)だけ<button>(アーカイブ/コピー)と色が食い違って見える。
+   実際に訪問済みになりやすい「編集」リンクを名指しで上書きする。 */
+a.icon-btn:link,
+a.icon-btn:visited {
+    color: var(--text-color);
+}
+
 .icon-btn:hover {
     background: var(--primary-color);
     color: white;
@@ -763,8 +771,8 @@ textarea:focus {
     }
 
     .welcome-actions {
-        justify-content: center;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         width: 100%;
         gap: 0.6rem;
     }
@@ -812,6 +820,11 @@ textarea:focus {
         color: #888;
     }
 
+    a.icon-btn:link,
+    a.icon-btn:visited {
+        color: #888;
+    }
+
     .icon-btn:hover {
         background: none;
         color: var(--primary-color);
@@ -837,11 +850,14 @@ textarea:focus {
     .welcome-actions .btn-primary,
     .welcome-actions .btn-secondary {
         width: 100%;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
         margin: 0;
-        padding: 0.65rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.6rem 0.5rem;
+        font-size: 0.82rem;
+        box-sizing: border-box;
     }
 
     .welcome-user {
