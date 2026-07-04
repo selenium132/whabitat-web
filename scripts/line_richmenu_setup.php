@@ -71,7 +71,7 @@ $richMenuDef = [
         ],
         [
             'bounds' => ['x' => 1667, 'y' => 0, 'width' => 833, 'height' => 843],
-            'action' => ['type' => 'postback', 'data' => 'action=status', 'displayText' => '利用状況確認'],
+            'action' => ['type' => 'postback', 'data' => 'action=status', 'displayText' => '部室利用状況確認'],
         ],
     ],
 ];
