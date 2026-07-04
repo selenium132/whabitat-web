@@ -777,6 +777,11 @@ a.icon-btn:visited {
         gap: 0.6rem;
     }
 
+    /* ボタンが奇数個のとき、最後の1つが片側に孤立して空白ができるのを防ぐため全幅にする */
+    .welcome-actions > :last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+
     .event-actions-wrap {
         flex-direction: column;
         gap: 0;
