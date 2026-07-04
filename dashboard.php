@@ -271,7 +271,7 @@ try {
             </div>
 
             <div id="events" style="display: flex; align-items: center; gap: 16px; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">
-                <h2 class="section-title" style="text-align: left; margin: 0;">出欠確認</h2>
+                <h2 class="section-title" style="text-align: left; margin: 0;"><span aria-hidden="true">✅</span> 出欠確認</h2>
                 <a href="past_events.php" style="font-size: 0.85rem; color: #555; text-decoration: none; padding: 8px 4px; display: inline-block;">過去の出欠 <span aria-hidden="true">→</span></a>
             </div>
             <?php if (empty($attend_checks)): ?>
@@ -337,7 +337,7 @@ try {
 
             <!-- アンケート Section -->
             <div id="surveys" style="display: flex; align-items: center; gap: 16px; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">
-                <h2 class="section-title" style="text-align: left; margin: 0;">アンケート</h2>
+                <h2 class="section-title" style="text-align: left; margin: 0;"><span aria-hidden="true">📋</span> アンケート</h2>
             </div>
             <?php if (empty($surveys)): ?>
                 <div class="card" style="text-align: center; color: var(--text-light);">
