@@ -1007,12 +1007,41 @@ try {
         .room-reservation-empty { color: var(--text-light, #8d877c); font-size: 0.85rem; }
 
         @media (max-width: 768px) {
-            .room-status-top { flex-direction: column; align-items: stretch; }
-            .room-toggle-btn { justify-content: center; }
-            .room-reserve-form { flex-direction: column; align-items: stretch; }
+            .room-status-card, .room-reserve-card { padding: 1.25rem; }
+            .room-status-top { flex-direction: column; align-items: stretch; gap: 0.9rem; }
+            .room-status-info { gap: 0.8rem; }
+            .room-count-badge { width: 42px; height: 42px; font-size: 1.05rem; }
+            .room-count-label { font-size: 0.95rem; }
+            .room-reservation-note { font-size: 0.78rem; }
+
+            .room-toggle-btn {
+                justify-content: center;
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .room-occupant-list { gap: 16px; margin-top: 1.2rem; padding-top: 1rem; }
+            .room-avatar, .room-avatar-fallback { width: 42px; height: 42px; }
+
+            .room-reserve-title { font-size: 0.92rem; margin-bottom: 1rem; }
+            .room-reserve-form { flex-direction: column; align-items: stretch; gap: 10px; }
             .room-reserve-field, .room-reserve-field-purpose { min-width: 0; width: 100%; box-sizing: border-box; }
-            .room-reserve-field input, .room-reserve-field-purpose input { width: 100%; box-sizing: border-box; }
-            .room-reserve-submit { justify-content: center; }
+
+            /* iOS Safariはdate/time inputにform-inputの1remパディングを適用すると
+               縦に間延びして見た目が崩れるため、モバイルでは高さ・paddingを詰める */
+            .room-reserve-field input,
+            .room-reserve-field-purpose input {
+                width: 100%;
+                box-sizing: border-box;
+                height: 44px;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.92rem;
+            }
+            .room-reserve-submit { justify-content: center; padding: 0.65rem 1.2rem; font-size: 0.9rem; }
+
+            .room-reservation-row { padding: 8px 12px; gap: 10px; }
+            .room-reservation-date { width: 42px; height: 42px; }
+            .room-reservation-time { font-size: 0.92rem; }
         }
     </style>
     
