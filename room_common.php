@@ -149,6 +149,55 @@ function logRoomAction(PDO $pdo, $userId, $action, $source) {
     }
 }
 
+// 予約の作成/更新（共通処理）。$reservationIdを渡すと更新（自分自身の枠は重複チェックから除外）、
+// nullなら新規作成。呼び出し側で対象予約の所有者確認(IDOR対策)を済ませてから呼ぶこと。
+function saveReservation(PDO $pdo, $userId, $date, $startTime, $endTime, $purpose, $reservationId = null) {
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !preg_match('/^\d{2}:\d{2}$/', $startTime) || !preg_match('/^\d{2}:\d{2}$/', $endTime)) {
+        return ['error' => '入力内容が不正です'];
+    }
+    if ($date < date('Y-m-d')) {
+        return ['error' => '過去の日付は予約できません'];
+    }
+    if ($startTime >= $endTime) {
+        return ['error' => '終了時刻は開始時刻より後にしてください'];
+    }
+
+    // 同一日付内での時間帯重複を防ぐため、日付単位のアプリケーションロックを取る。
+    // SELECT...FOR UPDATEでは「まだ存在しない行」はロックできず競合を防げないため。
+    $lockName = 'room_reservation_' . $date;
+    $lockStmt = $pdo->prepare("SELECT GET_LOCK(?, 5)");
+    $lockStmt->execute([$lockName]);
+    if (!$lockStmt->fetchColumn()) {
+        return ['error' => '混雑しています。もう一度お試しください'];
+    }
+
+    try {
+        $sql = "SELECT id FROM room_reservations WHERE room_id = ? AND reserved_date = ? AND cancelled_at IS NULL AND start_time < ? AND end_time > ?";
+        $params = [ROOM_ID, $date, $endTime, $startTime];
+        if ($reservationId) {
+            $sql .= " AND id != ?";
+            $params[] = $reservationId;
+        }
+        $checkStmt = $pdo->prepare($sql . " LIMIT 1");
+        $checkStmt->execute($params);
+        if ($checkStmt->fetch()) {
+            return ['error' => 'その時間帯は既に予約されています'];
+        }
+
+        if ($reservationId) {
+            $updateStmt = $pdo->prepare("UPDATE room_reservations SET reserved_date=?, start_time=?, end_time=?, purpose=? WHERE id=? AND user_id=? AND cancelled_at IS NULL");
+            $updateStmt->execute([$date, $startTime, $endTime, $purpose !== '' ? $purpose : null, $reservationId, $userId]);
+            return ['success' => true, 'id' => $reservationId];
+        }
+
+        $insertStmt = $pdo->prepare("INSERT INTO room_reservations (room_id, user_id, reserved_date, start_time, end_time, purpose) VALUES (?, ?, ?, ?, ?, ?)");
+        $insertStmt->execute([ROOM_ID, $userId, $date, $startTime, $endTime, $purpose !== '' ? $purpose : null]);
+        return ['success' => true, 'id' => $pdo->lastInsertId()];
+    } finally {
+        $pdo->prepare("SELECT RELEASE_LOCK(?)")->execute([$lockName]);
+    }
+}
+
 // LINE返信用にテキスト整形
 function formatOccupantsForLineText(array $occupants, $activeReservation = null) {
     if (empty($occupants)) {

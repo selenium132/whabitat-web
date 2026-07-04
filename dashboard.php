@@ -257,7 +257,7 @@ try {
             <div id="roomReserveModal" class="room-reserve-modal">
                 <div class="room-reserve-modal-box">
                     <div class="room-reserve-modal-header">
-                        <h3>部室を予約</h3>
+                        <h3 id="roomReserveModalTitle">部室を予約</h3>
                         <button type="button" class="room-reserve-modal-close" onclick="closeRoomReserveModal()" aria-label="閉じる">&times;</button>
                     </div>
                     <form id="roomReserveForm" class="room-reserve-form">
@@ -278,7 +278,7 @@ try {
                             <input type="text" name="purpose" class="form-input" placeholder="例: mtg">
                         </div>
                         <div id="roomReserveError" class="room-error"></div>
-                        <button type="submit" class="room-toggle-btn room-reserve-submit">予約する</button>
+                        <button type="submit" id="roomReserveSubmitBtn" class="room-toggle-btn room-reserve-submit">予約する</button>
                     </form>
                 </div>
             </div>
@@ -1394,6 +1394,13 @@ try {
                 row.appendChild(info);
 
                 if (r.is_mine) {
+                    const editBtn = document.createElement('button');
+                    editBtn.type = 'button';
+                    editBtn.className = 'room-reservation-cancel';
+                    editBtn.textContent = '編集';
+                    editBtn.onclick = function() { openRoomReserveModal(r); };
+                    row.appendChild(editBtn);
+
                     const cancelBtn = document.createElement('button');
                     cancelBtn.type = 'button';
                     cancelBtn.className = 'room-reservation-cancel';
@@ -1433,12 +1440,34 @@ try {
                 .catch(() => alert('通信に失敗しました。'));
         }
 
-        function openRoomReserveModal() {
+        let editingReservationId = null;
+
+        function openRoomReserveModal(reservation) {
+            const form = document.getElementById('roomReserveForm');
+            const title = document.getElementById('roomReserveModalTitle');
+            const submitBtn = document.getElementById('roomReserveSubmitBtn');
+
+            if (reservation) {
+                editingReservationId = reservation.id;
+                title.textContent = '予約を編集';
+                form.reserved_date.value = reservation.reserved_date;
+                form.start_time.value = reservation.start_time.slice(0, 5);
+                form.end_time.value = reservation.end_time.slice(0, 5);
+                form.purpose.value = reservation.purpose || '';
+                submitBtn.textContent = '更新する';
+            } else {
+                editingReservationId = null;
+                title.textContent = '部室を予約';
+                form.reset();
+                submitBtn.textContent = '予約する';
+            }
+            document.getElementById('roomReserveError').style.display = 'none';
             document.getElementById('roomReserveModal').classList.add('show');
         }
         function closeRoomReserveModal() {
             document.getElementById('roomReserveModal').classList.remove('show');
             document.getElementById('roomReserveError').style.display = 'none';
+            editingReservationId = null;
         }
         document.getElementById('roomReserveModal').addEventListener('click', function(e) {
             if (e.target === this) closeRoomReserveModal();
@@ -1449,14 +1478,16 @@ try {
             const errBox = document.getElementById('roomReserveError');
             errBox.style.display = 'none';
 
+            const isEditing = !!editingReservationId;
             const formData = new FormData(this);
-            formData.append('action', 'reserve');
+            formData.append('action', isEditing ? 'update_reservation' : 'reserve');
+            if (isEditing) formData.append('id', editingReservationId);
             formData.append('csrf_token', roomCsrfToken);
 
-            const submitBtn = this.querySelector('button[type="submit"]');
+            const submitBtn = document.getElementById('roomReserveSubmitBtn');
             const originalLabel = submitBtn.innerHTML;
             submitBtn.disabled = true;
-            submitBtn.textContent = '予約中...';
+            submitBtn.textContent = isEditing ? '更新中...' : '予約中...';
 
             fetch('room_api.php', { method: 'POST', body: formData })
                 .then(r => r.json())

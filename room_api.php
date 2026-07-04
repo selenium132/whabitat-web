@@ -40,49 +40,45 @@ try {
 
         case 'reserve':
             validateCsrfToken($_POST['csrf_token'] ?? '');
-            $date = $_POST['reserved_date'] ?? '';
-            $startTime = $_POST['start_time'] ?? '';
-            $endTime = $_POST['end_time'] ?? '';
-            $purpose = trim($_POST['purpose'] ?? '');
+            // 対象は常に自分自身（$_SESSION['user_id']）。クライアントからuser_idは一切受け取らない。
+            echo json_encode(saveReservation(
+                $pdo,
+                $_SESSION['user_id'],
+                $_POST['reserved_date'] ?? '',
+                $_POST['start_time'] ?? '',
+                $_POST['end_time'] ?? '',
+                trim($_POST['purpose'] ?? '')
+            ));
+            break;
 
-            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !preg_match('/^\d{2}:\d{2}$/', $startTime) || !preg_match('/^\d{2}:\d{2}$/', $endTime)) {
-                echo json_encode(['error' => '入力内容が不正です']);
+        case 'update_reservation':
+            validateCsrfToken($_POST['csrf_token'] ?? '');
+            $editId = (int)($_POST['id'] ?? 0);
+
+            // IDOR対策: 更新対象(予約のuser_id)で認可を再判定する。本人のみ編集可。
+            $ownerStmt = $pdo->prepare("SELECT user_id FROM room_reservations WHERE id = ? AND cancelled_at IS NULL");
+            $ownerStmt->execute([$editId]);
+            $owner = $ownerStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$owner) {
+                echo json_encode(['error' => '予約が見つかりません']);
                 break;
             }
-            if ($date < date('Y-m-d')) {
-                echo json_encode(['error' => '過去の日付は予約できません']);
-                break;
-            }
-            if ($startTime >= $endTime) {
-                echo json_encode(['error' => '終了時刻は開始時刻より後にしてください']);
+            if ((int)$owner['user_id'] !== (int)$_SESSION['user_id']) {
+                http_response_code(403);
+                echo json_encode(['error' => 'この予約を編集する権限がありません']);
                 break;
             }
 
-            // 同一日付内での時間帯重複を防ぐため、日付単位のアプリケーションロックを取る。
-            // SELECT...FOR UPDATEでは「まだ存在しない行」はロックできず競合を防げないため。
-            $lockName = 'room_reservation_' . $date;
-            $lockStmt = $pdo->prepare("SELECT GET_LOCK(?, 5)");
-            $lockStmt->execute([$lockName]);
-            if (!$lockStmt->fetchColumn()) {
-                echo json_encode(['error' => '混雑しています。もう一度お試しください']);
-                break;
-            }
-
-            try {
-                $checkStmt = $pdo->prepare("SELECT id FROM room_reservations
-                    WHERE room_id = ? AND reserved_date = ? AND cancelled_at IS NULL
-                      AND start_time < ? AND end_time > ? LIMIT 1");
-                $checkStmt->execute([ROOM_ID, $date, $endTime, $startTime]);
-                if ($checkStmt->fetch()) {
-                    echo json_encode(['error' => 'その時間帯は既に予約されています']);
-                } else {
-                    $insertStmt = $pdo->prepare("INSERT INTO room_reservations (room_id, user_id, reserved_date, start_time, end_time, purpose) VALUES (?, ?, ?, ?, ?, ?)");
-                    $insertStmt->execute([ROOM_ID, $_SESSION['user_id'], $date, $startTime, $endTime, $purpose !== '' ? $purpose : null]);
-                    echo json_encode(['success' => true, 'id' => $pdo->lastInsertId()]);
-                }
-            } finally {
-                $pdo->prepare("SELECT RELEASE_LOCK(?)")->execute([$lockName]);
-            }
+            echo json_encode(saveReservation(
+                $pdo,
+                $_SESSION['user_id'],
+                $_POST['reserved_date'] ?? '',
+                $_POST['start_time'] ?? '',
+                $_POST['end_time'] ?? '',
+                trim($_POST['purpose'] ?? ''),
+                $editId
+            ));
             break;
 
         case 'cancel_reservation':
