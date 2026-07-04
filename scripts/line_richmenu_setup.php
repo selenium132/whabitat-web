@@ -2,17 +2,18 @@
 /**
  * LINE公式アカウントのリッチメニュー作成スクリプト（CLI専用、実行のたびに作り直す）
  *
- * 「入室」「退室」「利用状況確認」「イベント確認」の4ボタンをpostbackイベントとして送る
+ * 「イベント確認」「部室入退出」「利用状況確認」の3ボタンをpostbackイベントとして送る
  * リッチメニューを作成し、全員のデフォルトメニューとして設定する。
+ * 「部室入退出」は1ボタンで、今の在室状態を見てサーバー側で入室/退室を自動判定する。
  * line_webhook.phpのhandleRoomPostback()が
- * action=checkin / action=checkout / action=status / action=event を受け取る前提。
+ * action=event / action=toggle / action=status を受け取る前提。
  * 実行時に既存の登録済みリッチメニューを全て削除してから作り直すため、
  * 再実行してもLINE Developers側にゴミが残らない。
  *
  * 実行方法（本番サーバー上、SSHまたはXserverのコマンド実行環境で）:
  *   php scripts/line_richmenu_setup.php images/richmenu/room_richmenu.png
  *
- * 画像は2500x843px推奨（2x2でボタンを配置するため）。PNG/JPG対応。
+ * 画像は2500x843px推奨（3等分でボタンを配置するため）。PNG/JPG対応。
  * 既存の.env（LINE_BOT_ACCESS_TOKEN）をそのまま使うため.env変更は不要。
  */
 
@@ -57,24 +58,20 @@ function lineApiRequest($method, $url, $data = null, $contentType = 'application
 $richMenuDef = [
     'size' => ['width' => 2500, 'height' => 843],
     'selected' => true,
-    'name' => 'WHABITAT 部室メニュー',
-    'chatBarText' => '部室メニュー',
+    'name' => 'WHABITAT メニュー',
+    'chatBarText' => 'メニュー',
     'areas' => [
         [
-            'bounds' => ['x' => 0, 'y' => 0, 'width' => 1250, 'height' => 422],
-            'action' => ['type' => 'postback', 'data' => 'action=checkin', 'displayText' => '入室'],
-        ],
-        [
-            'bounds' => ['x' => 1250, 'y' => 0, 'width' => 1250, 'height' => 422],
-            'action' => ['type' => 'postback', 'data' => 'action=checkout', 'displayText' => '退室'],
-        ],
-        [
-            'bounds' => ['x' => 0, 'y' => 422, 'width' => 1250, 'height' => 421],
-            'action' => ['type' => 'postback', 'data' => 'action=status', 'displayText' => '利用状況確認'],
-        ],
-        [
-            'bounds' => ['x' => 1250, 'y' => 422, 'width' => 1250, 'height' => 421],
+            'bounds' => ['x' => 0, 'y' => 0, 'width' => 833, 'height' => 843],
             'action' => ['type' => 'postback', 'data' => 'action=event', 'displayText' => 'イベント確認'],
+        ],
+        [
+            'bounds' => ['x' => 833, 'y' => 0, 'width' => 834, 'height' => 843],
+            'action' => ['type' => 'postback', 'data' => 'action=toggle', 'displayText' => '部室入退出'],
+        ],
+        [
+            'bounds' => ['x' => 1667, 'y' => 0, 'width' => 833, 'height' => 843],
+            'action' => ['type' => 'postback', 'data' => 'action=status', 'displayText' => '利用状況確認'],
         ],
     ],
 ];

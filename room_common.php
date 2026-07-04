@@ -54,6 +54,13 @@ function ensureRoomTables(PDO $pdo) {
     }
 }
 
+// 指定ユーザーが現在在室中か
+function isUserPresent(PDO $pdo, $userId) {
+    $stmt = $pdo->prepare("SELECT 1 FROM room_presence WHERE room_id = ? AND user_id = ?");
+    $stmt->execute([ROOM_ID, $userId]);
+    return (bool)$stmt->fetch();
+}
+
 // 現在の在室者一覧（入室が古い順）
 function getCurrentOccupants(PDO $pdo) {
     $stmt = $pdo->prepare("SELECT u.id, u.name, u.avatar_url, rp.checked_in_at

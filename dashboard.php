@@ -210,29 +210,28 @@ try {
             <!-- 部室 在室状況・入退室・予約 -->
             <h2 id="room" class="section-title" style="text-align: left; margin: 0 0 1.5rem; scroll-margin-top: 80px;"><span aria-hidden="true">🚪</span> 部室</h2>
             <input type="hidden" id="roomCsrfToken" value="<?php echo htmlspecialchars($room_csrf_token, ENT_QUOTES, 'UTF-8'); ?>">
-            <div class="card" style="padding: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                    <div>
-                        <div id="roomOccupantCount" style="font-weight: 600; font-size: 1.05rem;">
-                            <?php echo empty($room_occupants) ? '現在、部室には誰もいません。' : count($room_occupants) . '人が在室中'; ?>
-                        </div>
-                        <div id="roomActiveReservation" style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">
-                            <?php if ($room_active_reservation): ?>
-                                📅 現在の予約: <?php echo substr($room_active_reservation['start_time'], 0, 5) . '〜' . substr($room_active_reservation['end_time'], 0, 5); ?> <?php echo htmlspecialchars($room_active_reservation['name'], ENT_QUOTES, 'UTF-8'); ?>さん
-                            <?php endif; ?>
+            <div class="card room-status-card">
+                <div class="room-status-top">
+                    <div class="room-status-info">
+                        <div id="roomCountBadge" class="room-count-badge<?php echo empty($room_occupants) ? ' is-zero' : ''; ?>"><?php echo count($room_occupants); ?></div>
+                        <div>
+                            <div id="roomOccupantCount" class="room-count-label">
+                                <?php echo empty($room_occupants) ? '現在、部室には誰もいません' : count($room_occupants) . '人が在室中'; ?>
+                            </div>
+                            <div id="roomActiveReservation" class="room-reservation-note">
+                                <?php if ($room_active_reservation): ?>
+                                    予約中 <?php echo substr($room_active_reservation['start_time'], 0, 5) . '〜' . substr($room_active_reservation['end_time'], 0, 5); ?>（<?php echo htmlspecialchars($room_active_reservation['name'], ENT_QUOTES, 'UTF-8'); ?>さん）
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button type="button" id="roomCheckinBtn" class="btn-primary" onclick="roomCheckInOut('checkin')" <?php if ($room_my_presence) echo 'disabled'; ?>>
-                            <i class="fas fa-sign-in-alt"></i> 入室する
-                        </button>
-                        <button type="button" id="roomCheckoutBtn" class="btn-secondary" onclick="roomCheckInOut('checkout')" <?php if (!$room_my_presence) echo 'disabled'; ?>>
-                            <i class="fas fa-sign-out-alt"></i> 退室する
-                        </button>
-                    </div>
+                    <button type="button" id="roomToggleBtn" class="room-toggle-btn<?php echo $room_my_presence ? ' is-present' : ''; ?>" onclick="roomToggle()">
+                        <i id="roomToggleIcon" class="fas <?php echo $room_my_presence ? 'fa-right-from-bracket' : 'fa-door-open'; ?>"></i>
+                        <span id="roomToggleLabel"><?php echo $room_my_presence ? '退室する' : '入室する'; ?></span>
+                    </button>
                 </div>
-                <div id="roomError" style="color: var(--accent-red, #b0453a); font-size: 0.85rem; margin-top: 10px; display: none;"></div>
-                <div id="roomOccupantList" style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 1.2rem;">
+                <div id="roomError" class="room-error"></div>
+                <div id="roomOccupantList" class="room-occupant-list">
                     <?php foreach ($room_occupants as $occ): ?>
                         <div class="room-avatar-wrap">
                             <?php if (!empty($occ['avatar_url'])): ?>
@@ -246,29 +245,29 @@ try {
                 </div>
             </div>
 
-            <div class="card" style="padding: 1.5rem; margin-top: 1rem;">
-                <h3 style="margin: 0 0 1rem; font-size: 1rem;"><i class="far fa-calendar-plus"></i> 部室予約</h3>
-                <form id="roomReserveForm" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;">
-                    <div>
-                        <label style="display: block; font-size: 0.8rem; margin-bottom: 4px;">日付</label>
+            <div class="card room-reserve-card">
+                <h3 class="room-reserve-title"><i class="far fa-calendar-plus"></i> 部室予約</h3>
+                <form id="roomReserveForm" class="room-reserve-form">
+                    <div class="room-reserve-field">
+                        <label>日付</label>
                         <input type="date" name="reserved_date" required class="form-input" min="<?php echo date('Y-m-d'); ?>">
                     </div>
-                    <div>
-                        <label style="display: block; font-size: 0.8rem; margin-bottom: 4px;">開始</label>
+                    <div class="room-reserve-field">
+                        <label>開始</label>
                         <input type="time" name="start_time" required class="form-input">
                     </div>
-                    <div>
-                        <label style="display: block; font-size: 0.8rem; margin-bottom: 4px;">終了</label>
+                    <div class="room-reserve-field">
+                        <label>終了</label>
                         <input type="time" name="end_time" required class="form-input">
                     </div>
-                    <div style="flex: 1; min-width: 140px;">
-                        <label style="display: block; font-size: 0.8rem; margin-bottom: 4px;">目的（任意）</label>
-                        <input type="text" name="purpose" class="form-input" placeholder="例: mtg" style="width: 100%; box-sizing: border-box;">
+                    <div class="room-reserve-field room-reserve-field-purpose">
+                        <label>目的（任意）</label>
+                        <input type="text" name="purpose" class="form-input" placeholder="例: mtg">
                     </div>
-                    <button type="submit" class="btn-primary">予約する</button>
+                    <button type="submit" class="room-toggle-btn room-reserve-submit"><i class="fas fa-plus"></i> 予約する</button>
                 </form>
-                <div id="roomReserveError" style="color: var(--accent-red, #b0453a); font-size: 0.85rem; margin-top: 8px; display: none;"></div>
-                <div id="roomReservationList" style="margin-top: 1.2rem; display: flex; flex-direction: column; gap: 8px;"></div>
+                <div id="roomReserveError" class="room-error"></div>
+                <div id="roomReservationList" class="room-reservation-list"></div>
             </div>
 
             <div id="events" style="display: flex; align-items: center; gap: 16px; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">
@@ -821,7 +820,80 @@ try {
             margin-right: 1px; /* Slight gap from cell edge */
         }
 
-        /* 部室 在室者アイコン: PCはhover、スマホはtapで名前表示 */
+        /* ===== 部室セクション ===== */
+        .room-status-card { padding: 1.8rem; }
+        .room-status-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+        }
+        .room-status-info { display: flex; align-items: center; gap: 1.1rem; }
+        .room-count-badge {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: var(--primary-color, #1a1a1a);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            transition: background 0.15s ease;
+        }
+        .room-count-badge.is-zero { background: #e6e2d9; color: #9a9488; }
+        .room-count-label { font-weight: 600; font-size: 1.05rem; }
+        .room-reservation-note {
+            font-size: 0.83rem;
+            color: var(--text-light, #8d877c);
+            margin-top: 4px;
+            min-height: 1.2em;
+        }
+
+        .room-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 0.75rem 1.7rem;
+            border-radius: 50px;
+            border: none;
+            background: var(--primary-color, #1a1a1a);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            white-space: nowrap;
+        }
+        .room-toggle-btn:hover { opacity: 0.85; }
+        .room-toggle-btn.is-present {
+            background: transparent;
+            border: 1.5px solid var(--border-color, #e6e2d9);
+            color: var(--text-color, #2a2a2a);
+        }
+        .room-toggle-btn:disabled { opacity: 0.5; cursor: default; }
+
+        .room-error {
+            color: var(--accent-red, #b0453a);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* 在室者アイコン: PCはhover、スマホはtapで名前表示 */
+        .room-occupant-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 1.6rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--border-color, #e6e2d9);
+        }
+        .room-occupant-list:empty { display: none; }
         .room-avatar-wrap {
             position: relative;
             display: flex;
@@ -830,8 +902,8 @@ try {
             cursor: pointer;
         }
         .room-avatar, .room-avatar-fallback {
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             object-fit: cover;
             border: 1px solid var(--border-color, #e6e2d9);
@@ -847,14 +919,14 @@ try {
         .room-avatar-name {
             display: none;
             position: absolute;
-            bottom: -1.6rem;
+            bottom: -1.7rem;
             left: 50%;
             transform: translateX(-50%);
             white-space: nowrap;
             background: var(--primary-color, #1a1a1a);
             color: #fff;
             font-size: 0.72rem;
-            padding: 2px 8px;
+            padding: 3px 9px;
             border-radius: 4px;
             z-index: 5;
         }
@@ -863,16 +935,84 @@ try {
         }
         .room-avatar-wrap.show .room-avatar-name { display: block; }
 
+        /* 部室予約カード */
+        .room-reserve-card { padding: 1.8rem; margin-top: 1rem; }
+        .room-reserve-title {
+            margin: 0 0 1.2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .room-reserve-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .room-reserve-field label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-light, #8d877c);
+            margin-bottom: 5px;
+        }
+        .room-reserve-field-purpose { flex: 1; min-width: 160px; }
+        .room-reserve-field-purpose input { width: 100%; box-sizing: border-box; }
+        .room-reserve-submit { padding: 0.7rem 1.5rem; }
+
+        .room-reservation-list {
+            margin-top: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
         .room-reservation-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
+            gap: 14px;
+            padding: 10px 14px;
             border: 1px solid var(--border-color, #e6e2d9);
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.88rem;
             flex-wrap: wrap;
+        }
+        .room-reservation-date {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: #f2f0ea;
+            flex-shrink: 0;
+            line-height: 1.15;
+        }
+        .room-reservation-date .month { font-size: 0.6rem; color: var(--text-light, #8d877c); font-weight: 500; }
+        .room-reservation-date .day { font-size: 1.1rem; font-weight: 700; }
+        .room-reservation-info { flex: 1; min-width: 150px; }
+        .room-reservation-time { font-weight: 600; }
+        .room-reservation-who { color: var(--text-light, #8d877c); font-size: 0.8rem; margin-top: 2px; }
+        .room-reservation-cancel {
+            padding: 5px 12px;
+            font-size: 0.78rem;
+            border-radius: 50px;
+            border: 1px solid var(--border-color, #e6e2d9);
+            background: transparent;
+            color: var(--text-color, #2a2a2a);
+            cursor: pointer;
+        }
+        .room-reservation-cancel:hover { border-color: var(--primary-color, #1a1a1a); }
+        .room-reservation-empty { color: var(--text-light, #8d877c); font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .room-status-top { flex-direction: column; align-items: stretch; }
+            .room-toggle-btn { justify-content: center; }
+            .room-reserve-form { flex-direction: column; align-items: stretch; }
+            .room-reserve-field, .room-reserve-field-purpose { min-width: 0; width: 100%; box-sizing: border-box; }
+            .room-reserve-field input, .room-reserve-field-purpose input { width: 100%; box-sizing: border-box; }
+            .room-reserve-submit { justify-content: center; }
         }
     </style>
     
@@ -998,11 +1138,12 @@ try {
         // ===== 部室: 在室状況・入退室・予約 =====
         const roomCsrfToken = document.getElementById('roomCsrfToken').value;
 
-        function roomCheckInOut(action) {
-            const btn = document.getElementById(action === 'checkin' ? 'roomCheckinBtn' : 'roomCheckoutBtn');
+        function roomToggle() {
+            const btn = document.getElementById('roomToggleBtn');
             const errBox = document.getElementById('roomError');
             errBox.style.display = 'none';
-            if (btn) btn.disabled = true;
+            const action = btn.classList.contains('is-present') ? 'checkout' : 'checkin';
+            btn.disabled = true;
 
             const formData = new FormData();
             formData.append('action', action);
@@ -1011,30 +1152,35 @@ try {
             fetch('room_api.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .then(res => {
+                    btn.disabled = false;
                     if (res.success) {
                         loadRoomStatus();
                     } else {
                         errBox.textContent = res.error || 'エラーが発生しました';
                         errBox.style.display = 'block';
-                        if (btn) btn.disabled = false;
                     }
                 })
                 .catch(() => {
+                    btn.disabled = false;
                     errBox.textContent = '通信に失敗しました。通信状況をご確認ください。';
                     errBox.style.display = 'block';
-                    if (btn) btn.disabled = false;
                 });
         }
 
         function renderRoomStatus(data) {
+            const count = data.occupants.length;
             document.getElementById('roomOccupantCount').textContent =
-                data.occupants.length === 0 ? '現在、部室には誰もいません。' : data.occupants.length + '人が在室中';
+                count === 0 ? '現在、部室には誰もいません' : count + '人が在室中';
+
+            const badge = document.getElementById('roomCountBadge');
+            badge.textContent = count;
+            badge.classList.toggle('is-zero', count === 0);
 
             const resEl = document.getElementById('roomActiveReservation');
             resEl.textContent = '';
             if (data.active_reservation) {
                 const r = data.active_reservation;
-                resEl.textContent = '📅 現在の予約: ' + r.start_time.slice(0, 5) + '〜' + r.end_time.slice(0, 5) + ' ' + r.name + 'さん';
+                resEl.textContent = '予約中 ' + r.start_time.slice(0, 5) + '〜' + r.end_time.slice(0, 5) + '（' + r.name + 'さん）';
             }
 
             const listEl = document.getElementById('roomOccupantList');
@@ -1064,8 +1210,12 @@ try {
                 listEl.appendChild(wrap);
             });
 
-            document.getElementById('roomCheckinBtn').disabled = data.my_presence;
-            document.getElementById('roomCheckoutBtn').disabled = !data.my_presence;
+            const toggleBtn = document.getElementById('roomToggleBtn');
+            const toggleIcon = document.getElementById('roomToggleIcon');
+            const toggleLabel = document.getElementById('roomToggleLabel');
+            toggleBtn.classList.toggle('is-present', data.my_presence);
+            toggleIcon.className = 'fas ' + (data.my_presence ? 'fa-right-from-bracket' : 'fa-door-open');
+            toggleLabel.textContent = data.my_presence ? '退室する' : '入室する';
         }
 
         function loadRoomStatus() {
@@ -1107,12 +1257,14 @@ try {
         startRoomPolling();
 
         // 部室予約
+        const roomMonthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
         function renderRoomReservations(rows) {
             const listEl = document.getElementById('roomReservationList');
             listEl.innerHTML = '';
             if (rows.length === 0) {
                 const empty = document.createElement('div');
-                empty.style.cssText = 'color: var(--text-light); font-size: 0.85rem;';
+                empty.className = 'room-reservation-empty';
                 empty.textContent = '現在予約はありません。';
                 listEl.appendChild(empty);
                 return;
@@ -1121,16 +1273,35 @@ try {
                 const row = document.createElement('div');
                 row.className = 'room-reservation-row';
 
-                const info = document.createElement('span');
-                const dateStr = r.reserved_date.slice(5).replace('-', '/');
-                info.textContent = dateStr + ' ' + r.start_time.slice(0, 5) + '〜' + r.end_time.slice(0, 5) + ' ' + r.name + 'さん' + (r.purpose ? '（' + r.purpose + '）' : '');
+                const [, m, d] = r.reserved_date.split('-');
+                const dateBadge = document.createElement('div');
+                dateBadge.className = 'room-reservation-date';
+                const monthEl = document.createElement('span');
+                monthEl.className = 'month';
+                monthEl.textContent = roomMonthNames[parseInt(m, 10) - 1];
+                const dayEl = document.createElement('span');
+                dayEl.className = 'day';
+                dayEl.textContent = parseInt(d, 10);
+                dateBadge.appendChild(monthEl);
+                dateBadge.appendChild(dayEl);
+                row.appendChild(dateBadge);
+
+                const info = document.createElement('div');
+                info.className = 'room-reservation-info';
+                const timeEl = document.createElement('div');
+                timeEl.className = 'room-reservation-time';
+                timeEl.textContent = r.start_time.slice(0, 5) + '〜' + r.end_time.slice(0, 5);
+                const whoEl = document.createElement('div');
+                whoEl.className = 'room-reservation-who';
+                whoEl.textContent = r.name + 'さん' + (r.purpose ? '・' + r.purpose : '');
+                info.appendChild(timeEl);
+                info.appendChild(whoEl);
                 row.appendChild(info);
 
                 if (r.is_mine) {
                     const cancelBtn = document.createElement('button');
                     cancelBtn.type = 'button';
-                    cancelBtn.className = 'btn-secondary';
-                    cancelBtn.style.cssText = 'padding: 4px 10px; font-size: 0.8rem;';
+                    cancelBtn.className = 'room-reservation-cancel';
                     cancelBtn.textContent = 'キャンセル';
                     cancelBtn.onclick = function() { cancelRoomReservation(r.id); };
                     row.appendChild(cancelBtn);
@@ -1177,7 +1348,7 @@ try {
             formData.append('csrf_token', roomCsrfToken);
 
             const submitBtn = this.querySelector('button[type="submit"]');
-            const originalLabel = submitBtn.textContent;
+            const originalLabel = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.textContent = '予約中...';
 
@@ -1185,7 +1356,7 @@ try {
                 .then(r => r.json())
                 .then(res => {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = originalLabel;
+                    submitBtn.innerHTML = originalLabel;
                     if (res.success) {
                         document.getElementById('roomReserveForm').reset();
                         loadRoomReservations();
@@ -1197,7 +1368,7 @@ try {
                 })
                 .catch(() => {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = originalLabel;
+                    submitBtn.innerHTML = originalLabel;
                     errBox.textContent = '通信に失敗しました。通信状況をご確認ください。';
                     errBox.style.display = 'block';
                 });

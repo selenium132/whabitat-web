@@ -160,7 +160,7 @@ function handleRoomPostback($event) {
 
     parse_str($event['postback']['data'] ?? '', $data);
     $action = $data['action'] ?? '';
-    if (!in_array($action, ['checkin', 'checkout', 'status', 'event'], true)) {
+    if (!in_array($action, ['toggle', 'status', 'event'], true)) {
         return;
     }
 
@@ -193,14 +193,15 @@ function handleRoomPostback($event) {
     $userId = (int)$user['id'];
 
     switch ($action) {
-        case 'checkin':
-            $result = roomCheckIn($pdo, $userId, 'line');
-            replyToLine($replyToken, $result['success'] ? "✅ 入室しました。" : "⚠️ " . $result['error']);
-            break;
-
-        case 'checkout':
-            $result = roomCheckOut($pdo, $userId, 'line');
-            replyToLine($replyToken, $result['success'] ? "👋 退室しました。" : "⚠️ " . $result['error']);
+        case 'toggle':
+            // 「部室入退出」は1ボタン。今の在室状態を見て入室/退室を自動判定する。
+            if (isUserPresent($pdo, $userId)) {
+                $result = roomCheckOut($pdo, $userId, 'line');
+                replyToLine($replyToken, $result['success'] ? "👋 退室しました。" : "⚠️ " . $result['error']);
+            } else {
+                $result = roomCheckIn($pdo, $userId, 'line');
+                replyToLine($replyToken, $result['success'] ? "✅ 入室しました。" : "⚠️ " . $result['error']);
+            }
             break;
 
         case 'status':
