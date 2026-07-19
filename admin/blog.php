@@ -255,8 +255,8 @@ $csrf_token = generateCsrfToken();
             font-size: 0.7rem;
             font-weight: 600;
         }
-        .status-published { background: #d4edda; color: #155724; }
-        .status-draft { background: #fff3cd; color: #856404; }
+        .status-published { background: #ecf2ed; color: #3f7d54; }
+        .status-draft { background: #f4eedd; color: #8f6526; }
         .checkbox-label {
             display: flex;
             align-items: center;
@@ -325,7 +325,7 @@ $csrf_token = generateCsrfToken();
                         <label class="form-label">サムネイル画像</label>
                         <?php if (!empty($edit_blog['thumbnail'])): ?>
                             <div style="margin-bottom: 10px;">
-                                <img src="../<?php echo htmlspecialchars($edit_blog['thumbnail']); ?>" 
+                                <img src="../<?php echo htmlspecialchars($edit_blog['thumbnail']); ?>" alt="現在のサムネイル"
                                      style="max-width: 200px; border-radius: 8px;">
                                 <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">現在のサムネイル</p>
                             </div>
@@ -338,7 +338,7 @@ $csrf_token = generateCsrfToken();
                             <input type="file" name="thumbnail_file" id="fileInput" accept="image/*" style="display: none;">
                         </div>
                         <div id="previewNew" style="display: none; margin-bottom: 1rem;">
-                            <img id="previewImg" style="max-width: 200px; border-radius: 8px;">
+                            <img id="previewImg" alt="新しいサムネイルのプレビュー" style="max-width: 200px; border-radius: 8px;">
                             <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">選択した画像</p>
                         </div>
                         
@@ -452,8 +452,8 @@ $csrf_token = generateCsrfToken();
         
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropZone.style.borderColor = '#667eea';
-            dropZone.style.background = '#f0f4ff';
+            dropZone.style.borderColor = '#1a1a1a';
+            dropZone.style.background = '#f7f5f0';
         });
         
         dropZone.addEventListener('dragleave', () => {

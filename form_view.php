@@ -423,9 +423,9 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             <!-- Title Header -->
             <div class="header-card">
                 <?php if (($event['type'] ?? 'event') === 'survey'): ?>
-                    <div style="display:inline-block;background:#6c5ce7;color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;margin-bottom:12px;">📋 アンケート</div>
+                    <div style="display:inline-block;background:#7d6a8e;color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;margin-bottom:12px;">📋 アンケート</div>
                 <?php else: ?>
-                    <div style="display:inline-block;background:#0984e3;color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;margin-bottom:12px;">📅 出欠確認</div>
+                    <div style="display:inline-block;background:#51666e;color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;margin-bottom:12px;">📅 出欠確認</div>
                 <?php endif; ?>
                 <h1 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h1>
                 <div class="event-desc"><?php echo htmlspecialchars($event['description']); ?></div>
@@ -437,7 +437,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                             <i class="fas fa-clock"></i> <?php echo htmlspecialchars($schedule_message); ?>
                         </div>
                     <?php else: ?>
-                        <span style="color: #d93025;">* 必須</span>
+                        <span style="color: var(--accent-red);">* 必須</span>
                         <?php if (!empty($event['close_at'])): ?>
                             <div style="margin-top: 8px; color: #888; font-size: 0.85rem;">
                                 <i class="fas fa-hourglass-end"></i> 締切: <?php echo date('Y年m月d日 H:i', strtotime($event['close_at'])); ?>
@@ -457,7 +457,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                             <i class="fas fa-clock"></i> このアンケートは回答期間外です。
                         </div>
                     <?php else: ?>
-                        <span style="color: #d93025;">* 必須</span>
+                        <span style="color: var(--accent-red);">* 必須</span>
                         <?php if (!empty($event['close_at'])): ?>
                             <div style="margin-top: 8px; color: #888; font-size: 0.85rem;">
                                 <i class="fas fa-hourglass-end"></i> 締切: <?php echo date('Y年m月d日 H:i', strtotime($event['close_at'])); ?>
@@ -630,7 +630,7 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
         ?>
         <?php if ($show_responses_link): ?>
         <div style="text-align: right; margin-top: 10px;">
-            <a href="form_responses.php?id=<?php echo $event_id; ?>" style="color: #1967d2; text-decoration: none; font-size: 14px;">
+            <a href="form_responses.php?id=<?php echo $event_id; ?>" style="color: var(--primary-color); text-decoration: underline; text-underline-offset: .2em; font-size: 14px;">
                 <i class="fas fa-list"></i> みんなの回答を見る
             </a>
         </div>
@@ -706,6 +706,8 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             }
 
             // Submit
+            const submitBtn = document.querySelector('.btn-submit');
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '.6'; }
             document.getElementById('entryForm').submit();
         }
 

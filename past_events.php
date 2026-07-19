@@ -37,7 +37,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>過去のイベント | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .restore-modal-overlay {
@@ -90,12 +90,12 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
             transition: all 0.2s;
         }
         .restore-option:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
+            border-color: var(--primary-color);
+            background: #f7f5f0;
         }
         .restore-option.selected {
-            border-color: #667eea;
-            background: #f0f2ff;
+            border-color: var(--primary-color);
+            background: #f2f0ea;
         }
         .restore-option h4 {
             margin: 0 0 4px;
@@ -155,7 +155,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
         .btn-restore {
             padding: 0.6rem 1.2rem;
             border: none;
-            background: #28a745;
+            background: var(--accent-green, #3f7d54);
             color: white;
             border-radius: 8px;
             cursor: pointer;
@@ -164,7 +164,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
             transition: all 0.2s;
         }
         .btn-restore:hover {
-            background: #218838;
+            background: #356a47;
         }
         .btn-restore:disabled {
             background: #ccc;
@@ -193,10 +193,10 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
             color: white;
             margin-right: 8px;
         }
-        .badge-survey { background: #6c5ce7; }
-        .badge-event { background: #0984e3; }
+        .badge-survey { background: #7d6a8e; }
+        .badge-event { background: #51666e; }
         .badge-archived { background: #6c757d; margin-left: 8px; font-size: 0.7rem; }
-        .badge-past-date { background: #e17055; margin-left: 8px; font-size: 0.7rem; }
+        .badge-past-date { background: #a8762e; margin-left: 8px; font-size: 0.7rem; }
 
         .action-buttons {
             display: flex;
@@ -306,7 +306,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
                                 <?php if ($is_archived || $is_past_date): ?>
                                     <!-- Restore Button -->
                                     <button type="button" class="btn-icon" 
-                                        style="background: #28a745; color: white;" 
+                                        style="background: var(--accent-green, #3f7d54); color: white;" 
                                         title="ダッシュボードに戻す"
                                         onclick="openRestoreModal(<?php echo $event['id']; ?>, '<?php echo htmlspecialchars(addslashes($event['title']), ENT_QUOTES); ?>', <?php echo $is_archived ? 'true' : 'false'; ?>, <?php echo $is_past_date ? 'true' : 'false'; ?>, '<?php echo $is_survey ? 'survey' : 'event'; ?>', '<?php echo date('Y-m-d\TH:i', strtotime($event['event_date'])); ?>')">
                                         <i class="fas fa-undo"></i> 戻す
@@ -315,7 +315,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
                                 
                                 <!-- Edit Button -->
                                 <a href="form_create.php?id=<?php echo $event['id']; ?>" class="btn-icon" 
-                                   style="background: #007bff; color: white;" title="編集">
+                                   style="background: var(--primary-color, #1a1a1a); color: white;" title="編集">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 
@@ -324,7 +324,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
                                     <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                                     <input type="hidden" name="id" value="<?php echo $event['id']; ?>">
                                     <button type="submit" class="btn-icon" 
-                                       style="background: #dc3545; color: white;"
+                                       style="background: var(--accent-red, #b0453a); color: white;"
                                        title="削除">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -341,7 +341,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
     <div class="restore-modal-overlay" id="restoreOverlay" onclick="if(event.target===this)closeRestoreModal()">
         <div class="restore-modal">
             <div class="restore-modal-header">
-                <h3><i class="fas fa-undo" style="color: #28a745;"></i> <span id="restoreModalTitle">イベントを復元</span></h3>
+                <h3><i class="fas fa-undo" style="color: var(--accent-green, #3f7d54);"></i> <span id="restoreModalTitle">イベントを復元</span></h3>
                 <button onclick="closeRestoreModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888;">&times;</button>
             </div>
             <div class="restore-modal-body">
@@ -351,13 +351,13 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
 
                 <!-- Option: Just unarchive (shown when archived but date is future) -->
                 <div class="restore-option" id="optionUnarchive" onclick="selectRestoreOption('unarchive')">
-                    <h4><i class="fas fa-box-open" style="color: #28a745;"></i> アーカイブ解除のみ</h4>
+                    <h4><i class="fas fa-box-open" style="color: var(--accent-green, #3f7d54);"></i> アーカイブ解除のみ</h4>
                     <p>アーカイブを解除してダッシュボードに戻します。日時はそのままです。</p>
                 </div>
 
                 <!-- Option: Change date (shown when date is past) -->
                 <div class="restore-option" id="optionRedate" onclick="selectRestoreOption('restore')">
-                    <h4><i class="fas fa-calendar-plus" style="color: #007bff;"></i> 日時を変更して戻す</h4>
+                    <h4><i class="fas fa-calendar-plus" style="color: var(--primary-color, #1a1a1a);"></i> 日時を変更して戻す</h4>
                     <p>新しい日時を設定してダッシュボードに戻します。</p>
                 </div>
 
@@ -419,7 +419,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
             if (eventType === 'survey') {
                 // For surveys, just unarchive is enough (they don't rely on date for display)
                 optUnarchive.style.display = 'block';
-                optUnarchive.querySelector('h4').innerHTML = '<i class="fas fa-box-open" style="color: #28a745;"></i> そのまま戻す';
+                optUnarchive.querySelector('h4').innerHTML = '<i class="fas fa-box-open" style="color: var(--accent-green, #3f7d54);"></i> そのまま戻す';
                 optUnarchive.querySelector('p').textContent = 'そのままダッシュボードに戻します。';
             }
             optRedate.style.display = 'block';
@@ -433,7 +433,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
         } else if (isPastDate && isArchived) {
             // Both: show both options
             optUnarchive.style.display = 'block';
-            optUnarchive.querySelector('h4').innerHTML = '<i class="fas fa-box-open" style="color: #28a745;"></i> アーカイブ解除のみ';
+            optUnarchive.querySelector('h4').innerHTML = '<i class="fas fa-box-open" style="color: var(--accent-green, #3f7d54);"></i> アーカイブ解除のみ';
             optUnarchive.querySelector('p').textContent = 'アーカイブを解除します（日時は過去のままなので再度表示されない場合があります）。';
             optRedate.style.display = 'block';
             
@@ -452,7 +452,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
         document.getElementById('restoreOverlay').classList.remove('active');
         // Reset labels
         const optUnarchive = document.getElementById('optionUnarchive');
-        optUnarchive.querySelector('h4').innerHTML = '<i class="fas fa-box-open" style="color: #28a745;"></i> アーカイブ解除のみ';
+        optUnarchive.querySelector('h4').innerHTML = '<i class="fas fa-box-open" style="color: var(--accent-green, #3f7d54);"></i> アーカイブ解除のみ';
         optUnarchive.querySelector('p').textContent = 'アーカイブを解除してダッシュボードに戻します。日時はそのままです。';
     }
 

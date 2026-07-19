@@ -7,12 +7,14 @@
     <link rel="apple-touch-icon" href="logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>国内単発ボランティア | WHABITAT</title>
+    <meta name="description" content="ゴミ拾い・農業・地域のお手伝い。身近なところから始める、地域に根ざしたボランティア。WHABITATの国内単発ボランティア活動を紹介します。">
+    <link rel="canonical" href="https://whabitathome.com/activity_domestic.php">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="WHABITAT">
     <meta property="og:title" content="国内単発ボランティア | WHABITAT">
     <meta property="og:description" content="ゴミ拾い・農業・地域のお手伝い。身近なところから始める、地域に根ざしたボランティア。">
     <meta property="og:url" content="https://whabitathome.com/activity_domestic.php">
-    <meta property="og:image" content="https://whabitathome.com/images/domestic/domestic_hero.jpg">
+    <meta property="og:image" content="https://whabitathome.com/images/domestic/domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/domestic/domestic_hero.jpg') ?: '1'; ?>">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
@@ -170,13 +172,13 @@
             <a href="index.php" class="logo">
                 <img src="logo.png" alt="WHABITAT" height="50">
             </a>
-            <button class="menu-toggle" aria-label="Toggle Menu">
+            <button class="menu-toggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="nav-list">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
             <nav>
-                <ul class="nav-list">
+                <ul class="nav-list" id="nav-list">
                     <li><a href="index.php#about" class="nav-link">About</a></li>
                     <li><a href="index.php#activities" class="nav-link">Activities</a></li>
                     <li><a href="index.php#blog" class="nav-link">Blog</a></li>
@@ -199,13 +201,15 @@
     <script>
         document.querySelector('.menu-toggle').addEventListener('click', function () {
             this.classList.toggle('active');
-            document.querySelector('.nav-list').classList.toggle('nav-open');
+            const isOpen = document.querySelector('.nav-list').classList.toggle('nav-open');
+            this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
 
         // Close menu when a link is clicked
         document.querySelectorAll('.nav-link, .btn-login').forEach(link => {
             link.addEventListener('click', () => {
                 document.querySelector('.menu-toggle').classList.remove('active');
+                document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
                 document.querySelector('.nav-list').classList.remove('nav-open');
             });
         });
@@ -397,7 +401,7 @@
                 <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="index.php#contact">Contact</a>
             </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter. All Rights Reserved.</p>
+            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter. All Rights Reserved.</p>
         </div>
     </footer>
 

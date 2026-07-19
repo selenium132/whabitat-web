@@ -317,7 +317,7 @@ try {
                         <div class="event-actions-wrap">
                             <div class="event-actions">
                                 <?php $answered = isset($user_responses[$event['id']]); ?>
-                                <a href="form_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
+                                <a href="form_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered) echo 'style="border:2px solid #3f7d54;color:#3f7d54;background:#ecf2ed;"'; ?>>
                                     <?php echo $answered ? '<i class="fas fa-check" style="margin-right:4px"></i>回答を変更' : '回答する'; ?>
                                 </a>
                                 <a href="form_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
@@ -368,7 +368,7 @@ try {
                         <div class="event-actions-wrap">
                             <div class="event-actions">
                                 <?php $answered_s = isset($user_responses[$event['id']]); ?>
-                                <a href="form_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered_s ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered_s) echo 'style="border:2px solid #28a745;color:#28a745;background:#f0fff4;"'; ?>>
+                                <a href="form_view.php?id=<?php echo $event['id']; ?>" class="<?php echo $answered_s ? 'btn-secondary' : 'btn-primary'; ?> btn-answer" <?php if ($answered_s) echo 'style="border:2px solid #3f7d54;color:#3f7d54;background:#ecf2ed;"'; ?>>
                                     <?php echo $answered_s ? '<i class="fas fa-check" style="margin-right:4px"></i>回答を変更' : '回答する'; ?>
                                 </a>
                                 <a href="form_responses.php?id=<?php echo $event['id']; ?>" class="btn-secondary btn-status">
@@ -402,13 +402,13 @@ try {
             <!-- わびカレンダー -->
             <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem; scroll-margin-top: 80px;"><span aria-hidden="true">📅</span> わびカレンダー</h2>
             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.75rem;">
-                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #667eea; border-radius: 2px;"></span>イベント</span>
-                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #28a745; border-radius: 2px;"></span>派遣</span>
-                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #17a2b8; border-radius: 2px;"></span>mtg</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #667eea; border-radius: 2px;"></span>イベント</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #28a745; border-radius: 2px;"></span>派遣</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #17a2b8; border-radius: 2px;"></span>mtg</span>
                 <?php if ($_SESSION['role'] === 'admin'): ?>
-                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #dc3545; border-radius: 2px;"></span>🔒幹部関連</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #dc3545; border-radius: 2px;"></span>🔒幹部関連</span>
                 <?php endif; ?>
-                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #6c757d; border-radius: 2px;"></span>その他</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #6c757d; border-radius: 2px;"></span>その他</span>
             </div>
             <div class="card" style="padding: 0; overflow: hidden;">
                 <div style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
@@ -539,7 +539,7 @@ try {
                 <!-- Day headers -->
                 <div style="display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 1px solid #eee;">
                     <?php foreach (['日', '月', '火', '水', '木', '金', '土'] as $i => $d): ?>
-                        <div style="padding: 6px 4px; text-align: center; font-size: 0.7rem; font-weight: 500; color: <?php echo $i === 0 ? '#dc3545' : ($i === 6 ? '#007bff' : '#888'); ?>;"><?php echo $d; ?></div>
+                        <div style="padding: 6px 4px; text-align: center; font-size: 0.7rem; font-weight: 500; color: <?php echo $i === 0 ? '#b0453a' : ($i === 6 ? '#51666e' : '#888'); ?>;"><?php echo $d; ?></div>
                     <?php endforeach; ?>
                 </div>
                 
@@ -654,7 +654,7 @@ try {
                                 <?php if ($day): 
                                     $is_today = ($is_current_month && $day == date('j'));
                                     ?>
-                                    <span style="<?php if ($is_today): ?>background: var(--primary-color); color: white; border-radius: 50%; padding: 3px 7px; font-weight: 600;<?php endif; ?> <?php echo $i === 0 ? 'color: #dc3545;' : ($i === 6 ? 'color: #007bff;' : ''); ?> font-size: 0.85rem;"><?php echo $day; ?></span>
+                                    <span style="<?php if ($is_today): ?>background: var(--primary-color); color: white; border-radius: 50%; padding: 3px 7px; font-weight: 600;<?php endif; ?> <?php echo $i === 0 ? 'color: #b0453a;' : ($i === 6 ? 'color: #51666e;' : ''); ?> font-size: 0.85rem;"><?php echo $day; ?></span>
                                     
                                     <div style="margin-top: 2px; display: flex; flex-direction: column; gap: 1px;">
                                         <?php for($r=0; $r<=$max_row_used; $r++): ?>
@@ -1117,7 +1117,7 @@ try {
         <div style="background: white; border-radius: 16px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
             <div style="padding: 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
                 <h3 id="modalTitle" style="margin: 0; font-size: 1.2rem;">予定を追加</h3>
-                <button onclick="closeCalendarModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888;">&times;</button>
+                <button onclick="closeCalendarModal()" aria-label="閉じる" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888;">&times;</button>
             </div>
             <form id="calendarForm" style="padding: 1.5rem;">
                 <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">

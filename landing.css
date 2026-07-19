@@ -257,8 +257,27 @@ section { padding: 8rem 0; }
     border: 1px solid var(--lp-line); background: transparent;
     padding: .25rem .7rem; border-radius: 999px; margin-bottom: .9rem;
 }
-/* 地名などインライン色指定を控えめなグレーへ */
-.activity-content [style*="color"] { color: var(--lp-muted) !important; }
+/* 説明文・メタ行（地名/時間）は控えめなグレーで統一 */
+.activity-desc { font-size: .9rem; color: var(--lp-muted); margin-bottom: 1rem; }
+.activity-desc-list { padding-left: 1.2rem; }
+.activity-desc-list li { margin-bottom: .3rem; }
+.activity-desc-list li:last-child { margin-bottom: 0; }
+.activity-meta { font-size: .85rem; color: var(--lp-muted); font-weight: 600; }
+.activity-meta + .activity-meta { margin-top: .5rem; }
+
+/* フォーム送信結果の通知（罫線基調・モノトーン） */
+.form-notice {
+    border: 1px solid var(--lp-line);
+    border-left: 2px solid var(--lp-ink);
+    background: var(--lp-paper-2);
+    color: var(--lp-ink);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: .92rem;
+    border-radius: 4px;
+}
+.form-notice--error { border-left-color: #b0453a; color: #8f3a31; }
 @media (max-width: 680px) { .activity-grid { grid-template-columns: 1fr; } }
 
 /* =========================================================

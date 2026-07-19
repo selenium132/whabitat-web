@@ -22,6 +22,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog | WHABITAT</title>
     <meta name="description" content="WHABITAT（ワビタット）の活動報告やお知らせをお届けします。">
+    <link rel="canonical" href="https://whabitathome.com/blog.php">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="WHABITAT">
     <meta property="og:title" content="Blog | WHABITAT">
@@ -228,6 +229,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                     <li><a href="index.php#about" class="nav-link">About</a></li>
                     <li><a href="index.php#activities" class="nav-link">Activities</a></li>
                     <li><a href="blog.php" class="nav-link">Blog</a></li>
+                    <li><a href="index.php#join" class="nav-link">Join</a></li>
                     <li><a href="index.php#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i
@@ -326,7 +328,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="index.php#contact">Contact</a>
             </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter.
+            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter.
                 All Rights Reserved.</p>
         </div>
     </footer>

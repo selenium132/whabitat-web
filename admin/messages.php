@@ -171,19 +171,19 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
             gap: 0.2rem;
         }
         .btn-read {
-            background: #28a745;
+            background: #3f7d54;
         }
         .btn-read:hover {
-            background: #218838;
+            background: #356a47;
         }
         .btn-delete {
             background: #6c757d;
         }
         .btn-delete:hover {
-            background: #dc3545;
+            background: #9a3c32;
         }
         .unread-badge {
-            background: #dc3545;
+            background: #b0453a;
             color: white;
             padding: 2px 8px;
             border-radius: 12px;
@@ -228,7 +228,7 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                     <form method="POST" style="display: inline;">
                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                         <input type="hidden" name="mark_all_read" value="1">
-                        <button type="submit" class="filter-btn" style="background: #28a745; color: white; border-color: #28a745; border-radius: 20px; padding: 0.5rem 1rem;">
+                        <button type="submit" class="filter-btn" style="background: #3f7d54; color: white; border-color: #3f7d54; border-radius: 20px; padding: 0.5rem 1rem;">
                             <i class="fas fa-check-double"></i> すべて既読
                         </button>
                     </form>

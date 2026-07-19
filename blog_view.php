@@ -56,6 +56,7 @@ $og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="description" content="<?php echo htmlspecialchars($og_description); ?>">
+    <link rel="canonical" href="<?php echo htmlspecialchars($og_url); ?>">
 
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
@@ -284,6 +285,7 @@ $og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
                     <li><a href="index.php#about" class="nav-link">About</a></li>
                     <li><a href="index.php#activities" class="nav-link">Activities</a></li>
                     <li><a href="blog.php" class="nav-link">Blog</a></li>
+                    <li><a href="index.php#join" class="nav-link">Join</a></li>
                     <li><a href="index.php#contact" class="nav-link">Contact</a></li>
                     <li>
                         <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i
@@ -450,7 +452,7 @@ $og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
                 <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="index.php#contact">Contact</a>
             </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter.
+            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter.
                 All Rights Reserved.</p>
         </div>
     </footer>

@@ -80,7 +80,7 @@ if ($user) {
     $_SESSION['is_approved'] = $user['is_approved']; // Set Approval Status
     
     // If profile is incomplete, force update
-    if (empty($user['name']) || empty($user['student_id'])) {
+    if (!isProfileComplete($user)) {
         header("Location: register_profile.php");
     } else {
         if (!empty($_SESSION['redirect_after_login'])) {

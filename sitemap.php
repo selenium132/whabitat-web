@@ -4,6 +4,7 @@
 require_once 'config.php';
 
 header('Content-Type: application/xml; charset=UTF-8');
+header('Cache-Control: public, max-age=3600');
 
 $base = 'https://whabitathome.com';
 

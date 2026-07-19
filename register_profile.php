@@ -156,7 +156,7 @@ $is_first_registration = empty($current_user['name']);
                 <?php endif; ?>
                 
                 <?php if ($error): ?>
-                    <p style="color: #e74c3c; text-align: center; margin-bottom: 1rem;"><?php echo htmlspecialchars($error); ?></p>
+                    <p style="color: var(--accent-red); text-align: center; margin-bottom: 1rem;"><?php echo htmlspecialchars($error); ?></p>
                 <?php endif; ?>
 
                 <form method="POST">
@@ -167,21 +167,21 @@ $is_first_registration = empty($current_user['name']);
                         <h2 style="font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;"><i class="fas fa-user"></i> 基本情報</h2>
                         
                         <div class="form-group">
-                            <label class="form-label">氏名（正式名フルネーム） <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">氏名（正式名フルネーム） <span style="color: var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※姓と名の間は全角スペースを1文字空ける</p>
                             <input type="text" name="name" class="form-input" required placeholder="例：早稲田　太郎" value="<?php echo htmlspecialchars($name_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">氏名（ふりがな） <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">氏名（ふりがな） <span style="color: var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※姓と名の間は全角スペースを1文字空ける</p>
                             <input type="text" name="name_kana" class="form-input" required placeholder="例：わせだ　たろう" value="<?php echo htmlspecialchars($name_kana_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">メールアドレス <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">メールアドレス <span style="color: var(--accent-red);">*</span></label>
                             <input type="email" name="email" class="form-input" required placeholder="例：waseda@example.com" value="<?php echo htmlspecialchars($email_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">性別 <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">性別 <span style="color: var(--accent-red);">*</span></label>
                             <select name="gender" class="form-select" required>
                                 <option value="">選択してください</option>
                                 <option value="male" <?php echo $gender_val === 'male' ? 'selected' : ''; ?>>男</option>
@@ -190,7 +190,7 @@ $is_first_registration = empty($current_user['name']);
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">生年月日 <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">生年月日 <span style="color: var(--accent-red);">*</span></label>
                             <input type="date" name="birthdate" class="form-input" required value="<?php echo htmlspecialchars($birthdate_val); ?>">
                         </div>
                     </div>
@@ -199,7 +199,7 @@ $is_first_registration = empty($current_user['name']);
                         <h2 style="font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;"><i class="fas fa-graduation-cap"></i> 大学情報</h2>
 
                         <div class="form-group">
-                            <label class="form-label">代 <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">代 <span style="color: var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※自分が何代目か選択してください</p>
                             <select name="grade" class="form-select" required>
                                 <option value="">選択してください</option>
@@ -225,7 +225,7 @@ $is_first_registration = empty($current_user['name']);
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">学部 <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">学部 <span style="color: var(--accent-red);">*</span></label>
                             <select name="faculty" class="form-select" required>
                                 <option value="">選択してください</option>
                                 <?php foreach ($waseda_faculties as $f): ?>
@@ -238,7 +238,7 @@ $is_first_registration = empty($current_user['name']);
                             <input type="text" name="department" class="form-input" placeholder="任意" value="<?php echo htmlspecialchars($department_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">学籍番号（ハイフン以下不要）<span style="color:red;">*</span></label>
+                            <label class="form-label">学籍番号（ハイフン以下不要）<span style="color:var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※必須です。ハイフン以下（－以降）は入力不要です。学籍番号がまだ無い方は運営に連絡してください。</p>
                             <input type="text" name="student_id" class="form-input" placeholder="例：1A234567" value="<?php echo htmlspecialchars($sid_val); ?>">
                         </div>
@@ -248,19 +248,19 @@ $is_first_registration = empty($current_user['name']);
                         <h2 style="font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;"><i class="fas fa-home"></i> 連絡先・その他</h2>
 
                         <div class="form-group">
-                            <label class="form-label">郵便番号（ハイフンあり） <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">郵便番号（ハイフンあり） <span style="color: var(--accent-red);">*</span></label>
                             <div style="position: relative;">
                                 <input type="text" name="zipcode" id="zipcode" class="form-input" required placeholder="例：169-8050" value="<?php echo htmlspecialchars($zipcode_val); ?>">
                                 <span id="zipcode-loading" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#999; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> 検索中...</span>
                             </div>
-                            <p id="zipcode-error" style="font-size:0.8rem; color:#e74c3c; margin-top:0.3rem; display:none;"></p>
+                            <p id="zipcode-error" style="font-size:0.8rem; color:var(--accent-red); margin-top:0.3rem; display:none;"></p>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">住所 <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">住所 <span style="color: var(--accent-red);">*</span></label>
                             <input type="text" name="address" id="address" class="form-input" required placeholder="例：東京都新宿区戸塚町1-104" value="<?php echo htmlspecialchars($address_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">携帯電話番号 <span style="color: #e74c3c;">*</span></label>
+                            <label class="form-label">携帯電話番号 <span style="color: var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">例: 000-0000-0000</p>
                             <input type="text" name="phone" class="form-input" required placeholder="例：090-1234-5678" value="<?php echo htmlspecialchars($phone_val); ?>">
                         </div>

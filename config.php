@@ -144,8 +144,26 @@ function generateCsrfToken() {
 // Helper: Validate CSRF Token
 function validateCsrfToken($token) {
     if (empty($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-        die('Invalid CSRF Token');
+        http_response_code(400);
+        header('Content-Type: text/html; charset=utf-8');
+        die('セッションの有効期限が切れました。前のページに戻り、再読み込みしてからもう一度お試しください。');
     }
+}
+
+// Helper: プロフィール必須項目が全て埋まっているか（requireLogin と callback.php で共用）
+function isProfileComplete(array $user) {
+    return !(
+        empty($user['name']) ||
+        empty($user['name_kana']) ||
+        empty($user['email']) ||
+        empty($user['gender']) ||
+        empty($user['zipcode']) ||
+        empty($user['address']) ||
+        empty($user['phone']) ||
+        empty($user['birthdate']) ||
+        empty($user['grade']) ||
+        empty($user['student_id'])
+    );
 }
 
 // Helper: Check Login & Approval
@@ -186,18 +204,7 @@ function requireLogin() {
         $_SESSION['is_approved'] = $user['is_approved'];
         $_SESSION['role'] = $user['role']; // Also sync role in case of promotion/demotion
 
-        // Check if profile is missing any of the newly added required fields
-        $profile_incomplete = (
-            empty($user['name_kana']) ||
-            empty($user['email']) ||
-            empty($user['gender']) ||
-            empty($user['zipcode']) ||
-            empty($user['address']) ||
-            empty($user['phone']) ||
-            empty($user['birthdate']) ||
-            empty($user['grade']) ||
-            empty($user['student_id'])
-        );
+        $profile_incomplete = !isProfileComplete($user);
 
     } catch (PDOException $e) {
         die("Database Error during auth check.");

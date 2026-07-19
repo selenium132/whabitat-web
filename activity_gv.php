@@ -8,12 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GV (Global Village) | WHABITAT</title>
     <meta name="description" content="GV（Global Village）は、国際NGO Habitat for Humanity が世界中で展開する海外住居建築ボランティアプログラムです。WHABITATの渡航実績やGVの流れ、よくある質問を紹介します。">
+    <link rel="canonical" href="https://whabitathome.com/activity_gv.php">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="WHABITAT">
     <meta property="og:title" content="GV (Global Village) | WHABITAT">
     <meta property="og:description" content="国際NGO Habitat for Humanity が世界で展開する、海外住居建築ボランティア。開発途上国へ渡航し、現地で家づくりに参加します。">
     <meta property="og:url" content="https://whabitathome.com/activity_gv.php">
-    <meta property="og:image" content="https://whabitathome.com/images/gv/gv_hero.jpg">
+    <meta property="og:image" content="https://whabitathome.com/images/gv/gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/gv/gv_hero.jpg') ?: '1'; ?>">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
@@ -437,7 +438,7 @@
                 <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="index.php#contact">Contact</a>
             </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter. All Rights Reserved.</p>
+            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter. All Rights Reserved.</p>
         </div>
     </footer>
 

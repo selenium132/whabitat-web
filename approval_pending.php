@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
     <main>
         <div class="dashboard-container" style="max-width: 600px; margin-top: 150px;">
             <div class="card" style="text-align: center; padding: 3rem 2rem;">
-                <div style="font-size: 4rem; color: var(--accent-color); margin-bottom: 1.5rem;">
+                <div style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1.5rem;">
                     <i class="fas fa-clock"></i>
                 </div>
                 <h1 style="font-size: 2rem; margin-bottom: 1.5rem;">承認待ちです</h1>
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
                     <p style="margin-bottom: 1rem; font-weight: 600; color: var(--primary-color);">合言葉をお持ちの方はこちら</p>
                     
                     <?php if ($error_msg): ?>
-                        <div style="color: #d93025; font-size: 0.9rem; margin-bottom: 10px;">
+                        <div style="color: var(--accent-red); font-size: 0.9rem; margin-bottom: 10px;">
                             <i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error_msg); ?>
                         </div>
                     <?php endif; ?>

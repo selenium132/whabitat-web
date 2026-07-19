@@ -42,6 +42,7 @@ function al_label($action, $map) {
         h1 { font-size: 1.3rem; font-weight: 600; }
         .lead { color: #555; font-size: .9rem; line-height: 1.6; margin-bottom: 1rem; }
         a.back { display: inline-block; margin-bottom: 1rem; color: #333; font-size: .85rem; }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { border-collapse: collapse; width: 100%; font-size: .85rem; }
         th, td { border: 1px solid #e2e2e2; padding: .45rem .6rem; text-align: left; vertical-align: top; white-space: nowrap; }
         th { background: #f5f5f5; font-weight: 600; }
@@ -65,6 +66,7 @@ function al_label($action, $map) {
     <?php if (empty($logs)): ?>
         <p class="none">まだ記録はありません。</p>
     <?php else: ?>
+        <div class="table-wrap">
         <table>
             <thead>
                 <tr>
@@ -97,6 +99,7 @@ function al_label($action, $map) {
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     <?php endif; ?>
 </body>
 </html>

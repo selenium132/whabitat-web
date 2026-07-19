@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $verify_result = file_get_contents($verify_url, false, $context);
     $verify_json = json_decode($verify_result, true);
 
-    if (!$verify_json['success']) {
+    if (!($verify_json['success'] ?? false)) {
         $_SESSION['contact_error'] = 'reCAPTCHAの確認に失敗しました。もう一度お試しください。';
         header("Location: index.php#contact");
         exit;

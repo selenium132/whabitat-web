@@ -317,9 +317,9 @@ try {
                     <div class="activity-content">
                         <span class="activity-tag">Main Event</span>
                         <h3>GV (Global Village)</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
+                        <p class="activity-desc">
                             海外住居建築ボランティア。開発途上国へ渡航し、約2週間かけて「家を建てる」手伝いをします。</p>
-                        <div style="font-size: 0.85rem; color: var(--accent-red); font-weight: 600;">
+                        <div class="activity-meta">
                             <i class="fas fa-map-marker-alt"></i> ネパール、カンボジア、ベトナムなど
                         </div>
                     </div>
@@ -333,9 +333,9 @@ try {
                     <div class="activity-content">
                         <span class="activity-tag">Domestic</span>
                         <h3>JV (Japan Village)</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
+                        <p class="activity-desc">
                             国内派遣ボランティア。日本各地の地域活性化、古民家再生、農業支援などを行います。</p>
-                        <div style="font-size: 0.85rem; color: var(--accent-green); font-weight: 600;">
+                        <div class="activity-meta">
                             <i class="fas fa-map-marker-alt"></i> 日本全国各地
                         </div>
                     </div>
@@ -349,12 +349,12 @@ try {
                     <div class="activity-content">
                         <span class="activity-tag">Meeting</span>
                         <h3>全体ミーティング (MTG)</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
+                        <p class="activity-desc">
                             アイスブレイクで交流を深めたり、貧困・環境問題やボランティアの意義について学ぶ勉強会・ディスカッションを行います。</p>
-                        <div style="font-size: 0.85rem; color: var(--accent-blue); font-weight: 600; margin-bottom: 0.5rem;">
+                        <div class="activity-meta">
                             <i class="far fa-clock"></i> 毎週水曜 6限（19:00〜）
                         </div>
-                        <div style="font-size: 0.85rem; color: var(--text-color); font-weight: 600;">
+                        <div class="activity-meta">
                             <i class="fas fa-map-marker-alt"></i> 早稲田キャンパス15号館 / 奉仕園
                         </div>
                     </div>
@@ -368,13 +368,13 @@ try {
                     <div class="activity-content">
                         <span class="activity-tag">Domestic Volunteer</span>
                         <h3>国内単発ボランティア</h3>
-                        <ul style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; padding-left: 1.2rem;">
-                            <li style="margin-bottom: 0.3rem;">ゴミ拾い（渋谷、早稲田周辺など）</li>
-                            <li style="margin-bottom: 0.3rem;">農業ボランティア（東京地球農園など）</li>
-                            <li style="margin-bottom: 0.3rem;">地域連携（お祭り手伝い、防災など）</li>
+                        <ul class="activity-desc activity-desc-list">
+                            <li>ゴミ拾い（渋谷、早稲田周辺など）</li>
+                            <li>農業ボランティア（東京地球農園など）</li>
+                            <li>地域連携（お祭り手伝い、防災など）</li>
                             <li>短期合宿（新潟、山梨など 1〜3泊）</li>
                         </ul>
-                        <div style="font-size: 0.85rem; color: var(--accent-green); font-weight: 600;">
+                        <div class="activity-meta">
                             <i class="fas fa-map-marker-alt"></i> 都内近郊および地方各地
                         </div>
                     </div>
@@ -474,16 +474,14 @@ try {
             <h2 class="section-title fade-in"><span>Contact</span></h2>
             <div class="contact-form fade-in">
                 <?php if (isset($_SESSION['contact_success']) && $_SESSION['contact_success']): ?>
-                <div
-                    style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+                <div class="form-notice">
                     メッセージを送信しました。ありがとうございます！
                 </div>
                 <?php unset($_SESSION['contact_success']); ?>
                 <?php endif; ?>
-                
+
                 <?php if (isset($_SESSION['contact_error'])): ?>
-                <div
-                    style="background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+                <div class="form-notice form-notice--error">
                     <?php echo htmlspecialchars($_SESSION['contact_error']); ?>
                 </div>
                 <?php unset($_SESSION['contact_error']); ?>
@@ -524,7 +522,7 @@ try {
                 <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="#contact">Contact</a>
             </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter.
+            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter.
                 All Rights Reserved.</p>
         </div>
     </footer>

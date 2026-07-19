@@ -97,12 +97,39 @@ body .status-join    { background: #ecf2ed; color: #3f7d54; }
 body .status-decline { background: #f6ebe9; color: #b0453a; }
 body .status-maybe   { background: #f4eedd; color: #8f6526; }
 
+/* カレンダー分類色: 意味は保ち彩度だけ落とす（DB保存色にも効くよう filter で一括） */
+.event-bar, .cat-btn, .cal-dot { filter: saturate(.55) brightness(.92); }
+
 /* ページ固有の原色を世界観に合わせて調和 */
 /* past_events: 復元モーダルの選択枠（紫 → 墨） */
 body .restore-option:hover { border-color: var(--primary-color); background: #f7f5f0; }
 body .restore-option.selected { border-color: var(--primary-color); background: #f2f0ea; }
 /* form_create: 保存/追加ボタンのホバー（青暗 → 墨2） */
 body .float-btn.add-q:hover, body .btn-save:hover { background-color: #2e2e2e; }
+/* form_responses: Googleシート連携ボタン（Google緑の直書き → 墨のフラット） */
+body .btn-sheet {
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: .9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: 1px solid var(--primary-color);
+}
+body .btn-sheet:hover { background-color: #2e2e2e; color: #fff; }
+
+/* admin/mtg_history: カードを共通カードと同じ罫線基調に（丸み・影の旧デザインを解消） */
+body .form-card, body .entry-item {
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+    border-radius: 12px;
+}
+
 /* admin/mtg_history: 編集ボタン・戻るリンク（紫 → 墨）、削除は減彩赤 */
 body .btn-edit { background: var(--primary-color); }
 body .btn-delete { background: var(--accent-red); }

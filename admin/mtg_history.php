@@ -193,7 +193,7 @@ $csrf_token = generateCsrfToken();
                     <label class="form-label">画像<?php echo $edit_entry ? ' (変更する場合のみ)' : ''; ?></label>
                     <?php if ($edit_entry && $edit_entry['image_path']): ?>
                         <div style="margin-bottom: 10px;">
-                            <img src="../<?php echo htmlspecialchars($edit_entry['image_path']); ?>" style="max-width: 150px; border-radius: 6px;">
+                            <img src="../<?php echo htmlspecialchars($edit_entry['image_path']); ?>" alt="現在の画像" style="max-width: 150px; border-radius: 6px;">
                         </div>
                     <?php endif; ?>
                     <input type="file" name="image" accept="image/*" class="form-input">
@@ -219,7 +219,7 @@ $csrf_token = generateCsrfToken();
                 <?php foreach ($entries as $entry): ?>
                     <div class="entry-item">
                         <?php if ($entry['image_path']): ?>
-                            <img src="../<?php echo htmlspecialchars($entry['image_path']); ?>" alt="">
+                            <img src="../<?php echo htmlspecialchars($entry['image_path']); ?>" alt="<?php echo htmlspecialchars($entry['title']); ?>">
                         <?php else: ?>
                             <div style="width: 80px; height: 60px; background: #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #999;">
                                 <i class="fas fa-image"></i>

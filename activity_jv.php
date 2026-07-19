@@ -8,12 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JV (Japan Village) | WHABITAT</title>
     <meta name="description" content="JV (Japan Village) は、WHABITAT の国内派遣型ボランティアです。日本全国の地域へ夏休みの1週間、チームで派遣され、農作業・環境整備・文化交流などに取り組みます。">
+    <link rel="canonical" href="https://whabitathome.com/activity_jv.php">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="WHABITAT">
     <meta property="og:title" content="JV (Japan Village) | WHABITAT">
     <meta property="og:description" content="日本全国の地域へ、夏休みの1週間、国内派遣型ボランティア。農作業・環境整備・文化交流などに取り組みます。">
     <meta property="og:url" content="https://whabitathome.com/activity_jv.php">
-    <meta property="og:image" content="https://whabitathome.com/images/jv/jv.jpg">
+    <meta property="og:image" content="https://whabitathome.com/images/jv/jv.jpg?v=<?php echo @filemtime(__DIR__ . '/images/jv/jv.jpg') ?: '1'; ?>">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
@@ -691,7 +692,7 @@
                 <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
                 <a href="index.php#contact">Contact</a>
             </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; 2025 WHABITAT Waseda University Chapter. All Rights Reserved.</p>
+            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter. All Rights Reserved.</p>
         </div>
     </footer>
 

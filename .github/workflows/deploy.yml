@@ -38,3 +38,4 @@ jobs:
             **/node_modules/**
             old_wp_backup/**
             .env.example
+            **/*.md

@@ -53,13 +53,14 @@ foreach ($members as $m) {
         .lead { color: #555; font-size: .9rem; line-height: 1.6; margin-bottom: 1rem; }
         .count { font-weight: 600; }
         a.back { display: inline-block; margin-bottom: 1rem; color: #333; font-size: .85rem; }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { border-collapse: collapse; width: 100%; font-size: .85rem; }
         th, td { border: 1px solid #e2e2e2; padding: .5rem .6rem; text-align: left; vertical-align: top; }
         th { background: #f5f5f5; font-weight: 600; }
         tr:nth-child(even) td { background: #fafafa; }
-        .missing { color: #b00; font-weight: 600; }
+        .missing { color: #b0453a; font-weight: 600; }
         .pending { color: #888; font-size: .8rem; }
-        .none { color: #2a7; font-weight: 600; padding: 1rem 0; }
+        .none { color: #3f7d54; font-weight: 600; padding: 1rem 0; }
     </style>
 </head>
 <body>
@@ -73,6 +74,7 @@ foreach ($members as $m) {
     <?php if (empty($incomplete)): ?>
         <p class="none">未入力者はいません 🎉</p>
     <?php else: ?>
+        <div class="table-wrap">
         <table>
             <thead>
                 <tr>
@@ -97,6 +99,7 @@ foreach ($members as $m) {
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     <?php endif; ?>
 </body>
 </html>
