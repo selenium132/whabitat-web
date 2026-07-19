@@ -80,17 +80,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($action === 'add') {
                 $stmt = $pdo->prepare("INSERT INTO activity_teams (type, year_label, team_name, tag1, tag2, instagram_url, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$type, $year_label, $team_name, $tag1, $tag2, $instagram_url, $image_path]);
+                $id = (int)$pdo->lastInsertId();
                 $success = 'チームを追加しました。';
             } else {
                 $stmt = $pdo->prepare("UPDATE activity_teams SET type = ?, year_label = ?, team_name = ?, tag1 = ?, tag2 = ?, instagram_url = ?, image_path = ? WHERE id = ?");
                 $stmt->execute([$type, $year_label, $team_name, $tag1, $tag2, $instagram_url, $image_path, $id]);
                 $success = 'チームを更新しました。';
             }
+
+            // チームメンバーの紐付けを同期（実在する会員IDのみ受け付ける）
+            $posted_ids = array_map('intval', (array)($_POST['member_ids'] ?? []));
+            $valid_ids = array_map('intval', $pdo->query("SELECT id FROM users")->fetchAll(PDO::FETCH_COLUMN));
+            $member_ids = array_values(array_intersect(array_unique($posted_ids), $valid_ids));
+            $pdo->prepare("DELETE FROM activity_team_members WHERE team_id = ?")->execute([$id]);
+            if ($member_ids) {
+                $ins = $pdo->prepare("INSERT INTO activity_team_members (team_id, user_id) VALUES (?, ?)");
+                foreach ($member_ids as $uid) {
+                    $ins->execute([$id, $uid]);
+                }
+            }
         } elseif (!$error) {
             $error = 'チーム名と年度は必須です。';
         }
     } elseif ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
+        $pdo->prepare("DELETE FROM activity_team_members WHERE team_id = ?")->execute([$id]);
         $stmt = $pdo->prepare("DELETE FROM activity_teams WHERE id = ?");
         $stmt->execute([$id]);
         $success = 'チームを削除しました。';
@@ -138,6 +152,19 @@ if ($edit_team) {
     }
 }
 
+// メンバー選択用: 承認済み会員（代の新しい順 → 名前順）
+$all_members = $pdo->query("SELECT id, name, name_kana, grade FROM users WHERE is_approved = 1 AND name IS NOT NULL AND name != '' ORDER BY CAST(grade AS UNSIGNED) DESC, name COLLATE utf8mb4_unicode_ci ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+// チームごとの所属メンバー（一覧表示 + 編集時のプリチェック用）
+$team_member_map = [];   // team_id => [user_id, ...]
+$team_member_names = []; // team_id => [name, ...]
+$mrows = $pdo->query("SELECT tm.team_id, tm.user_id, u.name FROM activity_team_members tm JOIN users u ON u.id = tm.user_id ORDER BY u.name COLLATE utf8mb4_unicode_ci ASC")->fetchAll(PDO::FETCH_ASSOC);
+foreach ($mrows as $r) {
+    $team_member_map[$r['team_id']][] = (int)$r['user_id'];
+    $team_member_names[$r['team_id']][] = $r['name'];
+}
+$edit_member_ids = $edit_team ? ($team_member_map[$edit_team['id']] ?? []) : [];
+
 $csrf_token = generateCsrfToken();
 ?>
 <!DOCTYPE html>
@@ -178,6 +205,13 @@ $csrf_token = generateCsrfToken();
         .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
         .field-note { font-size: .8rem; color: #888; margin-top: 4px; }
         .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .member-picker { max-height: 220px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 4px; display: flex; flex-direction: column; }
+        .member-pick { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: .92rem; }
+        .member-pick:hover { background: #f5f3ee; }
+        .member-pick input { accent-color: #1a1a1a; }
+        .member-pick-grade { margin-left: auto; font-size: .78rem; color: #999; }
+        .entry-members { font-size: .8rem; color: #666; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .entry-members.is-empty { color: #aaa; }
         .admin-container h1 { font-size: 1.6rem; }
 
         @media (max-width: 640px) {
@@ -279,6 +313,25 @@ $csrf_token = generateCsrfToken();
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label">チームメンバー <span class="field-note" style="display:inline;">（<span id="memberSelCount">0</span>名選択中・サイト内の管理用で、公開ページには表示されません）</span></label>
+                    <input type="text" id="memberSearch" class="form-input" placeholder="名前・ふりがな・代で絞り込み" style="margin-bottom: 8px;" oninput="filterMemberList()">
+                    <div class="member-picker" id="memberPicker">
+                        <?php foreach ($all_members as $mem): ?>
+                            <label class="member-pick" data-search="<?php echo htmlspecialchars(mb_strtolower(($mem['name'] ?? '') . ' ' . ($mem['name_kana'] ?? '') . ' ' . ($mem['grade'] ?? ''))); ?>">
+                                <input type="checkbox" name="member_ids[]" value="<?php echo (int)$mem['id']; ?>"
+                                       <?php echo in_array((int)$mem['id'], $edit_member_ids, true) ? 'checked' : ''; ?>
+                                       onchange="updateMemberCount()">
+                                <span class="member-pick-name"><?php echo htmlspecialchars($mem['name']); ?></span>
+                                <span class="member-pick-grade"><?php echo htmlspecialchars($mem['grade'] ?? ''); ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                        <?php if (empty($all_members)): ?>
+                            <p class="field-note" style="padding: 8px;">承認済みの会員がいません。</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label" for="team-insta">Instagram URL</label>
                     <input type="url" name="instagram_url" id="team-insta" class="form-input"
                            placeholder="https://www.instagram.com/..."
@@ -339,6 +392,10 @@ $csrf_token = generateCsrfToken();
                             <?php if ($team['instagram_url']): ?>
                                 <div class="entry-insta"><i class="fab fa-instagram"></i> <?php echo htmlspecialchars($team['instagram_url']); ?></div>
                             <?php endif; ?>
+                            <?php $tm_names = $team_member_names[$team['id']] ?? []; ?>
+                            <div class="entry-members<?php echo $tm_names ? '' : ' is-empty'; ?>" title="<?php echo htmlspecialchars(implode('、', $tm_names)); ?>">
+                                <i class="fas fa-user-group"></i> <?php echo count($tm_names); ?>名<?php echo $tm_names ? '：' . htmlspecialchars(implode('、', $tm_names)) : '（未登録）'; ?>
+                            </div>
                         </div>
                         <div class="entry-actions">
                             <a href="?edit=<?php echo $team['id']; ?><?php echo $filter !== 'all' ? '&type=' . $filter : ''; ?>" class="btn-edit" aria-label="編集"><i class="fas fa-edit"></i></a>
@@ -360,6 +417,18 @@ $csrf_token = generateCsrfToken();
         </div>
     </div>
     <script>
+        function filterMemberList() {
+            const q = (document.getElementById('memberSearch').value || '').trim().toLowerCase();
+            document.querySelectorAll('#memberPicker .member-pick').forEach(el => {
+                el.style.display = (!q || (el.dataset.search || '').includes(q)) ? '' : 'none';
+            });
+        }
+        function updateMemberCount() {
+            const n = document.querySelectorAll('#memberPicker input[type="checkbox"]:checked').length;
+            document.getElementById('memberSelCount').textContent = n;
+        }
+        updateMemberCount();
+
         function toggleTypeFields() {
             const isGv = document.getElementById('team-type').value === 'gv';
             document.querySelectorAll('.gv-only').forEach(el => { el.style.display = isGv ? '' : 'none'; });

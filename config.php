@@ -177,6 +177,15 @@ function ensureActivityTeamsTable($pdo) {
         INDEX idx_type_year (type, year_label)
     )");
 
+    // チーム⇔会員の紐付け（管理画面・名簿用。対外公開ページには出さない）
+    $pdo->exec("CREATE TABLE IF NOT EXISTS activity_team_members (
+        team_id INT NOT NULL,
+        user_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (team_id, user_id),
+        INDEX idx_user (user_id)
+    )");
+
     $count = (int)$pdo->query("SELECT COUNT(*) FROM activity_teams")->fetchColumn();
     if ($count > 0) return;
 
@@ -208,6 +217,22 @@ function ensureActivityTeamsTable($pdo) {
     $stmt = $pdo->prepare("INSERT INTO activity_teams (type, year_label, team_name, tag1, tag2, instagram_url, image_path, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     foreach ($seed as $i => $row) {
         $stmt->execute([$row[0], $row[1], $row[2], $row[3], $row[4], $row[5], $row[6], $i]);
+    }
+}
+
+// Helper: 会員ID => 所属チーム名リスト（新しい年度順）。名簿表示・CSV/シート出力用
+function getTeamNamesByUser(PDO $pdo) {
+    try {
+        $sql = "SELECT tm.user_id, t.team_name FROM activity_team_members tm
+                JOIN activity_teams t ON t.id = tm.team_id
+                ORDER BY t.year_label DESC, FIELD(t.tag1, 'Summer', 'Spring'), t.sort_order, t.id";
+        $map = [];
+        foreach ($pdo->query($sql) as $row) {
+            $map[(int)$row['user_id']][] = $row['team_name'];
+        }
+        return $map;
+    } catch (Exception $e) {
+        return []; // テーブル未作成でも名簿表示を止めない
     }
 }
 

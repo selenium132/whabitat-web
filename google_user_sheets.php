@@ -103,9 +103,11 @@ function gus_create_spreadsheet($accessToken, $title) {
 function gus_build_members_rows(PDO $pdo) {
     $stmt = $pdo->query("SELECT * FROM users ORDER BY grade ASC, name COLLATE utf8mb4_unicode_ci ASC");
     $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // GV/JVチーム所属。手動タブの列参照（=シート1!E2 等）を壊さないよう既存列は動かさず末尾に追加する
+    $teams_by_user = getTeamNamesByUser($pdo);
     $rows = [[
         'ID', '名前', 'ふりがな', '学籍番号', '代', '今の学年', '学部', '学科', '性別',
-        '郵便番号', '住所', '電話番号', '生年月日', 'LINE名', 'メールアドレス', '他サークル', 'アレルギー等', '備考(その他)', 'ステータス', '権限'
+        '郵便番号', '住所', '電話番号', '生年月日', 'LINE名', 'メールアドレス', '他サークル', 'アレルギー等', '備考(その他)', 'ステータス', '権限', 'チーム'
     ]];
     foreach ($members as $m) {
         $status = $m['is_approved'] ? '承認済' : '未承認';
@@ -126,7 +128,8 @@ function gus_build_members_rows(PDO $pdo) {
             $m['id'], $m['name'], $m['name_kana'] ?? '', $m['student_id'], $m['grade'],
             $uni, $m['faculty'] ?? '', $m['department'] ?? '', $gender_label,
             $m['zipcode'] ?? '', $m['address'] ?? '', $m['phone'] ?? '', $m['birthdate'] ?? '', $m['line_name'],
-            $m['email'] ?? '', $m['other_circles'] ?? '', $m['allergies'] ?? '', $m['notes'] ?? '', $status, $role
+            $m['email'] ?? '', $m['other_circles'] ?? '', $m['allergies'] ?? '', $m['notes'] ?? '', $status, $role,
+            implode('、', $teams_by_user[(int)$m['id']] ?? [])
         ];
     }
     return $rows;

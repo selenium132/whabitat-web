@@ -91,6 +91,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $stmt = $pdo->query("SELECT * FROM users ORDER BY grade ASC, name COLLATE utf8mb4_unicode_ci ASC");
 $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// GV/JVチーム所属（admin/teams.php で管理。名簿の列・フィルター用）
+ensureActivityTeamsTable($pdo);
+$teams_by_user = [];      // user_id => [ ['id'=>..,'name'=>..], ... ]
+$team_options = [];       // フィルター用: [ ['id'=>..,'name'=>..,'type'=>..,'year'=>..], ... ]
+foreach ($pdo->query("SELECT t.id, t.team_name, t.type, t.year_label FROM activity_teams t ORDER BY t.year_label DESC, FIELD(t.tag1, 'Summer', 'Spring'), t.sort_order, t.id") as $t) {
+    $team_options[] = ['id' => (int)$t['id'], 'name' => $t['team_name'], 'type' => $t['type'], 'year' => $t['year_label']];
+}
+foreach ($pdo->query("SELECT tm.user_id, tm.team_id, t.team_name FROM activity_team_members tm JOIN activity_teams t ON t.id = tm.team_id ORDER BY t.year_label DESC, FIELD(t.tag1, 'Summer', 'Spring'), t.sort_order, t.id") as $r) {
+    $teams_by_user[(int)$r['user_id']][] = ['id' => (int)$r['team_id'], 'name' => $r['team_name']];
+}
+
 // Count members by grade (only approved members)
 $grade_counts = [];
 $total_approved = 0;
@@ -147,6 +158,7 @@ foreach ($members as $m) {
         'other_circles'  => $m['other_circles'] ?? '',
         'allergies'      => $m['allergies'] ?? '',
         'notes'          => $m['notes'] ?? '',
+        'teams'          => implode('、', array_column($teams_by_user[(int)$m['id']] ?? [], 'name')),
         'status'         => $m['is_approved'] ? '承認済' : '未承認',
         'role'           => $m['role'] === 'admin' ? '管理者' : '一般',
     ];
@@ -334,6 +346,24 @@ $csrf_token = generateCsrfToken();
                         <option value="<?php echo htmlspecialchars($f); ?>"><?php echo htmlspecialchars($f); ?></option>
                     <?php endforeach; ?>
                 </select>
+                <select id="filterTeam" class="form-select">
+                    <option value="">チーム（全て）</option>
+                    <option value="__none">未所属</option>
+                    <?php
+                        $gv_opts = array_filter($team_options, fn($t) => $t['type'] === 'gv');
+                        $jv_opts = array_filter($team_options, fn($t) => $t['type'] === 'jv');
+                    ?>
+                    <?php if ($gv_opts): ?><optgroup label="GV">
+                        <?php foreach ($gv_opts as $t): ?>
+                            <option value="<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['name'] . '（' . $t['year'] . '）'); ?></option>
+                        <?php endforeach; ?>
+                    </optgroup><?php endif; ?>
+                    <?php if ($jv_opts): ?><optgroup label="JV">
+                        <?php foreach ($jv_opts as $t): ?>
+                            <option value="<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['name'] . '（' . $t['year'] . '）'); ?></option>
+                        <?php endforeach; ?>
+                    </optgroup><?php endif; ?>
+                </select>
                 <select id="filterGender" class="form-select">
                     <option value="">性別（全て）</option>
                     <option value="male">男性</option>
@@ -365,6 +395,7 @@ $csrf_token = generateCsrfToken();
                                 <th class="sortable" data-type="text">学籍番号<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable" data-type="text">LINE名<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable" data-type="num">代<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
+                                <th class="sortable" data-type="text">チーム<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable" data-type="text">学部<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable col-detail" data-type="text">学科<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
                                 <th class="sortable" data-type="text">性別<span class="sort-ind"><i class="fas fa-sort"></i></span></th>
@@ -384,10 +415,13 @@ $csrf_token = generateCsrfToken();
                         <tbody id="membersBody">
                             <?php foreach ($members as $m): ?>
                                 <?php
+                                    $my_teams = $teams_by_user[(int)$m['id']] ?? [];
+                                    $my_team_names = implode('、', array_column($my_teams, 'name'));
                                     $search_blob = mb_strtolower(implode(' ', array_filter([
                                         $m['name'] ?? '', $m['name_kana'] ?? '', $m['student_id'] ?? '',
                                         $m['line_name'] ?? '', $m['email'] ?? '', $m['faculty'] ?? '', $m['department'] ?? '',
                                         $m['address'] ?? '', $m['phone'] ?? '', $m['other_circles'] ?? '',
+                                        $my_team_names,
                                     ])));
                                     $grade_num = (int)preg_replace('/\D/', '', $m['grade'] ?? '');
                                 ?>
@@ -397,6 +431,7 @@ $csrf_token = generateCsrfToken();
                                     data-gender="<?php echo htmlspecialchars($m['gender'] ?? ''); ?>"
                                     data-approved="<?php echo $m['is_approved'] ? '1' : '0'; ?>"
                                     data-role="<?php echo htmlspecialchars($m['role'] ?? ''); ?>"
+                                    data-teams="<?php echo $my_teams ? '|' . implode('|', array_column($my_teams, 'id')) . '|' : ''; ?>"
                                     data-search="<?php echo htmlspecialchars($search_blob); ?>">
                                     <td class="col-name">
                                         <div class="member-id-cell">
@@ -414,6 +449,7 @@ $csrf_token = generateCsrfToken();
                                     <td><?php echo htmlspecialchars($m['student_id'] ?? ''); ?></td>
                                     <td class="cell-muted"><?php echo htmlspecialchars($m['line_name'] ?? ''); ?></td>
                                     <td data-sort="<?php echo $grade_num; ?>"><?php echo htmlspecialchars($m['grade'] ?? ''); ?></td>
+                                    <td class="cell-clip" data-sort="<?php echo htmlspecialchars($my_team_names); ?>" title="<?php echo htmlspecialchars($my_team_names); ?>"><?php echo $my_team_names !== '' ? htmlspecialchars($my_team_names) : '<span class="cell-muted">-</span>'; ?></td>
                                     <td><?php echo htmlspecialchars($m['faculty'] ?? ''); ?></td>
                                     <td class="col-detail"><?php echo htmlspecialchars($m['department'] ?? ''); ?></td>
                                     <td data-sort="<?php echo htmlspecialchars($m['gender'] ?? ''); ?>"><?php echo htmlspecialchars(m_gender_ja($m['gender'] ?? '')) ?: '<span class="cell-muted">-</span>'; ?></td>
@@ -645,6 +681,7 @@ $csrf_token = generateCsrfToken();
         const searchInput = document.getElementById('searchInput');
         const fGrade = document.getElementById('filterGrade');
         const fFaculty = document.getElementById('filterFaculty');
+        const fTeam = document.getElementById('filterTeam');
         const fGender = document.getElementById('filterGender');
         const fStatus = document.getElementById('filterStatus');
         const fRole = document.getElementById('filterRole');
@@ -652,7 +689,7 @@ $csrf_token = generateCsrfToken();
 
         function applyFilter() {
             const q = (searchInput.value || '').trim().toLowerCase();
-            const g = fGrade.value, fac = fFaculty.value, gen = fGender.value, st = fStatus.value, ro = fRole.value;
+            const g = fGrade.value, fac = fFaculty.value, gen = fGender.value, st = fStatus.value, ro = fRole.value, tm = fTeam.value;
             let visible = 0;
             rows.forEach(r => {
                 let show = true;
@@ -660,6 +697,8 @@ $csrf_token = generateCsrfToken();
                 if (g && r.dataset.grade !== g) show = false;
                 if (fac && r.dataset.faculty !== fac) show = false;
                 if (gen && r.dataset.gender !== gen) show = false;
+                if (tm === '__none') { if ((r.dataset.teams || '') !== '') show = false; }
+                else if (tm && !(r.dataset.teams || '').includes('|' + tm + '|')) show = false;
                 if (st && r.dataset.approved !== st) show = false;
                 if (ro && r.dataset.role !== ro) show = false;
                 r.style.display = show ? '' : 'none';
@@ -706,8 +745,8 @@ $csrf_token = generateCsrfToken();
         document.getElementById('csvBtn').addEventListener('click', () => {
             const ids = visibleIds();
             const byId = {}; MEMBERS.forEach(m => byId[m.id] = m);
-            const headerRow = ['ID','名前','ふりがな','学籍番号','代','学部','学科','性別','生年月日','郵便番号','住所','電話番号','LINE名','メールアドレス','他サークル','アレルギー等','備考','ステータス','権限'];
-            const keys = ['id','name','name_kana','student_id','grade','faculty','department','gender','birthdate','zipcode','address','phone','line_name','email','other_circles','allergies','notes','status','role'];
+            const headerRow = ['ID','名前','ふりがな','学籍番号','代','チーム','学部','学科','性別','生年月日','郵便番号','住所','電話番号','LINE名','メールアドレス','他サークル','アレルギー等','備考','ステータス','権限'];
+            const keys = ['id','name','name_kana','student_id','grade','teams','faculty','department','gender','birthdate','zipcode','address','phone','line_name','email','other_circles','allergies','notes','status','role'];
             const esc = v => {
                 let s = (v === null || v === undefined) ? '' : String(v);
                 // CSV数式インジェクション対策: 先頭が = + - @ TAB CR のセルは ' を前置し、
@@ -733,7 +772,7 @@ $csrf_token = generateCsrfToken();
 
         // リセット・コンパクト
         document.getElementById('resetBtn').addEventListener('click', () => {
-            searchInput.value = ''; fGrade.value = ''; fFaculty.value = ''; fGender.value = ''; fStatus.value = ''; fRole.value = '';
+            searchInput.value = ''; fGrade.value = ''; fFaculty.value = ''; fGender.value = ''; fStatus.value = ''; fRole.value = ''; fTeam.value = '';
             applyFilter();
         });
         document.getElementById('compactBtn').addEventListener('click', function() {
@@ -742,7 +781,7 @@ $csrf_token = generateCsrfToken();
             this.innerHTML = on ? '<i class="fas fa-expand"></i> 全項目' : '<i class="fas fa-compress"></i> コンパクト';
         });
 
-        [searchInput, fGrade, fFaculty, fGender, fStatus, fRole].forEach(el => {
+        [searchInput, fGrade, fFaculty, fGender, fStatus, fRole, fTeam].forEach(el => {
             el.addEventListener('input', applyFilter);
             el.addEventListener('change', applyFilter);
         });
