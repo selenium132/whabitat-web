@@ -26,12 +26,20 @@ try {
     // ・卒業生(4代以上前)は自動で除外 → DBに永遠に残っても人数に影響しない
     // ・新入生が実際に登録し始めると窓が自動で1つ進む（4月固定でなくデータ基準）
     //   → 年度跨ぎの端境期に人数が急減しない。引き継ぎ時もコード変更不要。
+    // ・窓を進める「最新代」は承認済みが一定人数以上いる代に限る。
+    //   1人が代を選び間違えただけで窓が進み、実在する古い代が丸ごと
+    //   集計から消える事故が実際に起きたため（21th誤登録で18thの37人が消えた）。
     $rows = $pdo->query("SELECT grade, gender FROM users WHERE is_approved = 1")->fetchAll(PDO::FETCH_ASSOC);
-    $gens = [];
+    $gen_counts = [];
     foreach ($rows as $r) {
         $n = (int)preg_replace('/\D/', '', (string)($r['grade'] ?? ''));
-        if ($n > 0) $gens[] = $n;
+        if ($n > 0) $gen_counts[$n] = ($gen_counts[$n] ?? 0) + 1;
     }
+    $gens = [];
+    foreach ($gen_counts as $n => $c) {
+        if ($c >= 3) $gens[] = $n; // 3人未満の代は誤登録の可能性が高いので窓の基準にしない
+    }
+    if (!$gens) $gens = array_keys($gen_counts); // 全代が3人未満なら従来どおり全体から判定
     if ($gens) {
         $active_from = max($gens) - 2; // 最新3代ぶん（最新代・最新-1・最新-2）
         $cnt = 0; $m = 0; $f = 0;
