@@ -642,16 +642,30 @@ textarea:focus {
     transform: translateY(-2px);
 }
 
+/* 2列グリッドで幅を揃える。flex-wrapだと折り返し位置がボタン幅任せになり、
+   PCで「2つ/2つ/1つ右寄せ」のような不揃いな並びに見えるため。 */
 .welcome-actions {
-    display: flex;
-    /* Changed from grid to flex for better 3-item handling */
+    display: grid;
+    grid-template-columns: repeat(2, minmax(170px, 1fr));
     gap: 10px;
-    flex-wrap: wrap;
-    max-width: 600px;
-    justify-content: flex-end;
+    max-width: 420px;
 }
 
-/* Grid was causing issues with odd number of items. Flex wrap is robust. */
+/* ボタンが奇数個のとき、最後の1つが片側に孤立しないよう全幅にする（モバイルと同じルール） */
+.welcome-actions > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
+.welcome-actions .btn-primary,
+.welcome-actions .btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
 
 /* Event Info */
 .event-info {
@@ -774,6 +788,7 @@ a.icon-btn:visited {
         display: grid;
         grid-template-columns: 1fr 1fr;
         width: 100%;
+        max-width: none;
         gap: 0.6rem;
     }
 
