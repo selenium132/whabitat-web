@@ -116,9 +116,9 @@ $filter = $_GET['type'] ?? 'all';
 if (!in_array($filter, ['gv', 'jv', 'all'], true)) $filter = 'all';
 
 if ($filter === 'all') {
-    $teams = $pdo->query("SELECT * FROM activity_teams ORDER BY type, year_label DESC, FIELD(tag1, 'Summer', 'Spring'), sort_order, id")->fetchAll(PDO::FETCH_ASSOC);
+    $teams = $pdo->query("SELECT * FROM activity_teams ORDER BY type, year_label DESC, FIELD(tag1, 'Spring', 'Summer'), sort_order, id")->fetchAll(PDO::FETCH_ASSOC);
 } else {
-    $stmt = $pdo->prepare("SELECT * FROM activity_teams WHERE type = ? ORDER BY year_label DESC, FIELD(tag1, 'Summer', 'Spring'), sort_order, id");
+    $stmt = $pdo->prepare("SELECT * FROM activity_teams WHERE type = ? ORDER BY year_label DESC, FIELD(tag1, 'Spring', 'Summer'), sort_order, id");
     $stmt->execute([$filter]);
     $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

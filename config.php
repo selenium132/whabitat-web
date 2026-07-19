@@ -225,7 +225,7 @@ function getTeamNamesByUser(PDO $pdo) {
     try {
         $sql = "SELECT tm.user_id, t.team_name FROM activity_team_members tm
                 JOIN activity_teams t ON t.id = tm.team_id
-                ORDER BY t.year_label DESC, FIELD(t.tag1, 'Summer', 'Spring'), t.sort_order, t.id";
+                ORDER BY t.year_label DESC, FIELD(t.tag1, 'Spring', 'Summer'), t.sort_order, t.id";
         $map = [];
         foreach ($pdo->query($sql) as $row) {
             $map[(int)$row['user_id']][] = $row['team_name'];

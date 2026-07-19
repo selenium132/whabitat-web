@@ -95,10 +95,10 @@ $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ensureActivityTeamsTable($pdo);
 $teams_by_user = [];      // user_id => [ ['id'=>..,'name'=>..], ... ]
 $team_options = [];       // フィルター用: [ ['id'=>..,'name'=>..,'type'=>..,'year'=>..], ... ]
-foreach ($pdo->query("SELECT t.id, t.team_name, t.type, t.year_label FROM activity_teams t ORDER BY t.year_label DESC, FIELD(t.tag1, 'Summer', 'Spring'), t.sort_order, t.id") as $t) {
+foreach ($pdo->query("SELECT t.id, t.team_name, t.type, t.year_label FROM activity_teams t ORDER BY t.year_label DESC, FIELD(t.tag1, 'Spring', 'Summer'), t.sort_order, t.id") as $t) {
     $team_options[] = ['id' => (int)$t['id'], 'name' => $t['team_name'], 'type' => $t['type'], 'year' => $t['year_label']];
 }
-foreach ($pdo->query("SELECT tm.user_id, tm.team_id, t.team_name FROM activity_team_members tm JOIN activity_teams t ON t.id = tm.team_id ORDER BY t.year_label DESC, FIELD(t.tag1, 'Summer', 'Spring'), t.sort_order, t.id") as $r) {
+foreach ($pdo->query("SELECT tm.user_id, tm.team_id, t.team_name FROM activity_team_members tm JOIN activity_teams t ON t.id = tm.team_id ORDER BY t.year_label DESC, FIELD(t.tag1, 'Spring', 'Summer'), t.sort_order, t.id") as $r) {
     $teams_by_user[(int)$r['user_id']][] = ['id' => (int)$r['team_id'], 'name' => $r['team_name']];
 }
 

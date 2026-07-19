@@ -4,8 +4,8 @@ require_once 'config.php';
 // History: DBからGVチームを取得（初回は旧ハードコード内容を自動シード）
 $pdo = getDB();
 ensureActivityTeamsTable($pdo);
-// 年度内は大学の学事暦どおり夏休み(Summer)→春休み(Spring)の順で表示
-$stmt = $pdo->prepare("SELECT * FROM activity_teams WHERE type = 'gv' ORDER BY year_label ASC, FIELD(tag1, 'Summer', 'Spring'), sort_order, id");
+// 年度は西暦で分類しているため、年内は春(Spring)→夏(Summer)の順で表示
+$stmt = $pdo->prepare("SELECT * FROM activity_teams WHERE type = 'gv' ORDER BY year_label ASC, FIELD(tag1, 'Spring', 'Summer'), sort_order, id");
 $stmt->execute();
 $gv_years = [];
 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $team) {
