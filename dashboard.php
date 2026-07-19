@@ -202,6 +202,9 @@ try {
                         <a href="admin/teams.php" class="btn-secondary">
                             <i class="fas fa-people-group"></i> GV/JVチーム
                         </a>
+                        <a href="admin/mtg_history.php" class="btn-secondary">
+                            <i class="fas fa-clock-rotate-left"></i> MTG履歴
+                        </a>
                     <?php endif; ?>
                     
                     <a href="register_profile.php" class="btn-secondary">

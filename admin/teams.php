@@ -23,14 +23,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'add' || $action === 'edit') {
         $id = (int)($_POST['id'] ?? 0);
         $type = ($_POST['type'] ?? '') === 'jv' ? 'jv' : 'gv';
-        $year_label = trim($_POST['year_label'] ?? '');
+        $year = trim($_POST['year'] ?? '');
         $team_name = trim($_POST['team_name'] ?? '');
-        $tag1 = trim($_POST['tag1'] ?? '');
-        $tag2 = trim($_POST['tag2'] ?? '');
         $instagram_url = trim($_POST['instagram_url'] ?? '');
 
+        // GV: 春休み(Spring)/夏休み(Summer)の2シーズン + 渡航国
+        // JV: 夏休みのみ（シーズン入力なし）。都道府県 + 地名は自由入力
+        if ($type === 'gv') {
+            $season = ($_POST['season'] ?? '') === 'Summer' ? 'Summer' : 'Spring';
+            $year_label = $year;                       // 年ごとにまとめ、シーズンはカード上のタグで表示
+            $tag1 = $season;
+            $tag2 = trim($_POST['country'] ?? '');     // 渡航国
+        } else {
+            $year_label = $year !== '' ? $year . ' Summer' : ''; // JVは夏休みのみ
+            $tag1 = trim($_POST['region'] ?? '');      // 都道府県など
+            $tag2 = trim($_POST['place'] ?? '');       // 地名
+        }
+
+        if ($year !== '' && !preg_match('/^\d{4}$/', $year)) {
+            $error = '年度は西暦4桁で入力してください（例: 2026）。';
+        }
+
         // InstagramのURLのみ許可（空は可）
-        if ($instagram_url !== '' && !preg_match('#^https://(www\.)?instagram\.com/#', $instagram_url)) {
+        if (!$error && $instagram_url !== '' && !preg_match('#^https://(www\.)?instagram\.com/#', $instagram_url)) {
             $error = 'Instagram URLは https://www.instagram.com/ で始まるURLを入力してください。';
         }
 
@@ -105,6 +120,24 @@ if (isset($_GET['edit'])) {
 // 新規追加時の初期タイプ（?type=gv/jv から引き継ぐ）
 $default_type = $edit_team['type'] ?? ($filter === 'jv' ? 'jv' : 'gv');
 
+// 編集時のプリフィル（保存形式 → フォーム項目に展開）
+$edit_year = '';
+$edit_season = 'Spring';
+$edit_country = '';
+$edit_region = '';
+$edit_place = '';
+if ($edit_team) {
+    if ($edit_team['type'] === 'gv') {
+        $edit_year = $edit_team['year_label'];
+        $edit_season = ($edit_team['tag1'] === 'Summer') ? 'Summer' : 'Spring';
+        $edit_country = $edit_team['tag2'] ?? '';
+    } else {
+        $edit_year = trim(str_replace('Summer', '', $edit_team['year_label']));
+        $edit_region = $edit_team['tag1'] ?? '';
+        $edit_place = $edit_team['tag2'] ?? '';
+    }
+}
+
 $csrf_token = generateCsrfToken();
 ?>
 <!DOCTYPE html>
@@ -144,6 +177,18 @@ $csrf_token = generateCsrfToken();
         .alert-error { background: #f6ebe9; color: #b0453a; padding: 12px; border-radius: 6px; margin-bottom: 20px; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
         .field-note { font-size: .8rem; color: #888; margin-top: 4px; }
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .admin-container h1 { font-size: 1.6rem; }
+
+        @media (max-width: 640px) {
+            .admin-container { padding: 14px; padding-top: 90px; }
+            .admin-container h1 { font-size: 1.3rem; margin-bottom: 20px !important; }
+            .form-card { padding: 18px; }
+            .form-grid-2 { grid-template-columns: 1fr; gap: 0; }
+            .entry-item { flex-wrap: wrap; }
+            .entry-info { flex: 1 1 calc(100% - 95px); }
+            .entry-actions { width: 100%; justify-content: flex-end; }
+        }
     </style>
     <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
 </head>
@@ -177,20 +222,19 @@ $csrf_token = generateCsrfToken();
                     <input type="hidden" name="existing_image" value="<?php echo htmlspecialchars($edit_team['image_path']); ?>">
                 <?php endif; ?>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-grid-2">
                     <div class="form-group">
                         <label class="form-label" for="team-type">種別 *</label>
-                        <select name="type" id="team-type" class="form-select" required>
-                            <option value="gv" <?php echo $default_type === 'gv' ? 'selected' : ''; ?>>GV（海外）</option>
-                            <option value="jv" <?php echo $default_type === 'jv' ? 'selected' : ''; ?>>JV（国内派遣）</option>
+                        <select name="type" id="team-type" class="form-select" required onchange="toggleTypeFields()">
+                            <option value="gv" <?php echo $default_type === 'gv' ? 'selected' : ''; ?>>GV（海外住居建築）</option>
+                            <option value="jv" <?php echo $default_type === 'jv' ? 'selected' : ''; ?>>JV（国内派遣・夏休み）</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="team-year">年度 *</label>
-                        <input type="text" name="year_label" id="team-year" class="form-input" required
-                               placeholder="例: 2026（GV） / 2026 Summer（JV）"
-                               value="<?php echo htmlspecialchars($edit_team['year_label'] ?? ''); ?>">
-                        <div class="field-note">同じ表記の年度ごとにまとめて表示されます。</div>
+                        <input type="text" name="year" id="team-year" class="form-input" required
+                               inputmode="numeric" pattern="\d{4}" placeholder="例: <?php echo date('Y'); ?>"
+                               value="<?php echo htmlspecialchars($edit_year); ?>">
                     </div>
                 </div>
 
@@ -201,18 +245,36 @@ $csrf_token = generateCsrfToken();
                            value="<?php echo htmlspecialchars($edit_team['team_name'] ?? ''); ?>">
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <!-- GV: シーズン（春休み/夏休み）+ 渡航国 -->
+                <div class="form-grid-2 gv-only">
                     <div class="form-group">
-                        <label class="form-label" for="team-tag1">タグ1</label>
-                        <input type="text" name="tag1" id="team-tag1" class="form-input"
-                               placeholder="GV: Spring/Summer ・ JV: Nagano など"
-                               value="<?php echo htmlspecialchars($edit_team['tag1'] ?? ''); ?>">
+                        <label class="form-label" for="team-season">シーズン *</label>
+                        <select name="season" id="team-season" class="form-select">
+                            <option value="Spring" <?php echo $edit_season === 'Spring' ? 'selected' : ''; ?>>Spring（春休み）</option>
+                            <option value="Summer" <?php echo $edit_season === 'Summer' ? 'selected' : ''; ?>>Summer（夏休み）</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="team-tag2">タグ2</label>
-                        <input type="text" name="tag2" id="team-tag2" class="form-input"
-                               placeholder="GV: 渡航国 ・ JV: 地名（立屋 など）"
-                               value="<?php echo htmlspecialchars($edit_team['tag2'] ?? ''); ?>">
+                        <label class="form-label" for="team-country">渡航国</label>
+                        <input type="text" name="country" id="team-country" class="form-input"
+                               placeholder="例: Nepal / Indonesia"
+                               value="<?php echo htmlspecialchars($edit_country); ?>">
+                    </div>
+                </div>
+
+                <!-- JV: 都道府県 + 地名（自由入力） -->
+                <div class="form-grid-2 jv-only">
+                    <div class="form-group">
+                        <label class="form-label" for="team-region">都道府県</label>
+                        <input type="text" name="region" id="team-region" class="form-input"
+                               placeholder="例: Nagano / Tokushima"
+                               value="<?php echo htmlspecialchars($edit_region); ?>">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="team-place">地名</label>
+                        <input type="text" name="place" id="team-place" class="form-input"
+                               placeholder="例: 立屋 / 大井"
+                               value="<?php echo htmlspecialchars($edit_place); ?>">
                     </div>
                 </div>
 
@@ -297,5 +359,14 @@ $csrf_token = generateCsrfToken();
             <a href="../activity_jv.php" class="back-link" style="margin-left: 15px;"><i class="fas fa-external-link-alt"></i> JVページを見る</a>
         </div>
     </div>
+    <script>
+        function toggleTypeFields() {
+            const isGv = document.getElementById('team-type').value === 'gv';
+            document.querySelectorAll('.gv-only').forEach(el => { el.style.display = isGv ? '' : 'none'; });
+            document.querySelectorAll('.jv-only').forEach(el => { el.style.display = isGv ? 'none' : ''; });
+            document.getElementById('team-season').required = isGv;
+        }
+        toggleTypeFields();
+    </script>
 </body>
 </html>
