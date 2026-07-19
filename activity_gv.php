@@ -1,4 +1,17 @@
-<?php require_once 'config.php'; ?>
+<?php
+require_once 'config.php';
+
+// History: DBからGVチームを取得（初回は旧ハードコード内容を自動シード）
+$pdo = getDB();
+ensureActivityTeamsTable($pdo);
+$stmt = $pdo->prepare("SELECT * FROM activity_teams WHERE type = 'gv' ORDER BY year_label ASC, sort_order, id");
+$stmt->execute();
+$gv_years = [];
+foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $team) {
+    $gv_years[$team['year_label']][] = $team;
+}
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -107,6 +120,21 @@
         /* History（年ごとのグリッド・カラー写真） */
         .gv-history-year { margin-bottom: 3rem; }
         .gv-history-year:last-child { margin-bottom: 0; }
+        .team-add-btn {
+            display: inline-flex; align-items: center; gap: .45rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+            color: var(--lp-ink); text-decoration: none;
+            border: 1px solid var(--lp-line); border-radius: 999px;
+            padding: .4rem 1rem; transition: border-color .3s, background .3s;
+        }
+        .team-add-btn:hover { border-color: var(--lp-ink); background: rgba(26,26,26,.04); }
+        .gv-history-noimg {
+            width: 100%; height: 190px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--lp-paper-2); border-bottom: 1px solid var(--lp-line);
+            color: var(--lp-muted); font-size: 1.6rem;
+        }
         .gv-year-title { font-family: 'Montserrat', sans-serif; font-size: 1.15rem; font-weight: 600; letter-spacing: .1em; color: var(--lp-ink); margin: 0 0 1.4rem; padding-bottom: .7rem; border-bottom: 1px solid var(--lp-line); }
         .gv-history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
         .gv-history-card { display: block; text-decoration: none; color: inherit; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); overflow: hidden; transition: border-color .35s var(--lp-ease), transform .35s var(--lp-ease); }
@@ -312,100 +340,41 @@
             <div class="container">
                 <h2 class="gv-h2 fade-in"><span>WHABITAT GV History</span></h2>
                 <p class="gv-sub fade-in">これまでに派遣されたチームの記録です。</p>
+                <?php if ($is_admin): ?>
+                <p style="text-align: center; margin: -1.6rem 0 2.6rem;">
+                    <a href="admin/teams.php?type=gv" class="team-add-btn"><i class="fas fa-plus"></i> チームを追加・編集</a>
+                </p>
+                <?php endif; ?>
 
-                <div class="gv-history-year fade-in">
-                    <h3 class="gv-year-title">2020</h3>
-                    <div class="gv-history-grid">
-                        <a href="https://www.instagram.com/sakanto_gv" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_sakanto.jpg" alt="さかんとGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Spring</span><span>India</span></div>
-                                <h4 class="gv-history-team">さかんとGV</h4>
-                            </div>
-                        </a>
-                        <a href="https://www.instagram.com/habitat_paruparu_gv/" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_paruparu.jpg" alt="ぱるぱるGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Spring</span><span>Vietnam</span></div>
-                                <h4 class="gv-history-team">ぱるぱるGV</h4>
-                            </div>
-                        </a>
+                <?php if (empty($gv_years)): ?>
+                    <p class="gv-sub">チームの記録はまだありません。</p>
+                <?php else: ?>
+                    <?php foreach ($gv_years as $year => $teams): ?>
+                    <div class="gv-history-year fade-in">
+                        <h3 class="gv-year-title"><?php echo htmlspecialchars($year); ?></h3>
+                        <div class="gv-history-grid">
+                            <?php foreach ($teams as $team): ?>
+                            <<?php echo $team['instagram_url'] ? 'a href="' . htmlspecialchars($team['instagram_url']) . '" target="_blank" rel="noopener"' : 'div'; ?> class="gv-history-card">
+                                <?php if ($team['image_path']): ?>
+                                    <img src="<?php echo htmlspecialchars($team['image_path']); ?>" alt="<?php echo htmlspecialchars($team['team_name']); ?>">
+                                <?php else: ?>
+                                    <div class="gv-history-noimg"><i class="fas fa-users"></i></div>
+                                <?php endif; ?>
+                                <div class="gv-history-body">
+                                    <?php if ($team['tag1'] || $team['tag2']): ?>
+                                    <div class="gv-history-meta">
+                                        <?php if ($team['tag1']): ?><span><?php echo htmlspecialchars($team['tag1']); ?></span><?php endif; ?>
+                                        <?php if ($team['tag2']): ?><span><?php echo htmlspecialchars($team['tag2']); ?></span><?php endif; ?>
+                                    </div>
+                                    <?php endif; ?>
+                                    <h4 class="gv-history-team"><?php echo htmlspecialchars($team['team_name']); ?></h4>
+                                </div>
+                            </<?php echo $team['instagram_url'] ? 'a' : 'div'; ?>>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
-
-                <div class="gv-history-year fade-in">
-                    <h3 class="gv-year-title">2023</h3>
-                    <div class="gv-history-grid">
-                        <a href="https://www.instagram.com/tantangood_whabitat2023" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_tantangood.jpg" alt="たんたんぐGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Summer</span><span>Indonesia</span></div>
-                                <h4 class="gv-history-team">たんたんぐGV</h4>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="gv-history-year fade-in">
-                    <h3 class="gv-year-title">2024</h3>
-                    <div class="gv-history-grid">
-                        <a href="https://www.instagram.com/yupurumu_whabitat" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_yupurumu.jpg" alt="ゆぷるむGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Spring</span><span>Cambodia</span></div>
-                                <h4 class="gv-history-team">ゆぷるむGV</h4>
-                            </div>
-                        </a>
-                        <a href="https://www.instagram.com/magkarawn_gv" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_magkarawn.jpg" alt="マカランGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Spring</span><span>Philippines</span></div>
-                                <h4 class="gv-history-team">マカランGV</h4>
-                            </div>
-                        </a>
-                        <a href="https://www.instagram.com/sukairu.gv_whabitat" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_sukairu.jpg" alt="すかいるGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Summer</span><span>Cambodia</span></div>
-                                <h4 class="gv-history-team">すかいるGV</h4>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="gv-history-year fade-in">
-                    <h3 class="gv-year-title">2025</h3>
-                    <div class="gv-history-grid">
-                        <a href="https://www.instagram.com/bangalgv" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_bangal.jpg" alt="ばんがるGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Spring</span><span>Nepal</span></div>
-                                <h4 class="gv-history-team">ばんがるGV</h4>
-                            </div>
-                        </a>
-                        <a href="https://www.instagram.com/wabarumahgv" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_wabarumah.jpg" alt="わばるまGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Spring</span><span>Indonesia</span></div>
-                                <h4 class="gv-history-team">わばるまGV</h4>
-                            </div>
-                        </a>
-                        <a href="https://www.instagram.com/dangan_gv" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_dangan.jpg" alt="ダンガンGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Spring</span><span>Vietnam</span></div>
-                                <h4 class="gv-history-team">ダンガンGV</h4>
-                            </div>
-                        </a>
-                        <a href="https://www.instagram.com/erumela_gv" target="_blank" class="gv-history-card">
-                            <img src="images/gv/gv_erumela.jpg" alt="エルメラGV">
-                            <div class="gv-history-body">
-                                <div class="gv-history-meta"><span>Summer</span><span>Indonesia</span></div>
-                                <h4 class="gv-history-team">エルメラGV</h4>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </section>
 

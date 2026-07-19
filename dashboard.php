@@ -196,8 +196,11 @@ try {
                         <a href="admin/messages.php" class="btn-secondary" style="position: relative;">
                             <i class="fas fa-envelope"></i> お問い合わせ
                             <?php if ($unread_count > 0): ?>
-                                <span style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: 600;"><?php echo $unread_count; ?></span>
+                                <span style="position: absolute; top: -8px; right: -8px; background: #b0453a; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: 600;"><?php echo $unread_count; ?></span>
                             <?php endif; ?>
+                        </a>
+                        <a href="admin/teams.php" class="btn-secondary">
+                            <i class="fas fa-people-group"></i> GV/JVチーム
                         </a>
                     <?php endif; ?>
                     

@@ -106,7 +106,7 @@ $csrf_token = generateCsrfToken();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MTG履歴管理 | WHABITAT</title>
-    <link rel="stylesheet" href="../style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../style.css?v=<?php echo @filemtime(__DIR__ . '/../style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .admin-container { max-width: 900px; margin: 0 auto; padding: 20px; padding-top: 100px; }
@@ -193,7 +193,7 @@ $csrf_token = generateCsrfToken();
                     <label class="form-label">画像<?php echo $edit_entry ? ' (変更する場合のみ)' : ''; ?></label>
                     <?php if ($edit_entry && $edit_entry['image_path']): ?>
                         <div style="margin-bottom: 10px;">
-                            <img src="../<?php echo htmlspecialchars($edit_entry['image_path']); ?>" alt="現在の画像" style="max-width: 150px; border-radius: 6px;">
+                            <img src="../<?php echo htmlspecialchars(resolveUploadImagePath($edit_entry['image_path'])); ?>" alt="現在の画像" style="max-width: 150px; border-radius: 6px;">
                         </div>
                     <?php endif; ?>
                     <input type="file" name="image" accept="image/*" class="form-input">
@@ -219,7 +219,7 @@ $csrf_token = generateCsrfToken();
                 <?php foreach ($entries as $entry): ?>
                     <div class="entry-item">
                         <?php if ($entry['image_path']): ?>
-                            <img src="../<?php echo htmlspecialchars($entry['image_path']); ?>" alt="<?php echo htmlspecialchars($entry['title']); ?>">
+                            <img src="../<?php echo htmlspecialchars(resolveUploadImagePath($entry['image_path'])); ?>" alt="<?php echo htmlspecialchars($entry['title']); ?>">
                         <?php else: ?>
                             <div style="width: 80px; height: 60px; background: #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #999;">
                                 <i class="fas fa-image"></i>

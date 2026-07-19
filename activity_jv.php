@@ -1,4 +1,17 @@
-<?php require_once 'config.php'; ?>
+<?php
+require_once 'config.php';
+
+// History: DBからJVチームを取得（初回は旧ハードコード内容を自動シード）
+$pdo = getDB();
+ensureActivityTeamsTable($pdo);
+$stmt = $pdo->prepare("SELECT * FROM activity_teams WHERE type = 'jv' ORDER BY year_label ASC, sort_order, id");
+$stmt->execute();
+$jv_years = [];
+foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $team) {
+    $jv_years[$team['year_label']][] = $team;
+}
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -238,6 +251,22 @@
             line-height: 1.6;
             color: var(--lp-muted);
             margin: 0;
+        }
+
+        .team-add-btn {
+            display: inline-flex; align-items: center; gap: .45rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: .72rem; font-weight: 600; letter-spacing: .08em;
+            color: var(--lp-ink); text-decoration: none;
+            border: 1px solid var(--lp-line); border-radius: 999px;
+            padding: .4rem 1rem; transition: border-color .3s, background .3s;
+        }
+        .team-add-btn:hover { border-color: var(--lp-ink); background: rgba(26,26,26,.04); }
+        .jv-history-noimg {
+            width: 100%; height: 100%; min-height: 150px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--lp-paper-2);
+            color: var(--lp-muted); font-size: 1.6rem;
         }
 
         /* History：チームカード（写真はカラーのまま、罫線でまとめる） */
@@ -540,143 +569,39 @@
                 <h2 class="section-title fade-in"><span>WHABITAT JV History</span></h2>
                 <p class="jv-lead fade-in">これまでに派遣されたチームの記録です。</p>
 
-                <div class="jv-history-group fade-in">
-                    <h3 class="jv-history-year">2025 Summer</h3>
-                    <div class="jv-history-grid">
-                        <!-- Misara-chi JV -->
-                        <a href="https://www.instagram.com/oi.jv2025" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_misarachi.jpg" alt="Misara-chi JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Tokushima</span>
-                                <span class="jv-history-place">大井</span>
-                                <h4 class="jv-history-team">みさらーちJV</h4>
-                            </div>
-                        </a>
-                        <!-- Teyanoppe JV -->
-                        <a href="https://www.instagram.com/teyanope_jv" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_teyanoppe.jpg" alt="Teyanoppe JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Nagano</span>
-                                <span class="jv-history-place">立屋</span>
-                                <h4 class="jv-history-team">てやのっぺJV</h4>
-                            </div>
-                        </a>
-                        <!-- PepePON! JV -->
-                        <a href="https://www.instagram.com/pepepon_jv" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_pepepon.jpg" alt="PepePON! JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Tochigi</span>
-                                <span class="jv-history-place">益子</span>
-                                <h4 class="jv-history-team">ぺぺPON！JV</h4>
-                            </div>
-                        </a>
-                        <!-- Japparedan JV -->
-                        <a href="https://www.instagram.com/pepepon_jv" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_japparedan.jpg" alt="Japparedan JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Aomori</span>
-                                <span class="jv-history-place">白神</span>
-                                <h4 class="jv-history-team">じゃっぱーれ団</h4>
-                            </div>
-                        </a>
-                        <!-- Menkepokko JV -->
-                        <a href="https://www.instagram.com/jyapparedan_jv" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_menkepokko.jpg" alt="Menkepokko JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Akita</span>
-                                <span class="jv-history-place">仙北</span>
-                                <h4 class="jv-history-team">めんけぽっこJV</h4>
-                            </div>
-                        </a>
-                        <!-- Fukudeppora JV -->
-                        <a href="https://www.instagram.com/fukudeppo" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_fukudeppora.jpg" alt="Fukudeppora JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Fukushima</span>
-                                <span class="jv-history-place">田人</span>
-                                <h4 class="jv-history-team">ふくでっぽらJV</h4>
-                            </div>
-                        </a>
-                        <!-- Kamaquran JV -->
-                        <a href="https://www.instagram.com/kamaqran_jv2025" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_kamaquran.jpg" alt="Kamaquran JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Nagano</span>
-                                <span class="jv-history-place">真木</span>
-                                <h4 class="jv-history-team">かまきゅらんJV</h4>
-                            </div>
-                        </a>
-                        <!-- Gyabamiccha JV -->
-                        <a href="https://www.instagram.com/kamaqran_jv2025" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_gyabamiccha.jpg" alt="Gyabamiccha JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Fukuoka</span>
-                                <span class="jv-history-place">黒木</span>
-                                <h4 class="jv-history-team">ぎゃばみっちゃJV</h4>
-                            </div>
-                        </a>
-                        <!-- Konorei48 JV -->
-                        <a href="https://www.instagram.com/konorei48jv2025" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_konorei48.jpg" alt="Konorei48 JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Mie</span>
-                                <span class="jv-history-place">赤目</span>
-                                <h4 class="jv-history-team">このれい48JV</h4>
-                            </div>
-                        </a>
-                        <!-- Nacha JV -->
-                        <a href="https://www.instagram.com/konorei48jv2025" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_nacha.jpg" alt="Nacha JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Toyama</span>
-                                <span class="jv-history-place">五箇山</span>
-                                <h4 class="jv-history-team">なちゃJV</h4>
-                            </div>
-                        </a>
-                        <!-- Tsumugururin JV -->
-                        <a href="https://www.instagram.com/tsumugururin_jv" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_tsumugururin.png" alt="Tsumugururin JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Niigata</span>
-                                <span class="jv-history-place">山古志</span>
-                                <h4 class="jv-history-team">つむぐるりんJV</h4>
-                            </div>
-                        </a>
-                        <!-- Rimochun JV -->
-                        <a href="https://www.instagram.com/rimochunnn_jv" target="_blank" class="jv-history-card">
-                            <div class="jv-history-thumb">
-                                <img src="images/jv/jv_rimochun.jpg" alt="Rimochun JV">
-                            </div>
-                            <div class="jv-history-info">
-                                <span class="jv-history-region">Shiga</span>
-                                <span class="jv-history-place">高島</span>
-                                <h4 class="jv-history-team">りもちゅんJV</h4>
-                            </div>
-                        </a>
+                <?php if ($is_admin): ?>
+                <p style="text-align: center; margin: -1.6rem 0 2.6rem;">
+                    <a href="admin/teams.php?type=jv" class="team-add-btn"><i class="fas fa-plus"></i> チームを追加・編集</a>
+                </p>
+                <?php endif; ?>
+
+                <?php if (empty($jv_years)): ?>
+                    <p class="jv-lead">チームの記録はまだありません。</p>
+                <?php else: ?>
+                    <?php foreach ($jv_years as $year => $teams): ?>
+                    <div class="jv-history-group fade-in">
+                        <h3 class="jv-history-year"><?php echo htmlspecialchars($year); ?></h3>
+                        <div class="jv-history-grid">
+                            <?php foreach ($teams as $team): ?>
+                            <<?php echo $team['instagram_url'] ? 'a href="' . htmlspecialchars($team['instagram_url']) . '" target="_blank" rel="noopener"' : 'div'; ?> class="jv-history-card">
+                                <div class="jv-history-thumb">
+                                    <?php if ($team['image_path']): ?>
+                                        <img src="<?php echo htmlspecialchars($team['image_path']); ?>" alt="<?php echo htmlspecialchars($team['team_name']); ?>">
+                                    <?php else: ?>
+                                        <div class="jv-history-noimg"><i class="fas fa-users"></i></div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="jv-history-info">
+                                    <?php if ($team['tag1']): ?><span class="jv-history-region"><?php echo htmlspecialchars($team['tag1']); ?></span><?php endif; ?>
+                                    <?php if ($team['tag2']): ?><span class="jv-history-place"><?php echo htmlspecialchars($team['tag2']); ?></span><?php endif; ?>
+                                    <h4 class="jv-history-team"><?php echo htmlspecialchars($team['team_name']); ?></h4>
+                                </div>
+                            </<?php echo $team['instagram_url'] ? 'a' : 'div'; ?>>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
 
                 <div class="jv-back" style="margin-top: 3.5rem;">
                     <a href="index.php#activities" class="btn-secondary"><i class="fas fa-arrow-left"></i> 活動一覧へ戻る</a>

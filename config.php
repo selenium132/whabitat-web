@@ -150,6 +150,67 @@ function validateCsrfToken($token) {
     }
 }
 
+// Helper: DBに保存された画像パスの解決。旧データはファイル名のみで保存されている場合があり、
+// その実体は images/common/ に置かれている（例: mtg_history の初期データ）。
+function resolveUploadImagePath($path) {
+    if ($path && strpos($path, '/') === false) {
+        return 'images/common/' . $path;
+    }
+    return $path;
+}
+
+// Helper: GV/JV チーム（History）テーブルの用意。
+// 初回はページにハードコードされていた実績データを自動シードする（以後は admin/teams.php で管理）。
+function ensureActivityTeamsTable($pdo) {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS activity_teams (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        type ENUM('gv','jv') NOT NULL,
+        year_label VARCHAR(20) NOT NULL,
+        team_name VARCHAR(100) NOT NULL,
+        tag1 VARCHAR(50) DEFAULT NULL,
+        tag2 VARCHAR(50) DEFAULT NULL,
+        instagram_url VARCHAR(255) DEFAULT NULL,
+        image_path VARCHAR(255) DEFAULT NULL,
+        sort_order INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_type_year (type, year_label)
+    )");
+
+    $count = (int)$pdo->query("SELECT COUNT(*) FROM activity_teams")->fetchColumn();
+    if ($count > 0) return;
+
+    // 旧ハードコード内容の移行シード。GV: tag1=Season / tag2=Country、JV: tag1=Region / tag2=地名
+    $seed = [
+        ['gv', '2020', 'さかんとGV',    'Spring', 'India',       'https://www.instagram.com/sakanto_gv',              'images/gv/gv_sakanto.jpg'],
+        ['gv', '2020', 'ぱるぱるGV',    'Spring', 'Vietnam',     'https://www.instagram.com/habitat_paruparu_gv',     'images/gv/gv_paruparu.jpg'],
+        ['gv', '2023', 'たんたんぐGV',  'Summer', 'Indonesia',   'https://www.instagram.com/tantangood_whabitat2023', 'images/gv/gv_tantangood.jpg'],
+        ['gv', '2024', 'ゆぷるむGV',    'Spring', 'Cambodia',    'https://www.instagram.com/yupurumu_whabitat',       'images/gv/gv_yupurumu.jpg'],
+        ['gv', '2024', 'マカランGV',    'Spring', 'Philippines', 'https://www.instagram.com/magkarawn_gv',            'images/gv/gv_magkarawn.jpg'],
+        ['gv', '2024', 'すかいるGV',    'Summer', 'Cambodia',    'https://www.instagram.com/sukairu.gv_whabitat',     'images/gv/gv_sukairu.jpg'],
+        ['gv', '2025', 'ばんがるGV',    'Spring', 'Nepal',       'https://www.instagram.com/bangalgv',                'images/gv/gv_bangal.jpg'],
+        ['gv', '2025', 'わばるまGV',    'Spring', 'Indonesia',   'https://www.instagram.com/wabarumahgv',             'images/gv/gv_wabarumah.jpg'],
+        ['gv', '2025', 'ダンガンGV',    'Spring', 'Vietnam',     'https://www.instagram.com/dangan_gv',               'images/gv/gv_dangan.jpg'],
+        ['gv', '2025', 'エルメラGV',    'Summer', 'Indonesia',   'https://www.instagram.com/erumela_gv',              'images/gv/gv_erumela.jpg'],
+        ['jv', '2025 Summer', 'みさらーちJV',   'Tokushima', '大井',   'https://www.instagram.com/oi.jv2025',        'images/jv/jv_misarachi.jpg'],
+        ['jv', '2025 Summer', 'てやのっぺJV',   'Nagano',    '立屋',   'https://www.instagram.com/teyanope_jv',      'images/jv/jv_teyanoppe.jpg'],
+        ['jv', '2025 Summer', 'ぺぺPON！JV',    'Tochigi',   '益子',   'https://www.instagram.com/pepepon_jv',       'images/jv/jv_pepepon.jpg'],
+        ['jv', '2025 Summer', 'じゃっぱーれ団', 'Aomori',    '白神',   'https://www.instagram.com/pepepon_jv',       'images/jv/jv_japparedan.jpg'],
+        ['jv', '2025 Summer', 'めんけぽっこJV', 'Akita',     '仙北',   'https://www.instagram.com/jyapparedan_jv',   'images/jv/jv_menkepokko.jpg'],
+        ['jv', '2025 Summer', 'ふくでっぽらJV', 'Fukushima', '田人',   'https://www.instagram.com/fukudeppo',        'images/jv/jv_fukudeppora.jpg'],
+        ['jv', '2025 Summer', 'かまきゅらんJV', 'Nagano',    '真木',   'https://www.instagram.com/kamaqran_jv2025',  'images/jv/jv_kamaquran.jpg'],
+        ['jv', '2025 Summer', 'ぎゃばみっちゃJV', 'Fukuoka', '黒木',   'https://www.instagram.com/kamaqran_jv2025',  'images/jv/jv_gyabamiccha.jpg'],
+        ['jv', '2025 Summer', 'このれい48JV',   'Mie',       '赤目',   'https://www.instagram.com/konorei48jv2025',  'images/jv/jv_konorei48.jpg'],
+        ['jv', '2025 Summer', 'なちゃJV',       'Toyama',    '五箇山', 'https://www.instagram.com/konorei48jv2025',  'images/jv/jv_nacha.jpg'],
+        ['jv', '2025 Summer', 'つむぐるりんJV', 'Niigata',   '山古志', 'https://www.instagram.com/tsumugururin_jv',  'images/jv/jv_tsumugururin.png'],
+        ['jv', '2025 Summer', 'りもちゅんJV',   'Shiga',     '高島',   'https://www.instagram.com/rimochunnn_jv',    'images/jv/jv_rimochun.jpg'],
+    ];
+    $stmt = $pdo->prepare("INSERT INTO activity_teams (type, year_label, team_name, tag1, tag2, instagram_url, image_path, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    foreach ($seed as $i => $row) {
+        $stmt->execute([$row[0], $row[1], $row[2], $row[3], $row[4], $row[5], $row[6], $i]);
+    }
+}
+
 // Helper: プロフィール必須項目が全て埋まっているか（requireLogin と callback.php で共用）
 function isProfileComplete(array $user) {
     return !(

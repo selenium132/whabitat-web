@@ -31,12 +31,12 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <link rel="apple-touch-icon" href="logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>全体ミーティング (MTG) | WHABITAT</title>
-    <meta name="description" content="毎週水曜6限後に開催する全体ミーティング。学年を超えた交流と、ボランティアの意義を学ぶWHABITATの活動の中心です。">
+    <meta name="description" content="毎週水曜6限に開催する全体ミーティング。学年を超えた交流と、ボランティアの意義を学ぶWHABITATの活動の中心です。">
     <link rel="canonical" href="https://whabitathome.com/activity_mtg.php">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="WHABITAT">
     <meta property="og:title" content="全体ミーティング (MTG) | WHABITAT">
-    <meta property="og:description" content="毎週水曜6限後。学年を超えた交流と、ボランティアの意義を学ぶ場。">
+    <meta property="og:description" content="毎週水曜6限。学年を超えた交流と、ボランティアの意義を学ぶ場。">
     <meta property="og:url" content="https://whabitathome.com/activity_mtg.php">
     <meta property="og:image" content="https://whabitathome.com/images/common/mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/common/mtg_hero.jpg') ?: '1'; ?>">
     <meta property="og:locale" content="ja_JP">
@@ -221,7 +221,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <div class="page-hero-inner">
                 <p class="page-hero-eyebrow">Weekly Meeting</p>
                 <h1 class="page-hero-title">全体ミーティング (MTG)</h1>
-                <p class="page-hero-sub">毎週水曜6限後。学年を超えた交流と、ボランティアの意義を学ぶ場。</p>
+                <p class="page-hero-sub">毎週水曜6限。学年を超えた交流と、ボランティアの意義を学ぶ場。</p>
             </div>
         </section>
 
@@ -234,7 +234,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <div class="mtg-info-card">
                 <h3>週に一度の交流と学びの場</h3>
                 <p>
-                    毎週水曜日の6限後に集まり、全体ミーティングを行っています。<br>
+                    毎週水曜日の6限に集まり、全体ミーティングを行っています。<br>
                     アイスブレイクで学年を超えた交流を深めたり、貧困問題や環境問題、ボランティアの意義について学ぶワークショップを行ったりしています。
                 </p>
                 <dl class="mtg-meta">
@@ -267,7 +267,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                                 <?php foreach ($yearEntries as $entry): ?>
                                     <article class="history-card">
                                         <?php if ($entry['image_path']): ?>
-                                            <div class="history-card-img" style="background-image: url('<?php echo htmlspecialchars($entry['image_path']); ?>');" role="img" aria-label="<?php echo htmlspecialchars($entry['title']); ?>"></div>
+                                            <div class="history-card-img" style="background-image: url('<?php echo htmlspecialchars(resolveUploadImagePath($entry['image_path'])); ?>');" role="img" aria-label="<?php echo htmlspecialchars($entry['title']); ?>"></div>
                                         <?php else: ?>
                                             <div class="history-card-placeholder">
                                                 <i class="fas fa-users"></i>
