@@ -177,13 +177,15 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .admin-container { max-width: 900px; margin: 0 auto; padding: 20px; padding-top: 100px; }
-        .form-card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
+        .form-card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 30px; scroll-margin-top: 90px; }
+        .form-card.is-editing { border: 1.5px solid var(--primary-color, #1a1a1a) !important; }
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
         .form-input, .form-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
         .btn-submit { background: var(--primary-color); color: white; padding: 12px 30px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
         .btn-submit:hover { opacity: 0.9; }
-        .btn-cancel { background: #6c757d; color: white; padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px; text-decoration: none; }
+        .btn-cancel { background: #fff; color: #333; padding: 12px 20px; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; text-decoration: none; font-size: .95rem; transition: border-color .2s, background .2s; }
+        .btn-cancel:hover { border-color: #1a1a1a; background: #f7f5f0; }
         .filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
         .filter-tab { padding: 6px 16px; border: 1px solid #ddd; border-radius: 999px; text-decoration: none; color: #333; font-size: .88rem; }
         .filter-tab.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
@@ -191,7 +193,21 @@ $csrf_token = generateCsrfToken();
         .type-gv { background: #ecf0f2; color: #51666e; }
         .type-jv { background: #ecf2ed; color: #3f7d54; }
         .entry-list { display: grid; gap: 15px; }
-        .entry-item { background: white; padding: 15px; border-radius: 8px; display: flex; gap: 15px; align-items: center; }
+        /* min-width: 0 が無いと、nowrap の行(メンバー名/URL)の幅まで grid トラックが広がり
+           モバイルで画面からはみ出す（min-width:auto 対策） */
+        .entry-item { background: white; padding: 15px; border-radius: 8px; display: flex; gap: 15px; align-items: center; min-width: 0; }
+        .entry-item.is-editing { border-color: var(--primary-color, #1a1a1a) !important; background: #f7f5f0; }
+        .editing-chip {
+            display: inline-flex; align-items: center; gap: 6px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            background: var(--primary-color, #1a1a1a); color: #fff;
+            font-size: .78rem; font-weight: 600; letter-spacing: .04em;
+            padding: 4px 12px; border-radius: 999px; vertical-align: 3px;
+        }
+        .form-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 12px; }
+        .form-head h3 { margin: 0; }
+        .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .form-actions .btn-submit { flex: 1; }
+        .form-actions .btn-cancel { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 7px; margin-left: 0; }
         .entry-item img { width: 80px; height: 60px; object-fit: cover; border-radius: 6px; }
         .entry-info { flex: 1; min-width: 0; }
         .entry-title { font-weight: 600; color: #333; }
@@ -222,6 +238,9 @@ $csrf_token = generateCsrfToken();
             .entry-item { flex-wrap: wrap; }
             .entry-info { flex: 1 1 calc(100% - 95px); }
             .entry-actions { width: 100%; justify-content: flex-end; }
+            .form-actions { flex-direction: column; }
+            .form-actions .btn-cancel { width: 100%; box-sizing: border-box; }
+            .editing-chip { margin-left: 0; }
         }
     </style>
     <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
@@ -246,8 +265,16 @@ $csrf_token = generateCsrfToken();
         <?php endif; ?>
 
         <!-- Add/Edit Form -->
-        <div class="form-card card">
-            <h3><?php echo $edit_team ? 'チームを編集' : '新しいチームを追加'; ?></h3>
+        <div class="form-card card<?php echo $edit_team ? ' is-editing' : ''; ?>" id="teamForm">
+            <div class="form-head">
+                <h3><?php echo $edit_team ? 'チームを編集' : '新しいチームを追加'; ?></h3>
+                <?php if ($edit_team): ?>
+                    <span class="editing-chip"><i class="fas fa-pen"></i> 「<?php echo htmlspecialchars($edit_team['team_name']); ?>」を編集中</span>
+                <?php endif; ?>
+            </div>
+            <?php if ($edit_team): ?>
+                <p class="field-note" style="margin: 0 0 15px;">下の一覧で選んだチームの内容を書き換えています。「編集をやめる」で新規追加に戻ります。</p>
+            <?php endif; ?>
             <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                 <input type="hidden" name="action" value="<?php echo $edit_team ? 'edit' : 'add'; ?>">
@@ -348,12 +375,12 @@ $csrf_token = generateCsrfToken();
                     <input type="file" name="image" id="team-image" accept="image/*" class="form-input">
                 </div>
 
-                <div style="margin-top: 20px;">
+                <div class="form-actions">
                     <button type="submit" class="btn-submit">
-                        <?php echo $edit_team ? '更新する' : '追加する'; ?>
+                        <i class="fas fa-<?php echo $edit_team ? 'check' : 'plus'; ?>"></i> <?php echo $edit_team ? 'この内容で更新する' : '追加する'; ?>
                     </button>
                     <?php if ($edit_team): ?>
-                        <a href="teams.php" class="btn-cancel">キャンセル</a>
+                        <a href="teams.php<?php echo $filter !== 'all' ? '?type=' . $filter : ''; ?>" class="btn-cancel"><i class="fas fa-xmark"></i> 編集をやめる</a>
                     <?php endif; ?>
                 </div>
             </form>
@@ -371,7 +398,7 @@ $csrf_token = generateCsrfToken();
                 <p style="color: #666;">まだチームがありません。</p>
             <?php else: ?>
                 <?php foreach ($teams as $team): ?>
-                    <div class="entry-item">
+                    <div class="entry-item<?php echo ($edit_team && (int)$edit_team['id'] === (int)$team['id']) ? ' is-editing' : ''; ?>">
                         <?php if ($team['image_path']): ?>
                             <img src="../<?php echo htmlspecialchars($team['image_path']); ?>" alt="<?php echo htmlspecialchars($team['team_name']); ?>">
                         <?php else: ?>
@@ -398,7 +425,7 @@ $csrf_token = generateCsrfToken();
                             </div>
                         </div>
                         <div class="entry-actions">
-                            <a href="?edit=<?php echo $team['id']; ?><?php echo $filter !== 'all' ? '&type=' . $filter : ''; ?>" class="btn-edit" aria-label="編集"><i class="fas fa-edit"></i></a>
+                            <a href="?edit=<?php echo $team['id']; ?><?php echo $filter !== 'all' ? '&type=' . $filter : ''; ?>#teamForm" class="btn-edit" aria-label="編集"><i class="fas fa-edit"></i></a>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('「<?php echo htmlspecialchars($team['team_name']); ?>」を削除しますか？\nこの操作は取り消せません。');">
                                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                 <input type="hidden" name="action" value="delete">
