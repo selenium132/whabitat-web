@@ -347,7 +347,7 @@ $csrf_token = generateCsrfToken();
                             <label class="member-pick" data-search="<?php echo htmlspecialchars(mb_strtolower(($mem['name'] ?? '') . ' ' . ($mem['name_kana'] ?? '') . ' ' . ($mem['grade'] ?? ''))); ?>">
                                 <input type="checkbox" name="member_ids[]" value="<?php echo (int)$mem['id']; ?>"
                                        <?php echo in_array((int)$mem['id'], $edit_member_ids, true) ? 'checked' : ''; ?>
-                                       onchange="updateMemberCount()">
+                                       onchange="onMemberToggle()">
                                 <span class="member-pick-name"><?php echo htmlspecialchars($mem['name']); ?></span>
                                 <span class="member-pick-grade"><?php echo htmlspecialchars($mem['grade'] ?? ''); ?></span>
                             </label>
@@ -454,6 +454,19 @@ $csrf_token = generateCsrfToken();
             const n = document.querySelectorAll('#memberPicker input[type="checkbox"]:checked').length;
             document.getElementById('memberSelCount').textContent = n;
         }
+        // 選択済みのメンバーをリストの先頭にまとめる（それぞれのグループ内は元の並びを維持）
+        function sortMemberPicker() {
+            const picker = document.getElementById('memberPicker');
+            const rows = Array.from(picker.querySelectorAll('.member-pick'));
+            const checked = rows.filter(r => r.querySelector('input').checked);
+            const unchecked = rows.filter(r => !r.querySelector('input').checked);
+            checked.concat(unchecked).forEach(r => picker.appendChild(r));
+        }
+        function onMemberToggle() {
+            updateMemberCount();
+            sortMemberPicker();
+        }
+        sortMemberPicker();
         updateMemberCount();
 
         function toggleTypeFields() {
