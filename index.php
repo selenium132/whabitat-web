@@ -139,55 +139,7 @@ try {
 </head>
 
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="#" class="logo">
-                <img src="logo.png" alt="WHABITAT" height="50">
-            </a>
-            <button class="menu-toggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="nav-list">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <nav>
-                <ul class="nav-list" id="nav-list">
-                    <li><a href="#about" class="nav-link">About</a></li>
-                    <li><a href="#activities" class="nav-link">Activities</a></li>
-                    <li><a href="#blog" class="nav-link">Blog</a></li>
-                    <li><a href="#join" class="nav-link">Join</a></li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
-                    <li>
-                        <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i
-                                class="fab fa-x-twitter"></i></a>
-                        <a href="https://www.instagram.com/whabinsta" target="_blank"
-                            class="social-icon"><i class="fab fa-instagram"></i></a>
-                    </li>
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <li><a href="dashboard.php" class="btn-login"><i class="fas fa-user"></i> MY PAGE</a></li>
-                    <?php else: ?>
-                        <li><a href="login.php" class="btn-login"><i class="fas fa-lock"></i> MEMBER LOGIN</a></li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <script>
-        document.querySelector('.menu-toggle').addEventListener('click', function () {
-            this.classList.toggle('active');
-            const isOpen = document.querySelector('.nav-list').classList.toggle('nav-open');
-            this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-
-        // Close menu when a link is clicked
-        document.querySelectorAll('.nav-link, .btn-login').forEach(link => {
-            link.addEventListener('click', () => {
-                document.querySelector('.menu-toggle').classList.remove('active');
-                document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
-                document.querySelector('.nav-list').classList.remove('nav-open');
-            });
-        });
-    </script>
+    <?php $nav_home = ''; include 'partials/header.php'; ?>
 
     <section class="hero hero--<?php echo htmlspecialchars($hero); ?>">
         <?php if ($hero === 'full'): ?>
@@ -494,16 +446,16 @@ try {
                         <input type="text" name="website" tabindex="-1" autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">お名前</label>
-                        <input type="text" name="name" class="form-input" required placeholder="早稲田 花子">
+                        <label class="form-label" for="fld-name">お名前</label>
+                        <input id="fld-name" type="text" name="name" class="form-input" required placeholder="早稲田 花子">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">メールアドレス</label>
-                        <input type="email" name="email" class="form-input" required placeholder="example@waseda.jp">
+                        <label class="form-label" for="fld-email">メールアドレス</label>
+                        <input id="fld-email" type="email" name="email" class="form-input" required placeholder="example@waseda.jp">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">メッセージ</label>
-                        <textarea name="message" class="form-input" rows="5" required
+                        <label class="form-label" for="fld-message">メッセージ</label>
+                        <textarea id="fld-message" name="message" class="form-input" rows="5" required
                             placeholder="ご質問やメッセージをどうぞ"></textarea>
                     </div>
                     <div class="form-group" style="display: flex; justify-content: center;">
@@ -515,17 +467,7 @@ try {
         </div>
     </section>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-links">
-                <a href="https://x.com/whabitat?s=21" target="_blank">X (Twitter)</a>
-                <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
-                <a href="#contact">Contact</a>
-            </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter.
-                All Rights Reserved.</p>
-        </div>
-    </footer>
+    <?php include 'partials/footer.php'; ?>
 
     <script>
     // Intersection Observer for fade-in animations

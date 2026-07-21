@@ -152,8 +152,8 @@ $csrf_token = generateCsrfToken();
                     <input type="hidden" name="color" id="selectedColor" value="#667eea">
                     
                     <div class="form-group">
-                        <label class="form-label">タイトル</label>
-                        <input type="text" name="title" class="form-input" required placeholder="例: 定例ミーティング">
+                        <label class="form-label" for="fld-title">タイトル</label>
+                        <input id="fld-title" type="text" name="title" class="form-input" required placeholder="例: 定例ミーティング">
                     </div>
                     
                     <div class="form-group">
@@ -166,11 +166,11 @@ $csrf_token = generateCsrfToken();
                     <div id="dateOnlyField" style="display: none;">
                         <div style="display: flex; gap: 10px;">
                             <div class="form-group" style="flex: 1;">
-                                <label class="form-label">開始日</label>
+                                <label class="form-label" for="startDate">開始日</label>
                                 <input type="date" name="start_date" id="startDate" class="form-input" onchange="autoFillEndDate()">
                             </div>
                             <div class="form-group" style="flex: 1;">
-                                <label class="form-label">終了日</label>
+                                <label class="form-label" for="endDate">終了日</label>
                                 <input type="date" name="end_date" id="endDate" class="form-input">
                             </div>
                         </div>
@@ -179,19 +179,19 @@ $csrf_token = generateCsrfToken();
                     <div id="dateTimeFields">
                         <div style="display: flex; gap: 10px;">
                             <div class="form-group" style="flex: 1;">
-                                <label class="form-label">開始</label>
+                                <label class="form-label" for="startDatetime">開始</label>
                                 <input type="datetime-local" name="start_datetime" id="startDatetime" class="form-input" onchange="autoFillEndDatetime()">
                             </div>
                             <div class="form-group" style="flex: 1;">
-                                <label class="form-label">終了</label>
+                                <label class="form-label" for="endDatetime">終了</label>
                                 <input type="datetime-local" name="end_datetime" id="endDatetime" class="form-input">
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">メモ（任意）</label>
-                        <input type="text" name="description" class="form-input" placeholder="追加情報があれば...">
+                        <label class="form-label" for="fld-description">メモ（任意）</label>
+                        <input id="fld-description" type="text" name="description" class="form-input" placeholder="追加情報があれば...">
                     </div>
                     
                     <div class="form-group">

@@ -165,28 +165,28 @@ $csrf_token = generateCsrfToken();
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
-                        <label class="form-label">日付 *</label>
-                        <input type="date" name="event_date" class="form-input" required value="<?php echo htmlspecialchars($edit_entry['event_date'] ?? ''); ?>">
+                        <label class="form-label" for="fld-event_date">日付 *</label>
+                        <input id="fld-event_date" type="date" name="event_date" class="form-input" required value="<?php echo htmlspecialchars($edit_entry['event_date'] ?? ''); ?>">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">年度グループ *</label>
-                        <input type="number" name="year_group" class="form-input" required value="<?php echo htmlspecialchars($edit_entry['year_group'] ?? date('Y')); ?>">
+                        <label class="form-label" for="fld-year_group">年度グループ *</label>
+                        <input id="fld-year_group" type="number" name="year_group" class="form-input" required value="<?php echo htmlspecialchars($edit_entry['year_group'] ?? date('Y')); ?>">
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">タイトル *</label>
-                    <input type="text" name="title" class="form-input" required placeholder="例: わびチューン" value="<?php echo htmlspecialchars($edit_entry['title'] ?? ''); ?>">
+                    <label class="form-label" for="fld-title">タイトル *</label>
+                    <input id="fld-title" type="text" name="title" class="form-input" required placeholder="例: わびチューン" value="<?php echo htmlspecialchars($edit_entry['title'] ?? ''); ?>">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">サブタイトル</label>
-                    <input type="text" name="subtitle" class="form-input" placeholder="例: 〜3人の美食家を添えて〜" value="<?php echo htmlspecialchars($edit_entry['subtitle'] ?? ''); ?>">
+                    <label class="form-label" for="fld-subtitle">サブタイトル</label>
+                    <input id="fld-subtitle" type="text" name="subtitle" class="form-input" placeholder="例: 〜3人の美食家を添えて〜" value="<?php echo htmlspecialchars($edit_entry['subtitle'] ?? ''); ?>">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">説明</label>
-                    <textarea name="description" class="form-textarea" placeholder="MTGの内容を記載..."><?php echo htmlspecialchars($edit_entry['description'] ?? ''); ?></textarea>
+                    <label class="form-label" for="fld-description">説明</label>
+                    <textarea id="fld-description" name="description" class="form-textarea" placeholder="MTGの内容を記載..."><?php echo htmlspecialchars($edit_entry['description'] ?? ''); ?></textarea>
                 </div>
                 
                 <div class="form-group">

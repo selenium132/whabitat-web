@@ -213,6 +213,15 @@ try {
                 </div>
             </div>
 
+            <!-- セクションジャンプナビ（sticky・モバイルは横スクロール） -->
+            <nav class="dash-nav" aria-label="ページ内セクション">
+                <a href="#room"><span aria-hidden="true">🚪</span> 部室</a>
+                <a href="#events"><span aria-hidden="true">✅</span> 出欠確認</a>
+                <a href="#surveys"><span aria-hidden="true">📋</span> アンケート</a>
+                <a href="#calendar"><span aria-hidden="true">📅</span> カレンダー</a>
+                <a href="#suggestion"><span aria-hidden="true">📮</span> 目安箱</a>
+            </nav>
+
             <!-- 部室 在室状況・入退室・予約 -->
             <h2 id="room" class="section-title" style="text-align: left; margin: 0 0 1.5rem; scroll-margin-top: 80px;"><span aria-hidden="true">🚪</span> 部室</h2>
             <input type="hidden" id="roomCsrfToken" value="<?php echo htmlspecialchars($room_csrf_token, ENT_QUOTES, 'UTF-8'); ?>">
@@ -770,6 +779,27 @@ try {
     </main>
 
     <style>
+        /* セクションジャンプナビ */
+        .dash-nav {
+            position: sticky; top: 72px; z-index: 50;
+            display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+            margin: 0 0 2rem; padding: 10px 2px;
+            background: var(--bg-color, #faf9f6);
+            scrollbar-width: none;
+        }
+        .dash-nav::-webkit-scrollbar { display: none; }
+        .dash-nav a {
+            flex: none; display: inline-flex; align-items: center; gap: 6px;
+            font-size: .85rem; font-weight: 500; color: var(--text-color, #2a2a2a);
+            text-decoration: none; white-space: nowrap;
+            border: 1px solid var(--border-color, #e6e2d9); border-radius: 999px;
+            padding: 7px 14px; background: var(--card-bg, #fff);
+            transition: border-color .2s, background .2s;
+        }
+        .dash-nav a:hover { border-color: var(--primary-color, #1a1a1a); background: #f7f5f0; }
+        @media (max-width: 768px) {
+            .dash-nav { top: 64px; margin-bottom: 1.5rem; }
+        }
         /* ヘッダーの調整: コンテンツ幅に合わせる */
         @media (min-width: 769px) {
             .header-inner {

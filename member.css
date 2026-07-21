@@ -71,6 +71,13 @@ body .form-input:focus, body .form-select:focus, body textarea:focus {
     background-color: #fff;
 }
 
+/* form_create の独自入力欄にも統一フォーカスリング（下線色変化だけでは視認性が弱い） */
+body .title-input:focus, body .desc-input:focus,
+body .q-text-input:focus, body .option-input:focus {
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, .07);
+    border-radius: 2px;
+}
+
 /* アイコンボタン・ログアウト */
 body .icon-btn { background: #f2f0ea; }
 body .icon-btn:hover { background: var(--primary-color); color: #fff; }

@@ -315,14 +315,14 @@ $csrf_token = generateCsrfToken();
                     <?php endif; ?>
                     
                     <div class="form-group">
-                        <label class="form-label">タイトル</label>
-                        <input type="text" name="title" class="form-input" required 
+                        <label class="form-label" for="fld-title">タイトル</label>
+                        <input id="fld-title" type="text" name="title" class="form-input" required 
                                placeholder="記事のタイトル"
                                value="<?php echo htmlspecialchars($edit_blog['title'] ?? ''); ?>">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">サムネイル画像</label>
+                        <label class="form-label" for="thumbnailUrl">サムネイル画像</label>
                         <?php if (!empty($edit_blog['thumbnail'])): ?>
                             <div style="margin-bottom: 10px;">
                                 <img src="../<?php echo htmlspecialchars($edit_blog['thumbnail']); ?>" alt="現在のサムネイル"

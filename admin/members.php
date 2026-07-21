@@ -380,6 +380,11 @@ $csrf_token = generateCsrfToken();
                     <option value="admin">管理者</option>
                     <option value="member">一般</option>
                 </select>
+                <select id="filterEnroll" class="form-select">
+                    <option value="active" selected>在籍生のみ</option>
+                    <option value="obog">OB・OGのみ</option>
+                    <option value="">在籍+OB・OG</option>
+                </select>
                 <button type="button" id="resetBtn" class="btn-secondary btn-mini"><i class="fas fa-rotate-left"></i> リセット</button>
                 <button type="button" id="compactBtn" class="btn-secondary btn-mini"><i class="fas fa-compress"></i> コンパクト</button>
                 <span class="tool-spacer"></span>
@@ -416,6 +421,16 @@ $csrf_token = generateCsrfToken();
                             <?php foreach ($members as $m): ?>
                                 <?php
                                     $my_teams = $teams_by_user[(int)$m['id']] ?? [];
+                                    // 在籍/OB・OG判定: 代 → 卒業予定年(内部計算)。代が未設定なら在籍扱い(隠さない)
+                                    $enroll = 'active';
+                                    $gen = (int)preg_replace('/\D/', '', $m['grade'] ?? '');
+                                    if ($gen > 0) {
+                                        $gy = $gen + 2010;
+                                        $cy = (int)date('Y'); $cm = (int)date('n');
+                                        $cay = ($cm >= 4) ? $cy : $cy - 1;
+                                        $uy = 4 - ($gy - $cay - 1);
+                                        if ($uy > 4) $enroll = 'obog';
+                                    }
                                     $my_team_names = implode('、', array_column($my_teams, 'name'));
                                     $search_blob = mb_strtolower(implode(' ', array_filter([
                                         $m['name'] ?? '', $m['name_kana'] ?? '', $m['student_id'] ?? '',
@@ -431,6 +446,7 @@ $csrf_token = generateCsrfToken();
                                     data-gender="<?php echo htmlspecialchars($m['gender'] ?? ''); ?>"
                                     data-approved="<?php echo $m['is_approved'] ? '1' : '0'; ?>"
                                     data-role="<?php echo htmlspecialchars($m['role'] ?? ''); ?>"
+                                    data-enrollment="<?php echo $enroll; ?>"
                                     data-teams="<?php echo $my_teams ? '|' . implode('|', array_column($my_teams, 'id')) . '|' : ''; ?>"
                                     data-search="<?php echo htmlspecialchars($search_blob); ?>">
                                     <td class="col-name">
@@ -564,23 +580,23 @@ $csrf_token = generateCsrfToken();
                 <div class="edit-section">
                     <div class="edit-section-title">基本情報</div>
                     <div class="form-group">
-                        <label class="form-label">名前</label>
+                        <label class="form-label" for="edit_name">名前</label>
                         <input type="text" name="name" id="edit_name" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">ふりがな</label>
+                        <label class="form-label" for="edit_name_kana">ふりがな</label>
                         <input type="text" name="name_kana" id="edit_name_kana" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">メールアドレス</label>
+                        <label class="form-label" for="edit_email">メールアドレス</label>
                         <input type="email" name="email" id="edit_email" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">生年月日</label>
+                        <label class="form-label" for="edit_birthdate">生年月日</label>
                         <input type="date" name="birthdate" id="edit_birthdate" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">性別</label>
+                        <label class="form-label" for="edit_gender">性別</label>
                         <select name="gender" id="edit_gender" class="form-select">
                             <option value="">選択してください</option>
                             <option value="male">男性</option>
@@ -593,7 +609,7 @@ $csrf_token = generateCsrfToken();
                 <div class="edit-section">
                     <div class="edit-section-title">大学情報</div>
                     <div class="form-group">
-                        <label class="form-label">代</label>
+                        <label class="form-label" for="edit_grade">代</label>
                         <select name="grade" id="edit_grade" class="form-select" required>
                             <option value="">選択してください</option>
                             <?php
@@ -610,7 +626,7 @@ $csrf_token = generateCsrfToken();
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">学部</label>
+                        <label class="form-label" for="edit_faculty">学部</label>
                         <select name="faculty" id="edit_faculty" class="form-select">
                             <option value="">選択してください</option>
                             <?php
@@ -621,11 +637,11 @@ $csrf_token = generateCsrfToken();
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">学科</label>
+                        <label class="form-label" for="edit_department">学科</label>
                         <input type="text" name="department" id="edit_department" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">学籍番号</label>
+                        <label class="form-label" for="edit_sid">学籍番号</label>
                         <input type="text" name="student_id" id="edit_sid" class="form-input">
                     </div>
                 </div>
@@ -633,7 +649,7 @@ $csrf_token = generateCsrfToken();
                 <div class="edit-section">
                     <div class="edit-section-title">連絡先・その他</div>
                     <div class="form-group">
-                        <label class="form-label">郵便番号</label>
+                        <label class="form-label" for="edit_address">郵便番号</label>
                         <div style="position: relative;">
                             <input type="text" name="zipcode" id="edit_zipcode" class="form-input">
                             <span id="edit-zipcode-loading" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:#999; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> 検索中...</span>
@@ -645,19 +661,19 @@ $csrf_token = generateCsrfToken();
                         <input type="text" name="address" id="edit_address" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">携帯電話番号</label>
+                        <label class="form-label" for="edit_phone">携帯電話番号</label>
                         <input type="text" name="phone" id="edit_phone" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">他サークル</label>
+                        <label class="form-label" for="edit_other_circles">他サークル</label>
                         <input type="text" name="other_circles" id="edit_other_circles" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">アレルギー</label>
+                        <label class="form-label" for="edit_allergies">アレルギー</label>
                         <textarea name="allergies" id="edit_allergies" class="form-input" rows="2"></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">その他</label>
+                        <label class="form-label" for="edit_notes">その他</label>
                         <textarea name="notes" id="edit_notes" class="form-input" rows="2"></textarea>
                     </div>
                 </div>
@@ -682,6 +698,7 @@ $csrf_token = generateCsrfToken();
         const fGrade = document.getElementById('filterGrade');
         const fFaculty = document.getElementById('filterFaculty');
         const fTeam = document.getElementById('filterTeam');
+        const fEnroll = document.getElementById('filterEnroll');
         const fGender = document.getElementById('filterGender');
         const fStatus = document.getElementById('filterStatus');
         const fRole = document.getElementById('filterRole');
@@ -699,6 +716,7 @@ $csrf_token = generateCsrfToken();
                 if (gen && r.dataset.gender !== gen) show = false;
                 if (tm === '__none') { if ((r.dataset.teams || '') !== '') show = false; }
                 else if (tm && !(r.dataset.teams || '').includes('|' + tm + '|')) show = false;
+                if (fEnroll.value && r.dataset.enrollment !== fEnroll.value) show = false;
                 if (st && r.dataset.approved !== st) show = false;
                 if (ro && r.dataset.role !== ro) show = false;
                 r.style.display = show ? '' : 'none';
@@ -772,7 +790,7 @@ $csrf_token = generateCsrfToken();
 
         // リセット・コンパクト
         document.getElementById('resetBtn').addEventListener('click', () => {
-            searchInput.value = ''; fGrade.value = ''; fFaculty.value = ''; fGender.value = ''; fStatus.value = ''; fRole.value = ''; fTeam.value = '';
+            searchInput.value = ''; fGrade.value = ''; fFaculty.value = ''; fGender.value = ''; fStatus.value = ''; fRole.value = ''; fTeam.value = ''; fEnroll.value = 'active';
             applyFilter();
         });
         document.getElementById('compactBtn').addEventListener('click', function() {
@@ -781,7 +799,7 @@ $csrf_token = generateCsrfToken();
             this.innerHTML = on ? '<i class="fas fa-expand"></i> 全項目' : '<i class="fas fa-compress"></i> コンパクト';
         });
 
-        [searchInput, fGrade, fFaculty, fGender, fStatus, fRole, fTeam].forEach(el => {
+        [searchInput, fGrade, fFaculty, fGender, fStatus, fRole, fTeam, fEnroll].forEach(el => {
             el.addEventListener('input', applyFilter);
             el.addEventListener('change', applyFilter);
         });

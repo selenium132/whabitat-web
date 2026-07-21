@@ -169,53 +169,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="index.php" class="logo">
-                <img src="logo.png" alt="WHABITAT" height="50">
-            </a>
-            <button class="menu-toggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="nav-list">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <nav>
-                <ul class="nav-list" id="nav-list">
-                    <li><a href="index.php#about" class="nav-link">About</a></li>
-                    <li><a href="index.php#activities" class="nav-link">Activities</a></li>
-                    <li><a href="index.php#blog" class="nav-link">Blog</a></li>
-                    <li><a href="index.php#join" class="nav-link">Join</a></li>
-                    <li><a href="index.php#contact" class="nav-link">Contact</a></li>
-                    <li>
-                        <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
-                        <a href="https://www.instagram.com/whabinsta" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
-                    </li>
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <li><a href="dashboard.php" class="btn-login"><i class="fas fa-user"></i> MY PAGE</a></li>
-                    <?php else: ?>
-                        <li><a href="login.php" class="btn-login"><i class="fas fa-lock"></i> MEMBER LOGIN</a></li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <script>
-        document.querySelector('.menu-toggle').addEventListener('click', function () {
-            this.classList.toggle('active');
-            const isOpen = document.querySelector('.nav-list').classList.toggle('nav-open');
-            this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-
-        // Close menu when a link is clicked
-        document.querySelectorAll('.nav-link, .btn-login').forEach(link => {
-            link.addEventListener('click', () => {
-                document.querySelector('.menu-toggle').classList.remove('active');
-                document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
-                document.querySelector('.nav-list').classList.remove('nav-open');
-            });
-        });
-    </script>
+    <?php include 'partials/header.php'; ?>
 
     <main class="gv-main">
         <section class="page-hero">
@@ -357,7 +311,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                             <?php foreach ($teams as $team): ?>
                             <<?php echo $team['instagram_url'] ? 'a href="' . htmlspecialchars($team['instagram_url']) . '" target="_blank" rel="noopener"' : 'div'; ?> class="gv-history-card">
                                 <?php if ($team['image_path']): ?>
-                                    <img src="<?php echo htmlspecialchars($team['image_path']); ?>" alt="<?php echo htmlspecialchars($team['team_name']); ?>">
+                                    <img src="<?php echo htmlspecialchars($team['image_path']); ?>" alt="<?php echo htmlspecialchars($team['team_name']); ?>" loading="lazy" decoding="async">
                                 <?php else: ?>
                                     <div class="gv-history-noimg"><i class="fas fa-users"></i></div>
                                 <?php endif; ?>
@@ -401,16 +355,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </section>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-links">
-                <a href="https://x.com/whabitat?s=21" target="_blank">X (Twitter)</a>
-                <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
-                <a href="index.php#contact">Contact</a>
-            </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter. All Rights Reserved.</p>
-        </div>
-    </footer>
+    <?php include 'partials/footer.php'; ?>
 
     <script>
     // Intersection Observer for fade-in animations

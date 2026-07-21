@@ -167,7 +167,7 @@ $is_first_registration = empty($current_user['name']);
                         <h2 style="font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;"><i class="fas fa-user"></i> 基本情報</h2>
                         
                         <div class="form-group">
-                            <label class="form-label">氏名（正式名フルネーム） <span style="color: var(--accent-red);">*</span></label>
+                            <label class="form-label" for="fld-email">氏名（正式名フルネーム） <span style="color: var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※姓と名の間は全角スペースを1文字空ける</p>
                             <input type="text" name="name" class="form-input" required placeholder="例：早稲田　太郎" value="<?php echo htmlspecialchars($name_val); ?>">
                         </div>
@@ -178,11 +178,11 @@ $is_first_registration = empty($current_user['name']);
                         </div>
                         <div class="form-group">
                             <label class="form-label">メールアドレス <span style="color: var(--accent-red);">*</span></label>
-                            <input type="email" name="email" class="form-input" required placeholder="例：waseda@example.com" value="<?php echo htmlspecialchars($email_val); ?>">
+                            <input id="fld-email" type="email" name="email" class="form-input" required placeholder="例：waseda@example.com" value="<?php echo htmlspecialchars($email_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">性別 <span style="color: var(--accent-red);">*</span></label>
-                            <select name="gender" class="form-select" required>
+                            <label class="form-label" for="fld-gender">性別 <span style="color: var(--accent-red);">*</span></label>
+                            <select id="fld-gender" name="gender" class="form-select" required>
                                 <option value="">選択してください</option>
                                 <option value="male" <?php echo $gender_val === 'male' ? 'selected' : ''; ?>>男</option>
                                 <option value="female" <?php echo $gender_val === 'female' ? 'selected' : ''; ?>>女</option>
@@ -190,8 +190,8 @@ $is_first_registration = empty($current_user['name']);
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">生年月日 <span style="color: var(--accent-red);">*</span></label>
-                            <input type="date" name="birthdate" class="form-input" required value="<?php echo htmlspecialchars($birthdate_val); ?>">
+                            <label class="form-label" for="fld-birthdate">生年月日 <span style="color: var(--accent-red);">*</span></label>
+                            <input id="fld-birthdate" type="date" name="birthdate" class="form-input" required value="<?php echo htmlspecialchars($birthdate_val); ?>">
                         </div>
                     </div>
 
@@ -199,7 +199,7 @@ $is_first_registration = empty($current_user['name']);
                         <h2 style="font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;"><i class="fas fa-graduation-cap"></i> 大学情報</h2>
 
                         <div class="form-group">
-                            <label class="form-label">代 <span style="color: var(--accent-red);">*</span></label>
+                            <label class="form-label" for="fld-faculty">代 <span style="color: var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※自分が何代目か選択してください</p>
                             <select name="grade" class="form-select" required>
                                 <option value="">選択してください</option>
@@ -226,7 +226,7 @@ $is_first_registration = empty($current_user['name']);
                         </div>
                         <div class="form-group">
                             <label class="form-label">学部 <span style="color: var(--accent-red);">*</span></label>
-                            <select name="faculty" class="form-select" required>
+                            <select id="fld-faculty" name="faculty" class="form-select" required>
                                 <option value="">選択してください</option>
                                 <?php foreach ($waseda_faculties as $f): ?>
                                     <option value="<?php echo htmlspecialchars($f); ?>" <?php echo $faculty_val === $f ? 'selected' : ''; ?>><?php echo htmlspecialchars($f); ?></option>
@@ -234,11 +234,11 @@ $is_first_registration = empty($current_user['name']);
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">学科</label>
-                            <input type="text" name="department" class="form-input" placeholder="任意" value="<?php echo htmlspecialchars($department_val); ?>">
+                            <label class="form-label" for="fld-department">学科</label>
+                            <input id="fld-department" type="text" name="department" class="form-input" placeholder="任意" value="<?php echo htmlspecialchars($department_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">学籍番号（ハイフン以下不要）<span style="color:var(--accent-red);">*</span></label>
+                            <label class="form-label" for="address">学籍番号（ハイフン以下不要）<span style="color:var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">※必須です。ハイフン以下（－以降）は入力不要です。学籍番号がまだ無い方は運営に連絡してください。</p>
                             <input type="text" name="student_id" class="form-input" placeholder="例：1A234567" value="<?php echo htmlspecialchars($sid_val); ?>">
                         </div>
@@ -260,22 +260,22 @@ $is_first_registration = empty($current_user['name']);
                             <input type="text" name="address" id="address" class="form-input" required placeholder="例：東京都新宿区戸塚町1-104" value="<?php echo htmlspecialchars($address_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">携帯電話番号 <span style="color: var(--accent-red);">*</span></label>
+                            <label class="form-label" for="fld-other_circles">携帯電話番号 <span style="color: var(--accent-red);">*</span></label>
                             <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.3rem;">例: 000-0000-0000</p>
                             <input type="text" name="phone" class="form-input" required placeholder="例：090-1234-5678" value="<?php echo htmlspecialchars($phone_val); ?>">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">他サークル・団体</label>
-                            <input type="text" name="other_circles" class="form-input" placeholder="任意" value="<?php echo htmlspecialchars($other_circles_val); ?>">
+                            <input id="fld-other_circles" type="text" name="other_circles" class="form-input" placeholder="任意" value="<?php echo htmlspecialchars($other_circles_val); ?>">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">アレルギー等</label>
-                            <textarea name="allergies" class="form-input" rows="2" placeholder="任意"><?php echo htmlspecialchars($allergies_val); ?></textarea>
+                            <label class="form-label" for="fld-allergies">アレルギー等</label>
+                            <textarea id="fld-allergies" name="allergies" class="form-input" rows="2" placeholder="任意"><?php echo htmlspecialchars($allergies_val); ?></textarea>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">その他何かあればどうぞ！</label>
-                            <textarea name="notes" class="form-input" rows="3" placeholder="任意"><?php echo htmlspecialchars($notes_val); ?></textarea>
+                            <label class="form-label" for="fld-notes">その他何かあればどうぞ！</label>
+                            <textarea id="fld-notes" name="notes" class="form-input" rows="3" placeholder="任意"><?php echo htmlspecialchars($notes_val); ?></textarea>
                         </div>
                     </div>
 

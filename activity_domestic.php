@@ -167,53 +167,7 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="index.php" class="logo">
-                <img src="logo.png" alt="WHABITAT" height="50">
-            </a>
-            <button class="menu-toggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="nav-list">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <nav>
-                <ul class="nav-list" id="nav-list">
-                    <li><a href="index.php#about" class="nav-link">About</a></li>
-                    <li><a href="index.php#activities" class="nav-link">Activities</a></li>
-                    <li><a href="index.php#blog" class="nav-link">Blog</a></li>
-                    <li><a href="index.php#join" class="nav-link">Join</a></li>
-                    <li><a href="index.php#contact" class="nav-link">Contact</a></li>
-                    <li>
-                        <a href="https://x.com/whabitat?s=21" target="_blank" class="social-icon"><i class="fab fa-x-twitter"></i></a>
-                        <a href="https://www.instagram.com/whabinsta" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
-                    </li>
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <li><a href="dashboard.php" class="btn-login"><i class="fas fa-user"></i> MY PAGE</a></li>
-                    <?php else: ?>
-                        <li><a href="login.php" class="btn-login"><i class="fas fa-lock"></i> MEMBER LOGIN</a></li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <script>
-        document.querySelector('.menu-toggle').addEventListener('click', function () {
-            this.classList.toggle('active');
-            const isOpen = document.querySelector('.nav-list').classList.toggle('nav-open');
-            this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-
-        // Close menu when a link is clicked
-        document.querySelectorAll('.nav-link, .btn-login').forEach(link => {
-            link.addEventListener('click', () => {
-                document.querySelector('.menu-toggle').classList.remove('active');
-                document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
-                document.querySelector('.nav-list').classList.remove('nav-open');
-            });
-        });
-    </script>
+    <?php include 'partials/header.php'; ?>
 
     <main class="dm-main">
         <section class="page-hero">
@@ -298,7 +252,7 @@
                 <h3 class="dm-subtitle">ゴミ拾い・ビーチクリーン</h3>
                 <div class="dm-grid">
                     <div class="dm-card dm-card-wide">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_trash_picking.jpg" alt="ゴミ拾い・ビーチクリーン"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_trash_picking.jpg" alt="ゴミ拾い・ビーチクリーン" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Trash Picking &amp; Beach Clean</span>
                             <h4>ゴミ拾い・ビーチクリーン</h4>
@@ -313,7 +267,7 @@
                 <h3 class="dm-subtitle">農業ボランティア (援農)</h3>
                 <div class="dm-grid">
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_iijima_farm.jpg" alt="飯島農園"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_iijima_farm.jpg" alt="飯島農園" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Chiba</span>
                             <h4>北習志野</h4>
@@ -321,7 +275,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_earth_farm.jpg" alt="東京地球農園"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_earth_farm.jpg" alt="東京地球農園" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Tokyo</span>
                             <h4>あきる野</h4>
@@ -333,7 +287,7 @@
                 <h3 class="dm-subtitle">地域連携・その他</h3>
                 <div class="dm-grid">
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_omikoshi.jpg" alt="お神輿・お祭り手伝い"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_omikoshi.jpg" alt="お神輿・お祭り手伝い" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Festival</span>
                             <h4>お神輿・お祭り手伝い</h4>
@@ -341,7 +295,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_bosai.jpg" alt="地域防災訓練"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_bosai.jpg" alt="地域防災訓練" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Bosai</span>
                             <h4>地域防災訓練</h4>
@@ -357,7 +311,7 @@
                 <p class="dm-section-desc">1泊〜3泊4日程度。事前・事後の活動が少ないため、気軽に参加できるのが特徴です。</p>
                 <div class="dm-grid">
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_teradomari.jpg" alt="寺泊 (新潟県長岡市)" style="object-position: 60% 50%;"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_teradomari.jpg" alt="寺泊 (新潟県長岡市)" style="object-position: 60% 50%;" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Niigata</span>
                             <h4>寺泊</h4>
@@ -365,7 +319,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_nishiwaga.jpg" alt="西和賀（岩手県）" style="object-position: right bottom;"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_nishiwaga.jpg" alt="西和賀（岩手県）" style="object-position: right bottom;" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Iwate</span>
                             <h4>西和賀</h4>
@@ -373,7 +327,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_bukeyashiki.jpg" alt="武家屋敷 (東京都日の出町)"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_bukeyashiki.jpg" alt="武家屋敷 (東京都日の出町)" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Tokyo</span>
                             <h4>武家屋敷</h4>
@@ -381,7 +335,7 @@
                         </div>
                     </div>
                     <div class="dm-card">
-                        <div class="dm-card-img"><img src="images/domestic/domestic_tabayama.jpg" alt="丹波山村 (山梨県)"></div>
+                        <div class="dm-card-img"><img src="images/domestic/domestic_tabayama.jpg" alt="丹波山村 (山梨県)" loading="lazy" decoding="async"></div>
                         <div class="dm-card-body">
                             <span class="dm-tag">Yamanashi</span>
                             <h4>丹波山</h4>
@@ -394,16 +348,7 @@
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-links">
-                <a href="https://x.com/whabitat?s=21" target="_blank">X (Twitter)</a>
-                <a href="https://www.instagram.com/whabinsta" target="_blank">Instagram</a>
-                <a href="index.php#contact">Contact</a>
-            </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ccc;">&copy; <?php echo date('Y'); ?> WHABITAT Waseda University Chapter. All Rights Reserved.</p>
-        </div>
-    </footer>
+    <?php include 'partials/footer.php'; ?>
 
     <script>
     // Intersection Observer for fade-in animations
