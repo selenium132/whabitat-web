@@ -431,16 +431,16 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                 <div class="event-desc"><?php echo htmlspecialchars($event['description']); ?></div>
                 <?php if (($event['type'] ?? 'event') !== 'survey'): ?>
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.9rem; color: #666;">
-                    <strong>開催日時:</strong> <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?><br>
+                    <i class="far fa-calendar-alt" style="color: #8d877c;"></i> <strong>開催日時:</strong> <?php echo date('Y年m月d日 H:i', strtotime($event['event_date'])); ?><br>
                     <?php if (!$is_open): ?>
-                        <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 8px; color: #856404;">
+                        <div style="margin-top: 10px; padding: 10px; background: #f4eedd; border-radius: 8px; color: #8f6526;">
                             <i class="fas fa-clock"></i> <?php echo htmlspecialchars($schedule_message); ?>
                         </div>
                     <?php else: ?>
                         <span style="color: var(--accent-red);">* 必須</span>
                         <?php if (!empty($event['close_at'])): ?>
                             <div style="margin-top: 8px; color: #888; font-size: 0.85rem;">
-                                <i class="fas fa-hourglass-end"></i> 締切: <?php echo date('Y年m月d日 H:i', strtotime($event['close_at'])); ?>
+                                <i class="fas fa-hourglass-end" style="color: #b0453a;"></i> 締切: <?php echo date('Y年m月d日 H:i', strtotime($event['close_at'])); ?>
                             </div>
                         <?php endif; ?>
                         <?php if (!empty($event['capacity'])): ?>
@@ -453,14 +453,14 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
                 <?php else: /* survey header info */ ?>
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.9rem; color: #666;">
                     <?php if (!$is_open): ?>
-                        <div style="margin-top: 0; padding: 10px; background: #fff3cd; border-radius: 8px; color: #856404;">
+                        <div style="margin-top: 0; padding: 10px; background: #f4eedd; border-radius: 8px; color: #8f6526;">
                             <i class="fas fa-clock"></i> このアンケートは回答期間外です。
                         </div>
                     <?php else: ?>
                         <span style="color: var(--accent-red);">* 必須</span>
                         <?php if (!empty($event['close_at'])): ?>
                             <div style="margin-top: 8px; color: #888; font-size: 0.85rem;">
-                                <i class="fas fa-hourglass-end"></i> 締切: <?php echo date('Y年m月d日 H:i', strtotime($event['close_at'])); ?>
+                                <i class="fas fa-hourglass-end" style="color: #b0453a;"></i> 締切: <?php echo date('Y年m月d日 H:i', strtotime($event['close_at'])); ?>
                             </div>
                         <?php endif; ?>
                     <?php endif; ?>
