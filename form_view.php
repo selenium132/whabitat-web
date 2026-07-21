@@ -423,9 +423,9 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
             <!-- Title Header -->
             <div class="header-card">
                 <?php if (($event['type'] ?? 'event') === 'survey'): ?>
-                    <div style="display:inline-block;background:#7d6a8e;color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;margin-bottom:12px;">📋 アンケート</div>
+                    <div style="display:inline-block;background:#7d6a8e;color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;margin-bottom:12px;"><i class="fas fa-list-check" aria-hidden="true"></i> アンケート</div>
                 <?php else: ?>
-                    <div style="display:inline-block;background:#51666e;color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;margin-bottom:12px;">📅 出欠確認</div>
+                    <div style="display:inline-block;background:#51666e;color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;margin-bottom:12px;"><i class="fas fa-calendar-check" aria-hidden="true"></i> 出欠確認</div>
                 <?php endif; ?>
                 <h1 class="event-title"><?php echo htmlspecialchars($event['title']); ?></h1>
                 <div class="event-desc"><?php echo htmlspecialchars($event['description']); ?></div>

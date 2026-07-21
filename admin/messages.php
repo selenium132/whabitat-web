@@ -216,8 +216,8 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
             <div class="filter-bar">
                 <a href="?source=all" class="filter-btn <?php echo $source === 'all' ? 'active' : ''; ?>">すべて</a>
                 <a href="?source=unread" class="filter-btn <?php echo $source === 'unread' ? 'active' : ''; ?>">未読のみ</a>
-                <a href="?source=contact" class="filter-btn <?php echo $source === 'contact' ? 'active' : ''; ?>">📧 お問い合わせ</a>
-                <a href="?source=suggestion" class="filter-btn <?php echo $source === 'suggestion' ? 'active' : ''; ?>">📮 目安箱</a>
+                <a href="?source=contact" class="filter-btn <?php echo $source === 'contact' ? 'active' : ''; ?>"><i class="fas fa-envelope" aria-hidden="true"></i> お問い合わせ</a>
+                <a href="?source=suggestion" class="filter-btn <?php echo $source === 'suggestion' ? 'active' : ''; ?>"><i class="fas fa-inbox" aria-hidden="true"></i> 目安箱</a>
                 
                 <span style="margin-left: auto;"></span>
                 
@@ -250,9 +250,9 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                         <div class="message-meta">
                             <span>
                                 <?php if ($isSuggestion): ?>
-                                    <span class="source-badge suggestion">📮 目安箱</span>
+                                    <span class="source-badge suggestion"><i class="fas fa-inbox" aria-hidden="true"></i> 目安箱</span>
                                 <?php else: ?>
-                                    <span class="source-badge contact">📧 お問い合わせ</span>
+                                    <span class="source-badge contact"><i class="fas fa-envelope" aria-hidden="true"></i> お問い合わせ</span>
                                 <?php endif; ?>
                                 <strong><?php echo htmlspecialchars($msg['name']); ?></strong>
                                 <?php if (!$isSuggestion): ?>

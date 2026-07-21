@@ -215,15 +215,15 @@ try {
 
             <!-- セクションジャンプナビ（sticky・モバイルは横スクロール） -->
             <nav class="dash-nav" aria-label="ページ内セクション">
-                <a href="#room"><span aria-hidden="true">🚪</span> 部室</a>
-                <a href="#events"><span aria-hidden="true">✅</span> 出欠確認</a>
-                <a href="#surveys"><span aria-hidden="true">📋</span> アンケート</a>
-                <a href="#calendar"><span aria-hidden="true">📅</span> カレンダー</a>
-                <a href="#suggestion"><span aria-hidden="true">📮</span> 目安箱</a>
+                <a href="#room"><i class="fas fa-door-open" aria-hidden="true"></i> 部室</a>
+                <a href="#events"><i class="fas fa-calendar-check" aria-hidden="true"></i> 出欠確認</a>
+                <a href="#surveys"><i class="fas fa-list-check" aria-hidden="true"></i> アンケート</a>
+                <a href="#calendar"><i class="fas fa-calendar-days" aria-hidden="true"></i> カレンダー</a>
+                <a href="#suggestion"><i class="fas fa-inbox" aria-hidden="true"></i> 目安箱</a>
             </nav>
 
             <!-- 部室 在室状況・入退室・予約 -->
-            <h2 id="room" class="section-title" style="text-align: left; margin: 0 0 1.5rem; scroll-margin-top: 80px;"><span aria-hidden="true">🚪</span> 部室</h2>
+            <h2 id="room" class="section-title" style="text-align: left; margin: 0 0 1.5rem; scroll-margin-top: 80px;"><i class="fas fa-door-open section-icon" aria-hidden="true"></i> 部室</h2>
             <input type="hidden" id="roomCsrfToken" value="<?php echo htmlspecialchars($room_csrf_token, ENT_QUOTES, 'UTF-8'); ?>">
             <div class="card room-status-card">
                 <div class="room-status-top">
@@ -299,7 +299,7 @@ try {
             </div>
 
             <div id="events" style="display: flex; align-items: center; gap: 16px; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">
-                <h2 class="section-title" style="text-align: left; margin: 0;"><span aria-hidden="true">✅</span> 出欠確認</h2>
+                <h2 class="section-title" style="text-align: left; margin: 0;"><i class="fas fa-calendar-check section-icon" aria-hidden="true"></i> 出欠確認</h2>
                 <a href="past_events.php" style="font-size: 0.85rem; color: #555; text-decoration: none; padding: 8px 4px; display: inline-block;">過去の出欠 <span aria-hidden="true">→</span></a>
             </div>
             <?php if (empty($attend_checks)): ?>
@@ -365,7 +365,7 @@ try {
 
             <!-- アンケート Section -->
             <div id="surveys" style="display: flex; align-items: center; gap: 16px; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;">
-                <h2 class="section-title" style="text-align: left; margin: 0;"><span aria-hidden="true">📋</span> アンケート</h2>
+                <h2 class="section-title" style="text-align: left; margin: 0;"><i class="fas fa-list-check section-icon" aria-hidden="true"></i> アンケート</h2>
             </div>
             <?php if (empty($surveys)): ?>
                 <div class="card" style="text-align: center; color: var(--text-light);">
@@ -415,13 +415,13 @@ try {
             <?php endif; ?>
 
             <!-- わびカレンダー -->
-            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem; scroll-margin-top: 80px;"><span aria-hidden="true">📅</span> わびカレンダー</h2>
+            <h2 id="calendar" class="section-title" style="text-align: left; margin: 3rem 0 1rem; scroll-margin-top: 80px;"><i class="fas fa-calendar-days section-icon" aria-hidden="true"></i> わびカレンダー</h2>
             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.75rem;">
                 <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #667eea; border-radius: 2px;"></span>イベント</span>
                 <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #28a745; border-radius: 2px;"></span>派遣</span>
                 <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #17a2b8; border-radius: 2px;"></span>mtg</span>
                 <?php if ($_SESSION['role'] === 'admin'): ?>
-                <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #dc3545; border-radius: 2px;"></span>🔒幹部関連</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #dc3545; border-radius: 2px;"></span><i class="fas fa-lock" style="font-size: .65rem; color: var(--text-light);" aria-hidden="true"></i>幹部関連</span>
                 <?php endif; ?>
                 <span style="display: flex; align-items: center; gap: 4px;"><span class="cal-dot" style="width: 10px; height: 10px; background: #6c757d; border-radius: 2px;"></span>その他</span>
             </div>
@@ -740,23 +740,23 @@ try {
             </div>
 
             <!-- 目安箱 (Suggestion Box) -->
-            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;"><span aria-hidden="true">📮</span> 目安箱</h2>
+            <h2 id="suggestion" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;"><i class="fas fa-inbox section-icon" aria-hidden="true"></i> 目安箱</h2>
             <div class="card" style="padding: 2rem;">
                 <?php if (isset($_SESSION['suggestion_success']) && $_SESSION['suggestion_success']): ?>
-                    <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
-                        ✅ 送信しました！ご意見ありがとうございます。
+                    <div style="background: #ecf2ed; color: #3f7d54; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
+                        <i class="fas fa-check" aria-hidden="true"></i> 送信しました！ご意見ありがとうございます。
                     </div>
                     <?php unset($_SESSION['suggestion_success']); ?>
                 <?php endif; ?>
                 <?php if (!empty($_SESSION['suggestion_error'])): ?>
-                    <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
-                        ⚠️ <?php echo htmlspecialchars($_SESSION['suggestion_error'], ENT_QUOTES, 'UTF-8'); ?>
+                    <div style="background: #f6ebe9; color: #b0453a; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;">
+                        <i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <?php echo htmlspecialchars($_SESSION['suggestion_error'], ENT_QUOTES, 'UTF-8'); ?>
                     </div>
                     <?php unset($_SESSION['suggestion_error']); ?>
                 <?php endif; ?>
                 <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.95rem;">
                     サークルへのご意見・ご要望があればお気軽にどうぞ！<br>
-                    <span style="font-size: 0.85rem;">💡 名前を書かなければ「匿名」で送信されます。</span>
+                    <span style="font-size: 0.85rem; color: var(--text-light);"><i class="fas fa-circle-info" aria-hidden="true"></i> 名前を書かなければ「匿名」で送信されます。</span>
                 </p>
                 <form action="suggestion_submit.php" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
                     <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
@@ -797,8 +797,10 @@ try {
             transition: border-color .2s, background .2s;
         }
         .dash-nav a:hover { border-color: var(--primary-color, #1a1a1a); background: #f7f5f0; }
+        .section-icon { font-size: .8em; color: var(--text-light, #8d877c); margin-right: .15em; }
         @media (max-width: 768px) {
-            .dash-nav { top: 64px; margin-bottom: 1.5rem; }
+            /* モバイル: 横スクロールだと存在に気づきにくいので、折り返して全ピルを表示(stickyもやめる) */
+            .dash-nav { position: static; flex-wrap: wrap; overflow-x: visible; margin-bottom: 1.5rem; }
         }
         /* ヘッダーの調整: コンテンツ幅に合わせる */
         @media (min-width: 769px) {
