@@ -183,11 +183,11 @@ try {
                     <h1 class="welcome-user"><?php echo htmlspecialchars($_SESSION['name'] ?? 'メンバー'); ?> さん</h1>
                 </div>
                 <div class="welcome-actions">
-                    <a href="form_create.php?type=survey" class="btn-primary">
-                        <i class="fas fa-plus"></i> アンケート作成
-                    </a>
                     <a href="form_create.php" class="btn-primary">
                         <i class="fas fa-plus"></i> 出欠確認作成
+                    </a>
+                    <a href="form_create.php?type=survey" class="btn-primary">
+                        <i class="fas fa-plus"></i> アンケート作成
                     </a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                         <a href="admin/members.php" class="btn-secondary">
