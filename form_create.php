@@ -602,23 +602,18 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
             <input type="hidden" name="event_id" value="<?php echo $event_data['id']; ?>">
         <?php endif; ?>
         
-        <header class="header">
-            <div class="header-inner">
-                <a href="dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
-                    <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
-                </a>
-                
-                <div class="action-bar">
-                    <?php if ($edit_mode): ?>
-                         <button type="button" class="icon-btn" style="color: #d93025; border: none; background: none; cursor: pointer;" title="イベントを削除" onclick="deleteEvent()">
+        <?php
+        $mh_variant = 'back';
+        $mh_label = '一覧に戻る';
+        $delete_btn = $edit_mode
+            ? '<button type="button" class="icon-btn" style="color: #d93025; border: none; background: none; cursor: pointer;" title="イベントを削除" onclick="deleteEvent()">
                              <i class="far fa-trash-alt"></i>
-                         </button>
-                    <?php endif; ?>
-                    
-                    <button type="button" class="btn-save" onclick="saveForm()"><?php echo $edit_mode ? '更新 (Update)' : '作成 (Save)'; ?></button>
-                </div>
-            </div>
-        </header>
+                         </button>'
+            : '';
+        $mh_actions_html = '<div class="action-bar">' . $delete_btn
+            . '<button type="button" class="btn-save" onclick="saveForm()">' . ($edit_mode ? '更新 (Update)' : '作成 (Save)') . '</button></div>';
+        include 'partials/member_header.php';
+        ?>
 
         <div class="form-builder-container">
             
@@ -1033,7 +1028,7 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
             row.innerHTML = `
                 ${iconHtml}
                 <input type="text" class="option-input" value="${optionText}">
-                <div class="option-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></div>
+                <div class="option-remove" onclick="this.parentElement.remove()"><i class="fas fa-xmark"></i></div>
             `;
             
             list.appendChild(row);

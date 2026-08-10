@@ -141,13 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
     <link rel="stylesheet" href="member.css?v=<?php echo @filemtime(__DIR__ . '/member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="index.php" class="logo">
-                <img src="logo.png" alt="WHABITAT" height="50">
-            </a>
-        </div>
-    </header>
+    <?php include 'partials/member_header.php'; ?>
     <main>
         <div class="dashboard-container" style="max-width: 600px; margin-top: 150px;">
             <div class="card" style="text-align: center; padding: 3rem 2rem;">

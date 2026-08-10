@@ -132,13 +132,7 @@ $is_first_registration = empty($current_user['name']);
     <link rel="stylesheet" href="member.css?v=<?php echo @filemtime(__DIR__ . '/member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="index.php" class="logo">
-                <img src="logo.png" alt="WHABITAT" height="50">
-            </a>
-        </div>
-    </header>
+    <?php include 'partials/member_header.php'; ?>
     <main>
         <div class="dashboard-container" style="max-width: 600px;">
             <?php if (!$is_first_registration): ?>

@@ -395,16 +395,14 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
     <link rel="stylesheet" href="member.css?v=<?php echo @filemtime(__DIR__ . '/member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner" style="display: flex; justify-content: space-between; align-items: center;">
-            <a href="dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
-                <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
-            </a>
-            <button type="button" onclick="copyCurrentUrl()" style="background: #495057; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+    <?php
+    $mh_variant = 'back';
+    $mh_label = '一覧に戻る';
+    $mh_actions_html = '<button type="button" onclick="copyCurrentUrl()" style="background: #495057; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
                 <i class="fas fa-link"></i> URLをコピー
-            </button>
-        </div>
-    </header>
+            </button>';
+    include 'partials/member_header.php';
+    ?>
 
     <div class="view-container">
 
