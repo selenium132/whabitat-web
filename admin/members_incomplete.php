@@ -1,12 +1,6 @@
 <?php
 require_once '../config.php';
-requireLogin();
-
-// Check Admin Role
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 $pdo = getDB();
 ensureUsersEmailColumn($pdo);
@@ -25,7 +19,7 @@ $required = [
     'student_id' => '学籍番号',
 ];
 
-$members = $pdo->query("SELECT id, name, name_kana, email, gender, zipcode, address, phone, birthdate, grade, student_id, is_approved, created_at FROM users ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+$members = $pdo->query("SELECT id, name, name_kana, email, gender, zipcode, address, phone, birthdate, grade, student_id, is_approved, created_at, line_user_id FROM users ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
 
 $incomplete = [];
 foreach ($members as $m) {
@@ -38,6 +32,33 @@ foreach ($members as $m) {
     if ($missing) {
         $m['_missing'] = $missing;
         $incomplete[] = $m;
+    }
+}
+
+// LINEリマインド送信（一覧に載っている本人へ push）
+$flash = '';
+$flash_ok = false;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'remind') {
+    validateCsrfToken($_POST['csrf_token'] ?? '');
+    $target_id = (int)($_POST['user_id'] ?? 0);
+    $target = null;
+    foreach ($incomplete as $m) {
+        if ((int)$m['id'] === $target_id) { $target = $m; break; }
+    }
+    if (!$target) {
+        $flash = '対象が見つかりません（既に入力済みの可能性があります）。';
+    } elseif (empty($target['line_user_id'])) {
+        $flash = 'この会員はLINE未連携のため送信できません。';
+    } else {
+        $msg = "【WHABITAT】プロフィールに未入力の項目があります（" . implode('、', $target['_missing']) . "）。\n"
+             . "こちらから入力をお願いします🙏\nhttps://whabitathome.com/register_profile.php";
+        if (linePushToUser($target['line_user_id'], $msg)) {
+            $flash_ok = true;
+            $flash = ($target['name'] !== '' ? $target['name'] : 'ID:' . $target_id) . ' さんにLINEでリマインドを送信しました。';
+            auditLog('remind_incomplete_profile', $target_id, $target['name'] ?? null, null);
+        } else {
+            $flash = 'LINE送信に失敗しました（ブロックされている可能性があります）。';
+        }
     }
 }
 ?>
@@ -61,6 +82,12 @@ foreach ($members as $m) {
         .missing { color: #b0453a; font-weight: 600; }
         .pending { color: #888; font-size: .8rem; }
         .none { color: #3f7d54; font-weight: 600; padding: 1rem 0; }
+        .flash { border: 1px solid #ccc; background: #f7f7f7; padding: .7rem 1rem; font-size: .85rem; margin-bottom: 1rem; border-radius: 6px; }
+        .flash.ok { border-color: #3f7d54; color: #3f7d54; background: #f3f8f4; }
+        .flash.ng { border-color: #b0453a; color: #b0453a; background: #fbf4f3; }
+        .remind-btn { font-size: .78rem; padding: .3rem .7rem; border: 1px solid #1a1a1a; background: #fff; color: #1a1a1a; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+        .remind-btn:hover { background: #1a1a1a; color: #fff; }
+        .no-line { color: #aaa; font-size: .78rem; white-space: nowrap; }
     </style>
 </head>
 <body>
@@ -70,6 +97,10 @@ foreach ($members as $m) {
         ここに載っている人は、会員ページを開くと自動的にプロフィール編集へ誘導され、埋めるまで先に進めません（<?php echo htmlspecialchars(implode(' / ', $required)); ?> のいずれかが空）。<br>
         対象: <span class="count"><?php echo count($incomplete); ?></span> 名 ／ 全 <?php echo count($members); ?> 名中
     </p>
+
+    <?php if ($flash !== ''): ?>
+        <p class="flash <?php echo $flash_ok ? 'ok' : 'ng'; ?>"><?php echo htmlspecialchars($flash); ?></p>
+    <?php endif; ?>
 
     <?php if (empty($incomplete)): ?>
         <p class="none">未入力者はいません 🎉</p>
@@ -84,6 +115,7 @@ foreach ($members as $m) {
                     <th>メール</th>
                     <th>承認</th>
                     <th>未入力の項目</th>
+                    <th>リマインド</th>
                 </tr>
             </thead>
             <tbody>
@@ -95,6 +127,18 @@ foreach ($members as $m) {
                         <td><?php echo htmlspecialchars($m['email'] ?? ''); ?></td>
                         <td><?php echo $m['is_approved'] ? '承認済' : '<span class="pending">未承認</span>'; ?></td>
                         <td class="missing"><?php echo htmlspecialchars(implode('、', $m['_missing'])); ?></td>
+                        <td>
+                            <?php if (!empty($m['line_user_id'])): ?>
+                                <form method="post" style="margin:0" onsubmit="return confirm('<?php echo htmlspecialchars($m['name'] !== '' && $m['name'] !== null ? $m['name'] : 'この会員', ENT_QUOTES); ?> さんへLINEでリマインドを送りますか？');">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(generateCsrfToken()); ?>">
+                                    <input type="hidden" name="action" value="remind">
+                                    <input type="hidden" name="user_id" value="<?php echo (int)$m['id']; ?>">
+                                    <button type="submit" class="remind-btn">LINEでリマインド</button>
+                                </form>
+                            <?php else: ?>
+                                <span class="no-line">LINE未連携</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

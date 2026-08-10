@@ -1,13 +1,7 @@
 <?php
 require_once '../config.php';
 require_once '../sheet_sync.php';
-requireLogin();
-
-// Check Admin Role
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 $pdo = getDB();
 ensureUsersEmailColumn($pdo); // email カラムが無い既存DBでも動くように
@@ -286,13 +280,10 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="../dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
-                <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
-            </a>
-        </div>
-    </header>
+    <?php
+    $mh_variant = 'back';
+    include '../partials/member_header.php';
+    ?>
 
     <main>
         <div class="dashboard-container" style="max-width: 1280px;">

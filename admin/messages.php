@@ -1,12 +1,6 @@
 <?php
 require_once '../config.php';
-requireLogin();
-
-// Check Admin Role
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 $pdo = getDB();
 
@@ -42,26 +36,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $source = $_GET['source'] ?? 'all';
 $sort = $_GET['sort'] ?? 'newest';
 
-$sql = "SELECT * FROM contact_messages";
-$params = [];
-
+// WHERE はホワイトリスト分岐の固定文字列のみ（ユーザー入力は連結しない）
+$where = '';
 if ($source === 'contact') {
-    $sql .= " WHERE source = 'contact'";
+    $where = " WHERE source = 'contact'";
 } elseif ($source === 'suggestion') {
-    $sql .= " WHERE source = 'suggestion'";
+    $where = " WHERE source = 'suggestion'";
 } elseif ($source === 'unread') {
-    $sql .= " WHERE is_read = 0";
+    $where = " WHERE is_read = 0";
 }
 
 // Sort
-if ($sort === 'oldest') {
-    $sql .= " ORDER BY created_at ASC";
-} else {
-    $sql .= " ORDER BY created_at DESC";
-}
+$order = ($sort === 'oldest') ? " ORDER BY created_at ASC" : " ORDER BY created_at DESC";
 
-$stmt = $pdo->query($sql);
+// ページ送り（履歴は増え続けるため全件描画しない）
+$per_page = 30;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$total = (int)$pdo->query("SELECT COUNT(*) FROM contact_messages" . $where)->fetchColumn();
+$total_pages = max(1, (int)ceil($total / $per_page));
+if ($page > $total_pages) $page = $total_pages;
+
+$stmt = $pdo->prepare("SELECT * FROM contact_messages" . $where . $order . " LIMIT ? OFFSET ?");
+$stmt->bindValue(1, $per_page, PDO::PARAM_INT);
+$stmt->bindValue(2, ($page - 1) * $per_page, PDO::PARAM_INT);
+$stmt->execute();
 $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// ページ送りリンク用（現在のフィルター/並び順を維持）
+$pager_qs = 'source=' . urlencode($source) . '&sort=' . urlencode($sort) . '&page=';
 
 // Count unread
 $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0")->fetchColumn();
@@ -194,13 +196,10 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
     <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="../dashboard.php" class="logo" style="font-size: 1rem; font-weight: 500; display: flex; align-items: center;">
-                <i class="fas fa-chevron-left" style="margin-right: 8px; font-size: 0.8rem;"></i> 一覧に戻る
-            </a>
-        </div>
-    </header>
+    <?php
+    $mh_variant = 'back';
+    include '../partials/member_header.php';
+    ?>
 
     <main>
         <div class="dashboard-container">
@@ -256,7 +255,7 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                                 <?php endif; ?>
                                 <strong><?php echo htmlspecialchars($msg['name']); ?></strong>
                                 <?php if (!$isSuggestion): ?>
-                                    (<?php echo htmlspecialchars($msg['email']); ?>)
+                                    (<a href="mailto:<?php echo htmlspecialchars($msg['email'], ENT_QUOTES); ?>" style="color: inherit;"><?php echo htmlspecialchars($msg['email']); ?></a>)
                                 <?php endif; ?>
                             </span>
                             <span><?php echo date('Y/m/d H:i', strtotime($msg['created_at'])); ?></span>
@@ -284,6 +283,18 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                         </div>
                     </div>
                 <?php endforeach; ?>
+
+                <?php if ($total_pages > 1): ?>
+                <nav aria-label="ページ送り" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                    <?php if ($page > 1): ?>
+                        <a href="?<?php echo $pager_qs . ($page - 1); ?>" class="filter-btn"><i class="fas fa-chevron-left"></i> 前へ</a>
+                    <?php endif; ?>
+                    <span style="font-size: .85rem; color: var(--text-light, #888);"><?php echo $page; ?> / <?php echo $total_pages; ?></span>
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?<?php echo $pager_qs . ($page + 1); ?>" class="filter-btn">次へ <i class="fas fa-chevron-right"></i></a>
+                    <?php endif; ?>
+                </nav>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </main>

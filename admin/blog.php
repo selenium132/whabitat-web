@@ -1,12 +1,6 @@
 <?php
 require_once '../config.php';
-requireLogin();
-
-// Admin only
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 $pdo = getDB();
 $error = '';
@@ -268,13 +262,11 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="../blog.php" class="logo">
-                <img src="../logo.png" alt="WHABITAT" height="50">
-            </a>
-        </div>
-    </header>
+    <?php
+    // 他の管理ページと同様、ロゴはダッシュボードへ（公開ブログへは本文中の「戻る」リンクから）
+    $mh_href = '/dashboard.php';
+    include '../partials/member_header.php';
+    ?>
 
     <main>
         <div class="dashboard-container" style="max-width: 900px;">
@@ -302,7 +294,7 @@ $csrf_token = generateCsrfToken();
             <!-- Editor Card -->
             <div class="card" style="margin-bottom: 2rem;">
                 <h2 style="font-size: 1.1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-pen" style="color: var(--primary-color);"></i>
+                    <i class="fas fa-pen-to-square" style="color: var(--primary-color);"></i>
                     <?php echo $edit_blog ? '記事を編集' : '新しい記事を書く'; ?>
                 </h2>
                 
@@ -401,7 +393,7 @@ $csrf_token = generateCsrfToken();
                                 </a>
                                 <a href="?edit=<?php echo $blog['id']; ?>" 
                                    class="btn-secondary" style="padding: 6px 10px; font-size: 0.75rem;">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-pen-to-square"></i>
                                 </a>
                                 <form method="POST" style="display: inline;" onsubmit="return confirm('削除しますか？');">
                                     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">

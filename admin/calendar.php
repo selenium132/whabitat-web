@@ -1,12 +1,6 @@
 <?php
 require_once '../config.php';
-requireLogin();
-
-// Admin only
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 $pdo = getDB();
 $error = '';
@@ -108,13 +102,10 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="../dashboard.php" class="logo">
-                <img src="../logo.png" alt="WHABITAT" height="50">
-            </a>
-        </div>
-    </header>
+    <?php
+    $mh_href = '/dashboard.php';
+    include '../partials/member_header.php';
+    ?>
 
     <main>
         <div class="dashboard-container" style="max-width: 700px;">

@@ -1,11 +1,8 @@
 <?php
 require_once __DIR__ . '/SimpleGoogleSheets.php';
 
-// Apps Script deploy URL for creating spreadsheets (uses user's Drive storage, not service account).
-// 2関数で共有するため定数に集約（旧来は各関数内にハードコードで重複していた）。
-if (!defined('APPS_SCRIPT_URL')) {
-    define('APPS_SCRIPT_URL', 'https://script.google.com/macros/s/AKfycbxITwm-W_e9-1axQqFgzlqo48tBPSJJHEr90r6aoAa74Md1ETZLAwLMOMPdiJYthBWS/exec');
-}
+// APPS_SCRIPT_URL（シート新規作成用WebアプリURL）は config.php が .env から定義する。
+// URLを知っていれば誰でもPOSTできる疑似シークレットのため、このファイルに直書きしないこと。
 
 /**
  * イベントの参加者・アンケート回答を Google スプレッドシートへ同期する。
@@ -24,7 +21,7 @@ if (!defined('APPS_SCRIPT_URL')) {
  */
 function syncEventToSheet(PDO $pdo, $event_id, $autoCreate = false, $forceReset = false) {
     // Apps Script URL for creating spreadsheets (uses user's Drive storage, not service account)
-    $appsScriptUrl = APPS_SCRIPT_URL;
+    $appsScriptUrl = defined('APPS_SCRIPT_URL') ? APPS_SCRIPT_URL : '';
 
     $stmt = $pdo->prepare("SELECT * FROM events WHERE id = ?");
     $stmt->execute([$event_id]);
@@ -51,6 +48,10 @@ function syncEventToSheet(PDO $pdo, $event_id, $autoCreate = false, $forceReset 
         // 初回のシート作成は手動の同期ボタン($autoCreate=true)に任せる。
         if (!$autoCreate) {
             return ['status' => 'skipped', 'spreadsheetId' => null, 'isNew' => false];
+        }
+
+        if ($appsScriptUrl === '') {
+            throw new Exception('APPS_SCRIPT_URL が未設定です（.env を確認してください）');
         }
 
         // Create New Sheet via Apps Script

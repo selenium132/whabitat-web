@@ -2,13 +2,7 @@
 require_once '../config.php';
 require_once '../google_user_sheets.php';
 
-requireLogin();
-
-// Only Admin can export members
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 // 本人のGoogle Drive連携を要求（未連携なら一度だけOAuthへ。認証後ここへ戻る）。
 requireGoogleDriveConnection('admin/members_export_sheet.php');

@@ -1,12 +1,6 @@
 <?php
 require_once '../config.php';
-requireLogin();
-
-// Check Admin Role
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 $pdo = getDB();
 ensureAuditLogTable($pdo); // 無ければ作る（初回アクセスでも落ちないように）

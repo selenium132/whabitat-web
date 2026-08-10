@@ -1,12 +1,6 @@
 <?php
 require_once '../config.php';
-requireLogin();
-
-// Only admins can access this page
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 $pdo = getDB();
 $error = '';
@@ -246,13 +240,10 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="../dashboard.php" class="logo" style="font-size: 1rem;">
-                <i class="fas fa-chevron-left"></i> ダッシュボード
-            </a>
-        </div>
-    </header>
+    <?php
+    $mh_variant = 'back';
+    include '../partials/member_header.php';
+    ?>
 
     <div class="admin-container">
         <h1 style="margin-bottom: 30px;">GV/JVチーム管理</h1>
@@ -269,7 +260,7 @@ $csrf_token = generateCsrfToken();
             <div class="form-head">
                 <h3><?php echo $edit_team ? 'チームを編集' : '新しいチームを追加'; ?></h3>
                 <?php if ($edit_team): ?>
-                    <span class="editing-chip"><i class="fas fa-pen"></i> 「<?php echo htmlspecialchars($edit_team['team_name']); ?>」を編集中</span>
+                    <span class="editing-chip"><i class="fas fa-pen-to-square"></i> 「<?php echo htmlspecialchars($edit_team['team_name']); ?>」を編集中</span>
                 <?php endif; ?>
             </div>
             <?php if ($edit_team): ?>
@@ -425,7 +416,7 @@ $csrf_token = generateCsrfToken();
                             </div>
                         </div>
                         <div class="entry-actions">
-                            <a href="?edit=<?php echo $team['id']; ?><?php echo $filter !== 'all' ? '&type=' . $filter : ''; ?>#teamForm" class="btn-edit" aria-label="編集"><i class="fas fa-edit"></i></a>
+                            <a href="?edit=<?php echo $team['id']; ?><?php echo $filter !== 'all' ? '&type=' . $filter : ''; ?>#teamForm" class="btn-edit" aria-label="編集"><i class="fas fa-pen-to-square"></i></a>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('「<?php echo htmlspecialchars($team['team_name']); ?>」を削除しますか？\nこの操作は取り消せません。');">
                                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                 <input type="hidden" name="action" value="delete">

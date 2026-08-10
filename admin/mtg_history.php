@@ -1,12 +1,6 @@
 <?php
 require_once '../config.php';
-requireLogin();
-
-// Only admins can access this page
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../dashboard.php");
-    exit;
-}
+requireAdmin();
 
 $pdo = getDB();
 $error = '';
@@ -87,8 +81,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch all entries
-$entries = $pdo->query("SELECT * FROM mtg_history ORDER BY year_group DESC, event_date DESC")->fetchAll(PDO::FETCH_ASSOC);
+// Fetch entries (履歴は増え続けるためページ送りで取得)
+$per_page = 30;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$total = (int)$pdo->query("SELECT COUNT(*) FROM mtg_history")->fetchColumn();
+$total_pages = max(1, (int)ceil($total / $per_page));
+if ($page > $total_pages) $page = $total_pages;
+$list_stmt = $pdo->prepare("SELECT * FROM mtg_history ORDER BY year_group DESC, event_date DESC LIMIT ? OFFSET ?");
+$list_stmt->bindValue(1, $per_page, PDO::PARAM_INT);
+$list_stmt->bindValue(2, ($page - 1) * $per_page, PDO::PARAM_INT);
+$list_stmt->execute();
+$entries = $list_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Edit mode
 $edit_entry = null;
@@ -134,13 +137,10 @@ $csrf_token = generateCsrfToken();
     <link rel="stylesheet" href="../member.css?v=<?php echo @filemtime(__DIR__ . '/../member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="../dashboard.php" class="logo" style="font-size: 1rem;">
-                <i class="fas fa-chevron-left"></i> ダッシュボード
-            </a>
-        </div>
-    </header>
+    <?php
+    $mh_variant = 'back';
+    include '../partials/member_header.php';
+    ?>
 
     <div class="admin-container">
         <h1 style="margin-bottom: 30px;">MTG履歴管理</h1>
@@ -230,7 +230,7 @@ $csrf_token = generateCsrfToken();
                             <div class="entry-date"><?php echo $entry['year_group'] . ' / ' . date('Y.m.d', strtotime($entry['event_date'])); ?></div>
                         </div>
                         <div class="entry-actions">
-                            <a href="?edit=<?php echo $entry['id']; ?>" class="btn-edit"><i class="fas fa-edit"></i></a>
+                            <a href="?edit=<?php echo $entry['id']; ?>" class="btn-edit"><i class="fas fa-pen-to-square"></i></a>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('本当に削除しますか？');">
                                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                                 <input type="hidden" name="action" value="delete">
@@ -242,7 +242,19 @@ $csrf_token = generateCsrfToken();
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
-        
+
+        <?php if ($total_pages > 1): ?>
+        <nav aria-label="ページ送り" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 20px;">
+            <?php if ($page > 1): ?>
+                <a href="?page=<?php echo $page - 1; ?>" class="btn-edit" style="background: #6c757d;"><i class="fas fa-chevron-left"></i> 前へ</a>
+            <?php endif; ?>
+            <span style="font-size: .85rem; color: #666;"><?php echo $page; ?> / <?php echo $total_pages; ?></span>
+            <?php if ($page < $total_pages): ?>
+                <a href="?page=<?php echo $page + 1; ?>" class="btn-edit" style="background: #6c757d;">次へ <i class="fas fa-chevron-right"></i></a>
+            <?php endif; ?>
+        </nav>
+        <?php endif; ?>
+
         <div style="margin-top: 30px;">
             <a href="../activity_mtg.php" class="back-link"><i class="fas fa-external-link-alt"></i> MTGページを見る</a>
         </div>

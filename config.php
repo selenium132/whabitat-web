@@ -45,6 +45,10 @@ define('GOOGLE_OAUTH_CLIENT_ID', $env['GOOGLE_OAUTH_CLIENT_ID'] ?? '');
 define('GOOGLE_OAUTH_CLIENT_SECRET', $env['GOOGLE_OAUTH_CLIENT_SECRET'] ?? '');
 define('GOOGLE_OAUTH_REDIRECT_URI', $env['GOOGLE_OAUTH_REDIRECT_URI'] ?? '');
 
+// Google Apps Script WebアプリURL（イベント出欠シートの新規作成用）。
+// URLを知っていれば誰でもPOSTできる疑似シークレットのため、コードに直書きせず .env で管理する。
+define('APPS_SCRIPT_URL', $env['APPS_SCRIPT_URL'] ?? '');
+
 // Security: Session Hardening
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
@@ -309,6 +313,66 @@ function requireLogin() {
     // Check Profile Completion (Force existing & new users to complete their profile)
     if (!empty($_SESSION['is_approved']) && $profile_incomplete && !in_array($current_page, $allowed_incomplete)) {
         header("Location: /register_profile.php");
+        exit;
+    }
+}
+
+// Helper: LINE Messaging API への POST（push/multicast 共用）。失敗しても呼び出し元を止めない。
+function lineBotApiPost($endpoint, array $payload) {
+    if (!defined('LINE_BOT_ACCESS_TOKEN') || LINE_BOT_ACCESS_TOKEN === '') return false;
+    $ch = curl_init('https://api.line.me/v2/bot/' . $endpoint);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . LINE_BOT_ACCESS_TOKEN,
+    ]);
+    $result = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    if ($result === false || $status >= 300) {
+        error_log("lineBotApiPost {$endpoint} failed (HTTP {$status}): " . ($result === false ? curl_error($ch) : $result));
+        curl_close($ch);
+        return false;
+    }
+    curl_close($ch);
+    return true;
+}
+
+// Helper: 特定の会員1人へ LINE push 通知（LINE未連携なら何もしない）
+function linePushToUser($lineUserId, $text) {
+    if (empty($lineUserId)) return false;
+    return lineBotApiPost('message/push', [
+        'to' => $lineUserId,
+        'messages' => [['type' => 'text', 'text' => $text]],
+    ]);
+}
+
+// Helper: 管理者全員へ LINE push 通知（問い合わせ・目安箱の新着通知用）。
+// 通知失敗が元の操作（問い合わせ送信等）を絶対に止めないよう、全体を try/catch で握りつぶす。
+function linePushToAdmins($text) {
+    try {
+        $pdo = getDB();
+        $ids = $pdo->query("SELECT line_user_id FROM users WHERE role = 'admin' AND line_user_id IS NOT NULL AND line_user_id != ''")
+                   ->fetchAll(PDO::FETCH_COLUMN);
+        if (!$ids) return;
+        // multicast は1回で最大500宛先（管理者数なら1回で十分）
+        lineBotApiPost('message/multicast', [
+            'to' => array_values(array_slice($ids, 0, 500)),
+            'messages' => [['type' => 'text', 'text' => $text]],
+        ]);
+    } catch (Exception $e) {
+        error_log('linePushToAdmins failed: ' . $e->getMessage());
+    }
+}
+
+// Helper: 管理者専用ページの保護（requireLogin + role チェック）。
+// admin/ 配下の各ページ冒頭で必ず呼ぶこと。JSON APIは各自 403 応答を実装する（calendar_api.php 参照）。
+function requireAdmin() {
+    requireLogin();
+    if (($_SESSION['role'] ?? '') !== 'admin') {
+        header("Location: /dashboard.php");
         exit;
     }
 }
