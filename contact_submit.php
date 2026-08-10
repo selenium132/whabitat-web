@@ -75,6 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO contact_messages (name, email, message, source, is_read) VALUES (?, ?, ?, 'contact', 0)");
         $stmt->execute([$name, $email, $message]);
 
+        // 管理者へLINEで新着通知（見落とし防止。失敗しても送信処理は続行）
+        $excerpt = mb_strlen($message) > 100 ? mb_substr($message, 0, 100) . '…' : $message;
+        linePushToAdmins("📮 サイトに新しいお問い合わせが届きました\n\n名前: {$name}\n\n{$excerpt}\n\n確認: https://whabitathome.com/admin/messages.php");
+
         // Set flash message
         $_SESSION['contact_success'] = true;
 
