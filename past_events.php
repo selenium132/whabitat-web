@@ -12,7 +12,15 @@ try {
 }
 
 // Fetch past events (当日いっぱいは残す: 日付が変わってから過去へ。手動アーカイブは即時)
-$stmt = $pdo->prepare("SELECT e.*, u.name as creator_name FROM events e LEFT JOIN users u ON e.created_by = u.id WHERE (e.event_date < CURDATE() OR e.is_archived = 1) ORDER BY e.event_date DESC");
+// 件数は年々増えるためページ送りで取得
+$per_page = 20;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$total = (int)$pdo->query("SELECT COUNT(*) FROM events e WHERE (e.event_date < CURDATE() OR e.is_archived = 1)")->fetchColumn();
+$total_pages = max(1, (int)ceil($total / $per_page));
+if ($page > $total_pages) $page = $total_pages;
+$stmt = $pdo->prepare("SELECT e.*, u.name as creator_name FROM events e LEFT JOIN users u ON e.created_by = u.id WHERE (e.event_date < CURDATE() OR e.is_archived = 1) ORDER BY e.event_date DESC LIMIT ? OFFSET ?");
+$stmt->bindValue(1, $per_page, PDO::PARAM_INT);
+$stmt->bindValue(2, ($page - 1) * $per_page, PDO::PARAM_INT);
 $stmt->execute();
 $past_events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -40,6 +48,14 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        .pager-btn {
+            display: inline-flex; align-items: center; gap: .45rem;
+            font-size: .82rem; font-weight: 600;
+            color: var(--text-color, #1a1a1a); text-decoration: none;
+            border: 1px solid #ddd; border-radius: 999px; padding: .45rem 1.1rem;
+            transition: border-color .3s, background .3s;
+        }
+        .pager-btn:hover { border-color: #1a1a1a; background: rgba(26,26,26,.04); }
         .restore-modal-overlay {
             display: none;
             position: fixed;
@@ -236,18 +252,14 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
     <link rel="stylesheet" href="member.css?v=<?php echo @filemtime(__DIR__ . '/member.css') ?: '1'; ?>">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="index.php" class="logo">
-                <img src="logo.png" alt="WHABITAT" height="50">
-            </a>
-            <div class="user-menu">
+    <?php
+    $mh_actions_html = '<div class="user-menu">
                 <a href="dashboard.php" class="header-logout-btn" title="マイページに戻る">
                     <i class="fas fa-arrow-left"></i>
                 </a>
-            </div>
-        </div>
-    </header>
+            </div>';
+    include 'partials/member_header.php';
+    ?>
 
     <main>
         <div class="dashboard-container">
@@ -316,7 +328,7 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
                                 <!-- Edit Button -->
                                 <a href="form_create.php?id=<?php echo $event['id']; ?>" class="btn-icon" 
                                    style="background: var(--primary-color, #1a1a1a); color: white;" title="編集">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-pen-to-square"></i>
                                 </a>
                                 
                                 <!-- Delete Button -->
@@ -333,6 +345,22 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
                         </div>
                     </div>
                 <?php endforeach; ?>
+
+                <?php if ($total_pages > 1): ?>
+                <nav class="pager" aria-label="ページ送り" style="display: flex; justify-content: center; align-items: center; gap: 1.2rem; margin-top: 2rem;">
+                    <?php if ($page > 1): ?>
+                        <a href="?page=<?php echo $page - 1; ?>" class="pager-btn"><i class="fas fa-chevron-left"></i> 前へ</a>
+                    <?php else: ?>
+                        <span class="pager-btn" style="opacity: .35; pointer-events: none;"><i class="fas fa-chevron-left"></i> 前へ</span>
+                    <?php endif; ?>
+                    <span style="font-size: .85rem; color: var(--text-light, #888);"><?php echo $page; ?> / <?php echo $total_pages; ?></span>
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?page=<?php echo $page + 1; ?>" class="pager-btn">次へ <i class="fas fa-chevron-right"></i></a>
+                    <?php else: ?>
+                        <span class="pager-btn" style="opacity: .35; pointer-events: none;">次へ <i class="fas fa-chevron-right"></i></span>
+                    <?php endif; ?>
+                </nav>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </main>

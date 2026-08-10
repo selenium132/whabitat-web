@@ -3,10 +3,19 @@ require_once 'config.php';
 
 $pdo = getDB();
 
-// Fetch published blogs
+// Fetch published blogs (記事は年々増えるためページ送りで取得)
+$per_page = 12;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$total_pages = 1;
 $blogs = [];
 try {
-    $stmt = $pdo->query("SELECT b.*, u.name as author_name FROM blogs b LEFT JOIN users u ON b.author_id = u.id WHERE b.is_published = 1 ORDER BY b.created_at DESC");
+    $total = (int)$pdo->query("SELECT COUNT(*) FROM blogs WHERE is_published = 1")->fetchColumn();
+    $total_pages = max(1, (int)ceil($total / $per_page));
+    if ($page > $total_pages) $page = $total_pages;
+    $stmt = $pdo->prepare("SELECT b.*, u.name as author_name FROM blogs b LEFT JOIN users u ON b.author_id = u.id WHERE b.is_published = 1 ORDER BY b.created_at DESC LIMIT ? OFFSET ?");
+    $stmt->bindValue(1, $per_page, PDO::PARAM_INT);
+    $stmt->bindValue(2, ($page - 1) * $per_page, PDO::PARAM_INT);
+    $stmt->execute();
     $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     $blogs = [];
@@ -28,7 +37,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta property="og:title" content="Blog | WHABITAT">
     <meta property="og:description" content="WHABITAT（早稲田大学ボランティアサークル）の活動報告やお知らせ。">
     <meta property="og:url" content="https://whabitathome.com/blog.php">
-    <meta property="og:image" content="https://whabitathome.com/ogp.jpg">
+    <meta property="og:image" content="https://whabitathome.com/ogp.jpg?v=<?php echo @filemtime(__DIR__ . '/ogp.jpg') ?: '1'; ?>">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="logo.png">
@@ -180,6 +189,19 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         .blog-row-meta i { margin-right: .35rem; opacity: .8; }
 
         /* 空状態 */
+        /* ページ送り（ミニマル・モノトーン） */
+        .pager { display: flex; justify-content: center; align-items: center; gap: 1.2rem; margin-top: 3.5rem; }
+        .pager-btn {
+            display: inline-flex; align-items: center; gap: .45rem;
+            font-family: 'Montserrat', sans-serif; font-size: .78rem; font-weight: 600; letter-spacing: .06em;
+            color: var(--lp-ink); text-decoration: none;
+            border: 1px solid var(--lp-line); border-radius: 999px; padding: .45rem 1.1rem;
+            transition: border-color .3s, background .3s;
+        }
+        .pager-btn:hover { border-color: var(--lp-ink); background: rgba(26,26,26,.04); }
+        .pager-btn--disabled { opacity: .35; pointer-events: none; }
+        .pager-info { font-family: 'Montserrat', sans-serif; font-size: .8rem; color: var(--lp-muted); letter-spacing: .08em; }
+
         .blog-empty {
             max-width: 560px;
             margin: 0 auto;
@@ -268,6 +290,22 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                             </a>
                         <?php endforeach; ?>
                     </div>
+
+                    <?php if ($total_pages > 1): ?>
+                    <nav class="pager" aria-label="ページ送り">
+                        <?php if ($page > 1): ?>
+                            <a href="?page=<?php echo $page - 1; ?>" class="pager-btn"><i class="fas fa-chevron-left"></i> 前へ</a>
+                        <?php else: ?>
+                            <span class="pager-btn pager-btn--disabled"><i class="fas fa-chevron-left"></i> 前へ</span>
+                        <?php endif; ?>
+                        <span class="pager-info"><?php echo $page; ?> / <?php echo $total_pages; ?></span>
+                        <?php if ($page < $total_pages): ?>
+                            <a href="?page=<?php echo $page + 1; ?>" class="pager-btn">次へ <i class="fas fa-chevron-right"></i></a>
+                        <?php else: ?>
+                            <span class="pager-btn pager-btn--disabled">次へ <i class="fas fa-chevron-right"></i></span>
+                        <?php endif; ?>
+                    </nav>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
         </section>

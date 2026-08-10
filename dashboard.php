@@ -732,7 +732,7 @@ try {
                             <?php endif; ?>
                             <?php if ($_SESSION['role'] === 'admin'): ?>
                                 <button onclick="editCalendarEvent(<?php echo $ev['id']; ?>)" style="background: none; border: none; cursor: pointer; padding: 4px 8px; color: #888; border-radius: 4px;" onmouseover="this.style.background='#eee'" onmouseout="this.style.background='none'">
-                                    <i class="fas fa-pencil-alt" style="font-size: 0.75rem;"></i>
+                                    <i class="fas fa-pen-to-square" style="font-size: 0.75rem;"></i>
                                 </button>
                             <?php endif; ?>
                         </div>

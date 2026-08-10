@@ -373,7 +373,7 @@ $og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
                     <?php if ($is_admin): ?>
                     <div class="article-admin">
                         <a href="admin/blog.php?edit=<?php echo $blog['id']; ?>" class="btn-secondary">
-                            <i class="fas fa-edit"></i> 編集する
+                            <i class="fas fa-pen-to-square"></i> 編集する
                         </a>
                     </div>
                     <?php endif; ?>

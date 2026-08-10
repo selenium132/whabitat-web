@@ -49,18 +49,9 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         /* ===== MTGページ固有：ミニマル/モノトーン（landing.cssトーンに統一） ===== */
         .mtg-main { padding-top: 0; padding-bottom: 6rem; }
 
-        /* 主写真：カラーのまま・軽い暗幕は不要だが大きすぎないよう抑制 */
-        .mtg-photo {
-            width: 100%; max-height: 420px; object-fit: cover;
-            border-radius: var(--lp-radius);
-            border: 1px solid var(--lp-line);
-            display: block;
-            margin: 0 auto 4rem;
-        }
-
         /* 概要カード（罫線基調・影なし、index の info/fact トーン） */
         .mtg-info-card {
-            max-width: 760px; margin: 0 auto;
+            max-width: 760px; margin: 4.5rem auto 0;
             background: var(--lp-paper);
             border: 1px solid var(--lp-line);
             border-radius: var(--lp-radius);
@@ -79,8 +70,8 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         .mtg-meta .fact-row dt { font-size: .8rem; font-weight: 600; color: var(--lp-muted); letter-spacing: .06em; }
         .mtg-meta .fact-row dd { font-size: .94rem; color: var(--lp-ink); margin: 0; line-height: 1.65; }
 
-        /* History 見出し行 */
-        .mtg-history { margin-top: 7rem; }
+        /* History 見出し行（GVページ同様、罫線でセクションを区切る） */
+        .mtg-history { margin-top: 5rem; padding-top: 5rem; border-top: 1px solid var(--lp-line); }
         .mtg-history-head {
             display: flex; justify-content: center; align-items: center;
             position: relative; margin-bottom: 3.5rem;
@@ -159,7 +150,8 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         @media (max-width: 680px) {
             .mtg-main { padding-top: 0; }
-            .mtg-info-card { padding: 1.8rem; }
+            .mtg-info-card { padding: 1.8rem; margin-top: 3rem; }
+            .mtg-history { margin-top: 3.5rem; padding-top: 3.5rem; }
             .mtg-history-head { flex-direction: column; gap: 1rem; }
             .mtg-add-btn { position: static; transform: none; }
         }
@@ -185,7 +177,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         <div class="container">
 
-            <div class="mtg-info-card">
+            <div class="mtg-info-card fade-in">
                 <h3>週に一度の交流と学びの場</h3>
                 <p>
                     毎週水曜日の6限に集まり、全体ミーティングを行っています。<br>
@@ -214,7 +206,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                     </div>
                 <?php else: ?>
                     <?php foreach ($grouped as $year => $yearEntries): ?>
-                        <div class="history-year-group">
+                        <div class="history-year-group fade-in">
                             <h3 class="year-label"><?php echo htmlspecialchars($year); ?></h3>
 
                             <div class="history-grid">
@@ -252,5 +244,29 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </main>
 
     <?php include 'partials/footer.php'; ?>
+
+    <script>
+    // Intersection Observer for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Header scroll effect
+    const header = document.querySelector('.header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    }, { passive: true });
+    </script>
 </body>
 </html>
