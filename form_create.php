@@ -53,7 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $capacity = !empty($_POST['capacity']) ? intval($_POST['capacity']) : null;
 
     $type = $_POST['type'] ?? 'event';
-    
+
+    // 参加者/回答者リストの公開可否（1=公開, 0=非公開）。
+    // 既定は種別で変える: 出欠確認は公開、アンケートは非公開。
+    $show_participants = isset($_POST['show_participants'])
+        ? (($_POST['show_participants'] === '1') ? 1 : 0)
+        : (($type === 'survey') ? 0 : 1);
+
     // Target users for surveys (JSON array of user IDs, NULL = all users)
     $target_users = null;
     if (!empty($_POST['target_users']) && is_array($_POST['target_users'])) {
@@ -67,16 +73,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($title) {
         $pdo = getDB();
-        
+        // 旧DBにカラムが無い場合は自動追加する。追加できなかった時もイベント作成自体は
+        // 止めないよう、この列を含めないSQLにフォールバックする。
+        $has_sp = ensureEventShowParticipantsColumn($pdo);
+
         if ($target_id) {
             // Update
-            $stmt = $pdo->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ?, capacity = ?, type = ?, target_users = ? WHERE id = ?");
-            $res = $stmt->execute([$title, $description, $event_date, $form_schema, $open_at, $close_at, $capacity, $type, $target_users, $target_id]);
+            $sql = "UPDATE events SET title = ?, description = ?, event_date = ?, form_schema = ?, open_at = ?, close_at = ?, capacity = ?, type = ?, target_users = ?"
+                 . ($has_sp ? ", show_participants = ?" : "") . " WHERE id = ?";
+            $params = [$title, $description, $event_date, $form_schema, $open_at, $close_at, $capacity, $type, $target_users];
+            if ($has_sp) $params[] = $show_participants;
+            $params[] = $target_id;
+
+            $stmt = $pdo->prepare($sql);
+            $res = $stmt->execute($params);
             $event_id_final = $target_id;
         } else {
             // Insert
-            $stmt = $pdo->prepare("INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at, capacity, type, target_users) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $res = $stmt->execute([$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at, $capacity, $type, $target_users]);
+            $sql = "INSERT INTO events (title, description, event_date, created_by, form_schema, open_at, close_at, capacity, type, target_users"
+                 . ($has_sp ? ", show_participants" : "") . ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?" . ($has_sp ? ", ?" : "") . ")";
+            $params = [$title, $description, $event_date, $_SESSION['user_id'], $form_schema, $open_at, $close_at, $capacity, $type, $target_users];
+            if ($has_sp) $params[] = $show_participants;
+
+            $stmt = $pdo->prepare($sql);
+            $res = $stmt->execute($params);
             $event_id_final = $pdo->lastInsertId();
         }
 
@@ -827,6 +847,32 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                                     <span style="color: #888; font-size: 0.85rem;">空欄 = 定員なし</span>
                                 </div>
                                 <?php endif; ?>
+
+                                <?php
+                                    // 参加者/回答者リストの公開可否。既定は 出欠確認=公開 / アンケート=非公開。
+                                    $is_survey_form = ($type === 'survey');
+                                    $sp_on = $edit_mode ? isParticipantsVisible($event_data) : !$is_survey_form;
+                                ?>
+                                <div style="display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; border-top: 1px solid #eee; padding-top: 15px;">
+                                    <label style="min-width: 80px; font-weight: 500;"><?php echo $is_survey_form ? '回答者:' : '参加者:'; ?></label>
+                                    <div>
+                                        <input type="hidden" name="show_participants" id="sp-input" value="<?php echo $sp_on ? '1' : '0'; ?>">
+                                        <div onclick="toggleShowParticipants()" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+                                            <i class="fas <?php echo $sp_on ? 'fa-toggle-on' : 'fa-toggle-off'; ?>" id="sp-icon"
+                                               style="font-size: 24px; color: <?php echo $sp_on ? 'var(--primary-color)' : '#dadce0'; ?>;"></i>
+                                            <span id="sp-label" style="font-size: 0.9rem; color: #555;"><?php echo $sp_on ? '全員に公開' : '管理者のみ'; ?></span>
+                                        </div>
+                                        <div style="color: #888; font-size: 0.85rem; margin-top: 4px; line-height: 1.6;">
+                                            <?php if ($is_survey_form): ?>
+                                                ONにすると、回答した人の一覧を会員全員が見られます。<br>
+                                                回答内容そのものは、質問ごとの「公開」設定がONの項目だけが表示されます。
+                                            <?php else: ?>
+                                                OFFにすると、参加者リストは管理者だけが見られます。<br>
+                                                定員を設定している場合、人数（◯/◯名）は非公開でも表示されます。
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </details>
                     </div>
@@ -1043,6 +1089,19 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
             // Simply add new
             const typeSelect = document.querySelector(`#q-${id} .q-type-select`);
             addQuestion(typeSelect.value);
+        }
+
+        // 参加者/回答者リストの公開トグル（詳細設定内。イベント単位の設定）
+        function toggleShowParticipants() {
+            const input = document.getElementById('sp-input');
+            const icon = document.getElementById('sp-icon');
+            const label = document.getElementById('sp-label');
+            const on = input.value !== '1';
+
+            input.value = on ? '1' : '0';
+            icon.className = on ? 'fas fa-toggle-on' : 'fas fa-toggle-off';
+            icon.style.color = on ? 'var(--primary-color)' : '#dadce0';
+            label.textContent = on ? '全員に公開' : '管理者のみ';
         }
 
         function toggleRequired(id) {

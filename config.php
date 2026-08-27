@@ -92,6 +92,35 @@ function ensureUsersEmailColumn(PDO $pdo) {
     }
 }
 
+// Helper: events.show_participants カラムが無い既存DBに自動で追加する（無ければ作る）。
+// 参加者/回答者リストの公開可否を保持する。NULL = 未設定（種別ごとの既定で解釈）。
+// カラムを利用できるかどうかを返す（false のとき呼び出し側はこの列を使わずに保存する）。
+function ensureEventShowParticipantsColumn(PDO $pdo) {
+    try {
+        $pdo->query("SELECT show_participants FROM events LIMIT 1");
+        return true;
+    } catch (PDOException $e) {
+        try {
+            $pdo->exec("ALTER TABLE events ADD COLUMN show_participants TINYINT(1) NULL DEFAULT NULL");
+            return true;
+        } catch (PDOException $e2) {
+            error_log('ensureEventShowParticipantsColumn failed: ' . $e2->getMessage());
+            return false;
+        }
+    }
+}
+
+// Helper: 参加者/回答者リストを一般会員に見せてよいか。
+// 種別ごとの既定は「出欠確認=公開 / アンケート=非公開」。カラム未設定(NULL)の既存データもこの既定に従う。
+// 管理者・作成者・イベント管理者は常に閲覧可のため、この関数の判定対象外（呼び出し側で OR する）。
+function isParticipantsVisible(array $event) {
+    $flag = $event['show_participants'] ?? null;
+    if ($flag === null || $flag === '') {
+        return (($event['type'] ?? 'event') !== 'survey');
+    }
+    return (int)$flag === 1;
+}
+
 // Helper: 監査ログ用テーブルを自動作成（無ければ作る。ensureUsersEmailColumn と同じ流儀）
 function ensureAuditLogTable(PDO $pdo) {
     try {

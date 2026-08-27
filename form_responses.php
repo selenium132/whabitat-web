@@ -21,28 +21,34 @@ if (!$event) {
 $is_admin = ($_SESSION['role'] === 'admin');
 $is_manager = $is_admin || ($event['created_by'] == $_SESSION['user_id']) || isEventAdmin($event_id);
 
-// Fetch All Participants
-if ($is_manager) {
-    // Managers see everything with detailed data
-    $stmt = $pdo->prepare("
-        SELECT u.name, u.student_id, u.line_name, u.grade, u.faculty, u.gender, a.status, a.comment, a.response_data, a.updated_at
-        FROM attendance a 
-        JOIN users u ON a.user_id = u.id 
-        WHERE a.event_id = ?
-        ORDER BY FIELD(a.status, 'join', 'maybe', 'decline'), a.updated_at DESC
-    ");
-} else {
-    // Normal Members see only 'join' with minimal non-private detailed info
-    $stmt = $pdo->prepare("
-        SELECT u.name, u.grade, a.status, a.comment, a.response_data, a.updated_at
-        FROM attendance a 
-        JOIN users u ON a.user_id = u.id 
-        WHERE a.event_id = ? AND a.status = 'join'
-        ORDER BY a.updated_at DESC
-    ");
+// 参加者/回答者リストの公開可否（既定: 出欠確認=公開 / アンケート=非公開）。
+// 非公開のときは一般会員に一切データを渡さない（URL直打ち対策。リンクを隠すだけでは防げない）。
+$can_view_list = $is_manager || isParticipantsVisible($event);
+
+$participants = [];
+if ($can_view_list) {
+    if ($is_manager) {
+        // Managers see everything with detailed data
+        $stmt = $pdo->prepare("
+            SELECT u.name, u.student_id, u.line_name, u.grade, u.faculty, u.gender, a.status, a.comment, a.response_data, a.updated_at
+            FROM attendance a
+            JOIN users u ON a.user_id = u.id
+            WHERE a.event_id = ?
+            ORDER BY FIELD(a.status, 'join', 'maybe', 'decline'), a.updated_at DESC
+        ");
+    } else {
+        // Normal Members see only 'join' with minimal non-private detailed info
+        $stmt = $pdo->prepare("
+            SELECT u.name, u.grade, a.status, a.comment, a.response_data, a.updated_at
+            FROM attendance a
+            JOIN users u ON a.user_id = u.id
+            WHERE a.event_id = ? AND a.status = 'join'
+            ORDER BY a.updated_at DESC
+        ");
+    }
+    $stmt->execute([$event_id]);
+    $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-$stmt->execute([$event_id]);
-$participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Count only 'join' status for participant count (fix for admin view including all)
 $join_count = 0;
@@ -188,7 +194,9 @@ function getStatusLabel($status) {
         <div class="page-header">
             <div>
                 <h1 class="event-title" style="margin-top: 5px;">回答一覧: <?php echo htmlspecialchars($event['title']); ?></h1>
+                <?php if ($can_view_list): ?>
                 <p style="color: var(--text-light); font-size: 14px;"><?php echo (($event['type'] ?? 'event') === 'survey') ? '回答者数' : '参加予定者数'; ?>: <?php echo $join_count; ?>名</p>
+                <?php endif; ?>
                 <?php 
                     // $is_manager is prepared at top
                 ?>
@@ -209,7 +217,13 @@ function getStatusLabel($status) {
             <?php endif; ?>
         </div>
 
-        <?php if (empty($participants)): ?>
+        <?php if (!$can_view_list): ?>
+            <div class="p-card" style="text-align: center; color: #666;">
+                <i class="fas fa-lock" style="font-size: 1.6rem; color: #bbb; display: block; margin-bottom: 12px;"></i>
+                <?php echo (($event['type'] ?? 'event') === 'survey') ? 'このアンケートの回答は非公開です。' : 'このイベントの参加者は非公開です。'; ?><br>
+                <span style="font-size: 0.9rem;">主催者・管理者のみが確認できます。</span>
+            </div>
+        <?php elseif (empty($participants)): ?>
             <div class="p-card" style="text-align: center; color: #666;">
                 まだ回答はありません。
             </div>

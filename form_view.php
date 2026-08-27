@@ -623,8 +623,11 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
         </form>
 
         <?php 
-            $is_survey_view = (($event['type'] ?? 'event') === 'survey');
-            $show_responses_link = $is_survey_view || isEventAdmin($event_id) || $event['created_by'] == $_SESSION['user_id'];
+            // 一般会員へのリンク表示は「参加者/回答者の公開」設定に従う（既定: 出欠確認=公開 / アンケート=非公開）。
+            // 管理者・作成者・イベント管理者は設定に関わらず常に閲覧できる。
+            $show_responses_link = isEventAdmin($event_id)
+                || $event['created_by'] == $_SESSION['user_id']
+                || isParticipantsVisible($event);
         ?>
         <?php if ($show_responses_link): ?>
         <div style="text-align: right; margin-top: 10px;">
