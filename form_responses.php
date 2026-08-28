@@ -21,11 +21,22 @@ if (!$event) {
 $is_admin = ($_SESSION['role'] === 'admin');
 $is_manager = $is_admin || ($event['created_by'] == $_SESSION['user_id']) || isEventAdmin($event_id);
 
-// 参加者/回答者リストの公開可否（既定: 出欠確認=公開 / アンケート=非公開）。
-// 非公開のときは一般会員に一切データを渡さない（URL直打ち対策。リンクを隠すだけでは防げない）。
+// 回答者リストの公開可否（既定: 出欠確認=公開 / アンケート=非公開）。
+// 非公開のときは個人を特定できるデータを一切取得せず、ステータス別の人数だけを集計する
+// （リンクを隠すだけではURL直打ちで見えてしまうため、ページ側で遮断する）。
 $can_view_list = $is_manager || isParticipantsVisible($event);
 
+$status_counts = ['join' => 0, 'maybe' => 0, 'decline' => 0];
 $participants = [];
+if (!$can_view_list) {
+    $cnt_stmt = $pdo->prepare("SELECT status, COUNT(*) AS c FROM attendance WHERE event_id = ? GROUP BY status");
+    $cnt_stmt->execute([$event_id]);
+    foreach ($cnt_stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        if (isset($status_counts[$row['status']])) {
+            $status_counts[$row['status']] = (int)$row['c'];
+        }
+    }
+}
 if ($can_view_list) {
     if ($is_manager) {
         // Managers see everything with detailed data
@@ -52,14 +63,19 @@ if ($can_view_list) {
 
 // Count only 'join' status for participant count (fix for admin view including all)
 $join_count = 0;
-foreach ($participants as $p) {
-    if ($p['status'] === 'join') {
-        $join_count++;
+if (!$can_view_list) {
+    // 非公開時は集計クエリの結果を使う（明細は取得していない）
+    $join_count = $status_counts['join'];
+} else {
+    foreach ($participants as $p) {
+        if ($p['status'] === 'join') {
+            $join_count++;
+        }
     }
-}
-// If not manager, all participants are 'join' anyway
-if (!$is_manager) {
-    $join_count = count($participants);
+    // If not manager, all participants are 'join' anyway
+    if (!$is_manager) {
+        $join_count = count($participants);
+    }
 }
 
 // Parse Schema for Headers if needed (to show custom answers columns?)
@@ -173,6 +189,18 @@ function getStatusLabel($status) {
             padding: 10px;
             border-radius: 8px;
         }
+        /* 非公開時の集計表示（ミニマル・モノトーン） */
+        .summary-rows { display: flex; flex-direction: column; }
+        .summary-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            padding: 12px 4px; border-bottom: 1px solid #f0f0f0;
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row span { color: var(--text-light); font-size: 0.95rem; }
+        .summary-row strong { font-size: 1.15rem; font-weight: 700; color: var(--text-color); }
+        .summary-total { border-top: 1px solid #e0e0e0; margin-top: 4px; }
+        .summary-total span, .summary-total strong { color: var(--text-color); }
+
         .q-label {
             font-weight: 600;
             color: var(--primary-color);
@@ -194,9 +222,7 @@ function getStatusLabel($status) {
         <div class="page-header">
             <div>
                 <h1 class="event-title" style="margin-top: 5px;">回答一覧: <?php echo htmlspecialchars($event['title']); ?></h1>
-                <?php if ($can_view_list): ?>
                 <p style="color: var(--text-light); font-size: 14px;"><?php echo (($event['type'] ?? 'event') === 'survey') ? '回答者数' : '参加予定者数'; ?>: <?php echo $join_count; ?>名</p>
-                <?php endif; ?>
                 <?php 
                     // $is_manager is prepared at top
                 ?>
@@ -218,10 +244,31 @@ function getStatusLabel($status) {
         </div>
 
         <?php if (!$can_view_list): ?>
-            <div class="p-card" style="text-align: center; color: #666;">
-                <i class="fas fa-lock" style="font-size: 1.6rem; color: #bbb; display: block; margin-bottom: 12px;"></i>
-                <?php echo (($event['type'] ?? 'event') === 'survey') ? 'このアンケートの回答は非公開です。' : 'このイベントの参加者は非公開です。'; ?><br>
-                <span style="font-size: 0.9rem;">主催者・管理者のみが確認できます。</span>
+            <?php $is_survey_summary = (($event['type'] ?? 'event') === 'survey'); ?>
+            <div class="p-card">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee;">
+                    <i class="fas fa-chart-simple" style="color: #888;"></i>
+                    <span style="font-weight: 600; color: var(--text-color);">回答状況</span>
+                </div>
+
+                <div class="summary-rows">
+                    <?php if ($is_survey_summary): ?>
+                        <div class="summary-row"><span>回答済み</span><strong><?php echo $status_counts['join']; ?>名</strong></div>
+                    <?php else: ?>
+                        <div class="summary-row"><span>参加</span><strong><?php echo $status_counts['join']; ?>名</strong></div>
+                        <div class="summary-row"><span>不参加</span><strong><?php echo $status_counts['decline']; ?>名</strong></div>
+                        <div class="summary-row"><span>未定</span><strong><?php echo $status_counts['maybe']; ?>名</strong></div>
+                        <div class="summary-row summary-total">
+                            <span>回答済み</span>
+                            <strong><?php echo $status_counts['join'] + $status_counts['decline'] + $status_counts['maybe']; ?>名</strong>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <p style="margin: 18px 0 0; font-size: 0.85rem; color: #888; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-lock" style="font-size: 12px;"></i>
+                    <?php echo $is_survey_summary ? '誰が回答したかは主催者・管理者のみが確認できます。' : '誰が参加するかは主催者・管理者のみが確認できます。'; ?>
+                </p>
             </div>
         <?php elseif (empty($participants)): ?>
             <div class="p-card" style="text-align: center; color: #666;">

@@ -622,20 +622,19 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
 
         </form>
 
-        <?php 
-            // 一般会員へのリンク表示は「参加者/回答者の公開」設定に従う（既定: 出欠確認=公開 / アンケート=非公開）。
+        <?php
+            // 誰が回答したかを見られるかは「回答者の公開」設定に従う（既定: 出欠確認=公開 / アンケート=非公開）。
             // 管理者・作成者・イベント管理者は設定に関わらず常に閲覧できる。
-            $show_responses_link = isEventAdmin($event_id)
+            // 非公開でも人数（回答状況）は誰でも見られるため、リンク自体は常に出す。
+            $can_see_names = isEventAdmin($event_id)
                 || $event['created_by'] == $_SESSION['user_id']
                 || isParticipantsVisible($event);
         ?>
-        <?php if ($show_responses_link): ?>
         <div style="text-align: right; margin-top: 10px;">
             <a href="form_responses.php?id=<?php echo $event_id; ?>" style="color: var(--primary-color); text-decoration: underline; text-underline-offset: .2em; font-size: 14px;">
-                <i class="fas fa-list"></i> みんなの回答を見る
+                <i class="fas fa-list"></i> <?php echo $can_see_names ? 'みんなの回答を見る' : '回答状況を見る'; ?>
             </a>
         </div>
-        <?php endif; ?>
     </div>
 
     <script>
