@@ -15,6 +15,7 @@ $pages = [
     ['loc' => '/activity_domestic.php',  'changefreq' => 'monthly', 'priority' => '0.8'],
     ['loc' => '/activity_mtg.php',       'changefreq' => 'monthly', 'priority' => '0.7'],
     ['loc' => '/blog.php',               'changefreq' => 'weekly',  'priority' => '0.7'],
+    ['loc' => '/privacy.php',            'changefreq' => 'yearly',  'priority' => '0.3'],
 ];
 
 $blogs = [];
@@ -30,8 +31,12 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
 foreach ($pages as $p) {
+    // lastmod はファイルの更新日時から（Google は changefreq/priority より lastmod を再クロール判断に使う）
+    $file = __DIR__ . ($p['loc'] === '/' ? '/index.php' : $p['loc']);
+    $lastmod = @filemtime($file);
     echo "    <url>\n";
     echo "        <loc>" . htmlspecialchars($base . $p['loc'], ENT_XML1) . "</loc>\n";
+    if ($lastmod) echo "        <lastmod>" . date('Y-m-d', $lastmod) . "</lastmod>\n";
     echo "        <changefreq>{$p['changefreq']}</changefreq>\n";
     echo "        <priority>{$p['priority']}</priority>\n";
     echo "    </url>\n";

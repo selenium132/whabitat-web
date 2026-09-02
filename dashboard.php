@@ -28,12 +28,7 @@ if (empty($user_profile['name']) || empty($user_profile['student_id']) || empty(
     exit;
 }
 
-// Ensure is_archived column exists
-try {
-    $pdo->exec("ALTER TABLE events ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0");
-} catch (Exception $e) {
-    // Column already exists
-}
+ensureEventsArchivedColumn($pdo); // is_archived カラム（初回のみDDL実行）
 
 // Fetch Upcoming Events (exclude archived)
 $stmt = $pdo->query("SELECT * FROM events WHERE is_archived = 0 AND (event_date >= CURDATE() OR (type = 'survey' AND (close_at IS NULL OR close_at >= NOW()))) ORDER BY event_date ASC, open_at ASC");
@@ -50,6 +45,7 @@ try {
     $user_admin_events = $admin_stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (Exception $e) {
     // Table might not exist
+    error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
 }
 
 foreach ($all_upcoming as $ev) {
@@ -93,7 +89,9 @@ try {
             $user_responses[$r['event_id']] = $r['status'];
         }
     }
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
+}
 
 // Fetch Past Events (include archived even if date is future)
 $stmt = $pdo->query("SELECT * FROM events WHERE (event_date < CURDATE() OR is_archived = 1) ORDER BY event_date DESC LIMIT 5");
@@ -138,8 +136,8 @@ try {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -220,6 +218,7 @@ try {
                 <a href="#surveys"><i class="fas fa-list-check" aria-hidden="true"></i> アンケート</a>
                 <a href="#calendar"><i class="fas fa-calendar-days" aria-hidden="true"></i> カレンダー</a>
                 <a href="#suggestion"><i class="fas fa-inbox" aria-hidden="true"></i> 目安箱</a>
+                <a href="#account"><i class="fas fa-user-gear" aria-hidden="true"></i> アカウント</a>
             </nav>
 
             <!-- 部室 在室状況・入退室・予約 -->
@@ -340,7 +339,7 @@ try {
                                 </a>
                             </div>
                             <div class="event-icons">
-                                <?php if (isEventAdmin($event['id'])): ?>
+                                <?php if ($_SESSION['role'] === 'admin' || $event['created_by'] == $_SESSION['user_id'] || in_array($event['id'], $user_admin_events)): ?>
                                     <button type="button" class="icon-btn" title="編集" onclick="location.href='form_create.php?id=<?php echo (int)$event['id']; ?>'">
                                         <i class="fas fa-pen-to-square"></i><span>編集</span>
                                     </button>
@@ -396,7 +395,7 @@ try {
                                 </a>
                             </div>
                             <div class="event-icons">
-                                <?php if (isEventAdmin($event['id'])): ?>
+                                <?php if ($_SESSION['role'] === 'admin' || $event['created_by'] == $_SESSION['user_id'] || in_array($event['id'], $user_admin_events)): ?>
                                     <button type="button" class="icon-btn" title="編集" onclick="location.href='form_create.php?id=<?php echo (int)$event['id']; ?>'">
                                         <i class="fas fa-pen-to-square"></i><span>編集</span>
                                     </button>
@@ -779,6 +778,37 @@ try {
                         <i class="fas fa-paper-plane"></i> 送信する
                     </button>
                 </form>
+            </div>
+
+            <!-- アカウント（プロフィール編集・退会申請） -->
+            <h2 id="account" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;"><i class="fas fa-user-gear section-icon" aria-hidden="true"></i> アカウント</h2>
+            <div class="card">
+                <?php if (!empty($_SESSION['withdrawal_notice'])): ?>
+                    <div style="background: #ecf2ed; color: #3f7d54; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;" role="status">
+                        <i class="fas fa-check" aria-hidden="true"></i> <?php echo htmlspecialchars($_SESSION['withdrawal_notice']); ?>
+                    </div>
+                    <?php unset($_SESSION['withdrawal_notice']); ?>
+                <?php endif; ?>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: .25rem;">登録情報の確認・変更</div>
+                        <div style="color: var(--text-light); font-size: .9rem;">住所・電話番号・メールなどはいつでも変更できます。</div>
+                    </div>
+                    <a href="register_profile.php" class="btn-secondary" style="white-space: nowrap;"><i class="fas fa-pen-to-square"></i> プロフィールを編集</a>
+                </div>
+                <details style="margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1.2rem;">
+                    <summary style="cursor: pointer; color: var(--text-light); font-size: .9rem;">退会・個人情報の削除を申請する</summary>
+                    <form action="withdrawal_request.php" method="POST" style="margin-top: 1rem; display: flex; flex-direction: column; gap: .8rem;"
+                          onsubmit="return confirm('退会を申請します。管理者が確認後にアカウントと登録情報を削除します。よろしいですか？');">
+                        <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                        <p style="margin: 0; color: var(--text-light); font-size: .88rem; line-height: 1.7;">
+                            申請すると管理者に通知され、確認のうえアカウントと個人情報（名簿・出欠履歴の氏名紐付け）を削除します。
+                            取扱いの詳細は <a href="privacy.php" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">プライバシーポリシー</a> をご覧ください。
+                        </p>
+                        <textarea name="reason" rows="2" placeholder="理由・備考（任意）" style="width: 100%; padding: .7rem; border: 1px solid #ddd; border-radius: 8px; font-size: .95rem; box-sizing: border-box;"></textarea>
+                        <button type="submit" class="btn-secondary" style="align-self: flex-start; color: #b0453a; border-color: #b0453a;">退会を申請する</button>
+                    </form>
+                </details>
             </div>
         </div>
     </main>

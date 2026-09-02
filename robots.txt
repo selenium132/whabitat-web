@@ -6,7 +6,19 @@ Allow: /
 # Sitemap location
 Sitemap: https://whabitathome.com/sitemap.xml
 
-# Disallow admin pages
+# 検索結果に出す意味のないページ(管理・会員専用・認証フロー)をクロール対象外にする。
 # 個別の機密ファイル名はここに列挙しない（攻撃者に存在を教える地図になるため）。
-# これらは .htaccess の Require all denied と認証で保護している。
+# 機密は .htaccess の Require all denied と認証で保護している。
 Disallow: /admin/
+Disallow: /dashboard.php
+Disallow: /past_events.php
+Disallow: /form_view.php
+Disallow: /form_create.php
+Disallow: /form_responses.php
+Disallow: /form_google_sheet.php
+Disallow: /register_profile.php
+Disallow: /approval_pending.php
+Disallow: /login.php
+Disallow: /logout.php
+Disallow: /callback.php
+Disallow: /google_oauth_callback.php

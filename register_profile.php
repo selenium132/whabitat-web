@@ -122,8 +122,8 @@ $is_first_registration = empty($current_user['name']);
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>プロフィール登録 | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -274,7 +274,8 @@ $is_first_registration = empty($current_user['name']);
                     </div>
 
                     <p style="font-size: 0.85rem; color: #666; text-align: center; margin-bottom: 1.5rem;">
-                        <i class="fas fa-shield-alt"></i> ご記入いただいた個人情報は厳重に管理され、サークル運営以外の目的には使用されません。
+                        <i class="fas fa-shield-alt"></i> ご記入いただいた個人情報は厳重に管理され、サークル運営以外の目的には使用されません。<br>
+                        送信により <a href="privacy.php" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">プライバシーポリシー</a> に同意したものとみなします。
                     </p>
 
                     <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">

@@ -42,6 +42,8 @@ if ($source === 'contact') {
     $where = " WHERE source = 'contact'";
 } elseif ($source === 'suggestion') {
     $where = " WHERE source = 'suggestion'";
+} elseif ($source === 'withdrawal') {
+    $where = " WHERE source = 'withdrawal'";
 } elseif ($source === 'unread') {
     $where = " WHERE is_read = 0";
 }
@@ -72,8 +74,8 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="../logo.png">
-    <link rel="apple-touch-icon" href="../logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>お問い合わせ一覧 | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -124,6 +126,11 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
             background: #f3e5f5;
             color: #9c27b0;
         }
+        .source-badge.withdrawal {
+            background: #f6ebe9;
+            color: #b0453a;
+        }
+        .message-card.withdrawal { border-left-color: #b0453a; }
         .filter-bar {
             display: flex;
             gap: 0.5rem;
@@ -217,6 +224,7 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                 <a href="?source=unread" class="filter-btn <?php echo $source === 'unread' ? 'active' : ''; ?>">未読のみ</a>
                 <a href="?source=contact" class="filter-btn <?php echo $source === 'contact' ? 'active' : ''; ?>"><i class="fas fa-envelope" aria-hidden="true"></i> お問い合わせ</a>
                 <a href="?source=suggestion" class="filter-btn <?php echo $source === 'suggestion' ? 'active' : ''; ?>"><i class="fas fa-inbox" aria-hidden="true"></i> 目安箱</a>
+                <a href="?source=withdrawal" class="filter-btn <?php echo $source === 'withdrawal' ? 'active' : ''; ?>"><i class="fas fa-door-open" aria-hidden="true"></i> 退会申請</a>
                 
                 <span style="margin-left: auto;"></span>
                 
@@ -244,12 +252,15 @@ $unreadCount = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read 
                         $cardClass = 'message-card';
                         if ($isUnread) $cardClass .= ' unread';
                         if ($isSuggestion) $cardClass .= ' suggestion';
+                        if (($msg['source'] ?? '') === 'withdrawal') $cardClass .= ' withdrawal';
                     ?>
                     <div class="<?php echo $cardClass; ?>">
                         <div class="message-meta">
                             <span>
                                 <?php if ($isSuggestion): ?>
                                     <span class="source-badge suggestion"><i class="fas fa-inbox" aria-hidden="true"></i> 目安箱</span>
+                                <?php elseif (($msg['source'] ?? '') === 'withdrawal'): ?>
+                                    <span class="source-badge withdrawal"><i class="fas fa-door-open" aria-hidden="true"></i> 退会申請</span>
                                 <?php else: ?>
                                     <span class="source-badge contact"><i class="fas fa-envelope" aria-hidden="true"></i> お問い合わせ</span>
                                 <?php endif; ?>

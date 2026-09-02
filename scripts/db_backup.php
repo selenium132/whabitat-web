@@ -8,6 +8,13 @@
  * XServerでの設定: サーバーパネル > Cron設定 で毎日1回
  *   /usr/bin/php /home/＜サーバーID＞/whabitathome.com/public_html/scripts/db_backup.php
  * を登録する（PHPのパスはパネルの案内に従う）。
+ *
+ * サーバー外への退避（任意・推奨）:
+ *   .env に BACKUP_DRIVE_USER_ID=<管理者の users.id> を設定すると、その管理者が
+ *   「名簿シート出力」で連携済みの Google アカウントの Drive（drive.file スコープ）に
+ *   フォルダ「WHABITAT DB Backups」を作り、同じ gzip を毎回アップロードして 14 世代を保つ。
+ *   サーバー障害・誤操作で public_html ごと消えても DB を復元できるようにするのが目的。
+ *   Drive 側の失敗はローカル保存を妨げない（STDERR に出して終了コード 2）。
  */
 
 if (php_sapi_name() !== 'cli') {
@@ -77,3 +84,77 @@ while (count($files) > $keep) {
 }
 
 echo "OK: " . basename($file) . " (" . round(filesize($file) / 1024) . "KB, " . count($tables) . " tables)\n";
+
+// =====================================================================
+// Google Drive への退避（BACKUP_DRIVE_USER_ID が設定されているときだけ）
+// =====================================================================
+$drive_uid = (int)($env['BACKUP_DRIVE_USER_ID'] ?? 0);
+if ($drive_uid > 0) {
+    try {
+        require_once __DIR__ . '/../google_user_sheets.php';
+        $rec = gus_get_record($drive_uid);
+        if (!$rec || empty($rec['refresh_token'])) {
+            throw new Exception("users.id={$drive_uid} は Google 未連携です（名簿シート出力を一度実行して連携してください）");
+        }
+        $token = gus_access_token($rec['refresh_token']);
+        $folderId = backupDriveFolderId($token, 'WHABITAT DB Backups');
+        $fileId = backupDriveUpload($token, $folderId, basename($file), file_get_contents($file));
+        $removed = backupDrivePrune($token, $folderId, $keep);
+        echo "Drive: uploaded " . basename($file) . " (id={$fileId}" . ($removed ? ", pruned {$removed}" : '') . ")\n";
+    } catch (Exception $e) {
+        fwrite(STDERR, "Drive 退避に失敗（ローカル保存は完了）: " . $e->getMessage() . "\n");
+        exit(2);
+    }
+}
+
+// フォルダを名前で探し、無ければ作る（drive.file スコープではこのアプリが作ったものだけが見える）
+function backupDriveFolderId($token, $name) {
+    $q = "name = '" . addslashes($name) . "' and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
+    list($http, $d) = gus_api($token, 'GET', 'https://www.googleapis.com/drive/v3/files?spaces=drive&fields=files(id)&q=' . rawurlencode($q));
+    if ($http === 200 && !empty($d['files'][0]['id'])) return $d['files'][0]['id'];
+    list($http, $d, $raw) = gus_api($token, 'POST', 'https://www.googleapis.com/drive/v3/files', [
+        'name' => $name, 'mimeType' => 'application/vnd.google-apps.folder',
+    ]);
+    if ($http !== 200 || empty($d['id'])) throw new Exception('フォルダ作成に失敗: HTTP ' . $http . ' ' . substr((string)$raw, 0, 200));
+    return $d['id'];
+}
+
+// multipart/related でアップロード（メタデータ + gzip 本体）
+function backupDriveUpload($token, $folderId, $name, $bytes) {
+    $boundary = 'whb_' . bin2hex(random_bytes(8));
+    $meta = json_encode(['name' => $name, 'parents' => [$folderId]]);
+    $body = "--{$boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n{$meta}\r\n"
+          . "--{$boundary}\r\nContent-Type: application/gzip\r\n\r\n{$bytes}\r\n--{$boundary}--";
+    $ch = curl_init('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id');
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 120,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $token,
+            'Content-Type: multipart/related; boundary=' . $boundary,
+            'Content-Length: ' . strlen($body),
+        ],
+        CURLOPT_POSTFIELDS => $body,
+    ]);
+    $resp = curl_exec($ch);
+    $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err  = curl_error($ch);
+    curl_close($ch);
+    $d = json_decode((string)$resp, true);
+    if ($http !== 200 || empty($d['id'])) throw new Exception('アップロードに失敗: HTTP ' . $http . ' ' . ($err ?: substr((string)$resp, 0, 200)));
+    return $d['id'];
+}
+
+// フォルダ内の backup_*.sql.gz を新しい順に $keep 件だけ残して削除
+function backupDrivePrune($token, $folderId, $keep) {
+    $q = "'" . $folderId . "' in parents and trashed = false and name contains 'backup_'";
+    list($http, $d) = gus_api($token, 'GET', 'https://www.googleapis.com/drive/v3/files?spaces=drive&pageSize=200&orderBy=createdTime%20desc&fields=files(id,name)&q=' . rawurlencode($q));
+    if ($http !== 200 || empty($d['files'])) return 0;
+    $removed = 0;
+    foreach (array_slice($d['files'], $keep) as $f) {
+        list($h) = gus_api($token, 'DELETE', 'https://www.googleapis.com/drive/v3/files/' . rawurlencode($f['id']));
+        if ($h === 204) $removed++;
+    }
+    return $removed;
+}
