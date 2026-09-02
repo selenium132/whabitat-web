@@ -92,6 +92,19 @@ function sendEventsAndSurveysReply(PDO $pdo, $replyToken, $lineUserId) {
         $survey_stmt->execute();
         $all_surveys = $survey_stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        // このユーザーがイベント管理者になっているアンケートIDを1クエリでまとめて取得（従来はループ内で毎回問い合わせ）
+        $my_admin_event_ids = [];
+        if ($all_surveys) {
+            $ids = array_map(fn($r) => (int)$r['id'], $all_surveys);
+            try {
+                $ea_stmt = $pdo->prepare("SELECT event_id FROM event_admins WHERE user_id = ? AND event_id IN (" . implode(',', array_fill(0, count($ids), '?')) . ")");
+                $ea_stmt->execute(array_merge([$db_user_id], $ids));
+                $my_admin_event_ids = array_map('intval', $ea_stmt->fetchAll(PDO::FETCH_COLUMN));
+            } catch (Exception $e) {
+                error_log('line_webhook: event_admins lookup failed: ' . $e->getMessage());
+            }
+        }
+
         foreach ($all_surveys as $sv) {
             $target_users = json_decode($sv['target_users'] ?? '[]', true);
             $is_target = empty($target_users) || in_array($db_user_id, $target_users);
@@ -100,12 +113,8 @@ function sendEventsAndSurveysReply(PDO $pdo, $replyToken, $lineUserId) {
             if (!$is_target) {
                 if ($db_user_role === 'admin' || $sv['created_by'] == $db_user_id) {
                     $is_target = true;
-                } else {
-                    try {
-                        $ea_stmt = $pdo->prepare("SELECT 1 FROM event_admins WHERE event_id = ? AND user_id = ?");
-                        $ea_stmt->execute([$sv['id'], $db_user_id]);
-                        if ($ea_stmt->fetch()) $is_target = true;
-                    } catch (Exception $e) {}
+                } elseif (in_array((int)$sv['id'], $my_admin_event_ids, true)) {
+                    $is_target = true;
                 }
             }
 

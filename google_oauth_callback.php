@@ -50,6 +50,8 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
     'grant_type'    => 'authorization_code',
 ]));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 外部API無応答時にワーカーを占有しない
+curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 $resp = curl_exec($ch);
 $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
@@ -62,6 +64,8 @@ if ($http !== 200 || empty($data['id_token'])) {
 // 2. id_token を Google の tokeninfo で検証してメールを取得（aud/email_verified を厳格確認）
 $ch = curl_init('https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($data['id_token']));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 外部API無応答時にワーカーを占有しない
+curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 $vresp = curl_exec($ch);
 $vhttp = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);

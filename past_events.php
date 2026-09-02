@@ -4,12 +4,7 @@ requireLogin();
 
 $pdo = getDB();
 
-// Ensure is_archived column exists
-try {
-    $pdo->exec("ALTER TABLE events ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0");
-} catch (Exception $e) {
-    // Column already exists
-}
+ensureEventsArchivedColumn($pdo); // is_archived カラム（初回のみDDL実行）
 
 // Fetch past events (当日いっぱいは残す: 日付が変わってから過去へ。手動アーカイブは即時)
 // 件数は年々増えるためページ送りで取得
@@ -40,8 +35,8 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>過去のイベント | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -274,7 +269,8 @@ $is_global_admin = ($_SESSION['role'] === 'admin');
                 </div>
             <?php else: ?>
                 <?php foreach ($past_events as $event): 
-                    $is_event_admin = isEventAdmin($event['id']);
+                    // ループ内で isEventAdmin() を呼ぶと event ごとに2クエリ走るため、事前取得した一覧と作成者判定で済ませる
+                    $is_event_admin = in_array($event['id'], $user_admin_events) || ($event['created_by'] == $_SESSION['user_id']);
                     $can_manage = $is_global_admin || $is_event_admin;
                     $is_archived = !empty($event['is_archived']);
                     $is_past_date = strtotime($event['event_date']) < strtotime('today');

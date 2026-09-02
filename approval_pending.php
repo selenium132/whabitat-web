@@ -87,7 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
             try {
                 $del = $pdo->prepare("DELETE FROM secret_attempts WHERE ip = ?");
                 $del->execute([$client_ip]);
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
+            }
 
             // Redirect to Profile Registration
             header("Location: register_profile.php");
@@ -98,7 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
             try {
                 $ins = $pdo->prepare("INSERT INTO secret_attempts (ip) VALUES (?)");
                 $ins->execute([$client_ip]);
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
+            }
             $error_msg = '合言葉が間違っています。';
         }
     }
@@ -108,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['secret_keyword'])) {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>承認待ち | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">

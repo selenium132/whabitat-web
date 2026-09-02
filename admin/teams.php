@@ -51,12 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mkdir($upload_dir, 0755, true);
             }
             // PHP実行を二重に禁止（親 uploads/.htaccess に加え専用ディレクトリにも設置）
-            $ht = $upload_dir . '.htaccess';
-            if (!file_exists($ht)) {
-                file_put_contents($ht, "<IfModule mod_php.c>\nphp_flag engine off\n</IfModule>\n<FilesMatch \"(?i)\\.(php|php3|php4|php5|php7|phtml|pht|phar)$\">\nRequire all denied\n</FilesMatch>\n");
-            }
+            // admin/blog.php と同じく毎回上書き（誤削除・移行時の欠落からの自己修復）
+            file_put_contents($upload_dir . '.htaccess', "<IfModule mod_php.c>\nphp_flag engine off\n</IfModule>\n<FilesMatch \"(?i)\\.(php|php3|php4|php5|php7|phtml|pht|phar)$\">\nRequire all denied\n</FilesMatch>\n");
             // クライアント申告の拡張子は信用せず、マジックバイトで実形式を判定する
-            $imageInfo = getimagesize($_FILES['image']['tmp_name']);
+            if (($_FILES['image']['size'] ?? 0) > 10 * 1024 * 1024) {
+                $error = '画像は10MB以下にしてください。';
+            }
+            $imageInfo = $error ? false : getimagesize($_FILES['image']['tmp_name']);
             $allowed = [IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png', IMAGETYPE_GIF => 'gif', IMAGETYPE_WEBP => 'webp'];
             if ($imageInfo === false || !isset($allowed[$imageInfo[2]])) {
                 $error = '画像ファイル（JPEG / PNG / GIF / WebP）のみアップロードできます。';
@@ -208,11 +209,11 @@ $csrf_token = generateCsrfToken();
         .entry-date { font-size: 0.85rem; color: #666; }
         .entry-insta { font-size: .8rem; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .entry-actions { display: flex; gap: 8px; }
-        .btn-edit { background: #667eea; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.85rem; }
+        .btn-edit { background: var(--primary-color); color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.85rem; }
         .btn-delete { background: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .alert-success { background: #ecf2ed; color: #3f7d54; padding: 12px; border-radius: 6px; margin-bottom: 20px; }
         .alert-error { background: #f6ebe9; color: #b0453a; padding: 12px; border-radius: 6px; margin-bottom: 20px; }
-        .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-color); text-decoration: none; }
         .field-note { font-size: .8rem; color: #888; margin-top: 4px; }
         .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .member-picker { max-height: 220px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 4px; display: flex; flex-direction: column; }

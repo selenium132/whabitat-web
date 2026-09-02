@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($target_id) {
         // 監査ログ用に対象者名を先に取得（削除前に名前を残すため）
         $audit_target_name = null;
-        try { $tns = $pdo->prepare("SELECT name FROM users WHERE id = ?"); $tns->execute([$target_id]); $audit_target_name = $tns->fetchColumn() ?: null; } catch (Exception $e) {}
+        try { $tns = $pdo->prepare("SELECT name FROM users WHERE id = ?"); $tns->execute([$target_id]); $audit_target_name = $tns->fetchColumn() ?: null; } catch (Exception $e) {
+            error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
+        }
 
         if ($action === 'approve') {
             $stmt = $pdo->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
@@ -164,8 +166,8 @@ $csrf_token = generateCsrfToken();
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="../logo.png">
-    <link rel="apple-touch-icon" href="../logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>メンバー管理 | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -294,9 +296,7 @@ $csrf_token = generateCsrfToken();
                     <button type="button" id="csvBtn" class="btn-secondary btn-mini">
                         <i class="fas fa-download"></i> CSV出力
                     </button>
-                    <a href="members_export_sheet.php" class="btn-primary btn-mini" target="_blank" rel="noopener">
-                        <i class="fas fa-file-excel"></i> シートに出力
-                    </a>
+                    <form method="POST" action="members_export_sheet.php" target="_blank" style="display: inline;"><input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>"><button type="submit" class="btn-primary btn-mini"><i class="fas fa-file-excel"></i> シートに出力</button></form>
                     <a href="members_incomplete.php" class="btn-secondary btn-mini">
                         <i class="fas fa-user-clock"></i> 未入力者
                     </a>

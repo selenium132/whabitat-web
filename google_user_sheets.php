@@ -52,6 +52,8 @@ function gus_access_token($refresh_token) {
         'grant_type'    => 'refresh_token',
     ]));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 外部API無応答時にワーカーを占有しない
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     $resp = curl_exec($ch);
     $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -66,6 +68,8 @@ function gus_access_token($refresh_token) {
 function gus_api($accessToken, $method, $url, $body = null) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 外部API無応答時にワーカーを占有しない
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Authorization: Bearer ' . $accessToken,

@@ -25,12 +25,7 @@ if (!isEventAdmin($event_id)) {
 
 $pdo = getDB();
 
-// Ensure column exists
-try {
-    $pdo->exec("ALTER TABLE events ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0");
-} catch (Exception $e) {
-    // Column already exists
-}
+ensureEventsArchivedColumn($pdo); // is_archived カラム（初回のみDDL実行）
 
 if ($action === 'archive') {
     $stmt = $pdo->prepare("UPDATE events SET is_archived = 1 WHERE id = ?");

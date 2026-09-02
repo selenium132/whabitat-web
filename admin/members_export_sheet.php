@@ -4,7 +4,29 @@ require_once '../google_user_sheets.php';
 
 requireAdmin();
 
-// 本人のGoogle Drive連携を要求（未連携なら一度だけOAuthへ。認証後ここへ戻る）。
+// 名簿全件を本人の Drive に書き出す＝持続コピーを作る操作のため POST + CSRF 必須。
+// 従来は GET で発火でき、連携済み管理者にリンクを踏ませるだけで意図しない出力を起こせた。
+// Google OAuth から戻ってきた直後（GET）は、ワンクリックの確認画面を挟んで POST させる。
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $csrf = htmlspecialchars(generateCsrfToken(), ENT_QUOTES);
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+       . '<title>名簿をシートに出力</title>'
+       . '<style>body{font-family:"Noto Sans JP",sans-serif;background:#faf9f6;color:#2a2a2a;margin:0;padding:2rem 1.2rem;line-height:1.8}'
+       . '.box{max-width:480px;margin:1.5rem auto;background:#fff;border:1px solid #e6e2d9;border-radius:12px;padding:1.6rem}'
+       . 'h1{font-size:1.15rem;margin:0 0 1rem}button.btn{display:block;width:100%;background:#1a1a1a;color:#fff;border:none;padding:0.9rem;border-radius:8px;font-weight:600;font-size:1rem;margin:1.2rem 0;cursor:pointer}'
+       . '.muted{color:#6b655a;font-size:.86rem}a{color:#1a1a1a}</style></head><body><div class="box">'
+       . '<h1>名簿をGoogleスプレッドシートに出力</h1>'
+       . '<p>あなたのGoogleアカウントのDriveに「[WHABITAT] メンバー名簿」を作成/更新します（あなたが所有者になります）。</p>'
+       . '<form method="POST" action="members_export_sheet.php"><input type="hidden" name="csrf_token" value="' . $csrf . '">'
+       . '<button type="submit" class="btn">シートに出力する</button></form>'
+       . '<p class="muted">この操作は監査ログに記録されます。 <a href="members.php">メンバー管理へ戻る</a></p>'
+       . '</div></body></html>';
+    exit;
+}
+validateCsrfToken($_POST['csrf_token'] ?? '');
+
+// 本人のGoogle Drive連携を要求（未連携なら一度だけOAuthへ。認証後ここへ GET で戻り、上の確認画面から再度 POST する）。
 requireGoogleDriveConnection('admin/members_export_sheet.php');
 
 $pdo = getDB();
@@ -35,7 +57,7 @@ try {
 
 // 監査ログ: 誰がいつ名簿全件をスプレッドシートへ吸い出したかを記録（持続コピーが作られる操作のため特に重要）
 $export_count = 0;
-try { $export_count = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(); } catch (Exception $e) {}
+try { $export_count = (int)$pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(); } catch (Exception $e) { error_log('export count failed: ' . $e->getMessage()); }
 auditLog('export_sheet', null, null, '名簿をGoogleスプレッドシートへ出力（' . $export_count . '件）');
 
 // 成功。アプリ内ブラウザ（LINE等）では docs.google.com を直接開くと Google ログインで弾かれるため、

@@ -25,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'http' => [
             'method' => 'POST',
             'header' => 'Content-Type: application/x-www-form-urlencoded',
-            'content' => http_build_query($verify_data)
+            'content' => http_build_query($verify_data),
+            'timeout' => 5, // Google側の遅延でPHPワーカーを長時間占有しないため（失敗時は従来どおり送信を拒否）
         ]
     ];
 

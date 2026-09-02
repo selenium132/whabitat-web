@@ -30,6 +30,8 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
     'client_secret' => LINE_CHANNEL_SECRET,
 ]));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 外部API無応答時にワーカーを占有しない
+curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 $response = curl_exec($ch);
 $token_http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
@@ -47,6 +49,8 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Authorization: Bearer ' . $token_data['access_token']
 ]);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 外部API無応答時にワーカーを占有しない
+curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 $profile_response = curl_exec($ch);
 $profile_http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);

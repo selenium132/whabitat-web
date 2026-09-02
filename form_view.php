@@ -29,6 +29,32 @@ if (!$event) {
     exit;
 }
 
+// 「対象者」が指定されたアンケートは、対象外の会員には閲覧も回答もさせない。
+// 従来は一覧に出すかどうかの絞り込みにしか使われておらず、URL直打ちで誰でも開けた。
+// 管理者・作成者・イベント管理者、および（対象変更前などに）既に回答済みの人は例外。
+if (!empty($event['target_users'])) {
+    $targets = json_decode($event['target_users'], true);
+    if (is_array($targets) && $targets && !in_array((int)$_SESSION['user_id'], array_map('intval', $targets), true) && !isEventAdmin($event_id)) {
+        $chk = $pdo->prepare("SELECT 1 FROM attendance WHERE event_id = ? AND user_id = ?");
+        $chk->execute([$event_id, $_SESSION['user_id']]);
+        if (!$chk->fetchColumn()) {
+            http_response_code(403);
+            header('Content-Type: text/html; charset=utf-8');
+            echo '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+               . '<title>対象外のアンケートです | WHABITAT</title>'
+               . '<link rel="stylesheet" href="style.css?v=' . (@filemtime(__DIR__ . '/style.css') ?: '1') . '">'
+               . '<link rel="stylesheet" href="member.css?v=' . (@filemtime(__DIR__ . '/member.css') ?: '1') . '"></head><body>'
+               . '<main><div class="dashboard-container" style="max-width: 560px; margin-top: 120px;">'
+               . '<div class="card" style="text-align: center; padding: 2.5rem 2rem;">'
+               . '<h1 style="font-size: 1.3rem; margin-bottom: 1rem;">このアンケートはあなた宛ではありません</h1>'
+               . '<p style="color: var(--text-light); line-height: 1.8; margin-bottom: 1.5rem;">対象者が指定されたアンケートです。心当たりがある場合は主催者にご確認ください。</p>'
+               . '<a href="dashboard.php" class="btn-secondary">ダッシュボードに戻る</a>'
+               . '</div></div></main></body></html>';
+            exit;
+        }
+    }
+}
+
 // Parse Schema（POSTの必須項目サーバ側検証で参照するため、送信処理より前に用意する）
 $form_schema = [];
 if (!empty($event['form_schema'])) {
@@ -141,7 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $upd = $pdo->prepare("UPDATE events SET target_users = ? WHERE id = ?");
                     $upd->execute([json_encode($targets), $event_id]);
                 }
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
+            }
         }
         // 既にスプシ連携済みのイベントなら、回答を自動反映（失敗しても回答保存は妨げない）
         syncEventToSheetSafe($pdo, $event_id);
@@ -166,13 +194,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$event_id]);
 $participants = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-function getStatusLabel($status) {
-    if ($status === 'join') return '参加';
-    if ($status === 'decline') return '不参加';
-    if ($status === 'maybe') return '未定';
-    return '';
-}
 
 $is_admin = ($_SESSION['role'] === 'admin');
 $csrf_token = generateCsrfToken();
@@ -231,8 +252,8 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($event['title']); ?> | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">

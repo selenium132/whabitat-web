@@ -118,10 +118,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $del_stmt->execute([$event_id_final]);
 
             // 2. Insert new admins
+            // サーバー側で「承認済み・非admin の実在会員」に限定する（UIの選択肢と同じ集合）。
+            // 従来は POST 値をそのまま INSERT していたため、改ざんで任意の会員に無断で
+            // 回答者一覧の閲覧権を付与でき、実在しないIDだと FK 違反で未捕捉例外になっていた。
             if (!empty($_POST['event_admins']) && is_array($_POST['event_admins'])) {
-                $ins_stmt = $pdo->prepare("INSERT INTO event_admins (event_id, user_id) VALUES (?, ?)");
-                foreach ($_POST['event_admins'] as $uid) {
-                    $ins_stmt->execute([$event_id_final, $uid]);
+                try {
+                    $posted = array_values(array_unique(array_map('intval', $_POST['event_admins'])));
+                    $valid  = array_map('intval', $pdo->query("SELECT id FROM users WHERE is_approved = 1 AND role != 'admin'")->fetchAll(PDO::FETCH_COLUMN));
+                    $admins = array_values(array_intersect($posted, $valid));
+                    $ins_stmt = $pdo->prepare("INSERT IGNORE INTO event_admins (event_id, user_id) VALUES (?, ?)");
+                    foreach ($admins as $uid) {
+                        $ins_stmt->execute([$event_id_final, $uid]);
+                    }
+                } catch (Exception $e) {
+                    error_log('form_create: event_admins insert failed (event ' . $event_id_final . '): ' . $e->getMessage());
                 }
             }
             // ---------------------------
@@ -171,8 +181,8 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?> | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">

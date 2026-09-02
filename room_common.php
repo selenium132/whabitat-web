@@ -6,6 +6,10 @@ define('ROOM_ID', 1); // 現状は部室1つのみ。将来複数部屋化して
 
 // Helper: 入退室・予約用テーブルを自動作成（無ければ作る。config.php の ensureAuditLogTable() と同じ流儀）
 function ensureRoomTables(PDO $pdo) {
+    // 部室タブの20秒ポーリング等で毎回DDLが走っていたため、初回だけ実行する
+    ensureSchemaOnce('room_tables_v2', function () use ($pdo) { ensureRoomTablesNow($pdo); });
+}
+function ensureRoomTablesNow(PDO $pdo) {
     try {
         $pdo->exec("CREATE TABLE IF NOT EXISTS room_presence (
             id INT NOT NULL AUTO_INCREMENT,

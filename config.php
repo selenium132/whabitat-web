@@ -18,8 +18,8 @@ define('DB_USER', $env['DB_USER'] ?? '');
 define('DB_PASS', $env['DB_PASS'] ?? '');
 
 // Circle Secret Code (for registration)
-define('CIRCLE_SECRET', $env['CIRCLE_SECRET'] ?? '');    // 一般メンバー用
-define('ADMIN_SECRET', $env['ADMIN_SECRET'] ?? '');    // 管理者（幹部）用
+define('CIRCLE_SECRET', $env['CIRCLE_SECRET'] ?? '');    // 承認待ち画面の合言葉（approval_pending.php）
+// ADMIN_SECRET は参照箇所が無いデッドコードだったため撤去（管理者昇格は admin/members.php の権限変更のみ）
 
 // Available Grades (Generations) - dynamically calculated
 // Base: fiscal year 2026 -> newest gen = 20th
@@ -58,6 +58,24 @@ ini_set('session.cookie_secure', 1); // Enable for HTTPS
 // None にすると全クロスサイトリクエストでCookieが送出されCSRF面が不要に広がるため避ける。
 ini_set('session.cookie_samesite', 'Lax');
 
+// Security: レスポンスヘッダ
+// .htaccess の mod_headers は本番(Xserver)で無効で、実際には一切付与されていなかった(実測)。
+// PHP から直接送ることで環境に依存せず確実に付与する。CLI(cron スクリプト)では何もしない。
+if (PHP_SAPI !== 'cli' && !headers_sent()) {
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header("Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()");
+    // クリックジャッキング対策(X-Frame-Options の後継)。インラインJS/CSS が多いため script/style の制限は掛けない。
+    header("Content-Security-Policy: frame-ancestors 'self'; base-uri 'self'; form-action 'self' https://accounts.google.com https://access.line.me");
+    // HSTS: 180日。サブドメイン・preload は運用影響が読めないため付けない。
+    $is_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'); // nginx リバースプロキシ配下(Xserver)も考慮
+    if ($is_https) {
+        header('Strict-Transport-Security: max-age=15552000');
+    }
+}
+
 // Security: Disable Error Display in Production
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
@@ -66,11 +84,17 @@ ini_set('log_errors', 1);
 session_start();
 
 // Database Connection Function
+// リクエスト内では同じ接続を使い回す（従来は呼ぶたびに新規接続を張っていた。
+// requireLogin / isEventAdmin / auditLog などから1ページで十数回呼ばれるため接続コストが支配的だった）。
+// 名前付きロック(GET_LOCK)は同一接続内で取得・解放しているので単一接続でも問題ない。
 function getDB() {
+    static $shared = null;
+    if ($shared instanceof PDO) return $shared;
     try {
         $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
         $pdo = new PDO($dsn, DB_USER, DB_PASS);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $shared = $pdo;
         return $pdo;
     } catch (PDOException $e) {
         error_log("DB connection failed: " . $e->getMessage());
@@ -78,18 +102,69 @@ function getDB() {
     }
 }
 
+// Helper: スキーマの自己修復(CREATE TABLE IF NOT EXISTS / ALTER)を「初回だけ」実行する。
+// 従来は毎リクエスト(部室タブは20秒ポーリングごと)にDDLが走っていた。成功したら private/schema/ に
+// マーカーを置き、以後はファイル存在チェックだけで済ませる。DDLを変えたら $key の末尾バージョンを上げる。
+// 手動でテーブルを消した等で再実行したい場合はマーカーファイルを削除する。
+function ensureSchemaOnce($key, callable $fn) {
+    $dir  = __DIR__ . '/private/schema';
+    $mark = $dir . '/' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $key);
+    if (file_exists($mark)) return true;
+    try {
+        $fn();
+    } catch (Exception $e) {
+        error_log("ensureSchemaOnce[{$key}] failed: " . $e->getMessage());
+        return false;
+    }
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0700, true);
+        $ht = __DIR__ . '/private/.htaccess';
+        if (!file_exists($ht)) @file_put_contents($ht, "Require all denied\nDeny from all\n");
+    }
+    @file_put_contents($mark, date('c'));
+    return true;
+}
+
+// Helper: events.is_archived カラム（従来 dashboard/past_events/form_archive の3箇所に同じ ALTER 試行が重複していた）
+function ensureEventsArchivedColumn(PDO $pdo) {
+    ensureSchemaOnce('events_is_archived_v1', function () use ($pdo) {
+        try { $pdo->query("SELECT is_archived FROM events LIMIT 1"); }
+        catch (PDOException $e) { $pdo->exec("ALTER TABLE events ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0"); }
+    });
+}
+
+// Helper: mtg_history テーブル（従来 activity_mtg.php と admin/mtg_history.php に同一DDLが重複していた）
+function ensureMtgHistoryTable(PDO $pdo) {
+    ensureSchemaOnce('mtg_history_v1', function () use ($pdo) {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS mtg_history (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            event_date DATE NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            subtitle VARCHAR(255) DEFAULT NULL,
+            description TEXT,
+            image_path VARCHAR(255) DEFAULT NULL,
+            year_group INT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )");
+    });
+}
+
+// Helper: 出欠/回答ステータスの表示ラベル（従来 form_view.php と form_responses.php に別実装が重複し挙動が乖離していた）
+function getStatusLabel($status, $isSurvey = false) {
+    if ($status === 'join')    return $isSurvey ? '回答済' : '参加';
+    if ($status === 'decline') return '不参加';
+    if ($status === 'maybe')   return '未定';
+    return (string)$status;
+}
+
 // Helper: users.email カラムが無い既存DBに自動でカラムを追加する（既にあれば何もしない）。
 // email を使うページ(プロフィール登録・メンバー管理)の冒頭で呼ぶ。
 function ensureUsersEmailColumn(PDO $pdo) {
-    try {
-        $pdo->query("SELECT email FROM users LIMIT 1");
-    } catch (PDOException $e) {
-        try {
-            $pdo->exec("ALTER TABLE users ADD COLUMN email VARCHAR(255) NULL DEFAULT NULL");
-        } catch (PDOException $e2) {
-            error_log('ensureUsersEmailColumn failed: ' . $e2->getMessage());
-        }
-    }
+    ensureSchemaOnce('users_email_v1', function () use ($pdo) {
+        try { $pdo->query("SELECT email FROM users LIMIT 1"); }
+        catch (PDOException $e) { $pdo->exec("ALTER TABLE users ADD COLUMN email VARCHAR(255) NULL DEFAULT NULL"); }
+    });
 }
 
 // Helper: events.show_participants カラムが無い既存DBに自動で追加する（無ければ作る）。
@@ -195,6 +270,9 @@ function resolveUploadImagePath($path) {
 // Helper: GV/JV チーム（History）テーブルの用意。
 // 初回はページにハードコードされていた実績データを自動シードする（以後は admin/teams.php で管理）。
 function ensureActivityTeamsTable($pdo) {
+    ensureSchemaOnce('activity_teams_v1', function () use ($pdo) { ensureActivityTeamsTableNow($pdo); });
+}
+function ensureActivityTeamsTableNow($pdo) {
     $pdo->exec("CREATE TABLE IF NOT EXISTS activity_teams (
         id INT AUTO_INCREMENT PRIMARY KEY,
         type ENUM('gv','jv') NOT NULL,
@@ -416,6 +494,15 @@ function isEventAdmin($event_id) {
 
     // 不正/空のIDは以降のDB判定不要
     if ($event_id <= 0) return false;
+
+    // 同一リクエスト内の再判定はメモ化（一覧ページのループから event ごとに呼ばれるため）
+    static $memo = [];
+    if (array_key_exists($event_id, $memo)) return $memo[$event_id];
+    $memo[$event_id] = isEventAdminQuery($event_id);
+    return $memo[$event_id];
+}
+
+function isEventAdminQuery($event_id) {
 
     if (isset($_SESSION['user_id'])) {
         try {

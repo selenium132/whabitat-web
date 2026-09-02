@@ -5,8 +5,6 @@ requireLogin();
 $event_id = $_GET['id'] ?? 0;
 $pdo = getDB();
 
-$pdo = getDB();
-
 // Fetch Event Details
 $stmt = $pdo->prepare("SELECT * FROM events WHERE id = ?");
 $stmt->execute([$event_id]);
@@ -88,22 +86,15 @@ if (!empty($event['form_schema'])) {
     }
 }
 
-function getStatusLabel($status) {
-    global $event;
-    if (($event['type'] ?? 'event') === 'survey' && $status === 'join') return '回答済';
-    if ($status === 'join') return '参加';
-    if ($status === 'decline') return '不参加';
-    if ($status === 'maybe') return '未定';
-    return $status;
-}
+$is_survey_event = (($event['type'] ?? 'event') === 'survey');
 
 ?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>回答一覧: <?php echo htmlspecialchars($event['title']); ?> | WHABITAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -231,15 +222,16 @@ function getStatusLabel($status) {
                 <button onclick="copyForSpreadsheet()" class="btn-primary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
                     <i class="fas fa-copy"></i> シート用にコピー
                 </button>
-                <?php if (!empty($event['spreadsheet_id'])): ?>
-                    <a href="form_google_sheet.php?id=<?php echo $event['id']; ?>" target="_blank" class="btn-secondary btn-sheet">
-                        <i class="fas fa-sync-alt"></i> シートを開く (同期)
-                    </a>
-                <?php else: ?>
-                    <a href="form_google_sheet.php?id=<?php echo $event['id']; ?>" target="_blank" class="btn-secondary btn-sheet">
-                        <i class="fas fa-file-excel"></i> シート連携
-                    </a>
-                <?php endif; ?>
+                <?php // シート同期は状態変更を伴うため POST + CSRF（GET リンクだと第三者に踏ませて発火できる） ?>
+                <form method="POST" action="form_google_sheet.php" target="_blank" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                    <input type="hidden" name="id" value="<?php echo (int)$event['id']; ?>">
+                    <?php if (!empty($event['spreadsheet_id'])): ?>
+                        <button type="submit" class="btn-secondary btn-sheet"><i class="fas fa-sync-alt"></i> シートを開く (同期)</button>
+                    <?php else: ?>
+                        <button type="submit" class="btn-secondary btn-sheet"><i class="fas fa-file-excel"></i> シート連携</button>
+                    <?php endif; ?>
+                </form>
             <?php endif; ?>
         </div>
 
@@ -342,7 +334,7 @@ function getStatusLabel($status) {
                             <?php if (!$is_survey): ?>
                             <td>
                                 <span class="status-badge status-<?php echo htmlspecialchars($p['status']); ?>">
-                                    <?php echo getStatusLabel($p['status']); ?>
+                                    <?php echo getStatusLabel($p['status'], $is_survey_event); ?>
                                 </span>
                             </td>
                             <?php endif; ?>
