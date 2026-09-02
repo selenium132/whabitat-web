@@ -1190,3 +1190,15 @@ html {
     font-size: .9rem; text-decoration: none; transition: top .2s;
 }
 .skip-link:focus { top: 1rem; outline: 2px solid #fff; outline-offset: 2px; }
+
+
+/* ロゴにマウスを乗せると、ちょこっと揺れる（遊び心。reduced-motion では無効） */
+@keyframes logo-wiggle {
+    0%, 100% { transform: rotate(0); }
+    20% { transform: rotate(-8deg) scale(1.04); }
+    45% { transform: rotate(7deg) scale(1.04); }
+    70% { transform: rotate(-3deg); }
+}
+.logo img { transform-origin: 50% 70%; }
+.logo:hover img { animation: logo-wiggle .7s ease; }
+@media (prefers-reduced-motion: reduce) { .logo:hover img { animation: none; } }

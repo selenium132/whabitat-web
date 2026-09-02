@@ -165,3 +165,71 @@ body .source-badge.suggestion { background: #f0edf2; color: #7d6a8e; }
         border-left-color: var(--border-color);
     }
 }
+
+
+/* =========================================================
+   動き（2026-09）: 静かだけど生きている感じ。モノトーンは崩さない。
+   すべて prefers-reduced-motion で無効化される。
+   ========================================================= */
+/* 1) 読み込み時: 上から順に静かに現れる */
+@keyframes dash-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.dashboard-container > * { animation: dash-in .55s cubic-bezier(.16,.84,.44,1) both; }
+.dashboard-container > *:nth-child(1)  { animation-delay: .02s; }
+.dashboard-container > *:nth-child(2)  { animation-delay: .08s; }
+.dashboard-container > *:nth-child(3)  { animation-delay: .14s; }
+.dashboard-container > *:nth-child(4)  { animation-delay: .20s; }
+.dashboard-container > *:nth-child(5)  { animation-delay: .26s; }
+.dashboard-container > *:nth-child(6)  { animation-delay: .32s; }
+.dashboard-container > *:nth-child(7)  { animation-delay: .38s; }
+.dashboard-container > *:nth-child(8)  { animation-delay: .44s; }
+.dashboard-container > *:nth-child(n+9) { animation-delay: .5s; }
+
+/* 2) 挨拶の名前の下に、線がすっと引かれる */
+.welcome-user { position: relative; display: inline-block; }
+.welcome-user::after {
+    content: ""; position: absolute; left: 0; bottom: -6px; height: 1px; width: 0;
+    background: var(--primary-color); opacity: .35;
+    animation: underline-draw .9s cubic-bezier(.16,.84,.44,1) .55s forwards;
+}
+@keyframes underline-draw { to { width: 100%; } }
+
+/* 3) 部室に誰かいるとき: 人数バッジがゆっくり脈打つ（ライブ感） */
+.room-count-badge { position: relative; }
+.room-count-badge:not(.is-zero)::after {
+    content: ""; position: absolute; inset: -4px; border-radius: 50%;
+    border: 1px solid var(--primary-color);
+    animation: badge-pulse 2.6s ease-out infinite;
+}
+@keyframes badge-pulse {
+    0%   { transform: scale(.85); opacity: .5; }
+    70%  { transform: scale(1.25); opacity: 0; }
+    100% { transform: scale(1.25); opacity: 0; }
+}
+
+/* 4) ジャンプナビ: 今いるセクションを追従して塗る */
+.dash-nav a { transition: border-color .25s, background .25s, color .25s, transform .2s; }
+.dash-nav a.is-active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.dash-nav a:active { transform: scale(.97); }
+
+/* 5) 締切48時間以内: 砂時計が小さく揺れて知らせる */
+@keyframes hourglass-tick {
+    0%, 60%, 100% { transform: rotate(0); }
+    70% { transform: rotate(-14deg); }
+    80% { transform: rotate(12deg); }
+    90% { transform: rotate(-6deg); }
+}
+.deadline-soon i { display: inline-block; transform-origin: 50% 60%; animation: hourglass-tick 3s ease-in-out infinite; }
+
+/* 6) カード・ボタンの手触り */
+body .event-card { transition: transform .3s cubic-bezier(.16,.84,.44,1), border-color .3s; }
+body .event-card:hover { transform: translateY(-2px); border-color: var(--primary-color); }
+body .btn-primary, body .btn-secondary, body .btn-danger { transition: transform .18s ease, background-color .2s, border-color .2s, color .2s; }
+body .btn-primary:hover, body .btn-secondary:hover { transform: translateY(-1px); }
+body .btn-primary:active, body .btn-secondary:active { transform: translateY(0) scale(.98); }
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-container > * { animation: none; }
+    .welcome-user::after { animation: none; width: 100%; }
+    .room-count-badge:not(.is-zero)::after, .deadline-soon i { animation: none; }
+    body .event-card, body .btn-primary, body .btn-secondary, .dash-nav a { transition: none; }
+}

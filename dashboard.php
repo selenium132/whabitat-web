@@ -320,7 +320,7 @@ try {
                                         <span><i class="fas fa-hourglass-start" style="color: #8d877c;"></i> 開始: <?php echo date('m/d H:i', strtotime($event['open_at'])); ?></span>
                                     <?php endif; ?>
                                     <?php if (!empty($event['close_at'])): ?>
-                                        <span><i class="fas fa-hourglass-end" style="color: #b0453a;"></i> 締切: <?php echo date('m/d H:i', strtotime($event['close_at'])); ?></span>
+                                        <span<?php echo (strtotime($event['close_at']) - time() < 172800) ? ' class="deadline-soon" title="締切まで48時間以内"' : ''; ?>><i class="fas fa-hourglass-end" style="color: #b0453a;"></i> 締切: <?php echo date('m/d H:i', strtotime($event['close_at'])); ?></span>
                                     <?php endif; ?>
                                     <?php if (!empty($event['capacity'])): ?>
                                         <span><i class="fas fa-users" style="color: #8d877c;"></i> 定員: <?php echo $event['capacity']; ?>名</span>
@@ -380,7 +380,7 @@ try {
                             <h3 class="event-title-text"><?php echo htmlspecialchars($event['title']); ?></h3>
                             <?php if (!empty($event['close_at'])): ?>
                                 <div style="margin-top: 8px; font-size: 0.8rem; color: #666;">
-                                    <span><i class="fas fa-hourglass-end" style="color: #b0453a;"></i> 締切: <?php echo date('m/d H:i', strtotime($event['close_at'])); ?></span>
+                                    <span<?php echo (strtotime($event['close_at']) - time() < 172800) ? ' class="deadline-soon" title="締切まで48時間以内"' : ''; ?>><i class="fas fa-hourglass-end" style="color: #b0453a;"></i> 締切: <?php echo date('m/d H:i', strtotime($event['close_at'])); ?></span>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -1795,5 +1795,37 @@ try {
         .cat-btn:hover { opacity: 1; }
         .btn-danger { background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; }
     </style>
+
+    <script>
+    // 時間帯であいさつを変える（サーバーではなく本人の時計で）
+    (function () {
+        const el = document.querySelector('.welcome-label');
+        if (!el) return;
+        const h = new Date().getHours();
+        el.textContent = (h >= 5 && h < 11) ? 'おはようございます' : (h < 18 ? 'こんにちは' : 'こんばんは');
+    })();
+    // ジャンプナビ: いま見ているセクションを追従してハイライト
+    (function () {
+        const links = Array.from(document.querySelectorAll('.dash-nav a[href^="#"]'));
+        if (!links.length || !('IntersectionObserver' in window)) return;
+        const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+        const targets = Array.from(byId.keys()).map(id => document.getElementById(id)).filter(Boolean);
+        let current = null;
+        const setActive = (id) => {
+            if (id === current) return; current = id;
+            links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + id));
+        };
+        const io = new IntersectionObserver((entries) => {
+            // 画面上部 25% のラインを通過した見出しのうち、最後のものを現在地とする
+            const visible = entries.filter(e => e.isIntersecting).map(e => e.target);
+            if (visible.length) setActive(visible[visible.length - 1].id);
+        }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+        targets.forEach(t => io.observe(t));
+        // 初期状態は先頭
+        setActive(targets[0] && targets[0].id);
+        // クリック時は即反映（スクロール完了を待たない）
+        links.forEach(a => a.addEventListener('click', () => setActive(a.getAttribute('href').slice(1))));
+    })();
+    </script>
 </body>
 </html>
