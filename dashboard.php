@@ -550,7 +550,7 @@ try {
                     }
                 ?>
                 
-                <div style="padding: 1rem 1.5rem; border-bottom: 2px solid #eee;">
+                <div class="cal-month-head" style="padding: 1.1rem .25rem .75rem; border-bottom: 2px solid #eee;">
                     <h3 style="font-size: 1.3rem; font-weight: 700; margin: 0;"><?php echo $cal_month; ?>月 <span style="font-size: 0.9rem; color: #888; font-weight: 400;"><?php echo $cal_year; ?>年</span></h3>
                 </div>
                 
@@ -804,6 +804,9 @@ try {
         }
         .dash-nav a:hover { border-color: var(--primary-color, #1a1a1a); background: #f7f5f0; }
         .section-icon { font-size: .8em; color: var(--text-light, #8d877c); margin-right: .15em; }
+        /* カレンダー: 罫線までピッタリだったグリッドの周囲に余白 */
+        #calendarScroll { padding: .25rem 1.25rem 1.25rem; }
+        @media (max-width: 768px) { #calendarScroll { padding: .25rem .75rem 1rem; } }
         @media (max-width: 768px) {
             /* モバイル: 横スクロールだと存在に気づきにくいので、折り返して全ピルを表示(stickyもやめる) */
             .dash-nav { position: static; flex-wrap: wrap; overflow-x: visible; margin-bottom: 1.5rem; }
