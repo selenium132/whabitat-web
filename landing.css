@@ -12,14 +12,14 @@
     --accent-red: #1a1a1a;
     --accent-orange: #1a1a1a;
     --text-color: #1a1a1a;
-    --text-light: #8d877c;
+    --text-light: #6b655a;
 
     --lp-ink: #1a1a1a;
     --lp-ink-2: #2a2a2a;
     --lp-paper: #faf9f6;     /* 温かいオフホワイト */
     --lp-paper-2: #f2f0ea;   /* セクション交互の微差 */
     --lp-line: #e6e2d9;      /* 細いボーダー */
-    --lp-muted: #8d877c;
+    --lp-muted: #6b655a;     /* 本文用の薄い文字色。#8d877c は紙色上で 3.4:1 と WCAG AA 未達だったため 4.5:1 超に */
     --lp-radius: 4px;
     --lp-max: 1120px;
     --lp-ease: cubic-bezier(.16, .84, .44, 1);
@@ -321,7 +321,8 @@ section { padding: 8rem 0; }
    ========================================================= */
 .contact-form { max-width: 580px; margin: 0 auto; background: var(--lp-paper); padding: 2.5rem; border: 1px solid var(--lp-line); border-radius: var(--lp-radius); box-shadow: none; }
 .form-input { border-radius: var(--lp-radius); border: 1px solid var(--lp-line); background: #fff; transition: border-color .25s; }
-.form-input:focus { border-color: var(--lp-ink); box-shadow: none; outline: none; }
+.form-input:focus { border-color: var(--lp-ink); box-shadow: none; }
+.form-input:focus-visible { outline: 2px solid var(--lp-ink); outline-offset: 2px; }
 
 /* =========================================================
    フッター

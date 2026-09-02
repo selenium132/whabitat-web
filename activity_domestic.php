@@ -3,8 +3,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>国内単発ボランティア | WHABITAT</title>
     <meta name="description" content="ゴミ拾い・農業・地域のお手伝い。身近なところから始める、地域に根ざしたボランティア。WHABITATの国内単発ボランティア活動を紹介します。">
@@ -14,9 +14,14 @@
     <meta property="og:title" content="国内単発ボランティア | WHABITAT">
     <meta property="og:description" content="ゴミ拾い・農業・地域のお手伝い。身近なところから始める、地域に根ざしたボランティア。">
     <meta property="og:url" content="https://whabitathome.com/activity_domestic.php">
-    <meta property="og:image" content="https://whabitathome.com/images/domestic/domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/domestic/domestic_hero.jpg') ?: '1'; ?>">
+    <meta property="og:image" content="https://whabitathome.com/ogp.jpg?v=<?php echo @filemtime(__DIR__ . '/ogp.jpg') ?: '1'; ?>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
@@ -165,11 +170,12 @@
             .dm-tl-month { font-size: 1.25rem; }
         }
     </style>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://whabitathome.com/"}, {"@type": "ListItem", "position": 2, "name": "Activities", "item": "https://whabitathome.com/#activities"}, {"@type": "ListItem", "position": 3, "name": "国内単発ボランティア", "item": "https://whabitathome.com/activity_domestic.php"}]}</script>
 </head>
 <body>
-    <?php include 'partials/header.php'; ?>
+    <?php $nav_blog = 'blog.php'; include 'partials/header.php'; ?>
 
-    <main class="dm-main">
+    <main id="main" class="dm-main">
         <section class="page-hero">
             <div class="page-hero-bg" style="background-image: url('images/domestic/domestic_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/domestic/domestic_hero.jpg') ?: '1'; ?>'); background-position: center 62%;"></div>
             <div class="page-hero-overlay"></div>
@@ -350,28 +356,5 @@
 
     <?php include 'partials/footer.php'; ?>
 
-    <script>
-    // Intersection Observer for fade-in animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    // Header scroll effect
-    const header = document.querySelector('.header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    }, { passive: true });
-    </script>
 </body>
 </html>

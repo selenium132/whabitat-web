@@ -1,18 +1,7 @@
 <?php require_once 'config.php';
 $pdo = getDB();
 
-// Create table if not exists
-$pdo->exec("CREATE TABLE IF NOT EXISTS mtg_history (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    event_date DATE NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    subtitle VARCHAR(255) DEFAULT NULL,
-    description TEXT,
-    image_path VARCHAR(255) DEFAULT NULL,
-    year_group INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-)");
+ensureMtgHistoryTable($pdo); // 初回のみDDL実行
 
 // Fetch MTG history grouped by year
 $entries = $pdo->query("SELECT * FROM mtg_history ORDER BY year_group DESC, event_date DESC")->fetchAll(PDO::FETCH_ASSOC);
@@ -27,8 +16,8 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>全体ミーティング (MTG) | WHABITAT</title>
     <meta name="description" content="毎週水曜6限に開催する全体ミーティング。学年を超えた交流と、ボランティアの意義を学ぶWHABITATの活動の中心です。">
@@ -41,6 +30,9 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta property="og:image" content="https://whabitathome.com/images/common/mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/common/mtg_hero.jpg') ?: '1'; ?>">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
@@ -59,7 +51,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             transition: border-color .35s var(--lp-ease);
         }
         .mtg-info-card:hover { border-color: var(--lp-ink); }
-        .mtg-info-card h3 {
+        .mtg-info-card h2 {
             font-family: 'Montserrat', sans-serif;
             font-size: 1.2rem; font-weight: 600; color: var(--lp-ink);
             margin: 0 0 1.2rem;
@@ -156,11 +148,12 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             .mtg-add-btn { position: static; transform: none; }
         }
     </style>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://whabitathome.com/"}, {"@type": "ListItem", "position": 2, "name": "Activities", "item": "https://whabitathome.com/#activities"}, {"@type": "ListItem", "position": 3, "name": "全体ミーティング (MTG)", "item": "https://whabitathome.com/activity_mtg.php"}]}</script>
 </head>
 <body>
-    <?php include 'partials/header.php'; ?>
+    <?php $nav_blog = 'blog.php'; include 'partials/header.php'; ?>
 
-    <main class="mtg-main">
+    <main id="main" class="mtg-main">
         <section class="page-hero">
             <div class="page-hero-bg" style="background-image: url('images/common/mtg_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/common/mtg_hero.jpg') ?: '1'; ?>');"></div>
             <div class="page-hero-overlay"></div>
@@ -178,7 +171,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <div class="container">
 
             <div class="mtg-info-card fade-in">
-                <h3>週に一度の交流と学びの場</h3>
+                <h2>週に一度の交流と学びの場</h2>
                 <p>
                     毎週水曜日の6限に集まり、全体ミーティングを行っています。<br>
                     アイスブレイクで学年を超えた交流を深めたり、貧困問題や環境問題、ボランティアの意義について学ぶワークショップを行ったりしています。
@@ -245,28 +238,5 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
     <?php include 'partials/footer.php'; ?>
 
-    <script>
-    // Intersection Observer for fade-in animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    // Header scroll effect
-    const header = document.querySelector('.header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    }, { passive: true });
-    </script>
 </body>
 </html>

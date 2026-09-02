@@ -914,13 +914,17 @@ a.icon-btn:visited {
         height: 100dvh;
         background-color: rgba(255, 255, 255, 0.98);
         padding-top: 100px;
-        transition: right 0.4s ease;
+        /* 閉じている間は visibility:hidden にして、画面外のリンクにTab/スクリーンリーダーが届かないようにする */
+        visibility: hidden;
+        transition: right 0.4s ease, visibility 0s linear 0.4s;
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
         gap: 2rem;
     }
 
     .nav-list.nav-open {
         right: 0;
+        visibility: visible;
+        transition: right 0.4s ease, visibility 0s;
     }
 
     .hero-title {
@@ -1179,3 +1183,10 @@ html {
         transition-duration: 0.001ms !important;
     }
 }
+/* 本文へスキップ（キーボード利用者向け。フォーカス時のみ表示） */
+.skip-link {
+    position: absolute; left: 1rem; top: -100px; z-index: 2000;
+    background: #1a1a1a; color: #fff; padding: .6rem 1rem; border-radius: 6px;
+    font-size: .9rem; text-decoration: none; transition: top .2s;
+}
+.skip-link:focus { top: 1rem; outline: 2px solid #fff; outline-offset: 2px; }

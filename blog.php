@@ -31,7 +31,9 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog | WHABITAT</title>
     <meta name="description" content="WHABITAT（ワビタット）の活動報告やお知らせをお届けします。">
-    <link rel="canonical" href="https://whabitathome.com/blog.php">
+    <link rel="canonical" href="https://whabitathome.com/blog.php<?php echo $page > 1 ? '?page=' . (int)$page : ''; ?>">
+    <?php if ($page > 1): ?><link rel="prev" href="https://whabitathome.com/blog.php<?php echo $page > 2 ? '?page=' . ($page - 1) : ''; ?>"><?php endif; ?>
+    <?php if ($page < $total_pages): ?><link rel="next" href="https://whabitathome.com/blog.php?page=<?php echo $page + 1; ?>"><?php endif; ?>
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="WHABITAT">
     <meta property="og:title" content="Blog | WHABITAT">
@@ -40,11 +42,12 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta property="og:image" content="https://whabitathome.com/ogp.jpg?v=<?php echo @filemtime(__DIR__ . '/ogp.jpg') ?: '1'; ?>">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap"
-        rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -238,7 +241,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 <body>
     <?php $nav_blog = 'blog.php'; include 'partials/header.php'; ?>
 
-    <main>
+    <main id="main">
         <section class="bg-white blog-page">
             <div class="container">
                 <a href="index.php" class="blog-back"><i class="fas fa-chevron-left"></i> トップに戻る</a>
@@ -313,29 +316,6 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
     <?php include 'partials/footer.php'; ?>
 
-    <script>
-    // Intersection Observer for fade-in animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    // Header scroll effect
-    const header = document.querySelector('.header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    }, { passive: true });
-    </script>
 </body>
 
 </html>

@@ -30,7 +30,9 @@ try {
     $stmt = $pdo->prepare("SELECT id, title, created_at FROM blogs WHERE id != ? AND is_published = 1 ORDER BY created_at DESC LIMIT 3");
     $stmt->execute([$blog_id]);
     $related = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
+}
 
 // OGP用: 本文の抜粋とサムネイルの絶対URL
 $og_description = mb_substr(trim(preg_replace('/\s+/u', ' ', strip_tags($blog['content']))), 0, 90);
@@ -58,11 +60,12 @@ $og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
     <meta name="description" content="<?php echo htmlspecialchars($og_description); ?>">
     <link rel="canonical" href="<?php echo htmlspecialchars($og_url); ?>">
 
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap"
-        rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -267,12 +270,27 @@ $og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
             .related-item { flex-direction: column; gap: .3rem; }
         }
     </style>
+    <?php
+    // 構造化データ(Article): 検索結果のリッチリザルト用。値は json_encode でエスケープ
+    $ld_article = [
+        '@context' => 'https://schema.org', '@type' => 'BlogPosting',
+        'headline' => $blog['title'],
+        'description' => $og_description,
+        'image' => [$og_image],
+        'datePublished' => date('c', strtotime($blog['created_at'])),
+        'dateModified' => date('c', strtotime($blog['updated_at'] ?? $blog['created_at'])),
+        'author' => ['@type' => 'Organization', 'name' => 'WHABITAT'],
+        'publisher' => ['@type' => 'Organization', 'name' => 'WHABITAT', 'logo' => ['@type' => 'ImageObject', 'url' => 'https://whabitathome.com/logo.png']],
+        'mainEntityOfPage' => 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'],
+    ];
+    ?>
+    <script type="application/ld+json"><?php echo json_encode($ld_article, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG); ?></script>
 </head>
 
 <body>
     <?php $nav_blog = 'blog.php'; include 'partials/header.php'; ?>
 
-    <main>
+    <main id="main">
         <section class="bg-white" style="padding-top: 9rem;">
             <div class="article-wrap fade-in">
                 <!-- Back link -->
@@ -314,6 +332,8 @@ $og_url = 'https://whabitathome.com/blog_view.php?id=' . (int)$blog['id'];
                         // Only allow safe HTML tags
                         $allowed_tags = '<h1><h2><h3><p><br><strong><b><em><i><u><a><img><ul><ol><li><blockquote><hr><div><span>';
                         $safe_content = strip_tags($blog['content'], $allowed_tags);
+                        // ページの h1 は記事タイトルだけにする（本文中の見出し1は h2 へ）
+                        $safe_content = preg_replace('/<(\/?)h1\b/i', '<$1h2', $safe_content);
                         // Strip on* event handler attributes (e.g. onclick/onerror) to prevent stored XSS
                         $safe_content = preg_replace('/\son[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $safe_content);
                         // Neutralize dangerous URL schemes in href/src.

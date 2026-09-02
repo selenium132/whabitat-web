@@ -17,8 +17,8 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GV (Global Village) | WHABITAT</title>
     <meta name="description" content="GV（Global Village）は、国際NGO Habitat for Humanity が世界中で展開する海外住居建築ボランティアプログラムです。WHABITATの渡航実績やGVの流れ、よくある質問を紹介します。">
@@ -28,9 +28,14 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta property="og:title" content="GV (Global Village) | WHABITAT">
     <meta property="og:description" content="国際NGO Habitat for Humanity が世界で展開する、海外住居建築ボランティア。開発途上国へ渡航し、現地で家づくりに参加します。">
     <meta property="og:url" content="https://whabitathome.com/activity_gv.php">
-    <meta property="og:image" content="https://whabitathome.com/images/gv/gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/gv/gv_hero.jpg') ?: '1'; ?>">
+    <meta property="og:image" content="https://whabitathome.com/ogp.jpg?v=<?php echo @filemtime(__DIR__ . '/ogp.jpg') ?: '1'; ?>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
@@ -167,11 +172,13 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             .gv-step:not(:last-child) { border-bottom: 1px solid var(--lp-line); }
         }
     </style>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://whabitathome.com/"}, {"@type": "ListItem", "position": 2, "name": "Activities", "item": "https://whabitathome.com/#activities"}, {"@type": "ListItem", "position": 3, "name": "GV (Global Village)", "item": "https://whabitathome.com/activity_gv.php"}]}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "英語が話せなくても大丈夫ですか？", "acceptedAnswer": {"@type": "Answer", "text": "大丈夫です！チームメンバーで助け合います。大切なのは「伝えようとする気持ち」です。"}}, {"@type": "Question", "name": "建築作業は未経験でも平気ですか？", "acceptedAnswer": {"@type": "Answer", "text": "ほとんどの学生が未経験からスタートします。現地の大工さんが丁寧に教えてくれるので安心してください。ヘルメットや手袋などの安全装備もしっかり着用します。"}}, {"@type": "Question", "name": "費用はどれくらいかかりますか？", "acceptedAnswer": {"@type": "Answer", "text": "渡航先や航空券の価格によりますが、おおよそ20〜30万円程度です（航空券、滞在費、保険、寄付金含む）。"}}]}</script>
 </head>
 <body>
-    <?php include 'partials/header.php'; ?>
+    <?php $nav_blog = 'blog.php'; include 'partials/header.php'; ?>
 
-    <main class="gv-main">
+    <main id="main" class="gv-main">
         <section class="page-hero">
             <div class="page-hero-bg" style="background-image: url('images/gv/gv_hero.jpg?v=<?php echo @filemtime(__DIR__ . '/images/gv/gv_hero.jpg') ?: '1'; ?>'); background-position: center 52%;"></div>
             <div class="page-hero-overlay"></div>
@@ -357,28 +364,5 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
     <?php include 'partials/footer.php'; ?>
 
-    <script>
-    // Intersection Observer for fade-in animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    // Header scroll effect
-    const header = document.querySelector('.header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    }, { passive: true });
-    </script>
 </body>
 </html>

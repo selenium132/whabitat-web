@@ -84,11 +84,12 @@ try {
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="ja_JP">
     <meta name="twitter:card" content="summary_large_image">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap"
-        rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: '1'; ?>">
     <link rel="stylesheet" href="landing.css?v=<?php echo @filemtime(__DIR__ . '/landing.css') ?: '1'; ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -140,6 +141,7 @@ try {
 
 <body>
     <?php $nav_home = ''; include 'partials/header.php'; ?>
+    <main id="main">
 
     <section class="hero hero--<?php echo htmlspecialchars($hero); ?>">
         <?php if ($hero === 'full'): ?>
@@ -348,7 +350,7 @@ try {
                         <?php if ($blog['thumbnail']): ?>
                             <div class="blog-card-img" style="background-image: url('<?php echo htmlspecialchars($blog['thumbnail']); ?>');"></div>
                         <?php else: ?>
-                            <div class="blog-card-img" style="background: linear-gradient(135deg, var(--lp-accent) 0%, var(--lp-accent-2) 100%); display: flex; align-items: center; justify-content: center;">
+                            <div class="blog-card-img" style="background: var(--lp-paper-2); color: var(--lp-muted); display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-file-alt" style="font-size: 2.5rem; color: rgba(255,255,255,0.6);"></i>
                             </div>
                         <?php endif; ?>
@@ -426,14 +428,14 @@ try {
             <h2 class="section-title fade-in"><span>Contact</span></h2>
             <div class="contact-form fade-in">
                 <?php if (isset($_SESSION['contact_success']) && $_SESSION['contact_success']): ?>
-                <div class="form-notice">
+                <div class="form-notice" role="status">
                     メッセージを送信しました。ありがとうございます！
                 </div>
                 <?php unset($_SESSION['contact_success']); ?>
                 <?php endif; ?>
 
                 <?php if (isset($_SESSION['contact_error'])): ?>
-                <div class="form-notice form-notice--error">
+                <div class="form-notice form-notice--error" role="alert">
                     <?php echo htmlspecialchars($_SESSION['contact_error']); ?>
                 </div>
                 <?php unset($_SESSION['contact_error']); ?>
@@ -461,38 +463,18 @@ try {
                     <div class="form-group" style="display: flex; justify-content: center;">
                         <div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
                     </div>
+                    <p style="font-size: .8rem; color: var(--lp-muted); text-align: center; margin: 0 0 1rem; line-height: 1.7;">送信内容は <a href="privacy.php" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">プライバシーポリシー</a> に従って取り扱います。</p>
                     <button type="submit" class="btn-submit">送信する</button>
                 </form>
             </div>
         </div>
     </section>
 
+    </main>
+
     <?php include 'partials/footer.php'; ?>
 
     <script>
-    // Intersection Observer for fade-in animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(el => {
-        observer.observe(el);
-    });
-
-    // Header scroll effect
-    const header = document.querySelector('.header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    }, { passive: true });
 
     // ヒーローのフィルムストリップ: 自動スクロール + ドラッグ/横ホイールで手動送り
     const stripEl = document.querySelector('.hero-strip');

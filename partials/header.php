@@ -6,10 +6,11 @@
 $nav_home = $nav_home ?? 'index.php';
 $nav_blog = $nav_blog ?? $nav_home . '#blog';
 ?>
+<a href="#main" class="skip-link">本文へスキップ</a>
 <header class="header">
     <div class="header-inner">
         <a href="<?php echo $nav_home === '' ? '#' : 'index.php'; ?>" class="logo">
-            <img src="logo.png" alt="WHABITAT" height="50">
+            <img src="logo.png" alt="WHABITAT" width="51" height="50">
         </a>
         <button class="menu-toggle" aria-label="Toggle Menu" aria-expanded="false" aria-controls="nav-list">
             <span></span>
@@ -38,18 +39,35 @@ $nav_blog = $nav_blog ?? $nav_home . '#blog';
 </header>
 
 <script>
-    document.querySelector('.menu-toggle').addEventListener('click', function () {
-        this.classList.toggle('active');
-        const isOpen = document.querySelector('.nav-list').classList.toggle('nav-open');
-        this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    });
+    (function () {
+        const toggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('.nav-list');
+        if (!toggle || !nav) return;
 
-    // Close menu when a link is clicked
-    document.querySelectorAll('.nav-link, .btn-login').forEach(link => {
-        link.addEventListener('click', () => {
-            document.querySelector('.menu-toggle').classList.remove('active');
-            document.querySelector('.menu-toggle').setAttribute('aria-expanded', 'false');
-            document.querySelector('.nav-list').classList.remove('nav-open');
+        function setOpen(open) {
+            toggle.classList.toggle('active', open);
+            nav.classList.toggle('nav-open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        toggle.addEventListener('click', function () {
+            const open = !nav.classList.contains('nav-open');
+            setOpen(open);
+            // 開いたら最初のリンクへフォーカス（キーボード利用者がすぐ操作できるように）
+            if (open) {
+                const first = nav.querySelector('a');
+                if (first) setTimeout(() => first.focus(), 50);
+            }
         });
-    });
+        // Close menu when a link is clicked
+        nav.querySelectorAll('.nav-link, .btn-login').forEach(link => {
+            link.addEventListener('click', () => setOpen(false));
+        });
+        // Esc で閉じてトグルボタンへフォーカスを戻す
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && nav.classList.contains('nav-open')) {
+                setOpen(false);
+                toggle.focus();
+            }
+        });
+    })();
 </script>
