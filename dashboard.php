@@ -783,8 +783,6 @@ try {
 
     <style>
         /* セクションジャンプナビ */
-        /* PC はヘッダーに同じナビがあるので非表示。モバイル(ハンバーガーで畳まれる)だけ表示 */
-        @media (min-width: 769px) { .dash-nav { display: none; } }
         .dash-nav {
             position: sticky; top: 72px; z-index: 50;
             display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -793,6 +791,9 @@ try {
             scrollbar-width: none;
         }
         .dash-nav::-webkit-scrollbar { display: none; }
+        /* PC はヘッダーに同じナビがあるので非表示。モバイル(ハンバーガーで畳まれる)だけ表示。
+           ※ .dash-nav { display:flex } より後ろに書かないと上書きされる */
+        @media (min-width: 769px) { .dash-nav { display: none !important; } }
         .dash-nav a {
             flex: none; display: inline-flex; align-items: center; gap: 6px;
             font-size: .85rem; font-weight: 500; color: var(--text-color, #2a2a2a);
