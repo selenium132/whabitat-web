@@ -869,16 +869,19 @@ try {
             width: 100%; 
             box-sizing: border-box;
         }
+        /* 開始/終了側の角丸。隣接バーとの1pxの隙間は margin ではなく box-shadow で描く。
+           margin だと「その週に始まる/終わるバー」だけ1pxずれて、縦に並んだバーの左端が揃わなかった。 */
         .event-bar.is-start {
             border-top-left-radius: 3px;
             border-bottom-left-radius: 3px;
-            margin-left: 1px; /* Slight gap from cell edge */
+            box-shadow: -1px 0 0 #fff;
         }
         .event-bar.is-end {
             border-top-right-radius: 3px;
             border-bottom-right-radius: 3px;
-            margin-right: 1px; /* Slight gap from cell edge */
+            box-shadow: 1px 0 0 #fff;
         }
+        .event-bar.is-start.is-end { box-shadow: -1px 0 0 #fff, 1px 0 0 #fff; }
 
         /* ===== 部室セクション ===== */
         .room-status-card { padding: 1.8rem; }
