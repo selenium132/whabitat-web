@@ -555,7 +555,7 @@ try {
                 </div>
                 
                 <!-- Day headers -->
-                <div style="display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 1px solid #eee;">
+                <div class="cal-dayhead" style="display: grid; grid-template-columns: repeat(7, 1fr); background: #f8f9fa; border-bottom: 1px solid #eee;">
                     <?php foreach (['日', '月', '火', '水', '木', '金', '土'] as $i => $d): ?>
                         <div style="padding: 6px 4px; text-align: center; font-size: 0.7rem; font-weight: 500; color: <?php echo $i === 0 ? '#b0453a' : ($i === 6 ? '#51666e' : '#888'); ?>;"><?php echo $d; ?></div>
                     <?php endforeach; ?>
@@ -664,7 +664,7 @@ try {
                     }
                 ?>
                 
-                <div style="border-bottom: 1px solid #f0f0f0;">
+                <div class="cal-week" style="border-bottom: 1px solid #f0f0f0;">
                     <div style="display: grid; grid-template-columns: repeat(7, 1fr);">
                         <?php foreach ($week as $i => $day): ?>
                             <div style="padding: 6px 0; text-align: center; min-height: 28px; position: relative; z-index: <?php echo 20 - $i; ?>; <?php if ($day && $_SESSION['role'] === 'admin'): ?>cursor: pointer;<?php endif; ?>"
@@ -806,6 +806,9 @@ try {
         .section-icon { font-size: .8em; color: var(--text-light, #8d877c); margin-right: .15em; }
         /* カレンダー: 罫線までピッタリだったグリッドの周囲に余白 */
         #calendarScroll { padding: .25rem 1.25rem 1.25rem; }
+        /* カレンダー本体の左右に枠線（曜日ヘッダー〜最終週まで一続きの枠になる） */
+        .cal-dayhead, .cal-week { border-left: 1px solid #eee; border-right: 1px solid #eee; }
+        .cal-week:last-of-type { border-bottom-color: #eee; }
         @media (max-width: 768px) { #calendarScroll { padding: .25rem .75rem 1rem; } }
         @media (max-width: 768px) {
             /* モバイル: 横スクロールだと存在に気づきにくいので、折り返して全ピルを表示(stickyもやめる) */
