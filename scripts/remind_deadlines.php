@@ -10,8 +10,11 @@
  * 二重送信防止: event_reminders に (event_id, kind) を記録し、同じ種別は1イベント1回だけ。
  * 安全弁: 当月の送信数が QUOTA_GUARD 通を超えていたら何も送らない（問い合わせ通知などの枠を残す）。
  *
+ * 出力: 何か送信した回・異常時だけ標準出力に出す（Xserver の Cron は出力があるとメール通知するため、
+ *       毎時「送信なし」のメールが届かないようにしている）。
+ *
  * XServer Cron 設定例（毎時5分）:
- *   5 * * * *  /usr/bin/php /home/＜サーバーID＞/whabitathome.com/public_html/scripts/remind_deadlines.php
+ *   5 * * * *  /usr/bin/php8.2 -q /home/＜サーバーID＞/whabitathome.com/public_html/scripts/remind_deadlines.php
  */
 
 if (php_sapi_name() !== 'cli') {
@@ -48,16 +51,19 @@ function lineMonthlyUsage() {
     return ($http === 200 && isset($d['totalUsage'])) ? (int)$d['totalUsage'] : null;
 }
 
+// 出力はバッファに貯め、送信があった回だけ最後にまとめて出す
+$log = [];
 $usage = lineMonthlyUsage();
 if ($usage === null) {
-    echo "LINE の送信数を取得できなかったため今回は送信しません（トークン/ネットワークを確認）\n";
+    // 取得失敗は 9 時台に1回だけ知らせる（毎時メールにしない）
+    if ((int)date('G') === 9) echo "LINE の送信数を取得できないためダイジェストを送っていません（アクセストークン/ネットワークを確認）\n";
     exit(0);
 }
 if ($usage >= QUOTA_GUARD) {
-    echo "当月の LINE 送信数 {$usage} 通が上限目安 " . QUOTA_GUARD . " 通に達しているためダイジェストを停止中\n";
+    if ((int)date('G') === 9) echo "当月の LINE 送信数 {$usage} 通が上限目安 " . QUOTA_GUARD . " 通に達しているためダイジェストを停止中です\n";
     exit(0);
 }
-echo "LINE 当月送信数: {$usage} 通\n";
+$log[] = "LINE 当月送信数: {$usage} 通";
 
 $site = 'https://whabitathome.com';
 $totalSent = 0;
@@ -119,7 +125,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $ev) {
     $sent = ($to && linePushToUser($to, $text)) ? 1 : 0;
     markSent($pdo, $ev['id'], 'close24h', $sent);
     $totalSent += $sent;
-    echo "close24h event#{$ev['id']} 「{$ev['title']}」 未回答 {$unanswered}名 → 主催者へ " . ($sent ? '送信' : '送信なし(LINE未連携)') . "\n";
+    $log[] = "締切前ダイジェスト: 「{$ev['title']}」 未回答 {$unanswered}名 → 主催者へ " . ($sent ? '送信' : '送信なし(主催者がLINE未連携)');
 }
 
 // ---------------------------------------------------------------
@@ -140,8 +146,10 @@ if ((int)date('G') === 7) {
         $sent = ($to && linePushToUser($to, $text)) ? 1 : 0;
         markSent($pdo, $ev['id'], 'dayof', $sent);
         $totalSent += $sent;
-        echo "dayof event#{$ev['id']} 「{$ev['title']}」 参加 {$joins}名 → 主催者へ " . ($sent ? '送信' : '送信なし(LINE未連携)') . "\n";
+        $log[] = "当日ダイジェスト: 「{$ev['title']}」 参加 {$joins}名 → 主催者へ " . ($sent ? '送信' : '送信なし(主催者がLINE未連携)');
     }
 }
 
-echo "OK: " . date('Y-m-d H:i') . " 送信合計 {$totalSent} 通\n";
+if ($totalSent > 0 || count($log) > 1) {
+    echo implode("\n", $log) . "\n送信合計 {$totalSent} 通（" . date('Y-m-d H:i') . "）\n";
+}

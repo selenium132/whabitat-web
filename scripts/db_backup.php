@@ -10,7 +10,7 @@
  * を登録する（PHPのパスはパネルの案内に従う）。
  *
  * サーバー外への退避（任意・推奨）:
- *   .env に BACKUP_DRIVE_USER_ID=<管理者の users.id> を設定すると、その管理者が
+ *   .env に BACKUP_DRIVE_USER_ID=auto（または管理者の users.id）を設定すると、その管理者が
  *   「名簿シート出力」で連携済みの Google アカウントの Drive（drive.file スコープ）に
  *   フォルダ「WHABITAT DB Backups」を作り、同じ gzip を毎回アップロードして 14 世代を保つ。
  *   サーバー障害・誤操作で public_html ごと消えても DB を復元できるようにするのが目的。
@@ -88,10 +88,24 @@ echo "OK: " . basename($file) . " (" . round(filesize($file) / 1024) . "KB, " . 
 // =====================================================================
 // Google Drive への退避（BACKUP_DRIVE_USER_ID が設定されているときだけ）
 // =====================================================================
-$drive_uid = (int)($env['BACKUP_DRIVE_USER_ID'] ?? 0);
-if ($drive_uid > 0) {
+$drive_setting = trim((string)($env['BACKUP_DRIVE_USER_ID'] ?? ''));
+$drive_uid = (int)$drive_setting;
+if ($drive_setting !== '') {
     try {
         require_once __DIR__ . '/../google_user_sheets.php';
+        // "auto" のときは Google 連携済み（名簿シート出力を一度でも使った）管理者を自動選択する
+        if ($drive_uid <= 0 && strtolower($drive_setting) === 'auto') {
+            $connected = array_map('intval', array_keys(array_filter(gus_read_tokens(), fn($r) => !empty($r['refresh_token']))));
+            if ($connected) {
+                $in = implode(',', array_fill(0, count($connected), '?'));
+                $q = $pdo->prepare("SELECT id FROM users WHERE role = 'admin' AND id IN ($in) ORDER BY id LIMIT 1");
+                $q->execute($connected);
+                $drive_uid = (int)$q->fetchColumn();
+            }
+            if ($drive_uid <= 0) {
+                throw new Exception("Google 連携済みの管理者がいません（管理者が一度「名簿をシートに出力」を実行すると連携されます）");
+            }
+        }
         $rec = gus_get_record($drive_uid);
         if (!$rec || empty($rec['refresh_token'])) {
             throw new Exception("users.id={$drive_uid} は Google 未連携です（名簿シート出力を一度実行して連携してください）");
@@ -100,7 +114,7 @@ if ($drive_uid > 0) {
         $folderId = backupDriveFolderId($token, 'WHABITAT DB Backups');
         $fileId = backupDriveUpload($token, $folderId, basename($file), file_get_contents($file));
         $removed = backupDrivePrune($token, $folderId, $keep);
-        echo "Drive: uploaded " . basename($file) . " (id={$fileId}" . ($removed ? ", pruned {$removed}" : '') . ")\n";
+        echo "Drive: uploaded " . basename($file) . " → users.id={$drive_uid} の Google Drive「WHABITAT DB Backups」" . ($removed ? "（古い {$removed} 件を削除）" : '') . "\n";
     } catch (Exception $e) {
         fwrite(STDERR, "Drive 退避に失敗（ローカル保存は完了）: " . $e->getMessage() . "\n");
         exit(2);
