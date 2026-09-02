@@ -39,7 +39,7 @@ section { padding: 8rem 0; }
 .section-title span {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
-    font-size: clamp(1.55rem, 3.5vw, 2.1rem);
+    font-size: clamp(1.5rem, 3.2vw, 2rem);
     letter-spacing: .01em;
     color: var(--lp-ink);
 }
@@ -354,4 +354,73 @@ section { padding: 8rem 0; }
 /* 320px級の極小幅: WHABITAT見出しがはみ出さないように */
 @media (max-width: 360px) {
     .hero-title { font-size: 2.2rem; letter-spacing: .1em; }
+}
+
+
+/* =========================================================
+   洗練レイヤー（2026-09）: ページ間で揃える共通ルール
+   ========================================================= */
+/* 日本語見出しの字詰め（プロポーショナルメトリクス） */
+h1, h2, h3, .page-hero-title, .hero-catch { font-feature-settings: "palt" 1; }
+
+/* セクション見出しの英語ラベル（各ページの h2 の直上に置く） */
+.lp-eyebrow {
+    display: block; text-align: center;
+    font-family: 'Montserrat', sans-serif; font-size: .68rem; font-weight: 600;
+    letter-spacing: .26em; text-transform: uppercase; color: var(--lp-muted);
+    margin: 0 0 .9rem;
+}
+
+/* ヘッダー: 本文と同じ紙色にして「白い帯」が浮かないように。高さも少し詰める */
+:root { --header-height: 72px; }
+.header {
+    background-color: rgba(250, 249, 246, .84);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    box-shadow: none;
+    border-bottom: 1px solid var(--lp-line);
+}
+.header.scrolled { background-color: rgba(250, 249, 246, .95); box-shadow: 0 8px 28px rgba(26, 26, 26, .05); }
+.header-inner { max-width: var(--lp-max); padding: 0 1.5rem; }
+.logo img { height: 42px; width: auto; }
+.nav-link { font-size: .76rem; font-weight: 500; letter-spacing: .16em; color: var(--lp-ink); }
+.nav-link::after { background: var(--lp-ink); height: 1px; }
+.social-icon { color: var(--lp-ink); opacity: .7; }
+.social-icon:hover { opacity: 1; }
+/* ログインボタン: 唯一の紺色ピルだったので、他のボタンと同じ墨色・小さな角丸に */
+.btn-login {
+    background-color: var(--lp-ink); color: #fff;
+    border-radius: var(--lp-radius); font-weight: 500; font-size: .72rem; letter-spacing: .12em;
+    padding: .62rem 1.15rem; box-shadow: none;
+}
+.btn-login:hover { background-color: var(--lp-ink-2); box-shadow: none; transform: translateY(-1px); }
+@media (max-width: 768px) {
+    .header-inner { padding: 0 1.25rem; }
+}
+
+/* フッター: 名前・ナビ・SNS・著作権の4要素を整列 */
+.footer { padding: 4rem 0 2rem; text-align: left; }
+.footer-grid {
+    display: grid; grid-template-columns: 1.4fr 1fr auto; gap: 2rem; align-items: start;
+    padding-bottom: 2.4rem; border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+.footer-wordmark {
+    display: block; font-family: 'Montserrat', sans-serif; font-weight: 600;
+    font-size: 1.05rem; letter-spacing: .3em; color: #fff;
+}
+.footer-tagline { display: block; margin-top: .6rem; font-size: .78rem; line-height: 1.7; color: rgba(255, 255, 255, .55); letter-spacing: .02em; }
+.footer-nav { display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; }
+.footer-nav a {
+    font-family: 'Montserrat', sans-serif; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+    color: rgba(255, 255, 255, .6); text-decoration: none; transition: color .25s;
+}
+.footer-nav a:hover { color: #fff; }
+.footer-social { display: flex; gap: 1rem; }
+.footer-social a { color: rgba(255, 255, 255, .6); font-size: 1rem; transition: color .25s; }
+.footer-social a:hover { color: #fff; }
+.footer-bottom { padding-top: 1.4rem; }
+.footer-bottom p { margin: 0; font-size: .74rem; letter-spacing: .04em; color: rgba(255, 255, 255, .4); }
+@media (max-width: 768px) {
+    .footer { padding: 3rem 0 1.6rem; }
+    .footer-grid { grid-template-columns: 1fr; gap: 1.6rem; }
 }

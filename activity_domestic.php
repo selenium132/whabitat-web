@@ -56,11 +56,7 @@
 
         /* 導入文 */
         .dm-intro { max-width: 720px; margin: 0 auto 6rem; text-align: center; }
-        .dm-intro h2 {
-            font-family: 'Montserrat', sans-serif; font-weight: 600;
-            font-size: clamp(1.3rem, 3vw, 1.7rem); color: var(--lp-ink);
-            margin: 0 0 .8rem;
-        }
+        .dm-intro h2 { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: clamp(1.5rem, 3.2vw, 2rem); letter-spacing: .01em; color: var(--lp-ink); margin: 0 0 1.6rem; }
         .dm-intro h2::after {
             content: ""; display: block; width: 30px; height: 1px;
             margin: 1.1rem auto 2rem; background: var(--lp-ink); opacity: .28;
@@ -77,11 +73,7 @@
 
         /* 年間スケジュール：罫線基調のタイムライン */
         .dm-sched-head { text-align: center; margin-bottom: 3rem; }
-        .dm-sched-head h2 {
-            font-family: 'Montserrat', sans-serif; font-weight: 600;
-            font-size: clamp(1.3rem, 3vw, 1.7rem); letter-spacing: .02em;
-            color: var(--lp-ink); margin: 0;
-        }
+        .dm-sched-head h2 { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: clamp(1.5rem, 3.2vw, 2rem); letter-spacing: .01em; color: var(--lp-ink); margin: 0 0 .5rem; }
         .dm-sched-head .dm-sched-note {
             display: block; font-size: .78rem; color: var(--lp-muted);
             margin-top: .8rem; letter-spacing: .04em;
@@ -114,9 +106,10 @@
         .dm-section { max-width: var(--lp-max); margin: 0 auto 6rem; }
         .dm-section-title {
             font-family: 'Montserrat', sans-serif; font-weight: 600;
-            font-size: clamp(1.25rem, 2.8vw, 1.6rem); color: var(--lp-ink);
+            font-size: clamp(1.5rem, 3.2vw, 2rem); color: var(--lp-ink);
             letter-spacing: .01em; text-align: center; margin: 0 0 .6rem;
         }
+        .dm-section-title::after { content: ""; display: block; width: 30px; height: 1px; margin: 1.1rem auto 0; background: var(--lp-ink); opacity: .28; }
         .dm-section-desc { text-align: center; color: var(--lp-muted); font-size: .95rem; line-height: 1.8; margin: 0 auto 3rem; max-width: 40em; }
 
         /* サブ見出し（左の短い罫線つき） */
@@ -194,6 +187,7 @@
 
             <!-- Intro -->
             <div class="dm-intro fade-in">
+                <span class="lp-eyebrow">Why</span>
                 <h2>なぜ、ワビタットでボランティア？</h2>
                 <p>
                     「自分の成長のため」「人の役に立ちたい」「大学生の今しかできないことがしたい」<br>
@@ -208,6 +202,7 @@
 
             <!-- Annual Schedule -->
             <div class="dm-sched-head fade-in">
+                <span class="lp-eyebrow">Schedule</span>
                 <h2>年間スケジュール</h2>
                 <span class="dm-sched-note">※2026年度は未定</span>
             </div>
@@ -252,6 +247,7 @@
 
             <!-- 1. Day-trip Volunteer -->
             <section class="dm-section fade-in">
+                <span class="lp-eyebrow">Day Trip</span>
                 <h2 class="dm-section-title">日帰りボランティア</h2>
                 <p class="dm-section-desc">最も参加しやすく、月に1〜2回程度行われています。</p>
 
@@ -313,6 +309,7 @@
 
             <!-- 2. Short-term Camps -->
             <section class="dm-section fade-in">
+                <span class="lp-eyebrow">Short Stay</span>
                 <h2 class="dm-section-title">短期合宿ボランティア</h2>
                 <p class="dm-section-desc">1泊〜3泊4日程度。事前・事後の活動が少ないため、気軽に参加できるのが特徴です。</p>
                 <div class="dm-grid">

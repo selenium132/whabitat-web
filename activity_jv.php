@@ -113,7 +113,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         .jv-breadcrumb span { margin: 0 .5em; opacity: .6; }
 
         /* セクション見出し（landing.css の .section-title に補助のリード文を添える） */
-        .jv-section { padding: 5.5rem 0; }
+        .jv-section { padding: 6rem 0; }
         .jv-section.bg-light { background: var(--lp-paper-2); }
         .jv-lead {
             text-align: center;
@@ -361,7 +361,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             .jv-flow-step { flex: 1 1 40%; }
         }
         @media (max-width: 768px) {
-            .jv-section { padding: 4rem 0; }
+            .jv-section { padding: 3.5rem 0; }
             .jv-lead { margin-top: -1.6rem; }
         }
     </style>
@@ -402,6 +402,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- Overview -->
         <section class="jv-section bg-light">
             <div class="container">
+                <span class="lp-eyebrow fade-in">About</span>
                 <h2 class="section-title fade-in"><span>JVとは？</span></h2>
                 <div class="jv-grid jv-grid--3 stagger-children">
                     <div class="jv-card fade-in">
@@ -426,6 +427,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- Activities -->
         <section class="jv-section">
             <div class="container">
+                <span class="lp-eyebrow fade-in">Activities</span>
                 <h2 class="section-title fade-in"><span>活動内容</span></h2>
                 <p class="jv-lead fade-in">派遣先によって内容は多岐にわたりますが、主に3つの柱があります。</p>
                 <div class="jv-grid jv-grid--3 stagger-children">
@@ -466,6 +468,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- Merits -->
         <section class="jv-section bg-light">
             <div class="container">
+                <span class="lp-eyebrow fade-in">Why JV</span>
                 <h2 class="section-title fade-in"><span>JVに参加するメリット</span></h2>
                 <div class="jv-grid jv-grid--3 stagger-children">
                     <div class="jv-card fade-in">
@@ -490,6 +493,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- Flow -->
         <section class="jv-section">
             <div class="container">
+                <span class="lp-eyebrow fade-in">Process</span>
                 <h2 class="section-title fade-in"><span>JVの流れ</span></h2>
                 <div class="jv-flow fade-in">
                     <div class="jv-flow-step">
@@ -524,6 +528,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- History -->
         <section class="jv-section bg-light">
             <div class="container">
+                <span class="lp-eyebrow fade-in">Teams</span>
                 <h2 class="section-title fade-in"><span>WHABITAT JV History</span></h2>
                 <p class="jv-lead fade-in">これまでに派遣されたチームの記録です。</p>
 

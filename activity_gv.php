@@ -75,12 +75,12 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         .gv-hero-img img { display: block; width: 100%; height: clamp(220px, 42vw, 420px); object-fit: cover; }
 
         /* セクション見出し（landing.css の .section-title と統一感） */
-        .gv-section { padding: 5rem 0; }
+        .gv-section { padding: 6rem 0; }
         .gv-section + .gv-section { border-top: 1px solid var(--lp-line); }
         .gv-h2 { text-align: center; margin-bottom: 3rem; }
         .gv-h2 span {
             font-family: 'Montserrat', sans-serif; font-weight: 600;
-            font-size: clamp(1.4rem, 3.2vw, 1.9rem); letter-spacing: .01em; color: var(--lp-ink);
+            font-size: clamp(1.5rem, 3.2vw, 2rem); letter-spacing: .01em; color: var(--lp-ink);
         }
         .gv-h2 span::after {
             content: ""; display: block; width: 30px; height: 1px; margin: 1.1rem auto 0;
@@ -196,6 +196,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- What is GV -->
         <section class="gv-section bg-light">
             <div class="container">
+                <span class="lp-eyebrow fade-in">About</span>
                 <h2 class="gv-h2 fade-in"><span>GVとは？</span></h2>
                 <div class="gv-vision fade-in">
                     <p class="gv-vision-label">VISION</p>
@@ -237,6 +238,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- 3 Reasons -->
         <section class="gv-section">
             <div class="container">
+                <span class="lp-eyebrow fade-in">Why GV</span>
                 <h2 class="gv-h2 fade-in"><span>WHABITATのGVに参加する意義</span></h2>
                 <div class="gv-reasons stagger-children">
                     <div class="gv-reason fade-in">
@@ -261,6 +263,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- Timeline -->
         <section class="gv-section bg-light">
             <div class="container">
+                <span class="lp-eyebrow fade-in">Process</span>
                 <h2 class="gv-h2 fade-in"><span>GVの流れ</span></h2>
                 <div class="gv-steps fade-in">
                     <div class="gv-step">
@@ -300,6 +303,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- History -->
         <section class="gv-section">
             <div class="container">
+                <span class="lp-eyebrow fade-in">Teams</span>
                 <h2 class="gv-h2 fade-in"><span>WHABITAT GV History</span></h2>
                 <p class="gv-sub fade-in">これまでに派遣されたチームの記録です。</p>
                 <?php if ($is_admin): ?>
@@ -343,6 +347,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <!-- FAQ -->
         <section class="gv-section bg-light">
             <div class="container">
+                <span class="lp-eyebrow fade-in">Q&amp;A</span>
                 <h2 class="gv-h2 fade-in"><span>よくある質問 (FAQ)</span></h2>
                 <div class="gv-faq fade-in">
                     <div class="gv-faq-item">

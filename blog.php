@@ -164,6 +164,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             justify-content: center;
         }
         .blog-row-body h2 {
+            text-align: left;
             font-size: 1.12rem;
             font-weight: 600;
             line-height: 1.5;
