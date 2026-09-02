@@ -15,7 +15,6 @@ $pages = [
     ['loc' => '/activity_domestic.php',  'changefreq' => 'monthly', 'priority' => '0.8'],
     ['loc' => '/activity_mtg.php',       'changefreq' => 'monthly', 'priority' => '0.7'],
     ['loc' => '/blog.php',               'changefreq' => 'weekly',  'priority' => '0.7'],
-    ['loc' => '/privacy.php',            'changefreq' => 'yearly',  'priority' => '0.3'],
 ];
 
 $blogs = [];

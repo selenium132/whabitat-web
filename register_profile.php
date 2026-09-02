@@ -274,8 +274,8 @@ $is_first_registration = empty($current_user['name']);
                     </div>
 
                     <p style="font-size: 0.85rem; color: #666; text-align: center; margin-bottom: 1.5rem;">
-                        <i class="fas fa-shield-alt"></i> ご記入いただいた個人情報は厳重に管理され、サークル運営以外の目的には使用されません。<br>
-                        送信により <a href="privacy.php" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">プライバシーポリシー</a> に同意したものとみなします。
+                        <i class="fas fa-shield-alt"></i> ご記入いただいた情報は、活動の運営と緊急時の連絡のためだけに使い、幹部以外には見えません。<br>
+                        詳しくは <a href="privacy.php" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">個人情報の取り扱いについて</a> をご覧ください。
                     </p>
 
                     <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">

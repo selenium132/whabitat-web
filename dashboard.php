@@ -803,7 +803,7 @@ try {
                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                         <p style="margin: 0; color: var(--text-light); font-size: .88rem; line-height: 1.7;">
                             申請すると管理者に通知され、確認のうえアカウントと個人情報（名簿・出欠履歴の氏名紐付け）を削除します。
-                            取扱いの詳細は <a href="privacy.php" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">プライバシーポリシー</a> をご覧ください。
+                            詳しくは <a href="privacy.php" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">個人情報の取り扱いについて</a> をご覧ください。
                         </p>
                         <textarea name="reason" rows="2" placeholder="理由・備考（任意）" style="width: 100%; padding: .7rem; border: 1px solid #ddd; border-radius: 8px; font-size: .95rem; box-sizing: border-box;"></textarea>
                         <button type="submit" class="btn-secondary" style="align-self: flex-start; color: #b0453a; border-color: #b0453a;">退会を申請する</button>

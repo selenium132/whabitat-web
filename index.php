@@ -463,7 +463,7 @@ try {
                     <div class="form-group" style="display: flex; justify-content: center;">
                         <div class="g-recaptcha" data-sitekey="<?php echo RECAPTCHA_SITE_KEY; ?>"></div>
                     </div>
-                    <p style="font-size: .8rem; color: var(--lp-muted); text-align: center; margin: 0 0 1rem; line-height: 1.7;">送信内容は <a href="privacy.php" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">プライバシーポリシー</a> に従って取り扱います。</p>
+                    <p style="font-size: .8rem; color: var(--lp-muted); text-align: center; margin: 0 0 1rem; line-height: 1.7;">いただいた内容は、お問い合わせへの返信にのみ使用します。</p>
                     <button type="submit" class="btn-submit">送信する</button>
                 </form>
             </div>
