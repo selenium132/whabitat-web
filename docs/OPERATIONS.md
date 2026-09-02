@@ -23,9 +23,12 @@ PHP のパスはパネルの案内に従う（例: `/usr/bin/php8.2`）。`＜�
 | 頻度 | コマンド | 目的 |
 |---|---|---|
 | 毎日 1回（例 4:00） | `/usr/bin/php /home/＜サーバーID＞/whabitathome.com/public_html/scripts/db_backup.php` | DB バックアップ（14世代）。`.env` に `BACKUP_DRIVE_USER_ID` を設定すると Google Drive にも退避 |
-| 毎時（例 毎時5分） | `/usr/bin/php /home/＜サーバーID＞/whabitathome.com/public_html/scripts/remind_deadlines.php` | 出欠/アンケートの締切24時間前リマインドと当日朝の参加者リマインド（LINE） |
+| 毎時（例 毎時5分） | `/usr/bin/php /home/＜サーバーID＞/whabitathome.com/public_html/scripts/remind_deadlines.php` | 締切24時間前と当日朝に**主催者1人へ1通**のダイジェスト（未回答◯名＋一覧リンク）。会員への一斉送信はしない |
 
-- LINE 公式アカウントの無料枠は **月200通**。リマインドは 1回の実行で「未回答者数ぶん」消費する。上限に達した月は問い合わせ通知なども届かなくなるので、LINE Official Account Manager でメッセージ数を月1回は確認する。
+- LINE 公式アカウントの無料枠は **月200通**（push/multicast は宛先1人＝1通。会員からのメッセージへの返信は無料）。
+  このため**会員全員への一斉 push は実装しない方針**。通知は「管理者への新着通知」「主催者へのダイジェスト」「管理者が個別に押すリマインドボタン」だけに限定している。
+  ダイジェストは当月150通を超えると自動停止する。LINE Official Account Manager でメッセージ数を月1回は確認する。
+  催促は LINE グループに `form_view.php?id=◯` のリンクを貼る（無料）。
 
 ## 3. バックアップと復元
 

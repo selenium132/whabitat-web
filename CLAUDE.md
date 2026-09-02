@@ -36,6 +36,7 @@
 - エラー詳細は画面に出さず `error_log`（`config.php` で `display_errors=0`）。catch は握りつぶさず必ず `error_log` する。
 - **セキュリティヘッダは `config.php` の `header()` で送る**。Xserver では `.htaccess` の `Header` ディレクティブ（mod_headers）が効かない（実測）。
 - 状態変更は GET で発火させない（シート出力/同期も POST + CSRF）。
+- **LINE push は無料枠 月200通**。会員全員への一斉 push（multicast）は作らない。通知は管理者・主催者向けの少数に限定し、催促は LINE グループへのリンク投稿（無料）で行う。
 - `target_users`（アンケート対象者）は表示の絞り込みではなく閲覧制限として `form_view.php` で強制する。
 
 ## アーキテクチャ要点
