@@ -424,3 +424,32 @@ h1, h2, h3, .page-hero-title, .hero-catch { font-feature-settings: "palt" 1; }
     .footer { padding: 3rem 0 1.6rem; }
     .footer-grid { grid-template-columns: 1fr; gap: 1.6rem; }
 }
+
+
+/* =========================================================
+   トップページの動き（遊び心・モノトーン・reduced-motion で無効）
+   ========================================================= */
+/* ヒーロー: ロゴがふわっと降りてきて、WHABITAT の文字が一文字ずつ立ち上がる */
+@keyframes lp-rise { from { opacity: 0; transform: translateY(.6em); } to { opacity: 1; transform: none; } }
+@keyframes lp-drop { from { opacity: 0; transform: translateY(-14px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes lp-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.hero-logo-main { animation: lp-drop .9s cubic-bezier(.16,.84,.44,1) both, lp-float 6s ease-in-out 1.2s infinite; }
+.hero-letter { display: inline-block; animation: lp-rise .7s cubic-bezier(.16,.84,.44,1) both; animation-delay: calc(.25s + var(--i, 0) * 55ms); }
+.hero-catch, .hero-subtitle-wrapper, .hero-cta { animation: lp-rise .8s cubic-bezier(.16,.84,.44,1) both; }
+.hero-catch { animation-delay: .85s; }
+.hero-subtitle-wrapper { animation-delay: 1s; }
+.hero-cta { animation-delay: 1.15s; }
+
+/* セクション見出し: 表示されたときに下の細い線がすっと伸びる */
+.section-title span::after { width: 0; transition: width .8s cubic-bezier(.16,.84,.44,1) .25s; }
+.section-title.visible span::after { width: 30px; }
+.gv-h2 span::after { width: 0; transition: width .8s cubic-bezier(.16,.84,.44,1) .25s; }
+.gv-h2.visible span::after { width: 30px; }
+
+/* 数字（実績）: 表示時にわずかに浮き上がる（カウントアップは既存JS） */
+.stat-item .stat-value { display: inline-block; transition: transform .6s cubic-bezier(.16,.84,.44,1); }
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-logo-main, .hero-letter, .hero-catch, .hero-subtitle-wrapper, .hero-cta { animation: none; }
+    .section-title span::after, .gv-h2 span::after { width: 30px; transition: none; }
+}

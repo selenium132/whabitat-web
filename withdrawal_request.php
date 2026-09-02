@@ -6,7 +6,7 @@ require_once 'config.php';
 requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: dashboard.php#account");
+    header("Location: register_profile.php#withdraw");
     exit;
 }
 validateCsrfToken($_POST['csrf_token'] ?? '');
@@ -28,7 +28,7 @@ $dup = $pdo->prepare("SELECT 1 FROM contact_messages WHERE source = 'withdrawal'
 $dup->execute(['%[user_id:' . (int)$me['id'] . ']%']);
 if ($dup->fetchColumn()) {
     $_SESSION['withdrawal_notice'] = '退会の申請はすでに受け付けています。管理者の対応をお待ちください。';
-    header("Location: dashboard.php#account");
+    header("Location: register_profile.php#withdraw");
     exit;
 }
 
@@ -43,5 +43,5 @@ linePushToAdmins("🚪 退会・データ削除の申請がありました\n\n�
     . "名簿管理から対応してください: https://whabitathome.com/admin/messages.php?source=withdrawal");
 
 $_SESSION['withdrawal_notice'] = '退会の申請を受け付けました。管理者が確認のうえ、アカウントと個人情報を削除します。';
-header("Location: dashboard.php#account");
+header("Location: register_profile.php#withdraw");
 exit;

@@ -283,6 +283,31 @@ $is_first_registration = empty($current_user['name']);
                     </button>
                 </form>
             </div>
+
+            <?php if (!$is_first_registration): ?>
+            <!-- 退会・個人情報の削除（登録情報を扱うこのページの最下部に置く） -->
+            <div class="card" id="withdraw" style="margin-top: 1.5rem; scroll-margin-top: 90px;">
+                <?php if (!empty($_SESSION['withdrawal_notice'])): ?>
+                    <div style="background: #ecf2ed; color: #3f7d54; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;" role="status">
+                        <i class="fas fa-check" aria-hidden="true"></i> <?php echo htmlspecialchars($_SESSION['withdrawal_notice']); ?>
+                    </div>
+                    <?php unset($_SESSION['withdrawal_notice']); ?>
+                <?php endif; ?>
+                <details>
+                    <summary style="cursor: pointer; color: var(--text-light); font-size: .9rem;">退会・個人情報の削除を申請する</summary>
+                    <form action="withdrawal_request.php" method="POST" style="margin-top: 1rem; display: flex; flex-direction: column; gap: .8rem;"
+                          onsubmit="return confirm('退会を申請します。管理者が確認後にアカウントと登録情報を削除します。よろしいですか？');">
+                        <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                        <p style="margin: 0; color: var(--text-light); font-size: .88rem; line-height: 1.7;">
+                            申請すると管理者に通知され、確認のうえアカウントと個人情報を削除します。
+                            詳しくは <a href="privacy.php" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">個人情報の取り扱いについて</a> をご覧ください。
+                        </p>
+                        <textarea name="reason" rows="2" placeholder="理由・備考（任意）" style="width: 100%; padding: .7rem; border: 1px solid #ddd; border-radius: 8px; font-size: .95rem; box-sizing: border-box;"></textarea>
+                        <button type="submit" class="btn-secondary" style="align-self: flex-start; color: #b0453a; border-color: #b0453a;">退会を申請する</button>
+                    </form>
+                </details>
+            </div>
+            <?php endif; ?>
         </div>
     </main>
 

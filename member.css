@@ -206,9 +206,8 @@ body .source-badge.suggestion { background: #f0edf2; color: #7d6a8e; }
     100% { transform: scale(1.25); opacity: 0; }
 }
 
-/* 4) ジャンプナビ: 今いるセクションを追従して塗る */
-.dash-nav a { transition: border-color .25s, background .25s, color .25s, transform .2s; }
-.dash-nav a.is-active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+/* 4) ジャンプナビ(モバイルのみ): 押した手触り */
+.dash-nav a { transition: border-color .25s, background .25s, transform .2s; }
 .dash-nav a:active { transform: scale(.97); }
 
 /* 5) 締切48時間以内: 砂時計が小さく揺れて知らせる */

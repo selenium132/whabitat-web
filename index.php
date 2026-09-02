@@ -150,7 +150,7 @@ try {
         <?php endif; ?>
         <div class="hero-content">
             <img src="logo.png" alt="WHABITAT Logo" class="hero-logo-main">
-            <h1 class="hero-title">WHABITAT</h1>
+            <h1 class="hero-title" aria-label="WHABITAT"><?php foreach (str_split('WHABITAT') as $k => $ch): ?><span class="hero-letter" style="--i: <?php echo $k; ?>" aria-hidden="true"><?php echo $ch; ?></span><?php endforeach; ?></h1>
             <p class="hero-catch">誰もが、きちんとした場所で暮らせる世界へ。</p>
             <div class="hero-subtitle-wrapper">
                 <img src="images/common/waseda_logo.png" alt="Waseda University Logo" class="hero-logo-sub">

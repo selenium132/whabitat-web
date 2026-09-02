@@ -218,7 +218,6 @@ try {
                 <a href="#surveys"><i class="fas fa-list-check" aria-hidden="true"></i> アンケート</a>
                 <a href="#calendar"><i class="fas fa-calendar-days" aria-hidden="true"></i> カレンダー</a>
                 <a href="#suggestion"><i class="fas fa-inbox" aria-hidden="true"></i> 目安箱</a>
-                <a href="#account"><i class="fas fa-user-gear" aria-hidden="true"></i> アカウント</a>
             </nav>
 
             <!-- 部室 在室状況・入退室・予約 -->
@@ -780,41 +779,12 @@ try {
                 </form>
             </div>
 
-            <!-- アカウント（プロフィール編集・退会申請） -->
-            <h2 id="account" class="section-title" style="text-align: left; margin: 3rem 0 1.5rem; scroll-margin-top: 80px;"><i class="fas fa-user-gear section-icon" aria-hidden="true"></i> アカウント</h2>
-            <div class="card">
-                <?php if (!empty($_SESSION['withdrawal_notice'])): ?>
-                    <div style="background: #ecf2ed; color: #3f7d54; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center;" role="status">
-                        <i class="fas fa-check" aria-hidden="true"></i> <?php echo htmlspecialchars($_SESSION['withdrawal_notice']); ?>
-                    </div>
-                    <?php unset($_SESSION['withdrawal_notice']); ?>
-                <?php endif; ?>
-                <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;">
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: .25rem;">登録情報の確認・変更</div>
-                        <div style="color: var(--text-light); font-size: .9rem;">住所・電話番号・メールなどはいつでも変更できます。</div>
-                    </div>
-                    <a href="register_profile.php" class="btn-secondary" style="white-space: nowrap;"><i class="fas fa-pen-to-square"></i> プロフィールを編集</a>
-                </div>
-                <details style="margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1.2rem;">
-                    <summary style="cursor: pointer; color: var(--text-light); font-size: .9rem;">退会・個人情報の削除を申請する</summary>
-                    <form action="withdrawal_request.php" method="POST" style="margin-top: 1rem; display: flex; flex-direction: column; gap: .8rem;"
-                          onsubmit="return confirm('退会を申請します。管理者が確認後にアカウントと登録情報を削除します。よろしいですか？');">
-                        <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
-                        <p style="margin: 0; color: var(--text-light); font-size: .88rem; line-height: 1.7;">
-                            申請すると管理者に通知され、確認のうえアカウントと個人情報（名簿・出欠履歴の氏名紐付け）を削除します。
-                            詳しくは <a href="privacy.php" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-underline-offset: .2em;">個人情報の取り扱いについて</a> をご覧ください。
-                        </p>
-                        <textarea name="reason" rows="2" placeholder="理由・備考（任意）" style="width: 100%; padding: .7rem; border: 1px solid #ddd; border-radius: 8px; font-size: .95rem; box-sizing: border-box;"></textarea>
-                        <button type="submit" class="btn-secondary" style="align-self: flex-start; color: #b0453a; border-color: #b0453a;">退会を申請する</button>
-                    </form>
-                </details>
-            </div>
-        </div>
     </main>
 
     <style>
         /* セクションジャンプナビ */
+        /* PC はヘッダーに同じナビがあるので非表示。モバイル(ハンバーガーで畳まれる)だけ表示 */
+        @media (min-width: 769px) { .dash-nav { display: none; } }
         .dash-nav {
             position: sticky; top: 72px; z-index: 50;
             display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -1803,28 +1773,6 @@ try {
         if (!el) return;
         const h = new Date().getHours();
         el.textContent = (h >= 5 && h < 11) ? 'おはようございます' : (h < 18 ? 'こんにちは' : 'こんばんは');
-    })();
-    // ジャンプナビ: いま見ているセクションを追従してハイライト
-    (function () {
-        const links = Array.from(document.querySelectorAll('.dash-nav a[href^="#"]'));
-        if (!links.length || !('IntersectionObserver' in window)) return;
-        const byId = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
-        const targets = Array.from(byId.keys()).map(id => document.getElementById(id)).filter(Boolean);
-        let current = null;
-        const setActive = (id) => {
-            if (id === current) return; current = id;
-            links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + id));
-        };
-        const io = new IntersectionObserver((entries) => {
-            // 画面上部 25% のラインを通過した見出しのうち、最後のものを現在地とする
-            const visible = entries.filter(e => e.isIntersecting).map(e => e.target);
-            if (visible.length) setActive(visible[visible.length - 1].id);
-        }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
-        targets.forEach(t => io.observe(t));
-        // 初期状態は先頭
-        setActive(targets[0] && targets[0].id);
-        // クリック時は即反映（スクロール完了を待たない）
-        links.forEach(a => a.addEventListener('click', () => setActive(a.getAttribute('href').slice(1))));
     })();
     </script>
 </body>
