@@ -5,8 +5,32 @@ on:
       - main
 
 jobs:
+  lint:
+    name: PHP syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: none
+      # 本番(push=即デプロイ)に構文エラーを出さないための最終防波堤。
+      # 1ファイルでも失敗すればデプロイジョブは走らない。
+      - name: php -l (all PHP files)
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r -d '' f; do
+            if ! php -l "$f" > /dev/null 2>&1; then
+              echo "::error file=$f::PHP syntax error"; php -l "$f" || true; fail=1
+            fi
+          done < <(find . -name '*.php' -not -path './node_modules/*' -not -path './.git/*' -print0)
+          [ "$fail" -eq 0 ] && echo "OK: all PHP files passed php -l"
+          exit $fail
+
   web-deploy:
     name: Deploy
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Get latest code
@@ -21,17 +45,21 @@ jobs:
         env:
           SA_B64: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON_BASE64 }}
         run: printf '%s' "$SA_B64" | base64 -di > service-account.json
-      
-      - name: Sync files
+
+      # Xserver の FTPS は「Timeout (control socket)」で時々落ちるため、最大3回まで自動リトライする。
+      # 同期は差分ベース(サーバ側の state ファイルで判定)なので途中失敗→再実行は安全。
+      - name: Sync files (attempt 1)
+        id: sync1
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           # 暗号化転送を強制（.env / service-account.json 等のシークレットを平文で流さない）。
-          # Xserver は Explicit FTPS 対応。もし接続に失敗する場合は要サーバ設定確認。
           protocol: ftps
           server-dir: ./
+          timeout: 120000
           exclude: |
             **/.git*
             **/.git*/**
@@ -39,3 +67,52 @@ jobs:
             old_wp_backup/**
             .env.example
             **/*.md
+
+      - name: Sync files (attempt 2)
+        id: sync2
+        if: steps.sync1.outcome == 'failure'
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # 暗号化転送を強制（.env / service-account.json 等のシークレットを平文で流さない）。
+          protocol: ftps
+          server-dir: ./
+          timeout: 120000
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            old_wp_backup/**
+            .env.example
+            **/*.md
+
+      - name: Sync files (attempt 3)
+        id: sync3
+        if: steps.sync1.outcome == 'failure' && steps.sync2.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # 暗号化転送を強制（.env / service-account.json 等のシークレットを平文で流さない）。
+          protocol: ftps
+          server-dir: ./
+          timeout: 120000
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            old_wp_backup/**
+            .env.example
+            **/*.md
+
+      - name: Result
+        if: always()
+        run: |
+          echo "attempt1=${{ steps.sync1.outcome }} attempt2=${{ steps.sync2.outcome }} attempt3=${{ steps.sync3.outcome }}"
+          if [ "${{ steps.sync1.outcome }}" != "success" ] && [ "${{ steps.sync2.outcome }}" != "success" ] && [ "${{ steps.sync3.outcome }}" != "success" ]; then
+            echo "::error::FTP sync failed after 3 attempts"; exit 1
+          fi

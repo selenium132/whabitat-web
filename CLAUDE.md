@@ -17,8 +17,8 @@
 
 ## デプロイ
 
-- `main` への push で GitHub Actions が Xserver へ **FTP 自動デプロイ**（本番＝ https://whabitathome.com ）。push＝即本番反映。
-- FTP の「Sync files」が timeout したら **`gh run rerun --failed`**（よく落ちる）。
+- `main` への push で GitHub Actions が **全PHPの `php -l`** を通してから Xserver へ **FTPS 自動デプロイ**（本番＝ https://whabitathome.com ）。push＝即本番反映。
+- FTP の「Sync files」は timeout しやすいためワークフロー内で3回まで自動リトライ。それでも落ちたら **`gh run rerun --failed`**。
 - 本番 `.env` は GitHub Secret `ENV_FILE_BASE64`、`service-account.json` は `GOOGLE_SERVICE_ACCOUNT_JSON_BASE64` から生成。**`.env` のキーを増やしたら GitHub Secret も更新**する。
 - デプロイ後、PHP opcache の反映に最大1分ほどかかる（古い挙動が残ったら少し待つ）。
 - 変更PHPは本番に出す前に必ず `php -l` で構文確認。
@@ -33,12 +33,17 @@
 - リダイレクトは自サイト内（相対パス or 同一ホスト）のみ許可（オープンリダイレクト対策。`login.php` 参照）。
 - Google Sheets 書き込みは `valueInputOption=RAW`、CSV出力は先頭 `= + - @` を無害化（数式インジェクション対策）。
 - アップロードは `getimagesize()` でマジックバイト検証＋保存先ディレクトリで PHP 実行禁止。
-- エラー詳細は画面に出さず `error_log`（`config.php` で `display_errors=0`）。
+- エラー詳細は画面に出さず `error_log`（`config.php` で `display_errors=0`）。catch は握りつぶさず必ず `error_log` する。
+- **セキュリティヘッダは `config.php` の `header()` で送る**。Xserver では `.htaccess` の `Header` ディレクティブ（mod_headers）が効かない（実測）。
+- 状態変更は GET で発火させない（シート出力/同期も POST + CSRF）。
+- `target_users`（アンケート対象者）は表示の絞り込みではなく閲覧制限として `form_view.php` で強制する。
 
 ## アーキテクチャ要点
 
 - PHP + MySQL（フレームワークなし）。会員ログインは LINE OAuth（`callback.php`、state は常時検証）。
-- 共通処理は `config.php`：`getDB()` / CSRF / `requireLogin()` / `requireGoogleDriveConnection()` / `isInAppBrowser()`。
+- 共通処理は `config.php`：`getDB()`（リクエスト内で接続を共有） / CSRF / `requireLogin()` / `requireAdmin()` / `requireGoogleDriveConnection()` / `isInAppBrowser()` / LINE push（`linePushToAdmins` 等）。
+- スキーマの自己修復（CREATE TABLE IF NOT EXISTS / ALTER）は `ensureSchemaOnce($key, fn)` 経由で**初回だけ**実行し `private/schema/` にマーカーを置く。DDL を変えたら `$key` のバージョンを上げる。毎リクエストで DDL を走らせない。
+- 会員/管理ページのヘッダーは `partials/member_header.php`、公開ページは `partials/header.php` + `partials/footer.php`（フェードイン等の共通JSは footer 側に集約済み。各ページにコピペしない）。
 - 会員名簿の管理は `admin/members.php`（検索・フィルター・ソート・全項目表示・CSV出力）でサイト内完結。
 - 名簿の Google スプレッドシート出力は **「各自アカウント方式」**：
   `requireGoogleDriveConnection()` → `google_oauth_callback.php`（リフレッシュトークンを `private/` に保存）→ `google_user_sheets.php` が本人の OAuth トークンで **本人の Drive に**シートを作成/更新（本人が所有者＝編集可）。

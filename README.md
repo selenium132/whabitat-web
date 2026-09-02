@@ -14,13 +14,18 @@
 
 **会員機能（LINEログイン）**
 - プロフィール登録（郵便番号→住所オートフィル付き）
-- イベントの出欠登録・カスタムアンケート回答
-- 目安箱（意見投稿）
+- イベントの出欠登録・カスタムアンケート回答（参加者/回答者リストの公開・非公開はイベント単位で設定）
+- 目安箱（意見投稿）、退会・個人情報削除の申請
+- LINE 通知: 締切24時間前の未回答リマインド、当日朝の参加者リマインド（cron）
 
 **管理機能（幹部のみ）**
 - メンバー管理：検索・フィルター・ソート・全項目表示・CSV出力をサイト内で完結
 - 名簿を**各幹部自身の Google アカウント**でスプレッドシート出力（本人所有・最小権限共有）
-- ブログ / カレンダー / 定例MTG履歴 / お問い合わせ管理
+- ブログ / カレンダー / 定例MTG履歴 / GV・JVチーム / お問い合わせ・目安箱・退会申請の管理、監査ログ
+- 問い合わせ・目安箱・退会申請の新着は管理者へ LINE push 通知
+
+**法務・信頼**
+- プライバシーポリシー（`privacy.php`）を公開し、会員登録・問い合わせフォームから同意導線を設置
 
 ## 技術スタック
 
@@ -30,7 +35,7 @@
 | 認証 | LINE OAuth 2.0（会員ログイン）、Google OAuth 2.0（名簿のスプシ出力） |
 | 外部連携 | Google Sheets API、LINE Messaging API、reCAPTCHA v2、zipcloud（住所補完） |
 | フロント | 素の HTML / CSS / JavaScript（モノトーンのミニマルデザイン） |
-| インフラ / CI | Xserver（共用）、GitHub Actions による FTP 自動デプロイ |
+| インフラ / CI | Xserver（共用）、GitHub Actions（全PHPの `php -l` → FTPS デプロイ、3回まで自動リトライ） |
 
 ## セキュリティへの取り組み
 
@@ -43,7 +48,9 @@
 - **シークレット管理**：機密はすべて環境変数。リポジトリには非追跡で、本番は GitHub Secrets 経由で注入
 - **名簿の最小権限共有**：公開（リンク共有）を廃止し、各幹部の Google アカウントへ `drive.file` スコープで限定共有
 - **数式インジェクション対策**：CSV/スプレッドシート出力時に数式トリガ文字を無害化
-- **アップロード検証**：マジックバイト判定＋アップロードディレクトリでの PHP 実行禁止
+- **アップロード検証**：マジックバイト判定＋サイズ上限＋アップロードディレクトリでの PHP 実行禁止
+- **セキュリティヘッダ**：HSTS / X-Frame-Options / nosniff / Referrer-Policy / Permissions-Policy / CSP(frame-ancestors) を `config.php` から送出（Xserver では `.htaccess` の `Header` が効かないため）
+- **状態変更は POST + CSRF のみ**：シート出力・同期も GET では発火しない
 
 ## ローカル開発
 
@@ -67,8 +74,17 @@ DBスキーマは本番運用（Xserver）のため、変更のたびに本番�
 
 ## デプロイ
 
-`main` ブランチへ push すると、GitHub Actions が Xserver へ FTP デプロイします（`.github/workflows/deploy.yml`）。
-本番の `.env` と `service-account.json` は GitHub Secrets から生成されます。
+`main` ブランチへ push すると、GitHub Actions が **全 PHP の構文チェック（`php -l`）** を通した上で Xserver へ FTPS デプロイします（`.github/workflows/deploy.yml`、FTP タイムアウト時は3回まで自動リトライ）。
+本番の `.env` と `service-account.json` は GitHub Secrets から生成されます。`.env` にキーを増やしたら Secret も更新すること。
+
+## 定期実行（Xserver の Cron）
+
+| スクリプト | 頻度 | 内容 |
+|---|---|---|
+| `scripts/db_backup.php` | 毎日 | DB を `db_backups/` に14世代保存。`BACKUP_DRIVE_USER_ID` を設定すると管理者の Google Drive にも退避 |
+| `scripts/remind_deadlines.php` | 毎時 | 締切24時間前の未回答者リマインド／当日朝の参加者リマインド（LINE） |
+
+運用・引き継ぎの実務は [docs/OPERATIONS.md](docs/OPERATIONS.md) を参照。
 
 ## ディレクトリ構成（抜粋）
 
@@ -78,8 +94,12 @@ DBスキーマは本番運用（Xserver）のため、変更のたびに本番�
 ├── login.php / callback.php  LINE OAuth ログイン
 ├── dashboard.php             会員ダッシュボード
 ├── register_profile.php      プロフィール登録
-├── admin/                    管理画面（members / blog / calendar / messages / mtg_history）
+├── privacy.php               プライバシーポリシー
+├── admin/                    管理画面（members / blog / calendar / messages / mtg_history / teams / audit_log）
+├── partials/                 共通ヘッダー・フッター（公開用 header/footer、会員用 member_header）
 ├── google_user_sheets.php    各自アカウントでの名簿スプシ出力
-├── images/                   画像アセット（tiles / gv / jv / domestic / common）
-└── .github/workflows/        CI（FTPデプロイ）
+├── scripts/                  CLI スクリプト（DBバックアップ・リマインド・スキーマ出力）
+├── docs/OPERATIONS.md        運用・引き継ぎガイド
+├── images/                   画像アセット（tiles / gv / jv / domestic / common / icons）
+└── .github/workflows/        CI（php -l → FTPSデプロイ）
 ```
