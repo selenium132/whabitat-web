@@ -29,31 +29,10 @@ if (!$event) {
     exit;
 }
 
-// 「対象者」が指定されたアンケートは、対象外の会員には閲覧も回答もさせない。
-// 従来は一覧に出すかどうかの絞り込みにしか使われておらず、URL直打ちで誰でも開けた。
-// 管理者・作成者・イベント管理者、および（対象変更前などに）既に回答済みの人は例外。
-if (!empty($event['target_users'])) {
-    $targets = json_decode($event['target_users'], true);
-    if (is_array($targets) && $targets && !in_array((int)$_SESSION['user_id'], array_map('intval', $targets), true) && !isEventAdmin($event_id)) {
-        $chk = $pdo->prepare("SELECT 1 FROM attendance WHERE event_id = ? AND user_id = ?");
-        $chk->execute([$event_id, $_SESSION['user_id']]);
-        if (!$chk->fetchColumn()) {
-            http_response_code(403);
-            header('Content-Type: text/html; charset=utf-8');
-            echo '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
-               . '<title>対象外のアンケートです | WHABITAT</title>'
-               . '<link rel="stylesheet" href="style.css?v=' . (@filemtime(__DIR__ . '/style.css') ?: '1') . '">'
-               . '<link rel="stylesheet" href="member.css?v=' . (@filemtime(__DIR__ . '/member.css') ?: '1') . '"></head><body>'
-               . '<main><div class="dashboard-container" style="max-width: 560px; margin-top: 120px;">'
-               . '<div class="card" style="text-align: center; padding: 2.5rem 2rem;">'
-               . '<h1 style="font-size: 1.3rem; margin-bottom: 1rem;">このアンケートはあなた宛ではありません</h1>'
-               . '<p style="color: var(--text-light); line-height: 1.8; margin-bottom: 1.5rem;">対象者が指定されたアンケートです。心当たりがある場合は主催者にご確認ください。</p>'
-               . '<a href="dashboard.php" class="btn-secondary">ダッシュボードに戻る</a>'
-               . '</div></div></main></body></html>';
-            exit;
-        }
-    }
-}
+// 注意: events.target_users は「誰のダッシュボードに表示するか」のリストであり、閲覧制限ではない。
+// 回答した人はこのリストに自動追加される（下の回答処理）ため、これを閲覧制限に使うと
+// 「最初の1人が回答した後、他の全員が開けなくなる」事故になる（2026-09 に実際に発生し撤回）。
+// URLを知っている承認済み会員は誰でも開いて回答できる、が仕様。
 
 // Parse Schema（POSTの必須項目サーバ側検証で参照するため、送信処理より前に用意する）
 $form_schema = [];

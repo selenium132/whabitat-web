@@ -61,8 +61,12 @@ foreach ($all_upcoming as $ev) {
             $can_see = true;
         } elseif (in_array($ev['id'], $user_admin_events)) {
             $can_see = true;
-        } elseif (!empty($ev['target_users'])) {
-            // If target_users is set, show to those users
+        } elseif (empty($ev['target_users'])) {
+            // 対象者未指定 = 全員向け（LINE Bot の一覧と同じ解釈）。
+            // 以前は「誰にも表示されない」扱いで、回答した人だけ後から表示されていた。
+            $can_see = true;
+        } else {
+            // 対象者が指定されていれば、その人たち（回答済みで自動追加された人を含む）に表示
             $targets = json_decode($ev['target_users'], true);
             if (is_array($targets) && in_array($_SESSION['user_id'], $targets)) {
                 $can_see = true;
