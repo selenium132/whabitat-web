@@ -48,6 +48,22 @@ try {
     error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
 }
 
+// Fetch user's responses for all upcoming events
+$user_responses = [];
+try {
+    $event_ids = array_column($all_upcoming, 'id');
+    if (!empty($event_ids)) {
+        $placeholders = implode(',', array_fill(0, count($event_ids), '?'));
+        $resp_stmt = $pdo->prepare("SELECT event_id, status FROM attendance WHERE user_id = ? AND event_id IN ($placeholders)");
+        $resp_stmt->execute(array_merge([$_SESSION['user_id']], $event_ids));
+        foreach ($resp_stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $user_responses[$r['event_id']] = $r['status'];
+        }
+    }
+} catch (Exception $e) {
+    error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
+}
+
 foreach ($all_upcoming as $ev) {
     // Default to 'event' if type is not set (backwards compatibility)
     $type = $ev['type'] ?? 'event';
@@ -65,6 +81,9 @@ foreach ($all_upcoming as $ev) {
             // 対象者未指定 = 全員向け（LINE Bot の一覧と同じ解釈）。
             // 以前は「誰にも表示されない」扱いで、回答した人だけ後から表示されていた。
             $can_see = true;
+        } elseif (isset($user_responses[$ev['id']])) {
+            // 対象者指定ありでも、既に回答した人には引き続き表示（回答の変更ができるように）
+            $can_see = true;
         } else {
             // 対象者が指定されていれば、その人たち（回答済みで自動追加された人を含む）に表示
             $targets = json_decode($ev['target_users'], true);
@@ -79,22 +98,6 @@ foreach ($all_upcoming as $ev) {
     } else {
         $attend_checks[] = $ev;
     }
-}
-
-// Fetch user's responses for all upcoming events
-$user_responses = [];
-try {
-    $event_ids = array_column($all_upcoming, 'id');
-    if (!empty($event_ids)) {
-        $placeholders = implode(',', array_fill(0, count($event_ids), '?'));
-        $resp_stmt = $pdo->prepare("SELECT event_id, status FROM attendance WHERE user_id = ? AND event_id IN ($placeholders)");
-        $resp_stmt->execute(array_merge([$_SESSION['user_id']], $event_ids));
-        foreach ($resp_stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
-            $user_responses[$r['event_id']] = $r['status'];
-        }
-    }
-} catch (Exception $e) {
-    error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
 }
 
 // Fetch Past Events (include archived even if date is future)

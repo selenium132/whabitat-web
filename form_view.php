@@ -135,21 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($status) {
         $stmt = $pdo->prepare("INSERT INTO attendance (event_id, user_id, status, comment, response_data) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE status = ?, comment = ?, response_data = ?");
         $stmt->execute([$event_id, $_SESSION['user_id'], $status, $comment, $response_data, $status, $comment, $response_data]);
-        // アンケートは「回答送信時」に対象者へ追加する（旧: 閲覧時のGET書き込みは
-        // CSRF・ID列挙の温床だったため廃止）。ここはCSRF検証済みPOST経路。
-        if (($event['type'] ?? 'event') === 'survey') {
-            try {
-                $targets = json_decode($event['target_users'] ?? '[]', true);
-                if (!is_array($targets)) $targets = [];
-                if (!in_array($_SESSION['user_id'], $targets)) {
-                    $targets[] = (int)$_SESSION['user_id'];
-                    $upd = $pdo->prepare("UPDATE events SET target_users = ? WHERE id = ?");
-                    $upd->execute([json_encode($targets), $event_id]);
-                }
-            } catch (Exception $e) {
-                error_log(basename(__FILE__) . ':' . __LINE__ . ' ' . $e->getMessage());
-            }
-        }
+        // 旧: 回答者を target_users に自動追加していたが、対象者未指定（=全員）のアンケートが
+        // 最初の回答で「一部の人向け」に化けてしまうため廃止。回答済みかどうかは attendance で判定する。
         // 既にスプシ連携済みのイベントなら、回答を自動反映（失敗しても回答保存は妨げない）
         syncEventToSheetSafe($pdo, $event_id);
         // Refresh to show updated data
