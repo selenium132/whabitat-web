@@ -385,9 +385,17 @@ if (!empty($event['capacity']) && $event['capacity'] > 0) {
     <?php
     $mh_variant = 'back';
     $mh_label = '一覧に戻る';
-    $mh_actions_html = '<button type="button" onclick="copyCurrentUrl()" style="background: #495057; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+    // 編集できる人（管理者・作成者・イベント管理者）には編集ボタンも出す
+    $can_edit_event = isEventAdmin($event_id) || $event['created_by'] == $_SESSION['user_id'];
+    $mh_actions_html = '<div style="display: flex; align-items: center; gap: 8px;">';
+    if ($can_edit_event) {
+        $mh_actions_html .= '<a href="form_create.php?id=' . (int)$event_id . '" style="background: #fff; color: #1a1a1a; border: 1px solid #e6e2d9; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fas fa-pen-to-square"></i> 編集
+            </a>';
+    }
+    $mh_actions_html .= '<button type="button" onclick="copyCurrentUrl()" style="background: #495057; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
                 <i class="fas fa-link"></i> URLをコピー
-            </button>';
+            </button></div>';
     include 'partials/member_header.php';
     ?>
 

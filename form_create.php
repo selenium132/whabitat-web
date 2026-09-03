@@ -963,6 +963,10 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                 // It defaults to false, so toggle it
                 toggleRequired(id);
             }
+            // 公開トグル（復元漏れがあり、編集して保存し直すたびに「公開」が消えていた）
+            if (qData.public) {
+                togglePublic(id);
+            }
         }
         
         function createQuestionElement(id, initialType = 'radio') {
@@ -1000,7 +1004,7 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
                         <span>必須</span>
                         <i class="fas fa-toggle-off" style="font-size: 24px; color: #dadce0;" id="req-toggle-${id}" data-required="false"></i>
                     </div>
-                    <div class="required-toggle" onclick="togglePublic(${id})" title="ONにすると回答が全員に公開されます">
+                    <div class="required-toggle" onclick="togglePublic(${id})" title="ONにすると、この質問の回答が会員に公開されます（回答者を非公開にしている場合は、名前を伏せて共有されます）">
                         <span>公開</span>
                         <i class="fas fa-toggle-off" style="font-size: 24px; color: #dadce0;" id="pub-toggle-${id}" data-public="false"></i>
                     </div>
@@ -1135,7 +1139,7 @@ $default_title = ($type === 'survey') ? '無題のアンケート' : '無題の�
             
             if (!isPub) {
                 icon.className = 'fas fa-toggle-on';
-                icon.style.color = '#28a745';
+                icon.style.color = 'var(--primary-color)';
                 icon.setAttribute('data-public', 'true');
             } else {
                 icon.className = 'fas fa-toggle-off';

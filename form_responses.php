@@ -26,6 +26,7 @@ $can_view_list = $is_manager || isParticipantsVisible($event);
 
 $status_counts = ['join' => 0, 'maybe' => 0, 'decline' => 0];
 $participants = [];
+$anon_public_answers = []; // 回答者非公開でも、質問ごとに「公開」指定された回答は匿名で見せる
 if (!$can_view_list) {
     $cnt_stmt = $pdo->prepare("SELECT status, COUNT(*) AS c FROM attendance WHERE event_id = ? GROUP BY status");
     $cnt_stmt->execute([$event_id]);
@@ -87,6 +88,26 @@ if (!empty($event['form_schema'])) {
 }
 
 $is_survey_event = (($event['type'] ?? 'event') === 'survey');
+
+// 質問ごとの「公開」指定（回答者リストが非公開でも、この質問の回答は匿名で共有される）
+$public_q_idx = [];
+foreach ($form_schema as $idx => $q) {
+    if (!empty($q['public'])) $public_q_idx[] = $idx;
+}
+if (!$can_view_list && $public_q_idx) {
+    // 誰が答えたかは分からないよう、名前は一切取得せず回答本文だけをランダム順で取る
+    $pa = $pdo->prepare("SELECT response_data FROM attendance WHERE event_id = ? AND status = 'join' AND response_data IS NOT NULL ORDER BY RAND()");
+    $pa->execute([$event_id]);
+    foreach ($pa->fetchAll(PDO::FETCH_COLUMN) as $json) {
+        $ans = json_decode($json, true);
+        if (!is_array($ans)) continue;
+        foreach ($public_q_idx as $idx) {
+            $v = $ans[$idx] ?? null;
+            if ($v === null || $v === '' || (is_array($v) && !$v)) continue;
+            $anon_public_answers[$idx][] = is_array($v) ? implode('、', $v) : $v;
+        }
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -219,6 +240,9 @@ $is_survey_event = (($event['type'] ?? 'event') === 'survey');
                 ?>
             </div>
             <?php if ($is_manager): ?>
+                <a href="form_create.php?id=<?php echo (int)$event['id']; ?>" class="btn-secondary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                    <i class="fas fa-pen-to-square"></i> 編集
+                </a>
                 <button onclick="copyForSpreadsheet()" class="btn-primary" style="border-radius: 50px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
                     <i class="fas fa-copy"></i> シート用にコピー
                 </button>
@@ -262,6 +286,22 @@ $is_survey_event = (($event['type'] ?? 'event') === 'survey');
                     <?php echo $is_survey_summary ? '誰が回答したかは主催者・管理者のみが確認できます。' : '誰が参加するかは主催者・管理者のみが確認できます。'; ?>
                 </p>
             </div>
+
+            <?php if ($anon_public_answers): ?>
+                <?php foreach ($anon_public_answers as $idx => $vals): ?>
+                <div class="p-card">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #eee;">
+                        <i class="fas fa-comments" style="color: #888;"></i>
+                        <span style="font-weight: 600; color: var(--text-color);"><?php echo htmlspecialchars($form_schema[$idx]['title'] ?? ('Q' . ($idx + 1))); ?></span>
+                        <span style="margin-left: auto; font-size: .78rem; color: #888;"><?php echo count($vals); ?>件</span>
+                    </div>
+                    <?php foreach ($vals as $v): ?>
+                        <div class="custom-ans-block"><?php echo nl2br(htmlspecialchars($v)); ?></div>
+                    <?php endforeach; ?>
+                    <p style="margin: 14px 0 0; font-size: .8rem; color: #888;">この質問は「公開」設定のため、回答者名を伏せて共有されています。</p>
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         <?php elseif (empty($participants)): ?>
             <div class="p-card" style="text-align: center; color: #666;">
                 まだ回答はありません。
