@@ -89,64 +89,22 @@ if (!empty($event['form_schema'])) {
 
 $is_survey_event = (($event['type'] ?? 'event') === 'survey');
 
-// 質問ごとの「公開」指定（回答者リストが非公開でも、この質問の回答は共有される）
+// 質問ごとの「公開」指定（回答者リストが非公開でも、この質問の回答は匿名で共有される）
 $public_q_idx = [];
 foreach ($form_schema as $idx => $q) {
     if (!empty($q['public'])) $public_q_idx[] = $idx;
 }
-
-// 公開質問の集計。選択式(radio/checkbox/dropdown)は「選択肢ごとに何人が選んだか」を数え、
-// 回答者名を見せてよい場合（管理者、または回答者=公開）は誰が選んだかも並べる。
-// $q_tally[$idx] = ['type'=>..., 'options'=>[label => ['count'=>n,'names'=>[...]]], 'texts'=>[...], 'answered'=>n]
-$q_tally = [];
-if ($public_q_idx) {
-    $show_names = $can_view_list; // 回答者が非公開なら名前は取得しない
-    if ($show_names) {
-        $pa = $pdo->prepare("SELECT u.name, a.response_data FROM attendance a JOIN users u ON u.id = a.user_id
-                             WHERE a.event_id = ? AND a.status = 'join' AND a.response_data IS NOT NULL
-                             ORDER BY u.name COLLATE utf8mb4_unicode_ci ASC");
-        $pa->execute([$event_id]);
-        $rows = $pa->fetchAll(PDO::FETCH_ASSOC);
-    } else {
-        // 誰が答えたか分からないよう、名前は取得せず順序もランダムにする
-        $pa = $pdo->prepare("SELECT response_data FROM attendance WHERE event_id = ? AND status = 'join' AND response_data IS NOT NULL ORDER BY RAND()");
-        $pa->execute([$event_id]);
-        $rows = array_map(fn($j) => ['name' => null, 'response_data' => $j], $pa->fetchAll(PDO::FETCH_COLUMN));
-    }
-
-    foreach ($public_q_idx as $idx) {
-        $q = $form_schema[$idx];
-        $type = $q['type'] ?? 'paragraph';
-        $entry = ['type' => $type, 'options' => [], 'texts' => [], 'answered' => 0];
-        if ($type !== 'paragraph') {
-            foreach (($q['options'] ?? []) as $opt) {
-                if ($opt === '' || $opt === null) continue;
-                $entry['options'][(string)$opt] = ['count' => 0, 'names' => []];
-            }
-        }
-        $q_tally[$idx] = $entry;
-    }
-
-    foreach ($rows as $row) {
-        $ans = json_decode($row['response_data'], true);
+if (!$can_view_list && $public_q_idx) {
+    // 誰が答えたかは分からないよう、名前は一切取得せず回答本文だけをランダム順で取る
+    $pa = $pdo->prepare("SELECT response_data FROM attendance WHERE event_id = ? AND status = 'join' AND response_data IS NOT NULL ORDER BY RAND()");
+    $pa->execute([$event_id]);
+    foreach ($pa->fetchAll(PDO::FETCH_COLUMN) as $json) {
+        $ans = json_decode($json, true);
         if (!is_array($ans)) continue;
         foreach ($public_q_idx as $idx) {
             $v = $ans[$idx] ?? null;
             if ($v === null || $v === '' || (is_array($v) && !$v)) continue;
-            $q_tally[$idx]['answered']++;
-            if ($q_tally[$idx]['type'] === 'paragraph') {
-                $q_tally[$idx]['texts'][] = is_array($v) ? implode('、', $v) : (string)$v;
-            } else {
-                foreach ((array)$v as $picked) {
-                    $picked = (string)$picked;
-                    if (!isset($q_tally[$idx]['options'][$picked])) {
-                        // 選択肢が編集で変わった等、スキーマに無い値も拾う
-                        $q_tally[$idx]['options'][$picked] = ['count' => 0, 'names' => []];
-                    }
-                    $q_tally[$idx]['options'][$picked]['count']++;
-                    if (!empty($row['name'])) $q_tally[$idx]['options'][$picked]['names'][] = $row['name'];
-                }
-            }
+            $anon_public_answers[$idx][] = is_array($v) ? implode('、', $v) : $v;
         }
     }
 }
@@ -301,10 +259,6 @@ if ($public_q_idx) {
             <?php endif; ?>
         </div>
 
-        <?php if ($can_view_list && $q_tally): ?>
-            <?php include __DIR__ . '/partials/response_tally.php'; ?>
-        <?php endif; ?>
-
         <?php if (!$can_view_list): ?>
             <?php $is_survey_summary = (($event['type'] ?? 'event') === 'survey'); ?>
             <div class="p-card">
@@ -333,7 +287,21 @@ if ($public_q_idx) {
                 </p>
             </div>
 
-            <?php include __DIR__ . '/partials/response_tally.php'; ?>
+            <?php if ($anon_public_answers): ?>
+                <?php foreach ($anon_public_answers as $idx => $vals): ?>
+                <div class="p-card">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #eee;">
+                        <i class="fas fa-comments" style="color: #888;"></i>
+                        <span style="font-weight: 600; color: var(--text-color);"><?php echo htmlspecialchars($form_schema[$idx]['title'] ?? ('Q' . ($idx + 1))); ?></span>
+                        <span style="margin-left: auto; font-size: .78rem; color: #888;"><?php echo count($vals); ?>件</span>
+                    </div>
+                    <?php foreach ($vals as $v): ?>
+                        <div class="custom-ans-block"><?php echo nl2br(htmlspecialchars($v)); ?></div>
+                    <?php endforeach; ?>
+                    <p style="margin: 14px 0 0; font-size: .8rem; color: #888;">この質問は「公開」設定のため、回答者名を伏せて共有されています。</p>
+                </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         <?php elseif (empty($participants)): ?>
             <div class="p-card" style="text-align: center; color: #666;">
                 まだ回答はありません。
