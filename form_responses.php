@@ -89,6 +89,12 @@ if (!empty($event['form_schema'])) {
 
 $is_survey_event = (($event['type'] ?? 'event') === 'survey');
 
+// 「公開」指定された質問があるか（あればアンケートでも一般会員に回答内容の列を出す）
+$has_public_q = false;
+foreach ($form_schema as $q) {
+    if (!empty($q['public'])) { $has_public_q = true; break; }
+}
+
 // 質問ごとの「公開」指定（回答者リストが非公開でも、この質問の回答は匿名で共有される）
 $public_q_idx = [];
 foreach ($form_schema as $idx => $q) {
@@ -310,8 +316,8 @@ if (!$can_view_list && $public_q_idx) {
 
             <?php $is_survey = (($event['type'] ?? 'event') === 'survey'); ?>
 
-            <?php if ($is_survey && !$is_manager): ?>
-                <!-- ===== Survey: General Member View (Name + Grade only) ===== -->
+            <?php if ($is_survey && !$is_manager && !$has_public_q): ?>
+                <!-- ===== Survey: General Member View (公開質問が無いときは回答者名だけ) ===== -->
                 <div class="p-card" style="padding: 16px 24px;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee;">
                         <i class="fas fa-check-circle" style="color: #1e8e3e;"></i>
