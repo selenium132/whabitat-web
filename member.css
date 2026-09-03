@@ -232,3 +232,24 @@ body .btn-primary:active, body .btn-secondary:active { transform: translateY(0) 
     .room-count-badge:not(.is-zero)::after, .deadline-soon i { animation: none; }
     body .event-card, body .btn-primary, body .btn-secondary, .dash-nav a { transition: none; }
 }
+
+
+/* =========================================================
+   アンケートの集計表示（partials/response_tally.php）
+   ========================================================= */
+.tally-list { display: flex; flex-direction: column; gap: 1.1rem; }
+.tally-row { display: flex; flex-direction: column; gap: .4rem; }
+.tally-head { display: flex; align-items: baseline; gap: .8rem; }
+.tally-label { font-size: .95rem; color: var(--text-color); font-weight: 500; }
+.tally-count { margin-left: auto; font-size: .82rem; color: var(--text-light); white-space: nowrap; }
+.tally-bar { height: 6px; border-radius: 999px; background: #efece5; overflow: hidden; }
+.tally-bar span { display: block; height: 100%; background: #cfcabf; border-radius: 999px; transition: width .6s cubic-bezier(.16,.84,.44,1); }
+.tally-row.is-top .tally-bar span { background: var(--primary-color); }
+.tally-row.is-top .tally-label { font-weight: 700; }
+.tally-row.is-top .tally-count { color: var(--text-color); font-weight: 600; }
+.tally-names { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .15rem; }
+.tally-name {
+    font-size: .78rem; color: var(--text-color);
+    background: #f2f0ea; border-radius: 999px; padding: .2rem .6rem;
+}
+@media (prefers-reduced-motion: reduce) { .tally-bar span { transition: none; } }
